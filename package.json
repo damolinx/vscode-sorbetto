@@ -309,7 +309,6 @@
     "test": "node ./out/test/runTest.js"
   },
   "dependencies": {
-    "elegant-spinner": "^2.0.0",
     "vscode-languageclient": "8.1.0"
   },
   "devDependencies": {
@@ -330,8 +329,8 @@
     "mocha": "^11.0.0",
     "prettier": "^1.19.1",
     "sinon": "^7.5.0",
-    "typescript-eslint": "^8.25.0",
     "typescript": "^5.7.2",
+    "typescript-eslint": "^8.25.0",
     "vscode-languageserver": "8.1.0"
   }
 }
