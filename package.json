@@ -1,11 +1,11 @@
 {
-  "name": "sorbet-vscode-extension",
-  "displayName": "Ruby Sorbet",
-  "description": "Ruby IDE features, powered by Sorbet.",
-  "author": "Stripe Inc.",
+  "name": "damolinx-sorbetto",
+  "displayName": "Sorbetto for VS Code",
+  "description": "Sorbetto provides Ruby Language features using the official Sorbet.",
+  "author": "damolinx",
+  "publisher": "damolinx",
   "license": "Apache-2.0",
-  "version": "0.3.41",
-  "publisher": "sorbet",
+  "version": "0.1.0",
   "icon": "icon.png",
   "repository": {
     "type": "git",
