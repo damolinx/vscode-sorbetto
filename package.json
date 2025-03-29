@@ -1,7 +1,7 @@
 {
   "name": "damolinx-sorbetto",
   "displayName": "Sorbetto for VS Code",
-  "description": "Sorbetto provides Ruby Language features using the official Sorbet.",
+  "description": "Sorbetto provides Ruby Language features using Sorbet, a type checker for Ruby.",
   "author": "damolinx",
   "publisher": "damolinx",
   "license": "Apache-2.0",
@@ -9,7 +9,7 @@
   "icon": "icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sorbet/sorbet"
+    "url": "https://github.com/damolinx/vscode-sorbetto"
   },
   "engines": {
     "vscode": "^1.77.0"
@@ -20,6 +20,7 @@
   "keywords": [
     "ruby",
     "sorbet",
+    "sorbetto",
     "language-server"
   ],
   "activationEvents": [
@@ -43,60 +44,60 @@
   "contributes": {
     "commands": [
       {
-        "command": "sorbet.configure",
+        "command": "sorbetto.configure",
         "title": "Configure",
-        "category": "Sorbet"
+        "category": "Sorbetto"
       },
       {
-        "command": "sorbet.configureHighlightUntyped",
+        "command": "sorbetto.configureHighlightUntyped",
         "title": "Configure untyped code highlighting",
-        "category": "Sorbet",
+        "category": "Sorbetto",
         "enablement": "workbenchState != empty"
       },
       {
-        "command": "sorbet.copySymbolToClipboard",
+        "command": "sorbetto.copySymbolToClipboard",
         "title": "Copy Symbol to Clipboard",
-        "category": "Sorbet",
+        "category": "Sorbetto",
         "enablement": "editorLangId == ruby && !editorHasSelection && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote)"
       },
       {
-        "command": "sorbet.disable",
+        "command": "sorbetto.disable",
         "title": "Disable",
-        "category": "Sorbet"
+        "category": "Sorbetto"
       },
       {
-        "command": "sorbet.enable",
+        "command": "sorbetto.enable",
         "title": "Enable",
-        "category": "Sorbet"
+        "category": "Sorbetto"
       },
       {
-        "command": "sorbet.restart",
+        "command": "sorbetto.restart",
         "title": "Restart",
-        "category": "Sorbet"
+        "category": "Sorbetto"
       },
       {
-        "command": "sorbet.showOutput",
+        "command": "sorbetto.showOutput",
         "title": "Show Output",
-        "category": "Sorbet"
+        "category": "Sorbetto"
       },
       {
-        "command": "sorbet.toggleHighlightUntyped",
+        "command": "sorbetto.toggleHighlightUntyped",
         "title": "Toggle highlighting untyped code",
-        "category": "Sorbet",
+        "category": "Sorbetto",
         "enablement": "workbenchState != empty"
       },
       {
-        "command": "sorbet.toggleTypedFalseCompletionNudges",
+        "command": "sorbetto.toggleTypedFalseCompletionNudges",
         "title": "Toggle the auto-complete nudge in `typed: false` files",
-        "category": "Sorbet",
+        "category": "Sorbetto",
         "enablement": "workbenchState != empty"
       }
     ],
     "configuration": {
-      "title": "Sorbet",
+      "title": "Sorbetto",
       "properties": {
         "sorbet.enabled": {
-          "description": "Enable Sorbet Ruby IDE features",
+          "description": "Enable Sorbet typing features.",
           "type": "boolean"
         },
         "sorbet.selectedLspConfigId": {
@@ -293,7 +294,7 @@
       "editor/context": [
         {
           "when": "resourceLangId == ruby",
-          "command": "sorbet.copySymbolToClipboard",
+          "command": "sorbetto.copySymbolToClipboard",
           "group": "9_cutcopypaste"
         }
       ]
