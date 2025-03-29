@@ -91,7 +91,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
      */
     const stopTimer = setTimeout(() => {
       stopped = true;
-      this.context.metrics.emitCountMetric('stop.timed_out', 1);
+      this.context.metrics.increment('stop.timed_out', 1);
       if (this.sorbetProcess?.pid) {
         stopProcess(this.sorbetProcess, this.context.log);
       }
@@ -101,7 +101,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
     this.languageClient.stop().then(() => {
       if (!stopped) {
         clearTimeout(stopTimer);
-        this.context.metrics.emitCountMetric('stop.success', 1);
+        this.context.metrics.increment('stop.success', 1);
         this.context.log.info('Sorbet has stopped.');
       }
     });
@@ -237,7 +237,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
         this.status === ServerStatus.INITIALIZING &&
         err.code === 'ENOENT'
       ) {
-        this.context.metrics.emitCountMetric('error.enoent', 1);
+        this.context.metrics.increment('error.enoent', 1);
         // We failed to start the process. The path to Sorbet is likely incorrect.
         this.wrappedLastError = `Could not start Sorbet with command: '${command} ${args.join(
           ' ',

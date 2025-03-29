@@ -5,10 +5,9 @@ import {
   TransportKind,
 } from 'vscode-languageclient/node';
 import * as assert from 'assert';
-import * as sinon from 'sinon';
 import { TestLanguageServerSpecialURIs } from './testLanguageServerSpecialURIs';
 import { instrumentLanguageClient } from '../../languageClient.metrics';
-import { MetricsClient, MetricsEmitter, Tags } from '../../metricsClient';
+import { MetricsClient, Tags } from '../../metricsClient';
 
 const enum MetricType {
   Increment,
@@ -16,7 +15,7 @@ const enum MetricType {
   Timing,
 }
 
-class RecordingMetricsEmitter implements MetricsEmitter {
+class RecordingMetricsClient implements MetricsClient {
   private metrics: [MetricType, string, number, Tags][] = [];
 
   getAndResetMetrics(): [MetricType, string, number, Tags][] {
@@ -94,24 +93,16 @@ function createLanguageClient(): LanguageClient {
 
 suite('LanguageClient', () => {
   suite('Metrics', () => {
-    let metricsEmitter: RecordingMetricsEmitter;
-    let metricsClient: sinon.SinonStubbedInstance<MetricsClient> &
-      MetricsClient;
+    let metricsEmitter: RecordingMetricsClient;
 
     suiteSetup(() => {
-      metricsEmitter = new RecordingMetricsEmitter();
-      metricsClient = sinon.createStubInstance(
-        MetricsClient,
-      ) as sinon.SinonStubbedInstance<MetricsClient> & MetricsClient;
-      metricsClient.emitTimingMetric.callsFake((name, value, tags) => {
-        return metricsEmitter.timing(name, value, tags);
-      });
+      metricsEmitter = new RecordingMetricsClient();
     });
 
     test('Shims language clients and records latency metrics', async () => {
       const client = instrumentLanguageClient(
         createLanguageClient(),
-        metricsClient,
+        metricsEmitter,
       );
       await client.start();
 
@@ -174,11 +165,8 @@ suite('LanguageClient', () => {
     });
   });
 
-  function assertTimingMetric(
-    metricsEmitter: RecordingMetricsEmitter,
-    success: 'true' | 'false',
-  ) {
-    const metrics = metricsEmitter.getAndResetMetrics();
+  function assertTimingMetric(client: RecordingMetricsClient, success: 'true' | 'false') {
+    const metrics = client.getAndResetMetrics();
     assert.strictEqual(metrics.length, 1);
     assert.strictEqual(typeof metrics[0][2], 'number');
     assert.deepStrictEqual(metrics[0], [

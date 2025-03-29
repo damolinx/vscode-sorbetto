@@ -24,10 +24,10 @@ export function instrumentLanguageClient(
     response.then(
       () =>
         // This is request succeeded. If the request is canceled, the promise is rejected.
-        metrics.emitTimingMetric(metricName, now, { success: 'true' }),
+        metrics.timing(metricName, now, { success: 'true' }),
       () =>
         // This request failed or was canceled.
-        metrics.emitTimingMetric(metricName, now, { success: 'false' }),
+        metrics.timing(metricName, now, { success: 'false' }),
     );
     return response;
   };
