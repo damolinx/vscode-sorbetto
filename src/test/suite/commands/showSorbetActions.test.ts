@@ -1,19 +1,19 @@
-import * as vscode from "vscode";
-import * as assert from "assert";
-import * as path from "path";
-import * as sinon from "sinon";
+import * as vscode from 'vscode';
+import * as assert from 'assert';
+import * as path from 'path';
+import * as sinon from 'sinon';
 
-import { createLogStub } from "../testUtils";
+import { createLogStub } from '../testUtils';
 import {
   Action,
   getAvailableActions,
   showSorbetActions,
-} from "../../../commands/showSorbetActions";
-import { SorbetExtensionContext } from "../../../sorbetExtensionContext";
-import { SorbetStatusProvider } from "../../../sorbetStatusProvider";
-import { ServerStatus } from "../../../types";
+} from '../../../commands/showSorbetActions';
+import { SorbetExtensionContext } from '../../../sorbetExtensionContext';
+import { SorbetStatusProvider } from '../../../sorbetStatusProvider';
+import { ServerStatus } from '../../../types';
 
-suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
+suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
   let testRestorables: { restore: () => void }[];
 
   setup(() => {
@@ -24,7 +24,7 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
     testRestorables.forEach((r) => r.restore());
   });
 
-  test("getAvailableActions", () => {
+  test('getAvailableActions', () => {
     assert.deepStrictEqual(getAvailableActions(ServerStatus.DISABLED), [
       Action.ViewOutput,
       Action.EnableSorbet,
@@ -59,17 +59,17 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
     ]);
   });
 
-  test("showSorbetActions: Shows dropdown (no-selection)", async () => {
+  test('showSorbetActions: Shows dropdown (no-selection)', async () => {
     const showQuickPickSingleStub = sinon
-      .stub(vscode.window, "showQuickPick")
+      .stub(vscode.window, 'showQuickPick')
       .resolves(undefined); // User canceled
     testRestorables.push(showQuickPickSingleStub);
 
     const log = createLogStub();
-    const statusProvider = <SorbetStatusProvider>{
+    const statusProvider = {
       serverStatus: ServerStatus.RUNNING,
-    };
-    const context = <SorbetExtensionContext>{ log, statusProvider };
+    } as SorbetStatusProvider;
+    const context = { log, statusProvider } as SorbetExtensionContext;
 
     await assert.doesNotReject(showSorbetActions(context));
 
@@ -81,7 +81,7 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
       Action.ConfigureSorbet,
     ]);
     assert.deepStrictEqual(showQuickPickSingleStub.firstCall.args[1], {
-      placeHolder: "Select an action",
+      placeHolder: 'Select an action',
     });
   });
 });

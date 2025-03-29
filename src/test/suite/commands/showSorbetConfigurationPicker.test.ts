@@ -1,15 +1,15 @@
-import * as vscode from "vscode";
-import * as assert from "assert";
-import * as path from "path";
-import * as sinon from "sinon";
+import * as vscode from 'vscode';
+import * as assert from 'assert';
+import * as path from 'path';
+import * as sinon from 'sinon';
 
-import { createLogStub } from "../testUtils";
-import { showSorbetConfigurationPicker } from "../../../commands/showSorbetConfigurationPicker";
-import { SorbetExtensionConfig } from "../../../config";
-import { SorbetExtensionContext } from "../../../sorbetExtensionContext";
-import { SorbetLspConfig } from "../../../sorbetLspConfig";
+import { createLogStub } from '../testUtils';
+import { showSorbetConfigurationPicker } from '../../../commands/showSorbetConfigurationPicker';
+import { SorbetExtensionConfig } from '../../../config';
+import { SorbetExtensionContext } from '../../../sorbetExtensionContext';
+import { SorbetLspConfig } from '../../../sorbetLspConfig';
 
-suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
+suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
   let testRestorables: { restore: () => void }[];
 
   setup(() => {
@@ -20,33 +20,33 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
     testRestorables.forEach((r) => r.restore());
   });
 
-  test("showSorbetConfigurationPicker: Shows dropdown (no-selection)", async () => {
+  test('showSorbetConfigurationPicker: Shows dropdown (no-selection)', async () => {
     const activeLspConfig = new SorbetLspConfig({
-      id: "test-config-id-active",
-      name: "test-config-id-active",
-      description: "",
+      id: 'test-config-id-active',
+      name: 'test-config-id-active',
+      description: '',
       env: {},
       command: [],
     });
     const otherLspConfig = new SorbetLspConfig({
-      id: "test-config-id",
-      name: "test-config-id",
-      description: "",
+      id: 'test-config-id',
+      name: 'test-config-id',
+      description: '',
       env: {},
       command: [],
     });
 
     const showQuickPickSingleStub = sinon
-      .stub(vscode.window, "showQuickPick")
+      .stub(vscode.window, 'showQuickPick')
       .resolves(undefined); // User canceled
     testRestorables.push(showQuickPickSingleStub);
 
     const log = createLogStub();
-    const configuration = <SorbetExtensionConfig>(<unknown>{
+    const configuration = ({
       activeLspConfig,
       lspConfigs: [activeLspConfig, otherLspConfig],
-    });
-    const context = <SorbetExtensionContext>{ log, configuration };
+    } as unknown) as SorbetExtensionConfig;
+    const context = { log, configuration } as SorbetExtensionContext;
 
     await assert.doesNotReject(showSorbetConfigurationPicker(context));
 
@@ -55,22 +55,22 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
       {
         label: `• ${activeLspConfig.name}`,
         description: activeLspConfig.description,
-        detail: activeLspConfig.command.join(" "),
+        detail: activeLspConfig.command.join(' '),
         lspConfig: activeLspConfig,
       },
       {
         label: otherLspConfig.name,
         description: otherLspConfig.description,
-        detail: otherLspConfig.command.join(" "),
+        detail: otherLspConfig.command.join(' '),
         lspConfig: otherLspConfig,
       },
       {
-        label: "Disable Sorbet",
-        description: "Disable the Sorbet extension",
+        label: 'Disable Sorbet',
+        description: 'Disable the Sorbet extension',
       },
     ]);
     assert.deepStrictEqual(showQuickPickSingleStub.firstCall.args[1], {
-      placeHolder: "Select a Sorbet configuration",
+      placeHolder: 'Select a Sorbet configuration',
     });
   });
 });

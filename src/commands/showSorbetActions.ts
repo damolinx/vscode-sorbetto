@@ -1,20 +1,20 @@
-import { commands, window } from "vscode";
+import { commands, window } from 'vscode';
 import {
   SHOW_CONFIG_PICKER_COMMAND_ID,
   SHOW_OUTPUT_COMMAND_ID,
   SORBET_DISABLE_COMMAND_ID,
   SORBET_ENABLE_COMMAND_ID,
   SORBET_RESTART_COMMAND_ID,
-} from "../commandIds";
-import { SorbetExtensionContext } from "../sorbetExtensionContext";
-import { RestartReason, ServerStatus } from "../types";
+} from '../commandIds';
+import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { RestartReason, ServerStatus } from '../types';
 
 export const enum Action {
-  ConfigureSorbet = "Configure Sorbet",
-  DisableSorbet = "Disable Sorbet",
-  EnableSorbet = "Enable Sorbet",
-  RestartSorbet = "Restart Sorbet",
-  ViewOutput = "View Output",
+  ConfigureSorbet = 'Configure Sorbet',
+  DisableSorbet = 'Disable Sorbet',
+  EnableSorbet = 'Enable Sorbet',
+  RestartSorbet = 'Restart Sorbet',
+  ViewOutput = 'View Output',
 }
 
 /**
@@ -26,7 +26,7 @@ export async function showSorbetActions(
 ): Promise<void> {
   const actions = getAvailableActions(context.statusProvider.serverStatus);
   const selectedAction = await window.showQuickPick(actions, {
-    placeHolder: "Select an action",
+    placeHolder: 'Select an action',
   });
 
   switch (selectedAction) {

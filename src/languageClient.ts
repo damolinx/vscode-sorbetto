@@ -1,7 +1,7 @@
-import { ErrorHandler, RevealOutputChannelOn } from "vscode-languageclient";
-import { LanguageClient, ServerOptions } from "vscode-languageclient/node";
-import { backwardsCompatibleTrackUntyped } from "./config";
-import { SorbetExtensionContext } from "./sorbetExtensionContext";
+import { ErrorHandler, RevealOutputChannelOn } from 'vscode-languageclient';
+import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
+import { backwardsCompatibleTrackUntyped } from './config';
+import { SorbetExtensionContext } from './sorbetExtensionContext';
 
 /**
  * Create Language Client for Sorber Server.
@@ -25,21 +25,21 @@ export function createClient(
   };
 
   context.log.debug(
-    "Initializing with initializationOptions",
+    'Initializing with initializationOptions',
     ...Object.entries(initializationOptions).map(([k, v]) => `${k}:${v}`),
   );
 
-  const client = new CustomLanguageClient("ruby", "Sorbet", serverOptions, {
+  const client = new CustomLanguageClient('ruby', 'Sorbet', serverOptions, {
     documentSelector: [
-      { language: "ruby", scheme: "file" },
+      { language: 'ruby', scheme: 'file' },
       // Support queries on generated files with sorbet:// URIs that do not exist editor-side.
-      { language: "ruby", scheme: "sorbet" },
+      { language: 'ruby', scheme: 'sorbet' },
     ],
     errorHandler,
     initializationOptions,
     initializationFailedHandler: (error) => {
       context.log.error(
-        "Failed to initialize Sorbet language server.",
+        'Failed to initialize Sorbet language server.',
         error instanceof Error ? error : undefined,
       );
       return false;
@@ -66,12 +66,12 @@ class CustomLanguageClient extends LanguageClient {
   error(
     message: string,
     data?: any,
-    showNotification?: boolean | "force",
+    showNotification?: boolean | 'force',
   ): void {
     super.error(
       message,
       data,
-      showNotification === "force" ? true : showNotification,
+      showNotification === 'force' ? true : showNotification,
     );
   }
 }

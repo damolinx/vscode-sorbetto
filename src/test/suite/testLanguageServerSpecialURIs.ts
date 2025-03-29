@@ -1,5 +1,5 @@
 export enum TestLanguageServerSpecialURIs {
-  SUCCESS = "file:///success",
-  FAILURE = "file:///failure",
-  EXIT = "file:///exit",
+  SUCCESS = 'file:///success',
+  FAILURE = 'file:///failure',
+  EXIT = 'file:///exit',
 }

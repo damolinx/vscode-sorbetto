@@ -1,6 +1,6 @@
-import { Disposable, Event, EventEmitter } from "vscode";
-import { SorbetExtensionContext } from "./sorbetExtensionContext";
-import { ServerStatus } from "./types";
+import { Disposable, Event, EventEmitter } from 'vscode';
+import { SorbetExtensionContext } from './sorbetExtensionContext';
+import { ServerStatus } from './types';
 
 /**
  * Status changes reported by extension.
@@ -9,21 +9,21 @@ const enum Status {
   /**
    * Sorbet Language Server has been disabled.
    */
-  Disabled = "disabled",
+  Disabled = 'disabled',
   /**
    * Sorbet Language Server encountered an error. This state does not correlate
    * to code typing errors.
    */
-  Error = "error",
+  Error = 'error',
   /**
    * Sorbet Language Server is running.
    */
-  Running = "running",
+  Running = 'running',
   /**
    * Sorbet server is being started. The event might repeat in case of error or
    * if the server was previously stopped.
    */
-  Start = "start",
+  Start = 'start',
 }
 
 /**

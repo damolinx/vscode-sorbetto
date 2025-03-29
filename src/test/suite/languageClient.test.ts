@@ -3,12 +3,12 @@ import {
   LanguageClientOptions,
   ServerOptions,
   TransportKind,
-} from "vscode-languageclient/node";
-import * as assert from "assert";
-import * as sinon from "sinon";
-import { TestLanguageServerSpecialURIs } from "./testLanguageServerSpecialURIs";
-import { instrumentLanguageClient } from "../../languageClient.metrics";
-import { MetricsClient, MetricsEmitter, Tags } from "../../metricsClient";
+} from 'vscode-languageclient/node';
+import * as assert from 'assert';
+import * as sinon from 'sinon';
+import { TestLanguageServerSpecialURIs } from './testLanguageServerSpecialURIs';
+import { instrumentLanguageClient } from '../../languageClient.metrics';
+import { MetricsClient, MetricsEmitter, Tags } from '../../metricsClient';
 
 const enum MetricType {
   Increment,
@@ -27,8 +27,8 @@ class RecordingMetricsEmitter implements MetricsEmitter {
 
   async increment(
     metricName: string,
-    count: number = 1,
-    tags: Readonly<{ [metric: string]: string }> = {},
+    count = 1,
+    tags: Readonly<Record<string, string>> = {},
   ): Promise<void> {
     this.metrics.push([MetricType.Increment, metricName, count, tags]);
   }
@@ -36,7 +36,7 @@ class RecordingMetricsEmitter implements MetricsEmitter {
   async gauge(
     metricName: string,
     value: number,
-    tags: Readonly<{ [metric: string]: string }> = {},
+    tags: Readonly<Record<string, string>> = {},
   ): Promise<void> {
     this.metrics.push([MetricType.Gauge, metricName, value, tags]);
   }
@@ -47,7 +47,7 @@ class RecordingMetricsEmitter implements MetricsEmitter {
     tags: Tags = {},
   ): Promise<void> {
     const rawValue =
-      typeof value === "number" ? value : Date.now() - value.valueOf();
+      typeof value === 'number' ? value : Date.now() - value.valueOf();
     this.metrics.push([MetricType.Timing, metricName, rawValue, tags]);
   }
 
@@ -59,7 +59,7 @@ class RecordingMetricsEmitter implements MetricsEmitter {
 // Uninitialized client. Call start and await on it before use.
 function createLanguageClient(): LanguageClient {
   // The server is implemented in node
-  const serverModule = require.resolve("./testLanguageServer");
+  const serverModule = require.resolve('./testLanguageServer');
   // The debug options for the server
   const debugOptions = { execArgv: [] };
 
@@ -77,14 +77,14 @@ function createLanguageClient(): LanguageClient {
   // Options to control the language client
   const clientOptions: LanguageClientOptions = {
     // Register the server for plain text documents
-    documentSelector: [{ scheme: "file", language: "plaintext" }],
+    documentSelector: [{ scheme: 'file', language: 'plaintext' }],
     synchronize: {},
   };
 
   // Create the language client and start the client.
   const client = new LanguageClient(
-    "languageServerExample",
-    "Language Server Example",
+    'languageServerExample',
+    'Language Server Example',
     serverOptions,
     clientOptions,
   );
@@ -92,8 +92,8 @@ function createLanguageClient(): LanguageClient {
   return client;
 }
 
-suite("LanguageClient", () => {
-  suite("Metrics", () => {
+suite('LanguageClient', () => {
+  suite('Metrics', () => {
     let metricsEmitter: RecordingMetricsEmitter;
     let metricsClient: sinon.SinonStubbedInstance<MetricsClient> &
       MetricsClient;
@@ -108,7 +108,7 @@ suite("LanguageClient", () => {
       });
     });
 
-    test("Shims language clients and records latency metrics", async () => {
+    test('Shims language clients and records latency metrics', async () => {
       const client = instrumentLanguageClient(
         createLanguageClient(),
         metricsClient,
@@ -116,7 +116,7 @@ suite("LanguageClient", () => {
       await client.start();
 
       {
-        const successResponse = await client.sendRequest("textDocument/hover", {
+        const successResponse = await client.sendRequest('textDocument/hover', {
           textDocument: {
             uri: TestLanguageServerSpecialURIs.SUCCESS,
           },
@@ -126,11 +126,11 @@ suite("LanguageClient", () => {
           (successResponse as any).contents,
           TestLanguageServerSpecialURIs.SUCCESS,
         );
-        assertTimingMetric(metricsEmitter, "true");
+        assertTimingMetric(metricsEmitter, 'true');
       }
 
       {
-        const successResponse = await client.sendRequest("textDocument/hover", {
+        const successResponse = await client.sendRequest('textDocument/hover', {
           textDocument: {
             uri: TestLanguageServerSpecialURIs.SUCCESS,
           },
@@ -140,50 +140,50 @@ suite("LanguageClient", () => {
           (successResponse as any).contents,
           TestLanguageServerSpecialURIs.SUCCESS,
         );
-        assertTimingMetric(metricsEmitter, "true");
+        assertTimingMetric(metricsEmitter, 'true');
       }
 
       try {
-        await client.sendRequest("textDocument/hover", {
+        await client.sendRequest('textDocument/hover', {
           textDocument: {
             uri: TestLanguageServerSpecialURIs.FAILURE,
           },
           position: { line: 1, character: 1 },
         });
-        assert.fail("Request should have failed.");
+        assert.fail('Request should have failed.');
       } catch (e) {
         assert(
           ((e as any).message as string).indexOf(
             TestLanguageServerSpecialURIs.FAILURE,
           ) !== -1,
         );
-        assertTimingMetric(metricsEmitter, "false");
+        assertTimingMetric(metricsEmitter, 'false');
       }
 
       try {
-        await client.sendRequest("textDocument/hover", {
+        await client.sendRequest('textDocument/hover', {
           textDocument: {
             uri: TestLanguageServerSpecialURIs.EXIT,
           },
           position: { line: 1, character: 1 },
         });
-        assert.fail("Request should have failed.");
-      } catch (e) {
-        assertTimingMetric(metricsEmitter, "false");
+        assert.fail('Request should have failed.');
+      } catch {
+        assertTimingMetric(metricsEmitter, 'false');
       }
     });
   });
 
   function assertTimingMetric(
     metricsEmitter: RecordingMetricsEmitter,
-    success: "true" | "false",
+    success: 'true' | 'false',
   ) {
     const metrics = metricsEmitter.getAndResetMetrics();
     assert.strictEqual(metrics.length, 1);
-    assert.strictEqual(typeof metrics[0][2], "number");
+    assert.strictEqual(typeof metrics[0][2], 'number');
     assert.deepStrictEqual(metrics[0], [
       MetricType.Timing,
-      "latency.textDocument_hover_ms",
+      'latency.textDocument_hover_ms',
       metrics[0][2], // Time value is variable.
       { success },
     ]);

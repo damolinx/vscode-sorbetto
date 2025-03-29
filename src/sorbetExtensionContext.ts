@@ -1,8 +1,8 @@
-import { Disposable, ExtensionContext, LogOutputChannel, OutputChannel, window } from "vscode";
-import { DefaultSorbetWorkspaceContext, SorbetExtensionConfig } from "./config";
-import { MetricsClient } from "./metricsClient";
-import { SorbetStatusProvider } from "./sorbetStatusProvider";
-import { Log } from "./log";
+import { Disposable, ExtensionContext, LogOutputChannel, OutputChannel, window } from 'vscode';
+import { DefaultSorbetWorkspaceContext, SorbetExtensionConfig } from './config';
+import { MetricsClient } from './metricsClient';
+import { SorbetStatusProvider } from './sorbetStatusProvider';
+import { Log } from './log';
 
 export class SorbetExtensionContext implements Disposable {
   public readonly configuration: SorbetExtensionConfig;
@@ -16,7 +16,7 @@ export class SorbetExtensionContext implements Disposable {
     const sorbetWorkspaceContext = new DefaultSorbetWorkspaceContext(context);
     this.configuration = new SorbetExtensionConfig(sorbetWorkspaceContext);
     this.extensionContext = context;
-    this.wrappedLog = window.createOutputChannel("Sorbetto", {log: true});
+    this.wrappedLog = window.createOutputChannel('Sorbetto', {log: true});
     this.metrics = new MetricsClient(this);
     this.statusProvider = new SorbetStatusProvider(this);
 

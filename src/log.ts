@@ -1,4 +1,4 @@
-import { LogLevel } from "vscode";
+import { LogLevel } from 'vscode';
 
 /**
  * Logger.

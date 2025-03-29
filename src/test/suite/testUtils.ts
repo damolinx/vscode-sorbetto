@@ -1,5 +1,5 @@
-import { LogLevel } from "vscode";
-import { Log } from "../../log";
+import { LogLevel } from 'vscode';
+import { Log } from '../../log';
 
 /**
  * Stub {@link Log} interface.

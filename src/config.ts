@@ -7,46 +7,45 @@ import {
   FileSystemWatcher,
   Memento,
   workspace,
-} from "vscode";
-import * as fs from "fs";
-import { SorbetLspConfig, SorbetLspConfigData } from "./sorbetLspConfig";
-import { deepEqual } from "./utils";
-import { Log } from "./log";
+} from 'vscode';
+import * as fs from 'fs';
+import { SorbetLspConfig, SorbetLspConfigData } from './sorbetLspConfig';
+import { deepEqual } from './utils';
+import { Log } from './log';
 
-export type TrackUntyped = "nowhere" | "everywhere-but-tests" | "everywhere";
+export type TrackUntyped = 'nowhere' | 'everywhere-but-tests' | 'everywhere';
 
 export const ALL_TRACK_UNTYPED: TrackUntyped[] = [
-  "nowhere",
-  "everywhere-but-tests",
-  "everywhere",
+  'nowhere',
+  'everywhere-but-tests',
+  'everywhere',
 ];
 
 function coerceTrackUntypedSetting(value: boolean | string): TrackUntyped {
   switch (value) {
     case true:
-      return "everywhere";
+      return 'everywhere';
     case false:
-      return "nowhere";
-    case "nowhere":
-    case "everywhere-but-tests":
-    case "everywhere":
+      return 'nowhere';
+    case 'nowhere':
+    case 'everywhere-but-tests':
+    case 'everywhere':
       return value;
     default:
-      return "nowhere";
+      return 'nowhere';
   }
 }
 
 export function labelForTrackUntypedSetting(value: TrackUntyped): string {
   switch (value) {
-    case "nowhere":
-      return "Nowhere";
-    case "everywhere-but-tests":
-      return "Everywhere but tests";
-    case "everywhere":
-      return "Everywhere";
+    case 'nowhere':
+      return 'Nowhere';
+    case 'everywhere-but-tests':
+      return 'Everywhere but tests';
+    case 'everywhere':
+      return 'Everywhere';
     default:
-      const unexpected: never = value;
-      throw new Error(`Unexpected value: ${unexpected}`);
+      throw new Error(`Unexpected value: ${value}`);
   }
 }
 
@@ -55,15 +54,14 @@ export function backwardsCompatibleTrackUntyped(
   trackWhere: TrackUntyped,
 ): boolean | TrackUntyped {
   switch (trackWhere) {
-    case "nowhere":
+    case 'nowhere':
       return false;
-    case "everywhere":
+    case 'everywhere':
       return true;
-    case "everywhere-but-tests":
+    case 'everywhere-but-tests':
       return trackWhere;
     default:
-      const exhaustiveCheck: never = trackWhere;
-      log.warn("Got unexpected state", exhaustiveCheck);
+      log.warn('Got unexpected state', trackWhere);
       return false;
   }
 }
@@ -116,16 +114,16 @@ export class DefaultSorbetWorkspaceContext implements ISorbetWorkspaceContext {
   >;
 
   constructor(extensionContext: ExtensionContext) {
-    this.cachedSorbetConfiguration = workspace.getConfiguration("sorbet");
+    this.cachedSorbetConfiguration = workspace.getConfiguration('sorbet');
     this.onDidChangeConfigurationEmitter = new EventEmitter();
     this.workspaceState = extensionContext.workspaceState;
 
     this.disposables = [
       this.onDidChangeConfigurationEmitter,
       workspace.onDidChangeConfiguration((e) => {
-        if (e.affectsConfiguration("sorbet")) {
+        if (e.affectsConfiguration('sorbet')) {
           // update the cached configuration before firing
-          this.cachedSorbetConfiguration = workspace.getConfiguration("sorbet");
+          this.cachedSorbetConfiguration = workspace.getConfiguration('sorbet');
           this.onDidChangeConfigurationEmitter.fire(e);
         }
       }),
@@ -178,11 +176,11 @@ export class DefaultSorbetWorkspaceContext implements ISorbetWorkspaceContext {
    * Sorbet on first launch.
    */
   public async initializeEnabled(enabled: boolean): Promise<void> {
-    const stateEnabled = this.workspaceState.get<boolean>("sorbet.enabled");
+    const stateEnabled = this.workspaceState.get<boolean>('sorbet.enabled');
 
     if (stateEnabled === undefined) {
       const cachedConfig = this.cachedSorbetConfiguration.inspect<boolean>(
-        "enabled",
+        'enabled',
       );
 
       if (
@@ -194,15 +192,15 @@ export class DefaultSorbetWorkspaceContext implements ISorbetWorkspaceContext {
           cachedConfig.workspaceFolderLanguageValue === undefined &&
           cachedConfig.workspaceLanguageValue === undefined)
       ) {
-        await this.update("enabled", enabled);
+        await this.update('enabled', enabled);
       }
     }
   }
 }
 
 export class SorbetExtensionConfig implements Disposable {
-  private configFilePatterns: ReadonlyArray<string>;
-  private configFileWatchers: ReadonlyArray<FileSystemWatcher>;
+  private configFilePatterns: readonly string[];
+  private configFileWatchers: readonly FileSystemWatcher[];
   private readonly disposables: Disposable[];
   private readonly onLspConfigChangeEmitter: EventEmitter<
     SorbetLspConfigChangeEvent
@@ -211,9 +209,9 @@ export class SorbetExtensionConfig implements Disposable {
   private selectedLspConfigId?: string;
   private readonly sorbetWorkspaceContext: ISorbetWorkspaceContext;
   /** "Standard" LSP configs. */
-  private standardLspConfigs: ReadonlyArray<SorbetLspConfig>;
+  private standardLspConfigs: readonly SorbetLspConfig[];
   /** "Custom" LSP configs that override/supplement "standard" LSP configs. */
-  private userLspConfigs: ReadonlyArray<SorbetLspConfig>;
+  private userLspConfigs: readonly SorbetLspConfig[];
   private wrappedEnabled: boolean;
   private wrappedHighlightUntyped: TrackUntyped;
   private wrappedTypedFalseCompletionNudges: boolean;
@@ -228,7 +226,7 @@ export class SorbetExtensionConfig implements Disposable {
     this.sorbetWorkspaceContext = sorbetWorkspaceContext;
     this.standardLspConfigs = [];
     this.userLspConfigs = [];
-    this.wrappedHighlightUntyped = "nowhere";
+    this.wrappedHighlightUntyped = 'nowhere';
     this.wrappedTypedFalseCompletionNudges = true;
     this.wrappedRevealOutputOnError = false;
 
@@ -270,26 +268,26 @@ export class SorbetExtensionConfig implements Disposable {
     const oldConfigFilePatterns = this.configFilePatterns;
 
     this.configFilePatterns = this.sorbetWorkspaceContext.get(
-      "configFilePatterns",
+      'configFilePatterns',
       this.configFilePatterns,
     );
     this.wrappedEnabled = this.sorbetWorkspaceContext.get(
-      "enabled",
+      'enabled',
       this.enabled,
     );
     this.wrappedRevealOutputOnError = this.sorbetWorkspaceContext.get(
-      "revealOutputOnError",
+      'revealOutputOnError',
       this.revealOutputOnError,
     );
     const highlightUntyped = this.sorbetWorkspaceContext.get(
-      "highlightUntyped",
+      'highlightUntyped',
       this.highlightUntyped,
     );
     // Always store the setting as a TrackUntyped enum value internally.
     // We'll convert it to legacy-style boolean options (potentially) at the call sites.
     this.wrappedHighlightUntyped = coerceTrackUntypedSetting(highlightUntyped);
     this.wrappedTypedFalseCompletionNudges = this.sorbetWorkspaceContext.get(
-      "typedFalseCompletionNudges",
+      'typedFalseCompletionNudges',
       this.typedFalseCompletionNudges,
     );
 
@@ -310,16 +308,16 @@ export class SorbetExtensionConfig implements Disposable {
     });
 
     this.standardLspConfigs = this.sorbetWorkspaceContext
-      .get<SorbetLspConfigData[]>("lspConfigs", [])
+      .get<SorbetLspConfigData[]>('lspConfigs', [])
       .map((c) => new SorbetLspConfig(c));
 
     this.userLspConfigs = this.sorbetWorkspaceContext
-      .get<SorbetLspConfigData[]>("userLspConfigs", [])
+      .get<SorbetLspConfigData[]>('userLspConfigs', [])
       .map((c) => new SorbetLspConfig(c));
 
     this.selectedLspConfigId = this.sorbetWorkspaceContext.get<
       string | undefined
-    >("selectedLspConfigId", undefined);
+    >('selectedLspConfigId', undefined);
 
     // Ensure `selectedLspConfigId` is a valid Id (not `undefined` or empty)
     if (!this.selectedLspConfigId) {
@@ -368,8 +366,8 @@ export class SorbetExtensionConfig implements Disposable {
   /**
    * Returns a copy of the current SorbetLspConfig objects.
    */
-  public get lspConfigs(): ReadonlyArray<SorbetLspConfig> {
-    const results: Array<SorbetLspConfig> = [];
+  public get lspConfigs(): readonly SorbetLspConfig[] {
+    const results: SorbetLspConfig[] = [];
     const resultIds = new Set<string>();
     [...this.userLspConfigs, ...this.standardLspConfigs].forEach((c) => {
       if (!resultIds.has(c.id)) {
@@ -404,15 +402,15 @@ export class SorbetExtensionConfig implements Disposable {
    * If {@link enabled} is `false`, this will change it to `true`.
    */
   public async setActiveLspConfigId(id: string): Promise<void> {
-    const updates: Array<Thenable<void>> = [];
+    const updates: Thenable<void>[] = [];
 
     if (this.activeLspConfig?.id !== id) {
       updates.push(
-        this.sorbetWorkspaceContext.update("selectedLspConfigId", id),
+        this.sorbetWorkspaceContext.update('selectedLspConfigId', id),
       );
     }
     if (!this.enabled) {
-      updates.push(this.sorbetWorkspaceContext.update("enabled", true));
+      updates.push(this.sorbetWorkspaceContext.update('enabled', true));
     }
 
     if (updates.length) {
@@ -422,12 +420,12 @@ export class SorbetExtensionConfig implements Disposable {
   }
 
   public async setEnabled(enabled: boolean): Promise<void> {
-    await this.sorbetWorkspaceContext.update("enabled", enabled);
+    await this.sorbetWorkspaceContext.update('enabled', enabled);
     this.refresh();
   }
 
   public async setHighlightUntyped(trackWhere: TrackUntyped): Promise<void> {
-    await this.sorbetWorkspaceContext.update("highlightUntyped", trackWhere);
+    await this.sorbetWorkspaceContext.update('highlightUntyped', trackWhere);
     this.refresh();
   }
 
@@ -438,14 +436,14 @@ export class SorbetExtensionConfig implements Disposable {
    */
   public async setSelectedLspConfigId(id: string): Promise<void> {
     if (this.selectedLspConfigId !== id) {
-      await this.sorbetWorkspaceContext.update("selectedLspConfigId", id);
+      await this.sorbetWorkspaceContext.update('selectedLspConfigId', id);
       this.refresh();
     }
   }
 
   public async setTypedFalseCompletionNudges(enabled: boolean): Promise<void> {
     await this.sorbetWorkspaceContext.update(
-      "typedFalseCompletionNudges",
+      'typedFalseCompletionNudges',
       enabled,
     );
     this.refresh();

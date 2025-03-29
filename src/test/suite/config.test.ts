@@ -1,5 +1,5 @@
-import * as assert from "assert";
-import * as sinon from "sinon";
+import * as assert from 'assert';
+import * as sinon from 'sinon';
 import {
   EventEmitter,
   extensions,
@@ -7,11 +7,11 @@ import {
   ConfigurationChangeEvent,
   Uri,
   workspace,
-} from "vscode";
+} from 'vscode';
 
-import * as fs from "fs";
-import { SorbetExtensionConfig, ISorbetWorkspaceContext } from "../../config";
-import { SorbetLspConfig } from "../../sorbetLspConfig";
+import * as fs from 'fs';
+import { SorbetExtensionConfig, ISorbetWorkspaceContext } from '../../config';
+import { SorbetLspConfig } from '../../sorbetLspConfig';
 
 // Helpers
 
@@ -29,7 +29,7 @@ class FakeWorkspaceConfiguration implements ISorbetWorkspaceContext {
       ConfigurationChangeEvent
     >();
     const defaultProperties = extensions.getExtension(
-      "damolinx.damolinx-sorbetto",
+      'damolinx.damolinx-sorbetto',
     )!.packageJSON.contributes.configuration.properties;
     const defaultValues: Iterable<[string, any]> = Object.keys(
       defaultProperties,
@@ -37,13 +37,13 @@ class FakeWorkspaceConfiguration implements ISorbetWorkspaceContext {
       let value = defaultProperties[settingName].default;
 
       if (
-        defaultProperties[settingName].type === "boolean" &&
+        defaultProperties[settingName].type === 'boolean' &&
         value === undefined
       ) {
         value = false;
       }
 
-      return [settingName.replace("sorbet.", ""), value];
+      return [settingName.replace('sorbet.', ''), value];
     });
     this.defaults = new Map<string, any>(defaultValues);
   }
@@ -85,105 +85,105 @@ class FakeWorkspaceConfiguration implements ISorbetWorkspaceContext {
   }
 
   initializeEnabled(enabled: boolean): void {
-    const stateEnabled = this.backingStore.get("enabled");
+    const stateEnabled = this.backingStore.get('enabled');
 
     if (stateEnabled === undefined) {
-      this.update("enabled", enabled);
+      this.update('enabled', enabled);
     }
   }
 }
 
 const fooLspConfig = new SorbetLspConfig({
-  id: "foo",
-  name: "FooFoo",
-  description: "The foo config",
+  id: 'foo',
+  name: 'FooFoo',
+  description: 'The foo config',
   env: {},
-  command: ["foo", "on", "you"],
+  command: ['foo', 'on', 'you'],
 });
 
 const barLspConfig = new SorbetLspConfig({
-  id: "bar",
-  name: "BarBar",
-  description: "The bar config",
+  id: 'bar',
+  name: 'BarBar',
+  description: 'The bar config',
   env: {},
-  command: ["I", "heart", "bar", "bee", "que"],
+  command: ['I', 'heart', 'bar', 'bee', 'que'],
 });
 
-suite("SorbetLspConfig", () => {
-  test("modifications to ctor arg should not modify object", () => {
+suite('SorbetLspConfig', () => {
+  test('modifications to ctor arg should not modify object', () => {
     const ctorArg = {
-      id: "one",
-      name: "two",
-      description: "three",
-      cwd: "four",
+      id: 'one',
+      name: 'two',
+      description: 'three',
+      cwd: 'four',
       env: {},
-      command: ["five", "six"],
+      command: ['five', 'six'],
     };
     const lspConfig = new SorbetLspConfig(ctorArg);
-    ctorArg.id = "modified";
-    ctorArg.name = "modified";
-    ctorArg.description = "modified";
-    ctorArg.cwd = "modified";
-    ctorArg.command.push("modified");
+    ctorArg.id = 'modified';
+    ctorArg.name = 'modified';
+    ctorArg.description = 'modified';
+    ctorArg.cwd = 'modified';
+    ctorArg.command.push('modified');
     assert.strictEqual(
       lspConfig.id,
-      "one",
-      "Modifying ctor id should not affect object",
+      'one',
+      'Modifying ctor id should not affect object',
     );
     assert.strictEqual(
       lspConfig.name,
-      "two",
-      "Modifying ctor name should not affect object",
+      'two',
+      'Modifying ctor name should not affect object',
     );
     assert.strictEqual(
       lspConfig.description,
-      "three",
-      "Modifying ctor description should not affect object",
+      'three',
+      'Modifying ctor description should not affect object',
     );
     assert.deepStrictEqual(
       lspConfig.command,
-      ["five", "six"],
-      "Modifying ctor command should not affect object",
+      ['five', 'six'],
+      'Modifying ctor command should not affect object',
     );
   });
 
-  suite("equality", () => {
+  suite('equality', () => {
     const json = {
-      id: "one",
-      name: "two",
-      description: "three",
-      cwd: "four",
+      id: 'one',
+      name: 'two',
+      description: 'three',
+      cwd: 'four',
       env: {},
-      command: ["five", "six"],
+      command: ['five', 'six'],
     };
     const config1 = new SorbetLspConfig(json);
     const config2 = new SorbetLspConfig(json);
     const differentConfigs = [
-      new SorbetLspConfig({ ...json, id: "different id" }),
-      new SorbetLspConfig({ ...json, name: "different name" }),
-      new SorbetLspConfig({ ...json, description: "different description" }),
-      new SorbetLspConfig({ ...json, command: ["different", "command"] }),
-      new SorbetLspConfig({ ...json, env: { different: "value" } }),
+      new SorbetLspConfig({ ...json, id: 'different id' }),
+      new SorbetLspConfig({ ...json, name: 'different name' }),
+      new SorbetLspConfig({ ...json, description: 'different description' }),
+      new SorbetLspConfig({ ...json, command: ['different', 'command'] }),
+      new SorbetLspConfig({ ...json, env: { different: 'value' } }),
       undefined,
     ];
 
-    test(".isEqualTo(other)", () => {
+    test('.isEqualTo(other)', () => {
       assert.ok(config1.isEqualTo(config2));
       differentConfigs.forEach((c) => {
         assert.ok(!config1.isEqualTo(c), `Should not equal: ${c}`);
       });
-      assert.ok(!config1.isEqualTo(json), "Should not equal JSON");
+      assert.ok(!config1.isEqualTo(json), 'Should not equal JSON');
       assert.ok(
         !config1.isEqualTo(JSON.stringify(json)),
-        "Should not equal stringified JSON",
+        'Should not equal stringified JSON',
       );
       assert.ok(
         !config1.isEqualTo(JSON.stringify(config1)),
-        "Should not equal stringified config",
+        'Should not equal stringified config',
       );
     });
 
-    test(".areEqual(config1, config2)", () => {
+    test('.areEqual(config1, config2)', () => {
       assert.ok(SorbetLspConfig.areEqual(config1, config2));
       differentConfigs.forEach((c) => {
         assert.ok(
@@ -197,211 +197,211 @@ suite("SorbetLspConfig", () => {
 
 // Actual tests
 
-suite("SorbetExtensionConfig", async () => {
-  suite("initialization", async () => {
-    suite("when no sorbet settings", async () => {
-      test("sorbet is disabled", async () => {
+suite('SorbetExtensionConfig', async () => {
+  suite('initialization', async () => {
+    suite('when no sorbet settings', async () => {
+      test('sorbet is disabled', async () => {
         const workspaceConfig = new FakeWorkspaceConfiguration();
         const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
         assert.strictEqual(
           sorbetConfig.enabled,
           false,
-          "should not be enabled",
+          'should not be enabled',
         );
         assert.deepStrictEqual(
           sorbetConfig.selectedLspConfig,
-          new SorbetLspConfig(workspaceConfig.defaults.get("lspConfigs")[0]),
-          "LSP configs should have been set to first default",
+          new SorbetLspConfig(workspaceConfig.defaults.get('lspConfigs')[0]),
+          'LSP configs should have been set to first default',
         );
         assert.strictEqual(
           sorbetConfig.activeLspConfig,
           undefined,
-          "should not have an active LSP config",
+          'should not have an active LSP config',
         );
       });
     });
 
-    suite("when a sorbet/config file exists", async () => {
-      test("sorbet is enabled", async () => {
-        const expectedWorkspacePath = "/fake/path/to/project";
+    suite('when a sorbet/config file exists', async () => {
+      test('sorbet is enabled', async () => {
+        const expectedWorkspacePath = '/fake/path/to/project';
         const existsSyncStub = sinon
-          .stub(fs, "existsSync")
+          .stub(fs, 'existsSync')
           .withArgs(`${expectedWorkspacePath}/sorbet/config`)
           .returns(true);
         sinon
-          .stub(workspace, "workspaceFolders")
+          .stub(workspace, 'workspaceFolders')
           .value([{ uri: { fsPath: expectedWorkspacePath } }]);
 
         const workspaceConfig = new FakeWorkspaceConfiguration();
         const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
 
-        assert.strictEqual(sorbetConfig.enabled, true, "should be enabled");
+        assert.strictEqual(sorbetConfig.enabled, true, 'should be enabled');
 
         sinon.assert.calledOnce(existsSyncStub);
         sinon.restore();
       });
     });
 
-    suite("when workspace has fully-populated sorbet settings", async () => {
-      test("populates SorbetExtensionConfig", async () => {
+    suite('when workspace has fully-populated sorbet settings', async () => {
+      test('populates SorbetExtensionConfig', async () => {
         const workspaceConfig = new FakeWorkspaceConfiguration([
-          ["enabled", true],
-          ["lspConfigs", [fooLspConfig, barLspConfig]],
-          ["selectedLspConfigId", "bar"],
+          ['enabled', true],
+          ['lspConfigs', [fooLspConfig, barLspConfig]],
+          ['selectedLspConfigId', 'bar'],
         ]);
         const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
         assert.strictEqual(
           sorbetConfig.enabled,
           true,
-          "extension should be enabled",
+          'extension should be enabled',
         );
         const { lspConfigs, selectedLspConfig, activeLspConfig } = sorbetConfig;
         assert.strictEqual(
           lspConfigs.length,
           2,
-          "Should have two configs (foo and bar)",
+          'Should have two configs (foo and bar)',
         );
         assert.strictEqual(
           selectedLspConfig && selectedLspConfig.id,
           barLspConfig.id,
-          "selected config should be bar",
+          'selected config should be bar',
         );
         assert.strictEqual(
           activeLspConfig,
           selectedLspConfig,
-          "Active config should be same as selected",
+          'Active config should be same as selected',
         );
       });
     });
 
-    suite("when workspace has *some* sorbet settings", async () => {
-      test("when `sorbet.enabled` is missing", async () => {
-        const expectedWorkspacePath = "/fake/path/to/project";
+    suite('when workspace has *some* sorbet settings', async () => {
+      test('when `sorbet.enabled` is missing', async () => {
+        const expectedWorkspacePath = '/fake/path/to/project';
         const existsSyncStub = sinon
-          .stub(fs, "existsSync")
+          .stub(fs, 'existsSync')
           .withArgs(`${expectedWorkspacePath}/sorbet/config`)
           .returns(false);
         sinon
-          .stub(workspace, "workspaceFolders")
+          .stub(workspace, 'workspaceFolders')
           .value([{ uri: { fsPath: expectedWorkspacePath } }]);
 
         const workspaceConfig = new FakeWorkspaceConfiguration([
-          ["lspConfigs", [fooLspConfig, barLspConfig]],
-          ["selectedLspConfigId", barLspConfig.id],
+          ['lspConfigs', [fooLspConfig, barLspConfig]],
+          ['selectedLspConfigId', barLspConfig.id],
         ]);
         const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
         assert.strictEqual(
           sorbetConfig.enabled,
           false,
-          "should not be enabled",
+          'should not be enabled',
         );
         const { selectedLspConfig } = sorbetConfig;
         assert.strictEqual(
           selectedLspConfig && selectedLspConfig.id,
           barLspConfig.id,
-          "should have a selected LSP config",
+          'should have a selected LSP config',
         );
         assert.strictEqual(
           sorbetConfig.activeLspConfig,
           undefined,
-          "but should not have an active LSP config",
+          'but should not have an active LSP config',
         );
 
         sinon.assert.calledOnce(existsSyncStub);
         sinon.restore();
       });
 
-      test("when `sorbet.selectedLspConfigId` is missing", async () => {
+      test('when `sorbet.selectedLspConfigId` is missing', async () => {
         const workspaceConfig = new FakeWorkspaceConfiguration([
-          ["enabled", true],
-          ["lspConfigs", [fooLspConfig, barLspConfig]],
+          ['enabled', true],
+          ['lspConfigs', [fooLspConfig, barLspConfig]],
         ]);
         const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
-        assert.strictEqual(sorbetConfig.enabled, true, "should be enabled");
+        assert.strictEqual(sorbetConfig.enabled, true, 'should be enabled');
         const { selectedLspConfig } = sorbetConfig;
         assert.strictEqual(
           selectedLspConfig && selectedLspConfig.id,
           fooLspConfig.id,
-          "selectedLspConfig should default to first config",
+          'selectedLspConfig should default to first config',
         );
         assert.strictEqual(
           sorbetConfig.activeLspConfig,
           selectedLspConfig,
-          "activeLspConfig should also default to first config",
+          'activeLspConfig should also default to first config',
         );
       });
 
-      [undefined, ""].forEach((configId) => {
+      [undefined, ''].forEach((configId) => {
         test(`when \`sorbet.selectedLspConfigId\` is '${configId}', picks first available configuration`, async () => {
           const workspaceConfig = new FakeWorkspaceConfiguration([
-            ["enabled", true],
-            ["lspConfigs", [fooLspConfig, barLspConfig]],
-            ["selectedLspConfigId", configId],
+            ['enabled', true],
+            ['lspConfigs', [fooLspConfig, barLspConfig]],
+            ['selectedLspConfigId', configId],
           ]);
           const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
-          assert.strictEqual(sorbetConfig.enabled, true, "should be enabled");
+          assert.strictEqual(sorbetConfig.enabled, true, 'should be enabled');
           assert.strictEqual(
             sorbetConfig.selectedLspConfig,
             sorbetConfig.lspConfigs[0],
-            "selectedLspConfig should be undefined",
+            'selectedLspConfig should be undefined',
           );
           assert.strictEqual(
             sorbetConfig.activeLspConfig,
             sorbetConfig.lspConfigs[0],
-            "activeLspConfig should be undefined",
+            'activeLspConfig should be undefined',
           );
         });
       });
 
-      test("when `sorbet.selectedLspConfigId` matches none of the defined `sorbet.lspConfigs`", async () => {
+      test('when `sorbet.selectedLspConfigId` matches none of the defined `sorbet.lspConfigs`', async () => {
         const workspaceConfig = new FakeWorkspaceConfiguration([
-          ["enabled", true],
-          ["lspConfigs", [fooLspConfig]],
-          ["selectedLspConfigId", barLspConfig.id],
+          ['enabled', true],
+          ['lspConfigs', [fooLspConfig]],
+          ['selectedLspConfigId', barLspConfig.id],
         ]);
         const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
-        assert.strictEqual(sorbetConfig.enabled, true, "should be enabled");
+        assert.strictEqual(sorbetConfig.enabled, true, 'should be enabled');
         assert.strictEqual(
           sorbetConfig.selectedLspConfig,
           undefined,
-          "selectedLspConfig should be undefined",
+          'selectedLspConfig should be undefined',
         );
         assert.strictEqual(
           sorbetConfig.activeLspConfig,
           undefined,
-          "activeLspConfig should be undefined",
+          'activeLspConfig should be undefined',
         );
       });
 
-      suite("sorbet.highlightUntyped", async () => {
-        test("true instead of a string", async () => {
+      suite('sorbet.highlightUntyped', async () => {
+        test('true instead of a string', async () => {
           const workspaceConfig = new FakeWorkspaceConfiguration([
-            ["highlightUntyped", true],
+            ['highlightUntyped', true],
           ]);
           const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
-          assert.strictEqual(sorbetConfig.highlightUntyped, "everywhere");
+          assert.strictEqual(sorbetConfig.highlightUntyped, 'everywhere');
         });
-        test("false instead of a string", async () => {
+        test('false instead of a string', async () => {
           const workspaceConfig = new FakeWorkspaceConfiguration([
-            ["highlightUntyped", false],
+            ['highlightUntyped', false],
           ]);
           const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
-          assert.strictEqual(sorbetConfig.highlightUntyped, "nowhere");
+          assert.strictEqual(sorbetConfig.highlightUntyped, 'nowhere');
         });
-        test("unrecognized string", async () => {
+        test('unrecognized string', async () => {
           const workspaceConfig = new FakeWorkspaceConfiguration([
-            ["highlightUntyped", "nope"],
+            ['highlightUntyped', 'nope'],
           ]);
           const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
-          assert.strictEqual(sorbetConfig.highlightUntyped, "nowhere");
+          assert.strictEqual(sorbetConfig.highlightUntyped, 'nowhere');
         });
       });
 
-      test("multiple instances of SorbetExtensionConfig stay in sync with each other", async () => {
+      test('multiple instances of SorbetExtensionConfig stay in sync with each other', async () => {
         const workspaceConfig = new FakeWorkspaceConfiguration([
-          ["enabled", true],
-          ["lspConfigs", [fooLspConfig, barLspConfig]],
-          ["selectedLspConfigId", fooLspConfig.id],
+          ['enabled', true],
+          ['lspConfigs', [fooLspConfig, barLspConfig]],
+          ['selectedLspConfigId', fooLspConfig.id],
         ]);
         const sorbetConfig1 = new SorbetExtensionConfig(workspaceConfig);
         const sorbetConfig2 = new SorbetExtensionConfig(workspaceConfig);
@@ -409,38 +409,38 @@ suite("SorbetExtensionConfig", async () => {
         assert.strictEqual(
           sorbetConfig2.activeLspConfig!.id,
           fooLspConfig.id,
-          "Precondition: config2 should be set to 'foo'",
+          'Precondition: config2 should be set to \'foo\'',
         );
         await sorbetConfig1.setActiveLspConfigId(barLspConfig.id);
         assert.ok(sorbetConfig2.activeLspConfig);
         assert.strictEqual(
           sorbetConfig2.activeLspConfig!.id,
           barLspConfig.id,
-          "changing config1 should also change config2",
+          'changing config1 should also change config2',
         );
       });
     });
 
-    suite("when `sorbet.userLspConfigs` is specified", async () => {
-      test("when values are distinct from `lspConfigs`", async () => {
+    suite('when `sorbet.userLspConfigs` is specified', async () => {
+      test('when values are distinct from `lspConfigs`', async () => {
         const workspaceConfig = new FakeWorkspaceConfiguration([
-          ["lspConfigs", [fooLspConfig]],
-          ["userLspConfigs", [barLspConfig]],
+          ['lspConfigs', [fooLspConfig]],
+          ['userLspConfigs', [barLspConfig]],
         ]);
         const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
         const { selectedLspConfig, lspConfigs } = sorbetConfig;
         assert.deepStrictEqual(
           lspConfigs,
           [barLspConfig, fooLspConfig],
-          "items from userLspConfigs should precede items from lspConfigs",
+          'items from userLspConfigs should precede items from lspConfigs',
         );
         assert.deepStrictEqual(
           selectedLspConfig,
           barLspConfig,
-          "First element of userLspConfigs should be the selected/default config",
+          'First element of userLspConfigs should be the selected/default config',
         );
       });
-      test("when values overlap with `lspConfigs`", async () => {
+      test('when values overlap with `lspConfigs`', async () => {
         const userConfig = new SorbetLspConfig({
           ...barLspConfig,
           id: fooLspConfig.id,
@@ -448,39 +448,39 @@ suite("SorbetExtensionConfig", async () => {
         assert.notDeepEqual(
           userConfig,
           fooLspConfig,
-          "Precondition: userFoo and foo should be different configs",
+          'Precondition: userFoo and foo should be different configs',
         );
         assert.strictEqual(
           userConfig.id,
           fooLspConfig.id,
-          "Precondition: userFoo and foo should have the same id",
+          'Precondition: userFoo and foo should have the same id',
         );
         const workspaceConfig = new FakeWorkspaceConfiguration([
-          ["lspConfigs", [fooLspConfig]],
-          ["userLspConfigs", [userConfig]],
+          ['lspConfigs', [fooLspConfig]],
+          ['userLspConfigs', [userConfig]],
         ]);
         const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
         const { selectedLspConfig, lspConfigs } = sorbetConfig;
         assert.deepStrictEqual(
           lspConfigs,
           [userConfig],
-          "Item from userLspConfigs should override same id from lspConfigs",
+          'Item from userLspConfigs should override same id from lspConfigs',
         );
         assert.deepStrictEqual(
           selectedLspConfig,
           userConfig,
-          "Selected config should be first of userLspConfigs",
+          'Selected config should be first of userLspConfigs',
         );
       });
     });
   });
 
-  suite(".enabled", async () => {
-    test("fires onLspConfigChange event when enabling the extension", async () => {
+  suite('.enabled', async () => {
+    test('fires onLspConfigChange event when enabling the extension', async () => {
       const workspaceConfig = new FakeWorkspaceConfiguration([
-        ["enabled", false],
-        ["lspConfigs", [fooLspConfig, barLspConfig]],
-        ["selectedLspConfigId", barLspConfig.id],
+        ['enabled', false],
+        ['lspConfigs', [fooLspConfig, barLspConfig]],
+        ['selectedLspConfigId', barLspConfig.id],
       ]);
       const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
       const listener = sinon.spy();
@@ -489,7 +489,7 @@ suite("SorbetExtensionConfig", async () => {
         assert.strictEqual(
           listener.called,
           true,
-          "should have called listener onLspConfigChange",
+          'should have called listener onLspConfigChange',
         );
         assert.deepStrictEqual(
           listener.getCall(0).args[0],
@@ -497,16 +497,16 @@ suite("SorbetExtensionConfig", async () => {
             oldLspConfig: undefined,
             newLspConfig: barLspConfig,
           },
-          "should have transitioned from no config to bar config",
+          'should have transitioned from no config to bar config',
         );
       });
     });
 
-    test("fires onLspConfigChange event when disabling the extension", async () => {
+    test('fires onLspConfigChange event when disabling the extension', async () => {
       const workspaceConfig = new FakeWorkspaceConfiguration([
-        ["enabled", true],
-        ["lspConfigs", [fooLspConfig, barLspConfig]],
-        ["selectedLspConfigId", barLspConfig.id],
+        ['enabled', true],
+        ['lspConfigs', [fooLspConfig, barLspConfig]],
+        ['selectedLspConfigId', barLspConfig.id],
       ]);
       const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
       const listener = sinon.spy();
@@ -515,7 +515,7 @@ suite("SorbetExtensionConfig", async () => {
         assert.strictEqual(
           listener.called,
           true,
-          "should have called listener onLspConfigChange",
+          'should have called listener onLspConfigChange',
         );
         assert.deepStrictEqual(
           listener.getCall(0).args[0],
@@ -523,171 +523,171 @@ suite("SorbetExtensionConfig", async () => {
             oldLspConfig: barLspConfig,
             newLspConfig: undefined,
           },
-          "should have transitioned from bar config to no config",
+          'should have transitioned from bar config to no config',
         );
       });
     });
   });
 
-  suite(".setSelectedLspConfigId", async () => {
-    test("fires onLspConfigChange event when changing LSPConfig", async () => {
+  suite('.setSelectedLspConfigId', async () => {
+    test('fires onLspConfigChange event when changing LSPConfig', async () => {
       const workspaceConfig = new FakeWorkspaceConfiguration([
-        ["enabled", true],
-        ["lspConfigs", [fooLspConfig, barLspConfig]],
-        ["selectedLspConfigId", barLspConfig.id],
+        ['enabled', true],
+        ['lspConfigs', [fooLspConfig, barLspConfig]],
+        ['selectedLspConfigId', barLspConfig.id],
       ]);
       const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
       const listener = sinon.spy();
       sorbetConfig.onLspConfigChange(listener);
       sorbetConfig.setSelectedLspConfigId(fooLspConfig.id).then(() => {
-        assert.strictEqual(listener.called, true, "should be notified");
+        assert.strictEqual(listener.called, true, 'should be notified');
         assert.deepStrictEqual(
           listener.getCall(0).args[0],
           {
             oldLspConfig: barLspConfig,
             newLspConfig: fooLspConfig,
           },
-          "should have transitioned from bar config to foo config",
+          'should have transitioned from bar config to foo config',
         );
       });
     });
 
-    test("does not fire onLspConfigChange event when unchanged", async () => {
+    test('does not fire onLspConfigChange event when unchanged', async () => {
       const workspaceConfig = new FakeWorkspaceConfiguration([
-        ["enabled", true],
-        ["lspConfigs", [fooLspConfig, barLspConfig]],
-        ["selectedLspConfigId", barLspConfig.id],
+        ['enabled', true],
+        ['lspConfigs', [fooLspConfig, barLspConfig]],
+        ['selectedLspConfigId', barLspConfig.id],
       ]);
       const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
       const listener = sinon.spy();
       sorbetConfig.onLspConfigChange(listener);
       assert.strictEqual(sorbetConfig.selectedLspConfig!.id, barLspConfig.id);
       sorbetConfig.setSelectedLspConfigId(barLspConfig!.id).then(() => {
-        assert.strictEqual(listener.called, false, "should not be notified");
+        assert.strictEqual(listener.called, false, 'should not be notified');
       });
     });
 
-    test("does not fire onLspConfigChange event when extension disabled", async () => {
+    test('does not fire onLspConfigChange event when extension disabled', async () => {
       const workspaceConfig = new FakeWorkspaceConfiguration([
-        ["enabled", false],
-        ["lspConfigs", [fooLspConfig, barLspConfig]],
-        ["selectedLspConfigId", barLspConfig.id],
+        ['enabled', false],
+        ['lspConfigs', [fooLspConfig, barLspConfig]],
+        ['selectedLspConfigId', barLspConfig.id],
       ]);
       const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
       const listener = sinon.spy();
       sorbetConfig.onLspConfigChange(listener);
       sorbetConfig.setSelectedLspConfigId(fooLspConfig.id).then(() => {
-        assert.strictEqual(listener.called, false, "should not be notified");
+        assert.strictEqual(listener.called, false, 'should not be notified');
       });
     });
   });
 
-  suite(".onLspConfigChange when WorkspaceConfiguration changes", async () => {
-    test("does not fire when extension is disabled", async () => {
+  suite('.onLspConfigChange when WorkspaceConfiguration changes', async () => {
+    test('does not fire when extension is disabled', async () => {
       const workspaceConfig = new FakeWorkspaceConfiguration([
-        ["enabled", false],
-        ["lspConfigs", [fooLspConfig]],
-        ["selectedLspConfigId", fooLspConfig.id],
+        ['enabled', false],
+        ['lspConfigs', [fooLspConfig]],
+        ['selectedLspConfigId', fooLspConfig.id],
       ]);
       const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
       const listener = sinon.spy();
       sorbetConfig.onLspConfigChange(listener);
-      workspaceConfig.update("lspConfigs", [barLspConfig]);
-      workspaceConfig.update("selectedLspConfigId", barLspConfig.id);
-      assert.strictEqual(listener.called, false, "should not be notified");
+      workspaceConfig.update('lspConfigs', [barLspConfig]);
+      workspaceConfig.update('selectedLspConfigId', barLspConfig.id);
+      assert.strictEqual(listener.called, false, 'should not be notified');
     });
 
-    test("fires when active LSP config is modified", async () => {
+    test('fires when active LSP config is modified', async () => {
       const modifiedBarLspConfig = new SorbetLspConfig({
         ...barLspConfig,
-        command: ["different", "command", "here"],
+        command: ['different', 'command', 'here'],
       });
       const workspaceConfig = new FakeWorkspaceConfiguration([
-        ["enabled", true],
-        ["lspConfigs", [fooLspConfig, barLspConfig]],
-        ["selectedLspConfigId", barLspConfig.id],
+        ['enabled', true],
+        ['lspConfigs', [fooLspConfig, barLspConfig]],
+        ['selectedLspConfigId', barLspConfig.id],
       ]);
       const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
       const listener = sinon.spy();
       sorbetConfig.onLspConfigChange(listener);
-      workspaceConfig.update("lspConfigs", [
+      workspaceConfig.update('lspConfigs', [
         fooLspConfig,
         modifiedBarLspConfig,
       ]);
-      assert.strictEqual(listener.called, true, "should be notified");
+      assert.strictEqual(listener.called, true, 'should be notified');
       assert.deepStrictEqual(
         listener.getCall(0).args[0],
         {
           oldLspConfig: barLspConfig,
           newLspConfig: modifiedBarLspConfig,
         },
-        "should have transitioned from old bar config to modified bar config",
+        'should have transitioned from old bar config to modified bar config',
       );
     });
 
-    test("does not fire when non-active LSP config is modified", async () => {
+    test('does not fire when non-active LSP config is modified', async () => {
       const modifiedFooLspConfig = new SorbetLspConfig({
         ...fooLspConfig,
-        command: ["different", "command", "here"],
+        command: ['different', 'command', 'here'],
       });
       const workspaceConfig = new FakeWorkspaceConfiguration([
-        ["enabled", true],
-        ["lspConfigs", [fooLspConfig, barLspConfig]],
-        ["selectedLspConfigId", barLspConfig.id],
+        ['enabled', true],
+        ['lspConfigs', [fooLspConfig, barLspConfig]],
+        ['selectedLspConfigId', barLspConfig.id],
       ]);
       const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
       const listener = sinon.spy();
       sorbetConfig.onLspConfigChange(listener);
-      workspaceConfig.update("lspConfigs", [
+      workspaceConfig.update('lspConfigs', [
         modifiedFooLspConfig,
         barLspConfig,
       ]);
-      assert.strictEqual(listener.called, false, "should not be notified");
+      assert.strictEqual(listener.called, false, 'should not be notified');
     });
 
-    test("does not fire when a new (non-active) LSP config is added", async () => {
+    test('does not fire when a new (non-active) LSP config is added', async () => {
       const workspaceConfig = new FakeWorkspaceConfiguration([
-        ["enabled", true],
-        ["lspConfigs", [barLspConfig]],
-        ["selectedLspConfigId", barLspConfig.id],
+        ['enabled', true],
+        ['lspConfigs', [barLspConfig]],
+        ['selectedLspConfigId', barLspConfig.id],
       ]);
       const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
       const listener = sinon.spy();
       sorbetConfig.onLspConfigChange(listener);
-      workspaceConfig.update("lspConfigs", [fooLspConfig, barLspConfig]);
-      assert.strictEqual(listener.called, false, "should not be notified");
+      workspaceConfig.update('lspConfigs', [fooLspConfig, barLspConfig]);
+      assert.strictEqual(listener.called, false, 'should not be notified');
     });
 
-    test("does not fire when a non-active LSP config is removed", async () => {
+    test('does not fire when a non-active LSP config is removed', async () => {
       const workspaceConfig = new FakeWorkspaceConfiguration([
-        ["enabled", true],
-        ["lspConfigs", [fooLspConfig, barLspConfig]],
-        ["selectedLspConfigId", barLspConfig.id],
+        ['enabled', true],
+        ['lspConfigs', [fooLspConfig, barLspConfig]],
+        ['selectedLspConfigId', barLspConfig.id],
       ]);
       const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
       const listener = sinon.spy();
       sorbetConfig.onLspConfigChange(listener);
-      workspaceConfig.update("lspConfigs", [barLspConfig]);
+      workspaceConfig.update('lspConfigs', [barLspConfig]);
       assert.strictEqual(
         listener.called,
         false,
-        "should not have called listener onLspConfigChange",
+        'should not have called listener onLspConfigChange',
       );
     });
 
-    test("fires when the active LSP changes by nature of being the first lspConfig", async () => {
+    test('fires when the active LSP changes by nature of being the first lspConfig', async () => {
       const workspaceConfig = new FakeWorkspaceConfiguration([
-        ["enabled", true],
-        ["lspConfigs", [fooLspConfig, barLspConfig]],
+        ['enabled', true],
+        ['lspConfigs', [fooLspConfig, barLspConfig]],
       ]);
       const sorbetConfig = new SorbetExtensionConfig(workspaceConfig);
       const listener = sinon.spy();
       sorbetConfig.onLspConfigChange(listener);
-      workspaceConfig.update("lspConfigs", [barLspConfig, fooLspConfig]);
+      workspaceConfig.update('lspConfigs', [barLspConfig, fooLspConfig]);
       assert.strictEqual(
         listener.called,
         true,
-        "should have called listener onLspConfigChange",
+        'should have called listener onLspConfigChange',
       );
       assert.deepStrictEqual(
         listener.getCall(0).args[0],
@@ -695,7 +695,7 @@ suite("SorbetExtensionConfig", async () => {
           oldLspConfig: fooLspConfig,
           newLspConfig: barLspConfig,
         },
-        "should have transitioned from foo config to bar config",
+        'should have transitioned from foo config to bar config',
       );
     });
   });

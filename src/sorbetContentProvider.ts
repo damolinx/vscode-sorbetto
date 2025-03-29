@@ -1,11 +1,11 @@
-import { TextDocumentContentProvider, Uri } from "vscode";
-import { CancellationToken, TextDocumentItem } from "vscode-languageclient";
-import { SorbetExtensionContext } from "./sorbetExtensionContext";
+import { TextDocumentContentProvider, Uri } from 'vscode';
+import { CancellationToken, TextDocumentItem } from 'vscode-languageclient';
+import { SorbetExtensionContext } from './sorbetExtensionContext';
 
 /**
  * URI scheme supported by {@link SorbetContentProvider}.
  */
-export const SORBET_SCHEME = "sorbet";
+export const SORBET_SCHEME = 'sorbet';
 
 /**
  * Content provider for URIs with `sorbet` scheme.
@@ -27,9 +27,9 @@ export class SorbetContentProvider implements TextDocumentContentProvider {
     let content: string;
     const { activeLanguageClient: client } = this.context.statusProvider;
     if (client) {
-      this.context.log.info("Retrieving file contents", uri);
+      this.context.log.info('Retrieving file contents', uri);
       const response = await client.sendRequest<TextDocumentItem>(
-        "sorbet/readFile",
+        'sorbet/readFile',
         {
           uri: uri.toString(),
         },
@@ -37,10 +37,10 @@ export class SorbetContentProvider implements TextDocumentContentProvider {
       content = response.text;
     } else {
       this.context.log.info(
-        "Cannot retrieve file contents, no active Sorbet client",
+        'Cannot retrieve file contents, no active Sorbet client',
         uri,
       );
-      content = "";
+      content = '';
     }
     return content;
   }

@@ -1,6 +1,6 @@
-import { workspace } from "vscode";
-import { basename } from "path";
-import { SorbetExtensionContext } from "../sorbetExtensionContext";
+import { workspace } from 'vscode';
+import { basename } from 'path';
+import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
 /**
  * Save all __package.rb files with changes.
@@ -13,16 +13,16 @@ export async function savePackageFiles(
 ): Promise<boolean> {
   const packageDocuments = workspace.textDocuments.filter(
     (document) =>
-      document.isDirty && basename(document.fileName) === "__package.rb",
+      document.isDirty && basename(document.fileName) === '__package.rb',
   );
   if (!packageDocuments.length) {
-    context.log.trace("SavePackageFiles: nothing to save");
+    context.log.trace('SavePackageFiles: nothing to save');
     return true;
   }
 
   const allSaved = await Promise.all(
     packageDocuments.map((document) => {
-      context.log.trace("SavePackageFiles: Saving file", document.fileName);
+      context.log.trace('SavePackageFiles: Saving file', document.fileName);
       return document.save();
     }),
   );

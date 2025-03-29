@@ -1,6 +1,6 @@
-import { QuickPickItem, window } from "vscode";
-import { SorbetExtensionContext } from "../sorbetExtensionContext";
-import { SorbetLspConfig } from "../sorbetLspConfig";
+import { QuickPickItem, window } from 'vscode';
+import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { SorbetLspConfig } from '../sorbetLspConfig';
 
 export interface LspConfigQuickPickItem extends QuickPickItem {
   lspConfig?: SorbetLspConfig;
@@ -18,20 +18,20 @@ export async function showSorbetConfigurationPicker(
   } = context;
 
   const items: LspConfigQuickPickItem[] = lspConfigs.map((lspConfig) => ({
-    label: `${lspConfig.isEqualTo(activeLspConfig) ? "• " : ""}${
+    label: `${lspConfig.isEqualTo(activeLspConfig) ? '• ' : ''}${
       lspConfig.name
     }`,
     description: lspConfig.description,
-    detail: lspConfig.command.join(" "),
+    detail: lspConfig.command.join(' '),
     lspConfig,
   }));
   items.push({
-    label: `${activeLspConfig ? "" : "• "}Disable Sorbet`,
-    description: "Disable the Sorbet extension",
+    label: `${activeLspConfig ? '' : '• '}Disable Sorbet`,
+    description: 'Disable the Sorbet extension',
   });
 
   const selectedItem = await window.showQuickPick(items, {
-    placeHolder: "Select a Sorbet configuration",
+    placeHolder: 'Select a Sorbet configuration',
   });
   if (selectedItem) {
     const { lspConfig } = selectedItem;

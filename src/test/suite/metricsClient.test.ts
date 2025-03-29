@@ -1,16 +1,16 @@
-import * as path from "path";
-import * as sinon from "sinon";
+import * as path from 'path';
+import * as sinon from 'sinon';
 
-import { createLogStub } from "./testUtils";
+import { createLogStub } from './testUtils';
 import {
   METRIC_PREFIX,
   MetricsClient,
   NoOpApi,
   NoOpMetricsEmitter,
-} from "../../metricsClient";
-import { SorbetExtensionContext } from "../../sorbetExtensionContext";
+} from '../../metricsClient';
+import { SorbetExtensionContext } from '../../sorbetExtensionContext';
 
-suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
+suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
   let testRestorables: { restore: () => void }[];
 
   setup(() => {
@@ -21,20 +21,20 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
     testRestorables.forEach((r) => r.restore());
   });
 
-  test("emitCountMetric calls MetricsEmitter.increment once with correct params ", async () => {
-    const expectedMetricName = "metricClient.test.emitCountMetric";
+  test('emitCountMetric calls MetricsEmitter.increment once with correct params ', async () => {
+    const expectedMetricName = 'metricClient.test.emitCountMetric';
     const expectedCount = 123;
-    const expectedTags = { foo: "bar" };
+    const expectedTags = { foo: 'bar' };
 
-    const incrementStub = sinon.stub(NoOpMetricsEmitter.prototype, "increment");
+    const incrementStub = sinon.stub(NoOpMetricsEmitter.prototype, 'increment');
     testRestorables.push(incrementStub);
     const client = new MetricsClient(
-      <SorbetExtensionContext>{
+      ({
         configuration: {
           activeLspConfig: undefined,
         },
         log: createLogStub(),
-      },
+      } as SorbetExtensionContext),
       new NoOpApi(),
     );
 
@@ -53,20 +53,20 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
     );
   });
 
-  test("emitTimingMetric calls MetricsEmitter.timing once with correct params ", async () => {
-    const expectedMetricName = "metricClient.test.emitCountMetric";
+  test('emitTimingMetric calls MetricsEmitter.timing once with correct params ', async () => {
+    const expectedMetricName = 'metricClient.test.emitCountMetric';
     const expectedCount = 123;
-    const expectedTags = { foo: "bar" };
+    const expectedTags = { foo: 'bar' };
 
-    const timingStub = sinon.stub(NoOpMetricsEmitter.prototype, "timing");
+    const timingStub = sinon.stub(NoOpMetricsEmitter.prototype, 'timing');
     testRestorables.push(timingStub);
     const client = new MetricsClient(
-      <SorbetExtensionContext>{
+      ({
         configuration: {
           activeLspConfig: undefined,
         },
         log: createLogStub(),
-      },
+      } as SorbetExtensionContext),
       new NoOpApi(),
     );
 

@@ -1,12 +1,12 @@
-import { extensions, commands } from "vscode";
-import { SorbetExtensionContext } from "./sorbetExtensionContext";
+import { extensions, commands } from 'vscode';
+import { SorbetExtensionContext } from './sorbetExtensionContext';
 
-export const METRIC_PREFIX = "ruby_typer.lsp.extension.";
+export const METRIC_PREFIX = 'ruby_typer.lsp.extension.';
 
 /**
  * Exported by the `sorbet-internal.metrics` extension
  */
-export type Tags = Readonly<{ [metric: string]: string }>;
+export type Tags = Readonly<Record<string, string>>;
 
 export interface MetricsEmitter {
   /** Increments the given counter metric by the given count (default: 1 if unspecified). */
@@ -34,21 +34,21 @@ export class NoOpMetricsEmitter implements MetricsEmitter {
     _metricName: string,
     _count?: number,
     _tags?: Tags,
-  ): Promise<void> {} // eslint-disable-line no-empty-function
+  ): Promise<void> {}  
 
   async gauge(
     _metricName: string,
     _value: number,
     _tags?: Tags,
-  ): Promise<void> {} // eslint-disable-line no-empty-function
+  ): Promise<void> {}  
 
   async timing(
     _metricName: string,
     _value: number | Date,
     _tags?: Tags,
-  ): Promise<void> {} // eslint-disable-line no-empty-function
+  ): Promise<void> {}  
 
-  async flush(): Promise<void> {} // eslint-disable-line no-empty-function
+  async flush(): Promise<void> {}  
 }
 
 export class NoOpApi implements Api {
@@ -70,11 +70,11 @@ export class MetricsClient {
     this.apiPromise = api ? Promise.resolve(api) : this.initSorbetMetricsApi();
     this.context = context;
     const sorbetExtension = extensions.getExtension(
-      "sorbet.sorbet-vscode-extension",
+      'sorbet.sorbet-vscode-extension',
     );
     this.sorbetExtensionVersion =
-      sorbetExtension?.packageJSON.version ?? "unknown";
-    this.emitCountMetric("metrics_client_initialized", 1);
+      sorbetExtension?.packageJSON.version ?? 'unknown';
+    this.emitCountMetric('metrics_client_initialized', 1);
   }
 
   /**
@@ -84,7 +84,7 @@ export class MetricsClient {
    */
   private buildTags(tags: Tags) {
     return {
-      config_id: this.context.configuration.activeLspConfig?.id ?? "disabled",
+      config_id: this.context.configuration.activeLspConfig?.id ?? 'disabled',
       sorbet_extension_version: this.sorbetExtensionVersion,
       ...tags,
     };
@@ -94,29 +94,29 @@ export class MetricsClient {
     let sorbetMetricsApi: Api;
     try {
       const api = await commands.executeCommand(
-        "sorbet.metrics.getExportedApi",
+        'sorbet.metrics.getExportedApi',
       );
       if (api) {
-        this.context.log.info("Metrics-gathering initialized.");
+        this.context.log.info('Metrics-gathering initialized.');
         sorbetMetricsApi = api as Api;
         if (!sorbetMetricsApi.metricsEmitter.timing) {
-          this.context.log.info("Timer metrics disabled (unsupported API).");
+          this.context.log.info('Timer metrics disabled (unsupported API).');
           sorbetMetricsApi = NoOpApi.INSTANCE;
         }
       } else {
-        this.context.log.info("Metrics-gathering disabled (no API)");
+        this.context.log.info('Metrics-gathering disabled (no API)');
         sorbetMetricsApi = NoOpApi.INSTANCE;
       }
     } catch (reason) {
       sorbetMetricsApi = NoOpApi.INSTANCE;
       const adjustedReason =
-        (<any>reason)?.message ===
-        "command 'sorbet.metrics.getExportedApi' not found"
-          ? "Define the 'sorbet.metrics.getExportedApi' command to enable metrics gathering"
-          : (<any>reason).message;
+        (reason as any)?.message ===
+        'command \'sorbet.metrics.getExportedApi\' not found'
+          ? 'Define the \'sorbet.metrics.getExportedApi\' command to enable metrics gathering'
+          : (reason as any).message;
 
       this.context.log.error(
-        "Metrics-gathering disabled (error)",
+        'Metrics-gathering disabled (error)',
         adjustedReason,
       );
     }
