@@ -1,25 +1,20 @@
 {
   "compilerOptions": {
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "allowJs": true,
-    "target": "es6",
     "module": "commonjs",
-    "rootDirs": ["scripts", "src"],
+    "target": "ES2022",
     "outDir": "out",
-    "lib": ["es7"],
     "sourceMap": true,
+    "rootDir": "src",
+    "skipLibCheck": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
-    "preserveSymlinks": true,
-    "types" : ["node", "sinon", "mocha"]
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
   },
-  "include": [
-    "src/**/*.ts",
-    "scripts/**/*.ts"
-  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".vscode-test"
   ]
 }

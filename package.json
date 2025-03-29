@@ -12,7 +12,7 @@
     "url": "https://github.com/sorbet/sorbet"
   },
   "engines": {
-    "vscode": "^1.65.0"
+    "vscode": "^1.77.0"
   },
   "categories": [
     "Programming Languages"
@@ -23,15 +23,6 @@
     "language-server"
   ],
   "activationEvents": [
-    "onCommand:sorbet.configure",
-    "onCommand:sorbet.configureHighlightUntyped",
-    "onCommand:sorbet.disable",
-    "onCommand:sorbet.enable",
-    "onCommand:sorbet.restart",
-    "onCommand:sorbet.setLogLevel",
-    "onCommand:sorbet.showOutput",
-    "onCommand:sorbet.toggleHighlightUntyped",
-    "onCommand:sorbet.toggleTypedFalseCompletionNudges",
     "onLanguage:ruby",
     "workspaceContains:sorbet/*"
   ],
@@ -48,7 +39,7 @@
       ]
     }
   ],
-  "main": "./out/src/extension",
+  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -314,48 +305,38 @@
     }
   },
   "scripts": {
-    "compile": "tsc -p ./",
-    "integrity": "yarn-integrity",
+    "vscode:prepublish": "node esbuild.mjs",
+    "compile": "npm run check-types && node esbuild.mjs",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.ts\" --fix",
     "watch": "tsc -w -p ./",
-    "lint": "eslint --ext .ts ./src",
-    "prettier": "prettier --write 'src/**/*.ts'",
-    "test": "yarn compile && ./scripts/run_tests.sh .",
-    "test:ci": "node --preserve-symlinks-main ./out/scripts/runTests.js .",
-    "generate-package": "yarn install && yarn compile && yarn vsce package --out sorbet.vsix",
-    "launch": "VSCODE_SORBETEXT_LOG_LEVEL=trace code --extensionDevelopmentPath=$PWD"
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runTest.js"
   },
   "dependencies": {
     "elegant-spinner": "^2.0.0",
     "vscode-languageclient": "8.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@stylistic/eslint-plugin": "^4.1.0",
     "@types/glob": "^7.1.1",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^10.11.7",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^20.14.10",
     "@types/sinon": "^7.5.0",
-    "@types/vscode": "~1.65",
-    "@typescript-eslint/eslint-plugin": "^5.17.0",
-    "@typescript-eslint/parser": "^5.17.0",
-    "eslint": "^7.32.0",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-eslint-comments": "^3.1.2",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-prettier": "^3.1.1",
-    "eslint-plugin-react": "^7.16.0",
-    "glob": "^7.1.4",
-    "mocha": "^6.2.0",
-    "mocha-junit-reporter": "^1.23.1",
+    "@types/vscode": "~1.77",
+    "@typescript-eslint/eslint-plugin": "^8.25.0",
+    "@typescript-eslint/parser": "^8.25.0",
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^2.20.0",
+    "esbuild": "^0.25.0",
+    "eslint": "^9.6.0",
+    "glob": "^11.0.0",
+    "mocha": "^11.0.0",
     "prettier": "^1.19.1",
     "sinon": "^7.5.0",
-    "typescript": "^4.6.3",
-    "vsce": "~1.76",
-    "vscode-languageserver": "7.0.0",
-    "vscode-test": "^1.0.2"
-  },
-  "prettier": {
-    "trailingComma": "all",
-    "arrowParens": "always"
+    "typescript-eslint": "^8.25.0",
+    "typescript": "^5.7.2",
+    "vscode-languageserver": "7.0.0"
   }
 }

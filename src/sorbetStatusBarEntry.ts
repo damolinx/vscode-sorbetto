@@ -11,7 +11,7 @@ export class SorbetStatusBarEntry implements Disposable {
   private readonly disposable: Disposable;
   private serverStatus: ServerStatus;
   private readonly spinner: () => string;
-  private spinnerTimer?: NodeJS.Timer;
+  private spinnerTimer?: NodeJS.Timeout;
   private readonly statusBarItem: StatusBarItem;
 
   constructor(context: SorbetExtensionContext) {
