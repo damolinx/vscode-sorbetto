@@ -9,9 +9,9 @@ import {
   workspace,
 } from "vscode";
 import * as fs from "fs";
-import { Log } from "./log";
 import { SorbetLspConfig, SorbetLspConfigData } from "./sorbetLspConfig";
 import { deepEqual } from "./utils";
+import { Log } from "./log";
 
 export type TrackUntyped = "nowhere" | "everywhere-but-tests" | "everywhere";
 

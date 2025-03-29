@@ -3,12 +3,11 @@ import * as assert from "assert";
 import * as path from "path";
 import * as sinon from "sinon";
 
-import { createLogStub } from "./testUtils";
 import { SorbetLanguageClient } from "../sorbetLanguageClient";
-import { LogLevel } from "../log";
 import { SorbetExtensionContext } from "../sorbetExtensionContext";
 import { SorbetContentProvider } from "../sorbetContentProvider";
 import { SorbetStatusProvider } from "../sorbetStatusProvider";
+import { createLogStub } from "./testUtils";
 
 suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
   let testRestorables: { restore: () => void }[];
@@ -34,8 +33,8 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
       }),
     };
     const context = <SorbetExtensionContext>{
-      log: createLogStub(LogLevel.Info),
-      statusProvider,
+      log: createLogStub(),
+      statusProvider
     };
 
     const provider = new SorbetContentProvider(context);
@@ -54,10 +53,9 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
     const fileUri = vscode.Uri.parse("sorbet:/test/file", true);
     const statusProvider = <SorbetStatusProvider>{};
     const context = <SorbetExtensionContext>{
-      log: createLogStub(LogLevel.Info),
-      statusProvider,
+      log: createLogStub(),
+      statusProvider
     };
-
     const provider = new SorbetContentProvider(context);
     assert.strictEqual(await provider.provideTextDocumentContent(fileUri), "");
   });

@@ -20,22 +20,17 @@
                 "${workspaceFolder}/out/**"
             ],
         },
-        {
-            "name": "Run Extension Tests",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                "--extensionDevelopmentPath=${workspaceFolder}",
-                "--extensionTestsPath=${workspaceFolder}/out/src/test"
-            ],
-            "outFiles": [
-                "${workspaceFolder}/out/src/test/**/*.js"
-            ],
-            "preLaunchTask": "watch",
-            "resolveSourceMapLocations": [
-                "${workspaceFolder}/out/**"
-            ],
-        }
+		{
+			"name": "Test Extension",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--extensionTestsPath=${workspaceFolder}/out/test/index"
+			],
+			"outFiles": [],
+			"preLaunchTask": "watch"
+		}
     ]
 }

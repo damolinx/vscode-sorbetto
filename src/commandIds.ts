@@ -10,11 +10,6 @@ export const CONFIGURE_HIGHLIGHT_UNTYPED_COMMAND_ID =
 export const COPY_SYMBOL_COMMAND_ID = "sorbet.copySymbolToClipboard";
 
 /**
- * Set log level available actions.
- */
-export const SET_LOGLEVEL_COMMAND_ID = "sorbet.setLogLevel";
-
-/**
  * Show available actions.
  */
 export const SHOW_ACTIONS_COMMAND_ID = "sorbet.showAvailableActions";

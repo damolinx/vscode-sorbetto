@@ -75,11 +75,6 @@
         "category": "Sorbet"
       },
       {
-        "command": "sorbet.setLogLevel",
-        "title": "Set Log Level…",
-        "category": "Sorbet"
-      },
-      {
         "command": "sorbet.showOutput",
         "title": "Show Output",
         "category": "Sorbet"
@@ -337,6 +332,6 @@
     "sinon": "^7.5.0",
     "typescript-eslint": "^8.25.0",
     "typescript": "^5.7.2",
-    "vscode-languageserver": "7.0.0"
+    "vscode-languageserver": "8.1.0"
   }
 }

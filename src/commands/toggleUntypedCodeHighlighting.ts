@@ -6,8 +6,8 @@ import {
   backwardsCompatibleTrackUntyped,
   SorbetExtensionConfig,
 } from "../config";
-import { Log } from "../log";
 import { SorbetExtensionContext } from "../sorbetExtensionContext";
+import { Log } from "../log";
 
 export interface TrackUntypedQuickPickItem extends QuickPickItem {
   trackWhere: TrackUntyped;

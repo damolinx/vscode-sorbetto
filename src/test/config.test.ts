@@ -29,7 +29,7 @@ class FakeWorkspaceConfiguration implements ISorbetWorkspaceContext {
       ConfigurationChangeEvent
     >();
     const defaultProperties = extensions.getExtension(
-      "sorbet.sorbet-vscode-extension",
+      "damolinx.damolinx-sorbetto",
     )!.packageJSON.contributes.configuration.properties;
     const defaultValues: Iterable<[string, any]> = Object.keys(
       defaultProperties,

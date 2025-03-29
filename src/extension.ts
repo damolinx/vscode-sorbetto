@@ -2,7 +2,6 @@ import { commands, ExtensionContext, workspace } from "vscode";
 import * as cmdIds from "./commandIds";
 import { copySymbolToClipboard } from "./commands/copySymbolToClipboard";
 import { savePackageFiles } from "./commands/savePackageFiles";
-import { setLogLevel } from "./commands/setLogLevel";
 import { showSorbetActions } from "./commands/showSorbetActions";
 import { showSorbetConfigurationPicker } from "./commands/showSorbetConfigurationPicker";
 import {
@@ -10,7 +9,6 @@ import {
   configureUntypedCodeHighlighting,
 } from "./commands/toggleUntypedCodeHighlighting";
 import { toggleTypedFalseCompletionNudges } from "./commands/toggleTypedFalseCompletionNudges";
-import { getLogLevelFromEnvironment, LogLevel } from "./log";
 import { SorbetContentProvider, SORBET_SCHEME } from "./sorbetContentProvider";
 import { SorbetExtensionApiImpl } from "./sorbetExtensionApi";
 import { SorbetExtensionContext } from "./sorbetExtensionContext";
@@ -22,7 +20,6 @@ import { ServerStatus, RestartReason } from "./types";
  */
 export async function activate(context: ExtensionContext) {
   const sorbetExtensionContext = new SorbetExtensionContext(context);
-  sorbetExtensionContext.log.logLevel = getLogLevelFromEnvironment();
 
   context.subscriptions.push(
     sorbetExtensionContext,
@@ -56,10 +53,6 @@ export async function activate(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(cmdIds.COPY_SYMBOL_COMMAND_ID, () =>
       copySymbolToClipboard(sorbetExtensionContext),
-    ),
-    commands.registerCommand(
-      cmdIds.SET_LOGLEVEL_COMMAND_ID,
-      (level?: LogLevel) => setLogLevel(sorbetExtensionContext, level),
     ),
     commands.registerCommand(cmdIds.SHOW_ACTIONS_COMMAND_ID, () =>
       showSorbetActions(sorbetExtensionContext),

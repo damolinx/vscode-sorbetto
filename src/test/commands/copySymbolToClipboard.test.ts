@@ -6,7 +6,6 @@ import * as sinon from "sinon";
 import { createLogStub } from "../testUtils";
 import { copySymbolToClipboard } from "../../commands/copySymbolToClipboard";
 import { SorbetLanguageClient } from "../../sorbetLanguageClient";
-import { LogLevel } from "../../log";
 import { SorbetExtensionContext } from "../../sorbetExtensionContext";
 import { SorbetStatusProvider } from "../../sorbetStatusProvider";
 import { ServerStatus, ShowOperationParams } from "../../types";
@@ -35,7 +34,7 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
       activeLanguageClient: undefined,
     };
     const context = <SorbetExtensionContext>{
-      log: createLogStub(LogLevel.Info),
+      log: createLogStub(vscode.LogLevel.Info),
       statusProvider,
     };
     await copySymbolToClipboard(context);
@@ -58,7 +57,7 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
       },
     };
     const context = <SorbetExtensionContext>{
-      log: createLogStub(LogLevel.Info),
+      log: createLogStub(vscode.LogLevel.Info),
       statusProvider,
     };
     await copySymbolToClipboard(context);
@@ -85,7 +84,7 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
     };
 
     const context = <SorbetExtensionContext>{
-      log: createLogStub(LogLevel.Info),
+      log: createLogStub(vscode.LogLevel.Info),
       statusProvider,
     };
     await copySymbolToClipboard(context);
@@ -133,7 +132,7 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
       operations: <ReadonlyArray<Readonly<ShowOperationParams>>>[],
     };
     const context = <SorbetExtensionContext>{
-      log: createLogStub(LogLevel.Info),
+      log: createLogStub(vscode.LogLevel.Info),
       statusProvider,
     };
     await copySymbolToClipboard(context);
@@ -194,7 +193,7 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
       ],
     };
     const context = <SorbetExtensionContext>{
-      log: createLogStub(LogLevel.Info),
+      log: createLogStub(vscode.LogLevel.Info),
       statusProvider,
     };
     await copySymbolToClipboard(context);
@@ -247,7 +246,7 @@ suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
       ],
     };
     const context = <SorbetExtensionContext>{
-      log: createLogStub(LogLevel.Info),
+      log: createLogStub(vscode.LogLevel.Info),
       statusProvider,
     };
     await copySymbolToClipboard(context);
