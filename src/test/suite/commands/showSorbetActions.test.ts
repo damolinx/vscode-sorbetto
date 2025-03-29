@@ -8,10 +8,10 @@ import {
   Action,
   getAvailableActions,
   showSorbetActions,
-} from "../../commands/showSorbetActions";
-import { SorbetExtensionContext } from "../../sorbetExtensionContext";
-import { SorbetStatusProvider } from "../../sorbetStatusProvider";
-import { ServerStatus } from "../../types";
+} from "../../../commands/showSorbetActions";
+import { SorbetExtensionContext } from "../../../sorbetExtensionContext";
+import { SorbetStatusProvider } from "../../../sorbetStatusProvider";
+import { ServerStatus } from "../../../types";
 
 suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
   let testRestorables: { restore: () => void }[];

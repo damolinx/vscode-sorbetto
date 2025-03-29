@@ -3,10 +3,10 @@ import * as assert from "assert";
 import * as path from "path";
 import * as sinon from "sinon";
 
-import { SorbetLanguageClient } from "../sorbetLanguageClient";
-import { SorbetExtensionContext } from "../sorbetExtensionContext";
-import { SorbetContentProvider } from "../sorbetContentProvider";
-import { SorbetStatusProvider } from "../sorbetStatusProvider";
+import { SorbetLanguageClient } from "../../sorbetLanguageClient";
+import { SorbetExtensionContext } from "../../sorbetExtensionContext";
+import { SorbetContentProvider } from "../../sorbetContentProvider";
+import { SorbetStatusProvider } from "../../sorbetStatusProvider";
 import { createLogStub } from "./testUtils";
 
 suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {

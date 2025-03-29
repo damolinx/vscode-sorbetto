@@ -7,8 +7,8 @@ import {
 import * as assert from "assert";
 import * as sinon from "sinon";
 import { TestLanguageServerSpecialURIs } from "./testLanguageServerSpecialURIs";
-import { instrumentLanguageClient } from "../languageClient.metrics";
-import { MetricsClient, MetricsEmitter, Tags } from "../metricsClient";
+import { instrumentLanguageClient } from "../../languageClient.metrics";
+import { MetricsClient, MetricsEmitter, Tags } from "../../metricsClient";
 
 const enum MetricType {
   Increment,

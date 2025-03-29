@@ -8,15 +8,15 @@ import {
   toggleUntypedCodeHighlighting,
   configureUntypedCodeHighlighting,
   TrackUntypedQuickPickItem,
-} from "../../commands/toggleUntypedCodeHighlighting";
+} from "../../../commands/toggleUntypedCodeHighlighting";
 import {
   SorbetExtensionConfig,
   TrackUntyped,
   labelForTrackUntypedSetting,
-} from "../../config";
-import { SorbetExtensionContext } from "../../sorbetExtensionContext";
-import { SorbetStatusProvider } from "../../sorbetStatusProvider";
-import { RestartReason } from "../../types";
+} from "../../../config";
+import { SorbetExtensionContext } from "../../../sorbetExtensionContext";
+import { SorbetStatusProvider } from "../../../sorbetStatusProvider";
+import { RestartReason } from "../../../types";
 
 suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
   let testRestorables: { restore: () => void }[];

@@ -10,8 +10,8 @@ import {
 } from "vscode";
 
 import * as fs from "fs";
-import { SorbetExtensionConfig, ISorbetWorkspaceContext } from "../config";
-import { SorbetLspConfig } from "../sorbetLspConfig";
+import { SorbetExtensionConfig, ISorbetWorkspaceContext } from "../../config";
+import { SorbetLspConfig } from "../../sorbetLspConfig";
 
 // Helpers
 

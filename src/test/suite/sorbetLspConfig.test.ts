@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import * as path from "path";
 
-import { SorbetLspConfig } from "../sorbetLspConfig";
+import { SorbetLspConfig } from "../../sorbetLspConfig";
 
 suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
   const config1 = new SorbetLspConfig(

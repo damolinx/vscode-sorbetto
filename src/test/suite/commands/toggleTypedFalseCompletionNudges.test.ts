@@ -3,11 +3,11 @@ import * as path from "path";
 import * as sinon from "sinon";
 
 import { createLogStub } from "../testUtils";
-import { toggleTypedFalseCompletionNudges } from "../../commands/toggleTypedFalseCompletionNudges";
-import { SorbetExtensionConfig } from "../../config";
-import { SorbetExtensionContext } from "../../sorbetExtensionContext";
-import { SorbetStatusProvider } from "../../sorbetStatusProvider";
-import { RestartReason } from "../../types";
+import { toggleTypedFalseCompletionNudges } from "../../../commands/toggleTypedFalseCompletionNudges";
+import { SorbetExtensionConfig } from "../../../config";
+import { SorbetExtensionContext } from "../../../sorbetExtensionContext";
+import { SorbetStatusProvider } from "../../../sorbetStatusProvider";
+import { RestartReason } from "../../../types";
 
 suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
   let testRestorables: { restore: () => void }[];

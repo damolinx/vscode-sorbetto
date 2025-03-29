@@ -7,8 +7,8 @@ import {
   MetricsClient,
   NoOpApi,
   NoOpMetricsEmitter,
-} from "../metricsClient";
-import { SorbetExtensionContext } from "../sorbetExtensionContext";
+} from "../../metricsClient";
+import { SorbetExtensionContext } from "../../sorbetExtensionContext";
 
 suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
   let testRestorables: { restore: () => void }[];

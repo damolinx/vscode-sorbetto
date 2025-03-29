@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import * as path from "path";
 
-import { deepEqual } from "../utils";
+import { deepEqual } from "../../utils";
 
 suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
   test("deepEqual", () => {

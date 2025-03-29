@@ -4,10 +4,10 @@ import * as path from "path";
 import * as sinon from "sinon";
 
 import { createLogStub } from "../testUtils";
-import { showSorbetConfigurationPicker } from "../../commands/showSorbetConfigurationPicker";
-import { SorbetExtensionConfig } from "../../config";
-import { SorbetExtensionContext } from "../../sorbetExtensionContext";
-import { SorbetLspConfig } from "../../sorbetLspConfig";
+import { showSorbetConfigurationPicker } from "../../../commands/showSorbetConfigurationPicker";
+import { SorbetExtensionConfig } from "../../../config";
+import { SorbetExtensionContext } from "../../../sorbetExtensionContext";
+import { SorbetLspConfig } from "../../../sorbetLspConfig";
 
 suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
   let testRestorables: { restore: () => void }[];

@@ -4,11 +4,11 @@ import * as path from "path";
 import * as sinon from "sinon";
 
 import { createLogStub } from "../testUtils";
-import { copySymbolToClipboard } from "../../commands/copySymbolToClipboard";
-import { SorbetLanguageClient } from "../../sorbetLanguageClient";
-import { SorbetExtensionContext } from "../../sorbetExtensionContext";
-import { SorbetStatusProvider } from "../../sorbetStatusProvider";
-import { ServerStatus, ShowOperationParams } from "../../types";
+import { copySymbolToClipboard } from "../../../commands/copySymbolToClipboard";
+import { SorbetLanguageClient } from "../../../sorbetLanguageClient";
+import { SorbetExtensionContext } from "../../../sorbetExtensionContext";
+import { SorbetStatusProvider } from "../../../sorbetStatusProvider";
+import { ServerStatus, ShowOperationParams } from "../../../types";
 
 suite(`Test Suite: ${path.basename(__filename, ".test.js")}`, () => {
   let testRestorables: { restore: () => void }[];
