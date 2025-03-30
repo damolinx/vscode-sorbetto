@@ -24,6 +24,7 @@ export default tseslint.config(
     },
     rules: {
       'curly': 'warn',
+      'no-trailing-spaces': 'error',
       '@stylistic/quotes': ['error', 'single'],
       '@stylistic/semi': ['error', 'always'],
       '@typescript-eslint/naming-convention': [
@@ -38,7 +39,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
-          'argsIgnorePattern': '^_'
+          'argsIgnorePattern': '^_.*'
         }
       ],
     }

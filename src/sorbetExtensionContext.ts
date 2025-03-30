@@ -1,52 +1,42 @@
-import { Disposable, ExtensionContext, LogOutputChannel, OutputChannel, window } from 'vscode';
-import { DefaultSorbetWorkspaceContext, SorbetExtensionConfig } from './config';
+import { Disposable, ExtensionContext, LogOutputChannel, window } from 'vscode';
+import { Configuration } from './configuration';
+import { Log } from './log';
 import { MetricsClient, NoOpMetricsClient } from './metricsClient';
 import { SorbetStatusProvider } from './sorbetStatusProvider';
-import { Log } from './log';
 
 export class SorbetExtensionContext implements Disposable {
-  public readonly configuration: SorbetExtensionConfig;
-  private readonly disposable: Disposable;
+  public readonly configuration: Configuration;
+  private readonly disposables: Disposable[];
   public readonly extensionContext: ExtensionContext;
   public readonly metrics: MetricsClient;
   public readonly statusProvider: SorbetStatusProvider;
-  private readonly wrappedLog: LogOutputChannel;
+  public readonly logOutputChannel: LogOutputChannel;
 
   constructor(context: ExtensionContext) {
-    const sorbetWorkspaceContext = new DefaultSorbetWorkspaceContext(context);
-    this.configuration = new SorbetExtensionConfig(sorbetWorkspaceContext);
+    this.configuration = new Configuration();
     this.extensionContext = context;
-    this.wrappedLog = window.createOutputChannel('Sorbetto', {log: true});
+    this.logOutputChannel = window.createOutputChannel('Sorbetto', {log: true});
     this.metrics = new NoOpMetricsClient();
     this.statusProvider = new SorbetStatusProvider(this);
 
-    this.disposable = Disposable.from(
-      sorbetWorkspaceContext,
+    this.disposables = [
       this.configuration,
+      this.logOutputChannel,
       this.statusProvider,
-      this.wrappedLog,
-    );
+    ];
   }
 
   /**
    * Dispose and free associated resources.
    */
   public dispose() {
-    this.disposable.dispose();
+    this.disposables.forEach((disposable) => disposable.dispose());
   }
 
   /**
    * Logger.
    */
   public get log(): Log {
-    return this.wrappedLog;
-  }
-
-  /**
-   * Output channel used by {@link log}. This is exposed separately to promote
-   * use of the {@link Log} interface instead of accessing the UI component.
-   */
-  public get logOutputChannel(): OutputChannel {
-    return this.wrappedLog;
+    return this.logOutputChannel;
   }
 }

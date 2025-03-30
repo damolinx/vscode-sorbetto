@@ -203,7 +203,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
    */
   private startSorbetProcess(): Promise<ChildProcess> {
     this.context.log.info('Running Sorbet LSP.');
-    const activeConfig = this.context.configuration.activeLspConfig;
+    const activeConfig = this.context.configuration.lspConfig;
     const [command, ...args] = activeConfig?.command ?? [];
     if (!command) {
       let msg: string;
@@ -211,7 +211,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
         msg = 'No active Sorbet configuration.';
         this.status = ServerStatus.DISABLED;
       } else {
-        msg = `Missing command-line data to start Sorbet. ConfigId:${activeConfig.id}`;
+        msg = `Missing command-line data to start Sorbet. Config:${activeConfig.type}`;
       }
 
       this.context.log.error(msg);

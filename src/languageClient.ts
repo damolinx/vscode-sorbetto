@@ -1,6 +1,7 @@
 import { ErrorHandler, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
-import { backwardsCompatibleTrackUntyped } from './config';
+import { HighlightType } from './configuration';
+import { Log } from './log';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 
 /**
@@ -16,10 +17,7 @@ export function createClient(
     supportsOperationNotifications: true,
     // Let Sorbet know that we can handle sorbet:// URIs for generated files.
     supportsSorbetURIs: true,
-    highlightUntyped: backwardsCompatibleTrackUntyped(
-      context.log,
-      context.configuration.highlightUntyped,
-    ),
+    highlightUntyped: getHighlightType(context.configuration.highlightUntyped, context.log),
     enableTypedFalseCompletionNudges:
       context.configuration.typedFalseCompletionNudges,
   };
@@ -51,6 +49,20 @@ export function createClient(
   });
 
   return client;
+}
+
+export function getHighlightType(type: HighlightType, log: Log): boolean | HighlightType {
+  switch (type) {
+    case HighlightType.Disabled:
+      return false;
+    case HighlightType.Everywhere:
+      return true;
+    case HighlightType.EverywhereButTests:
+      return type;
+    default:
+      log.warn('Got unexpected state', type);
+      return false;
+  }
 }
 
 // This implementation exists for the sole purpose of overriding the `force` flag
