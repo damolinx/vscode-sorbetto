@@ -1,4 +1,4 @@
-import { commands, ExtensionContext, workspace } from 'vscode';
+import { commands, ExtensionContext, Uri, workspace } from 'vscode';
 import * as cmdIds from './commandIds';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { showSorbetActions } from './commands/showSorbetActions';
@@ -8,6 +8,7 @@ import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetStatusBarEntry } from './sorbetStatusBarEntry';
 import { ServerStatus, RestartReason } from './types';
 import { verifyEnvironment } from './commands/verifyEnvironment';
+import { verifyWorkspace } from './commands/verifyWorkspace';
 
 /**
  * Extension entrypoint.
@@ -48,11 +49,14 @@ export async function activate(context: ExtensionContext) {
   // Register commands
   const rc = commands.registerCommand;
   context.subscriptions.push(
-    rc(cmdIds.SHOW_ACTIONS_COMMAND_ID, () => showSorbetActions()),
-    rc(cmdIds.SHOW_OUTPUT_COMMAND_ID, () => extensionContext.logOutputChannel.show(true)),
-    rc(cmdIds.SORBET_RESTART_COMMAND_ID, (reason: RestartReason = RestartReason.COMMAND) =>
-      extensionContext.statusProvider.restartSorbet(reason),
-    ),
+    rc(cmdIds.SHOW_ACTIONS_COMMAND_ID, () =>
+      showSorbetActions()),
+    rc(cmdIds.SHOW_OUTPUT_COMMAND_ID, (preserveFocus?: boolean) =>
+      extensionContext.logOutputChannel.show(preserveFocus ?? true)),
+    rc(cmdIds.SORBET_RESTART_COMMAND_ID, (reason?: RestartReason) =>
+      extensionContext.statusProvider.restartSorbet(reason ?? RestartReason.COMMAND)),
+    rc(cmdIds.VERIFY_WORKSPACE_COMMAND_ID, (pathOrUri?: string | Uri) =>
+      verifyWorkspace(pathOrUri)),
   );
 
   // Register text editor commands

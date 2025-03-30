@@ -17,7 +17,7 @@ export interface LspConfigurationChangeEvent {
 
 export interface LspConfig {
   command: readonly string[];
-  env?:  Record<string, string | undefined>;
+  env?: Record<string, string | undefined>;
   type: LspConfigType;
 }
 
@@ -54,7 +54,7 @@ export class Configuration implements Disposable {
         dispose: () => this.restartFileWatchers.forEach((disposable) => disposable.dispose())
       },
       workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration('sorbetto.sorbetLspConfiguration')) {
+        if (event.affectsConfiguration('sorbetto.sorbetLspConfiguration') || event.affectsConfiguration('sorbetto.additionalSorbetLspConfigurationArguments')) {
           const previousConfig = this._lspConfig;
           const newLspConfig = this.getLspConfigFromSettings();
           this._lspConfig = newLspConfig;
@@ -78,19 +78,20 @@ export class Configuration implements Disposable {
     this.disposables.forEach((disposable) => disposable.dispose());
   }
 
-  private getLspConfigFromSettings(defaultValue=LspConfigType.Stable): LspConfig | undefined {
+  private getLspConfigFromSettings(defaultValue = LspConfigType.Stable): LspConfig | undefined {
     const lspConfigType = workspace.getConfiguration('sorbetto').get<LspConfigType>('sorbetLspConfiguration', defaultValue);
-    const baseConfig = ['bundle', 'exec', 'srb', 'typecheck', '--lsp'];
-    switch(lspConfigType) {
+    const additionalArguments = workspace.getConfiguration('sorbetto').get<string[]>('additionalSorbetLspConfigurationArguments', []);
+    const baseConfig = ['bundle', 'exec', 'srb', 'typecheck', '--lsp', ...additionalArguments];
+    switch (lspConfigType) {
       case LspConfigType.Beta:
         return {
           type: LspConfigType.Beta,
-          command:  baseConfig.concat(['--enable-all-beta-lsp-features']),
+          command: baseConfig.concat(['--enable-all-beta-lsp-features']),
         };
       case LspConfigType.Custom:
         return {
           type: LspConfigType.Custom,
-          command: workspace.getConfiguration('sorbetto').get<string[]>('sorbetCustomLspConfiguration', baseConfig),
+          command: workspace.getConfiguration('sorbetto').get<string[]>('sorbetCustomLspConfiguration', []),
         };
       case LspConfigType.Experimental:
         return {

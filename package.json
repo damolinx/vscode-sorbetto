@@ -49,12 +49,6 @@
         "category": "Sorbetto"
       },
       {
-        "command": "sorbetto.configureHighlightUntyped",
-        "title": "Configure untyped code highlighting",
-        "category": "Sorbetto",
-        "enablement": "workbenchState != empty"
-      },
-      {
         "command": "sorbetto.copySymbolToClipboard",
         "title": "Copy Symbol to Clipboard",
         "category": "Sorbetto",
@@ -71,14 +65,8 @@
         "category": "Sorbetto"
       },
       {
-        "command": "sorbetto.toggleHighlightUntyped",
-        "title": "Toggle highlighting untyped code",
-        "category": "Sorbetto",
-        "enablement": "workbenchState != empty"
-      },
-      {
-        "command": "sorbetto.toggleTypedFalseCompletionNudges",
-        "title": "Toggle the auto-complete nudge in `typed: false` files",
+        "command": "sorbetto.verify.workspace",
+        "title": "Verify Workspace",
         "category": "Sorbetto",
         "enablement": "workbenchState != empty"
       }
@@ -86,6 +74,16 @@
     "configuration": {
       "title": "Sorbetto",
       "properties": {
+        "sorbetto.additionalSorbetLspConfigurationArguments": {
+          "type": "array",
+          "default": [],
+          "markdownDescription": "Specifies additional arguments to be passed to Sorbet in all configurations (except for `custom`), e.g. `--disable-watchman`",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
         "sorbetto.highlightUntypedCode": {
           "type": "string",
           "default": "disabled",
