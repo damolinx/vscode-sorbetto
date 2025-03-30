@@ -1,4 +1,4 @@
-import { env, ProgressLocation, window } from 'vscode';
+import { env, ProgressLocation, TextEditor, window } from 'vscode';
 import {
   SymbolInformation,
   TextDocumentPositionParams,
@@ -12,9 +12,16 @@ import { ServerStatus } from '../types';
  */
 export async function copySymbolToClipboard(
   context: SorbetExtensionContext,
+  editor: TextEditor
 ): Promise<void> {
-  const { activeLanguageClient: client } = context.statusProvider;
+  if (!editor.selection.isEmpty) {
+    context.log.debug(
+      'CopySymbol: Non-empty selection, cannot determine target symbol.',
+    );
+    return;
+  }
 
+  const { activeLanguageClient: client } = context.statusProvider;
   if (!client) {
     context.log.warn('CopySymbol: No active Sorbet LSP.');
     return;
@@ -23,19 +30,6 @@ export async function copySymbolToClipboard(
   if (!client.capabilities?.sorbetShowSymbolProvider) {
     context.log.warn(
       'CopySymbol: Sorbet LSP does not support \'showSymbol\' capability.',
-    );
-    return;
-  }
-
-  const editor = window.activeTextEditor;
-  if (!editor) {
-    context.log.debug('CopySymbol: No active editor, no target symbol.');
-    return;
-  }
-
-  if (!editor.selection.isEmpty) {
-    context.log.debug(
-      'CopySymbol: Non-empty selection, cannot determine target symbol.',
     );
     return;
   }

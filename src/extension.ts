@@ -1,7 +1,6 @@
 import { commands, ExtensionContext, workspace } from 'vscode';
 import * as cmdIds from './commandIds';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
-import { savePackageFiles } from './commands/savePackageFiles';
 import { showSorbetActions } from './commands/showSorbetActions';
 import { SorbetContentProvider, SORBET_SCHEME } from './sorbetContentProvider';
 import { SorbetExtensionApiImpl } from './sorbetExtensionApi';
@@ -46,15 +45,19 @@ export async function activate(context: ExtensionContext) {
   );
 
   // Register commands
-  const r = commands.registerCommand;
+  const rc = commands.registerCommand;
   context.subscriptions.push(
-    r(cmdIds.COPY_SYMBOL_COMMAND_ID, () => copySymbolToClipboard(extensionContext)),
-    r(cmdIds.SHOW_ACTIONS_COMMAND_ID, () => showSorbetActions()),
-    r(cmdIds.SHOW_OUTPUT_COMMAND_ID, () => extensionContext.logOutputChannel.show(true)),
-    r(cmdIds.SORBET_RESTART_COMMAND_ID, (reason: RestartReason = RestartReason.COMMAND) =>
+    rc(cmdIds.SHOW_ACTIONS_COMMAND_ID, () => showSorbetActions()),
+    rc(cmdIds.SHOW_OUTPUT_COMMAND_ID, () => extensionContext.logOutputChannel.show(true)),
+    rc(cmdIds.SORBET_RESTART_COMMAND_ID, (reason: RestartReason = RestartReason.COMMAND) =>
         extensionContext.statusProvider.restartSorbet(reason),
     ),
-    r(cmdIds.SORBET_SAVE_PACKAGE_FILES, () => savePackageFiles(extensionContext)),
+  );
+
+  // Register text editor commands
+  const rtc = commands.registerTextEditorCommand;
+  context.subscriptions.push(
+    rtc(cmdIds.COPY_SYMBOL_COMMAND_ID, (textEditor) => copySymbolToClipboard(extensionContext, textEditor)),
   );
 
   // Start the extension.

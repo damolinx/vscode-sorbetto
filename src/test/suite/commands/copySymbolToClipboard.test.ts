@@ -22,6 +22,9 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
   });
 
   test('copySymbolToClipboard: does nothing if client is not present', async () => {
+    const expectedUri = vscode.Uri.parse('file://workspace/test.rb');
+    const editor = createMockEditor(expectedUri);
+
     const writeTextSpy = sinon.spy();
     const envClipboardStub = sinon.stub(vscode, 'env').value(({
       clipboard: {
@@ -37,12 +40,15 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       log: createLogStub(vscode.LogLevel.Info),
       statusProvider,
     } as SorbetExtensionContext;
-    await copySymbolToClipboard(context);
+    await copySymbolToClipboard(context, editor);
 
     sinon.assert.notCalled(writeTextSpy);
   });
 
   test('copySymbolToClipboard: does nothing if client is not ready', async () => {
+    const expectedUri = vscode.Uri.parse('file://workspace/test.rb');
+    const editor = createMockEditor(expectedUri);
+
     const writeTextSpy = sinon.spy();
     const envClipboardStub = sinon.stub(vscode, 'env').value(({
       clipboard: {
@@ -60,12 +66,15 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       log: createLogStub(vscode.LogLevel.Info),
       statusProvider,
     } as SorbetExtensionContext;
-    await copySymbolToClipboard(context);
+    await copySymbolToClipboard(context, editor);
 
     sinon.assert.notCalled(writeTextSpy);
   });
 
   test('copySymbolToClipboard: does nothing if client does not support `sorbetShowSymbolProvider`', async () => {
+    const expectedUri = vscode.Uri.parse('file://workspace/test.rb');
+    const editor = createMockEditor(expectedUri);
+
     const writeTextSpy = sinon.spy();
     const envClipboardStub = sinon.stub(vscode, 'env').value(({
       clipboard: {
@@ -87,7 +96,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       log: createLogStub(vscode.LogLevel.Info),
       statusProvider,
     } as SorbetExtensionContext;
-    await copySymbolToClipboard(context);
+    await copySymbolToClipboard(context, editor);
 
     sinon.assert.notCalled(writeTextSpy);
   });
@@ -95,6 +104,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
   test('copySymbolToClipboard: copies symbol to clipboard when there is a valid selection', async () => {
     const expectedUri = vscode.Uri.parse('file://workspace/test.rb');
     const expectedSymbolName = 'test_symbol_name';
+    const editor = createMockEditor(expectedUri);
 
     const writeTextSpy = sinon.spy();
     const envClipboardStub = sinon.stub(vscode, 'env').value(({
@@ -104,16 +114,6 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     } as any));
     testRestorables.push(envClipboardStub);
 
-    const activeTextEditorStub = sinon
-      .stub(vscode.window, 'activeTextEditor')
-      .get(
-        () =>
-          ({
-            document: { uri: expectedUri },
-            selection: new vscode.Selection(1, 1, 1, 1),
-          } as vscode.TextEditor),
-      );
-    testRestorables.push(activeTextEditorStub);
     const sendRequestSpy = sinon.spy(
       (_method: string, _param: vsclc.TextDocumentPositionParams) =>
         ({
@@ -135,7 +135,8 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       log: createLogStub(vscode.LogLevel.Info),
       statusProvider,
     } as SorbetExtensionContext;
-    await copySymbolToClipboard(context);
+
+    await copySymbolToClipboard(context, editor);
 
     sinon.assert.calledOnce(writeTextSpy);
     sinon.assert.calledWith(writeTextSpy, expectedSymbolName);
@@ -150,6 +151,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
   test('copySymbolToClipboard: shows progress dialog when Sorbet is not ready', async () => {
     const expectedUri = vscode.Uri.parse('file://workspace/test.rb');
     const expectedSymbolName = 'test_symbol_name';
+    const editor = createMockEditor(expectedUri);
 
     const writeTextSpy = sinon.spy();
     const envClipboardStub = sinon.stub(vscode, 'env').value(({
@@ -158,17 +160,6 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       } as any,
     } as any));
     testRestorables.push(envClipboardStub);
-
-    const activeTextEditorStub = sinon
-      .stub(vscode.window, 'activeTextEditor')
-      .get(
-        () =>
-          ({
-            document: { uri: expectedUri },
-            selection: new vscode.Selection(1, 1, 1, 1),
-          } as vscode.TextEditor),
-      );
-    testRestorables.push(activeTextEditorStub);
 
     const progressStub = sinon.stub(vscode.window, 'withProgress').resolves(({
       name: expectedSymbolName,
@@ -194,7 +185,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       log: createLogStub(vscode.LogLevel.Info),
       statusProvider,
     } as SorbetExtensionContext;
-    await copySymbolToClipboard(context);
+    await copySymbolToClipboard(context, editor);
 
     sinon.assert.calledOnce(writeTextSpy);
     sinon.assert.calledWith(writeTextSpy, expectedSymbolName);
@@ -203,6 +194,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
 
   test('copySymbolToClipboard: exits gracefully when cancelled', async () => {
     const expectedUri = vscode.Uri.parse('file://workspace/test.rb');
+    const editor = createMockEditor(expectedUri);
 
     const writeTextSpy = sinon.spy();
     const envClipboardStub = sinon.stub(vscode, 'env').value(({
@@ -211,17 +203,6 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       } as any,
     } as any));
     testRestorables.push(envClipboardStub);
-
-    const activeTextEditorStub = sinon
-      .stub(vscode.window, 'activeTextEditor')
-      .get(
-        () =>
-          ({
-            document: { uri: expectedUri },
-            selection: new vscode.Selection(1, 1, 1, 1),
-          } as vscode.TextEditor),
-      );
-    testRestorables.push(activeTextEditorStub);
 
     const progressStub = sinon
       .stub(vscode.window, 'withProgress')
@@ -247,9 +228,16 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       log: createLogStub(vscode.LogLevel.Info),
       statusProvider,
     } as SorbetExtensionContext;
-    await copySymbolToClipboard(context);
+    await copySymbolToClipboard(context, editor);
 
     sinon.assert.calledOnce(progressStub);
     sinon.assert.notCalled(writeTextSpy);
   });
 });
+
+function createMockEditor(expectedUri: vscode.Uri): any {
+  return {
+    document: { uri: expectedUri },
+    selection: new vscode.Selection(1, 1, 1, 1),
+  } as vscode.TextEditor;
+}

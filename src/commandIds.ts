@@ -23,8 +23,3 @@ export const SHOW_OUTPUT_COMMAND_ID = 'sorbetto.showOutput';
  * Restart Sorbet.
  */
 export const SORBET_RESTART_COMMAND_ID = 'sorbetto.restart';
-
-/**
- * Save all open __package.rb files.
- */
-export const SORBET_SAVE_PACKAGE_FILES = 'sorbetto.savePackageFiles';
