@@ -3,6 +3,7 @@ import { SHOW_ACTIONS_COMMAND_ID } from './commandIds';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { StatusChangedEvent } from './sorbetStatusProvider';
 import { RestartReason, ServerStatus } from './types';
+import { LspConfigType } from './configuration';
 
 export class SorbetStatusBarEntry implements Disposable {
   private readonly context: SorbetExtensionContext;
@@ -99,8 +100,8 @@ export class SorbetStatusBarEntry implements Disposable {
       }
     }
 
-    if (tooltip && lspConfig?.type ) {
-      tooltip += `Configuration: ${lspConfig?.type}`;
+    if (tooltip && lspConfig?.type && lspConfig.type !== LspConfigType.Stable) {
+      tooltip += `\nConfiguration: ${lspConfig.type}`;
     }
 
     this.statusBarItem.text = text;

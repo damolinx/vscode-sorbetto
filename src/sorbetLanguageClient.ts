@@ -213,9 +213,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
       } else {
         msg = `Missing command-line data to start Sorbet. Config:${activeConfig.type}`;
       }
-
-      this.context.log.error(msg);
-      return Promise.reject(new Error(msg));
+      return Promise.reject(msg);
     }
 
     this.context.log.debug('>', command, ...args);

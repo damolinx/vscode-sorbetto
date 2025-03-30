@@ -86,10 +86,10 @@
     "configuration": {
       "title": "Sorbetto",
       "properties": {
-        "sorbetto.highlightUntyped": {
+        "sorbetto.highlightUntypedCode": {
           "type": "string",
           "default": "disabled",
-          "description": "Shows warning for untyped values.",
+          "description": "Show a warning for untyped values.",
           "enum": [
             "disabled",
             "everywhere-but-tests",
@@ -114,8 +114,8 @@
         },
         "sorbetto.sorbetLspConfiguration": {
           "type": "string",
-          "default": "Stable",
-          "description": "Specifies a LSP configuration to use.",
+          "default": "stable",
+            "description": "Specifies the LSP configuration to use.",
           "enum": [
             "disabled",
             "stable",
@@ -124,11 +124,11 @@
             "custom"
           ],
           "markdownEnumDescriptions": [
-            "Disable Sorbet.",
-            "Enable **stable** Sorbet features.",
-            "Enable **beta** Sorbet features.",
-            "Enable **experimental** Sorbet features (unstable).",
-            "Use a custom configuration defined in the [`sorbetCustomLspConfiguration`](#sorbetto.sorbetLspConfiguration) setting."
+            "Disable Sorbet language server.",
+            "Enable Sorbet language server **stable** features.",
+            "Enable Sorbet language server **beta** features.",
+            "Enable Sorbet language server **experimental** features (unstable).",
+            "Use configuration defined in the [`sorbetCustomLspConfiguration`](#sorbetto.sorbetLspConfiguration) setting."
           ]
         },
         "sorbetto.restartFilePatterns": {
@@ -145,12 +145,12 @@
         },
         "sorbetto.revealOutputOnError": {
           "type": "boolean",
-          "description": "Show the extension output window on errors.",
+          "description": "Show the Output window on errors.",
           "default": false
         },
         "sorbetto.typedFalseCompletionNudges": {
           "type": "boolean",
-          "description": "Displays an auto-complete nudge in `typed: false` files.",
+          "description": "Display an auto-complete nudge in `typed: false` files.",
           "default": true
         }
       }
