@@ -19,12 +19,12 @@ export async function verifyEnvironment() {
     let result = false;
     const START_OPTION = 'Start Sorbet';
     const CONFIGURE_OPTION = 'Configure';
-    const DOC_OPTION = 'Open Documentation';
+    const DOC_OPTION = 'Documentation';
     const option = await window.showErrorMessage(
       `Following dependencies are missing: ${missingCommands.join(', ')}. Sorbet will not be started automatically.`,
       START_OPTION,
       CONFIGURE_OPTION,
-      DOC_OPTION,
+      DOC_OPTION
     );
 
     // Don't await

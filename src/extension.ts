@@ -62,7 +62,9 @@ export async function activate(context: ExtensionContext) {
   );
 
   // If enabled, verify Sorbet dependencies before running.
-  if (extensionContext.configuration.lspConfig && await verifyEnvironment()) {
+  if (extensionContext.configuration.lspConfig &&
+    (!workspace.getConfiguration('sorbetto').get('verifyDependencies', true)
+      || await verifyEnvironment())) {
     // Start the extension.
     await extensionContext.statusProvider.startSorbet();
   }

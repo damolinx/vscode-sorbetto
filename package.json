@@ -96,6 +96,23 @@
             "everywhere"
           ]
         },
+        "sorbetto.restartFilePatterns": {
+          "type": "array",
+            "description": "Workspace files patterns that force a restart of the Sorbet language server.",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/sorbet/config",
+            "**/Gemfile.lock"
+          ],
+          "uniqueItems": true
+        },
+        "sorbetto.revealOutputOnError": {
+          "type": "boolean",
+          "description": "Show the Output window on errors.",
+          "default": false
+        },
         "sorbetto.sorbetCustomLspConfiguration": {
           "type": "array",
           "default": [
@@ -131,27 +148,15 @@
             "Use configuration defined in the [`sorbetCustomLspConfiguration`](#sorbetto.sorbetLspConfiguration) setting."
           ]
         },
-        "sorbetto.restartFilePatterns": {
-          "type": "array",
-            "description": "Workspace files patterns that force a restart of the Sorbet language server.",
-          "items": {
-            "type": "string"
-          },
-          "default": [
-            "**/sorbet/config",
-            "**/Gemfile.lock"
-          ],
-          "uniqueItems": true
-        },
-        "sorbetto.revealOutputOnError": {
-          "type": "boolean",
-          "description": "Show the Output window on errors.",
-          "default": false
-        },
         "sorbetto.typedFalseCompletionNudges": {
           "type": "boolean",
           "description": "Display an auto-complete nudge in `typed: false` files.",
           "default": true
+        },
+        "sorbetto.verifyDependencies": {
+          "type": "boolean",
+          "default": true,
+          "description": "Verify dependencies during extension activation."
         }
       }
     },
