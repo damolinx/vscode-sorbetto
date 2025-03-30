@@ -11,7 +11,7 @@
     "typescript.tsdk": "./node_modules/typescript/lib",
     "typescript.tsc.autoDetect": "off",
     "[typescript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.defaultFormatter": "vscode.typescript-language-features",
       "editor.formatOnSave": true
     }
 }

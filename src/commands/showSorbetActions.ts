@@ -1,6 +1,6 @@
 import { commands, window } from 'vscode';
-import {SHOW_OUTPUT_COMMAND_ID, SORBET_RESTART_COMMAND_ID} from '../commandIds';
-import { RestartReason} from '../types';
+import { SHOW_OUTPUT_COMMAND_ID, SORBET_RESTART_COMMAND_ID } from '../commandIds';
+import { RestartReason } from '../types';
 
 export const enum Action {
   ConfigureSorbet = 'Configure Sorbet',
@@ -14,7 +14,7 @@ export const enum Action {
  */
 export async function showSorbetActions(): Promise<void> {
   const selectedAction = await window.showQuickPick(
-    [Action.ViewOutput, Action.RestartSorbet, Action.ConfigureSorbet], {
+    [Action.ConfigureSorbet, Action.RestartSorbet, Action.ViewOutput], {
     placeHolder: 'Select an action',
   });
 

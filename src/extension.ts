@@ -7,6 +7,7 @@ import { SorbetExtensionApiImpl } from './sorbetExtensionApi';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetStatusBarEntry } from './sorbetStatusBarEntry';
 import { ServerStatus, RestartReason } from './types';
+import { verifyEnvironment } from './commands/verifyEnvironment';
 
 /**
  * Extension entrypoint.
@@ -50,7 +51,7 @@ export async function activate(context: ExtensionContext) {
     rc(cmdIds.SHOW_ACTIONS_COMMAND_ID, () => showSorbetActions()),
     rc(cmdIds.SHOW_OUTPUT_COMMAND_ID, () => extensionContext.logOutputChannel.show(true)),
     rc(cmdIds.SORBET_RESTART_COMMAND_ID, (reason: RestartReason = RestartReason.COMMAND) =>
-        extensionContext.statusProvider.restartSorbet(reason),
+      extensionContext.statusProvider.restartSorbet(reason),
     ),
   );
 
@@ -60,8 +61,11 @@ export async function activate(context: ExtensionContext) {
     rtc(cmdIds.COPY_SYMBOL_COMMAND_ID, (textEditor) => copySymbolToClipboard(extensionContext, textEditor)),
   );
 
-  // Start the extension.
-  await extensionContext.statusProvider.startSorbet();
+  // If enabled, verify Sorbet dependencies before running.
+  if (extensionContext.configuration.lspConfig && await verifyEnvironment()) {
+    // Start the extension.
+    await extensionContext.statusProvider.startSorbet();
+  }
 
   // This exposes Sorbet Extension API.
   const api = new SorbetExtensionApiImpl(extensionContext);
