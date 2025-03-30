@@ -1,52 +1,42 @@
-import { Disposable, ExtensionContext, OutputChannel } from "vscode";
-import { DefaultSorbetWorkspaceContext, SorbetExtensionConfig } from "./config";
-import { Log, OutputChannelLog } from "./log";
-import { MetricsClient } from "./metricsClient";
-import { SorbetStatusProvider } from "./sorbetStatusProvider";
+import { Disposable, ExtensionContext, LogOutputChannel, window } from 'vscode';
+import { Configuration } from './configuration';
+import { Log } from './log';
+import { MetricsClient, NoOpMetricsClient } from './metricsClient';
+import { SorbetStatusProvider } from './sorbetStatusProvider';
 
 export class SorbetExtensionContext implements Disposable {
-  public readonly configuration: SorbetExtensionConfig;
-  private readonly disposable: Disposable;
+  public readonly configuration: Configuration;
+  private readonly disposables: Disposable[];
   public readonly extensionContext: ExtensionContext;
   public readonly metrics: MetricsClient;
   public readonly statusProvider: SorbetStatusProvider;
-  private readonly wrappedLog: OutputChannelLog;
+  public readonly logOutputChannel: LogOutputChannel;
 
   constructor(context: ExtensionContext) {
-    const sorbetWorkspaceContext = new DefaultSorbetWorkspaceContext(context);
-    this.configuration = new SorbetExtensionConfig(sorbetWorkspaceContext);
+    this.configuration = new Configuration();
     this.extensionContext = context;
-    this.wrappedLog = new OutputChannelLog("Sorbet");
-    this.metrics = new MetricsClient(this);
+    this.logOutputChannel = window.createOutputChannel('Sorbetto', {log: true});
+    this.metrics = new NoOpMetricsClient();
     this.statusProvider = new SorbetStatusProvider(this);
 
-    this.disposable = Disposable.from(
-      sorbetWorkspaceContext,
+    this.disposables = [
       this.configuration,
+      this.logOutputChannel,
       this.statusProvider,
-      this.wrappedLog,
-    );
+    ];
   }
 
   /**
    * Dispose and free associated resources.
    */
   public dispose() {
-    this.disposable.dispose();
+    this.disposables.forEach((disposable) => disposable.dispose());
   }
 
   /**
    * Logger.
    */
   public get log(): Log {
-    return this.wrappedLog;
-  }
-
-  /**
-   * Output channel used by {@link log}. This is exposed separately to promote
-   * use of the {@link Log} interface instead of accessing the UI component.
-   */
-  public get logOutputChannel(): OutputChannel {
-    return this.wrappedLog.outputChannel;
+    return this.logOutputChannel;
   }
 }

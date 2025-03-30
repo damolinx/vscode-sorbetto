@@ -1,7 +1,8 @@
-import { ErrorHandler, RevealOutputChannelOn } from "vscode-languageclient";
-import { LanguageClient, ServerOptions } from "vscode-languageclient/node";
-import { backwardsCompatibleTrackUntyped } from "./config";
-import { SorbetExtensionContext } from "./sorbetExtensionContext";
+import { ErrorHandler, RevealOutputChannelOn } from 'vscode-languageclient';
+import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
+import { HighlightType } from './configuration';
+import { Log } from './log';
+import { SorbetExtensionContext } from './sorbetExtensionContext';
 
 /**
  * Create Language Client for Sorber Server.
@@ -16,30 +17,27 @@ export function createClient(
     supportsOperationNotifications: true,
     // Let Sorbet know that we can handle sorbet:// URIs for generated files.
     supportsSorbetURIs: true,
-    highlightUntyped: backwardsCompatibleTrackUntyped(
-      context.log,
-      context.configuration.highlightUntyped,
-    ),
+    highlightUntyped: getHighlightType(context.configuration.highlightUntyped, context.log),
     enableTypedFalseCompletionNudges:
       context.configuration.typedFalseCompletionNudges,
   };
 
   context.log.debug(
-    "Initializing with initializationOptions",
+    'Initializing with initializationOptions',
     ...Object.entries(initializationOptions).map(([k, v]) => `${k}:${v}`),
   );
 
-  const client = new CustomLanguageClient("ruby", "Sorbet", serverOptions, {
+  const client = new CustomLanguageClient('ruby', 'Sorbet', serverOptions, {
     documentSelector: [
-      { language: "ruby", scheme: "file" },
+      { language: 'ruby', scheme: 'file' },
       // Support queries on generated files with sorbet:// URIs that do not exist editor-side.
-      { language: "ruby", scheme: "sorbet" },
+      { language: 'ruby', scheme: 'sorbet' },
     ],
     errorHandler,
     initializationOptions,
     initializationFailedHandler: (error) => {
       context.log.error(
-        "Failed to initialize Sorbet language server.",
+        'Failed to initialize Sorbet language server.',
         error instanceof Error ? error : undefined,
       );
       return false;
@@ -51,6 +49,20 @@ export function createClient(
   });
 
   return client;
+}
+
+export function getHighlightType(type: HighlightType, log: Log): boolean | HighlightType {
+  switch (type) {
+    case HighlightType.Disabled:
+      return false;
+    case HighlightType.Everywhere:
+      return true;
+    case HighlightType.EverywhereButTests:
+      return type;
+    default:
+      log.warn('Got unexpected state', type);
+      return false;
+  }
 }
 
 // This implementation exists for the sole purpose of overriding the `force` flag
@@ -66,12 +78,12 @@ class CustomLanguageClient extends LanguageClient {
   error(
     message: string,
     data?: any,
-    showNotification?: boolean | "force",
+    showNotification?: boolean | 'force',
   ): void {
     super.error(
       message,
       data,
-      showNotification === "force" ? true : showNotification,
+      showNotification === 'force' ? true : showNotification,
     );
   }
 }

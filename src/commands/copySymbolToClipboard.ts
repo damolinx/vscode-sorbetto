@@ -1,10 +1,10 @@
-import { env, ProgressLocation, window } from "vscode";
+import { env, ProgressLocation, window } from 'vscode';
 import {
   SymbolInformation,
   TextDocumentPositionParams,
-} from "vscode-languageclient/node";
-import { SorbetExtensionContext } from "../sorbetExtensionContext";
-import { ServerStatus } from "../types";
+} from 'vscode-languageclient/node';
+import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ServerStatus } from '../types';
 
 /**
  * Copy symbol at current.
@@ -16,32 +16,32 @@ export async function copySymbolToClipboard(
   const { activeLanguageClient: client } = context.statusProvider;
 
   if (!client) {
-    context.log.warn("CopySymbol: No active Sorbet LSP.");
+    context.log.warn('CopySymbol: No active Sorbet LSP.');
     return;
   }
 
   if (!client.capabilities?.sorbetShowSymbolProvider) {
     context.log.warn(
-      "CopySymbol: Sorbet LSP does not support 'showSymbol' capability.",
+      'CopySymbol: Sorbet LSP does not support \'showSymbol\' capability.',
     );
     return;
   }
 
   const editor = window.activeTextEditor;
   if (!editor) {
-    context.log.debug("CopySymbol: No active editor, no target symbol.");
+    context.log.debug('CopySymbol: No active editor, no target symbol.');
     return;
   }
 
   if (!editor.selection.isEmpty) {
     context.log.debug(
-      "CopySymbol: Non-empty selection, cannot determine target symbol.",
+      'CopySymbol: Non-empty selection, cannot determine target symbol.',
     );
     return;
   }
 
   if (client.status !== ServerStatus.RUNNING) {
-    context.log.warn("CopySymbol: Sorbet LSP is not ready.");
+    context.log.warn('CopySymbol: Sorbet LSP is not ready.');
     return;
   }
 
@@ -61,9 +61,9 @@ export async function copySymbolToClipboard(
         location: ProgressLocation.Notification,
       },
       async (progress, token) => {
-        progress.report({ message: "Querying Sorbet …" });
+        progress.report({ message: 'Querying Sorbet …' });
         const r = await client.sendRequest<SymbolInformation>(
-          "sorbet/showSymbol",
+          'sorbet/showSymbol',
           params,
         );
 
@@ -79,7 +79,7 @@ export async function copySymbolToClipboard(
     );
   } else {
     response = await client.sendRequest<SymbolInformation>(
-      "sorbet/showSymbol",
+      'sorbet/showSymbol',
       params,
     );
   }

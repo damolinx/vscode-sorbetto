@@ -1,23 +1,18 @@
-import * as Spinner from "elegant-spinner";
-import { Disposable, StatusBarAlignment, StatusBarItem, window } from "vscode";
-
-import { SHOW_ACTIONS_COMMAND_ID } from "./commandIds";
-import { SorbetExtensionContext } from "./sorbetExtensionContext";
-import { StatusChangedEvent } from "./sorbetStatusProvider";
-import { RestartReason, ServerStatus } from "./types";
+import { Disposable, StatusBarAlignment, StatusBarItem, window } from 'vscode';
+import { SHOW_ACTIONS_COMMAND_ID } from './commandIds';
+import { SorbetExtensionContext } from './sorbetExtensionContext';
+import { StatusChangedEvent } from './sorbetStatusProvider';
+import { RestartReason, ServerStatus } from './types';
 
 export class SorbetStatusBarEntry implements Disposable {
   private readonly context: SorbetExtensionContext;
   private readonly disposable: Disposable;
   private serverStatus: ServerStatus;
-  private readonly spinner: () => string;
-  private spinnerTimer?: NodeJS.Timer;
   private readonly statusBarItem: StatusBarItem;
 
   constructor(context: SorbetExtensionContext) {
     this.context = context;
     this.serverStatus = ServerStatus.DISABLED;
-    this.spinner = Spinner();
     this.statusBarItem = window.createStatusBarItem(
       StatusBarAlignment.Left,
       10,
@@ -25,11 +20,9 @@ export class SorbetStatusBarEntry implements Disposable {
     this.statusBarItem.command = SHOW_ACTIONS_COMMAND_ID;
 
     this.disposable = Disposable.from(
-      this.context.configuration.onLspConfigChange(() => this.render()),
-      this.context.statusProvider.onStatusChanged((e) =>
-        this.onServerStatusChanged(e),
-      ),
-      this.context.statusProvider.onShowOperation((_params) => this.render()),
+      this.context.configuration.onDidChangeLspConfig(this.render, this),
+      this.context.statusProvider.onStatusChanged(this.onServerStatusChanged, this),
+      this.context.statusProvider.onShowOperation(this.render, this),
       this.statusBarItem,
     );
 
@@ -56,63 +49,58 @@ export class SorbetStatusBarEntry implements Disposable {
     }
   }
 
-  private getSpinner() {
-    if (this.spinnerTimer) {
-      clearTimeout(this.spinnerTimer);
-    }
-    // Animate the spinner with setTimeout.
-    this.spinnerTimer = setTimeout(() => this.render(), 250);
-    return this.spinner();
-  }
-
   private render() {
     const { operations } = this.context.statusProvider;
-    const { activeLspConfig } = this.context.configuration;
-    const sorbetName = activeLspConfig?.name ?? "Sorbet";
+    const { lspConfig } = this.context.configuration;
 
     let text: string;
     let tooltip: string;
     // Errors should suppress operation animations / feedback.
     if (
-      activeLspConfig &&
+      lspConfig &&
       this.serverStatus !== ServerStatus.ERROR &&
       operations.length > 0
     ) {
       const latestOp = operations[operations.length - 1];
-      text = `${sorbetName}: ${latestOp.description} ${this.getSpinner()}`;
-      tooltip = "The Sorbet server is currently running.";
+      text = `$(sync~spin) Sorbet: ${latestOp.description}`;
+      tooltip = 'The Sorbet server is currently running.';
     } else {
+      let serverError: string | undefined;
       switch (this.serverStatus) {
         case ServerStatus.DISABLED:
-          text = `${sorbetName}: Disabled`;
-          tooltip = "The Sorbet server is disabled.";
+          text = 'Sorbet: Disabled';
+          tooltip = 'The Sorbet server is disabled.';
           break;
         case ServerStatus.ERROR:
-          text = `${sorbetName}: Error`;
-          tooltip = "Click for remediation items.";
-          const { serverError } = this.context.statusProvider;
+          text = 'Sorbet: Error';
+          tooltip = 'Click for remediation items.';
+          serverError = this.context.statusProvider.serverError;
           if (serverError) {
             tooltip = `${serverError}\n${tooltip}`;
           }
           break;
         case ServerStatus.INITIALIZING:
-          text = `${sorbetName}: Initializing ${this.getSpinner()}`;
-          tooltip = "The Sorbet server is initializing.";
+            text = '$(sync~spin) Sorbet: Initializing';
+          tooltip = 'The Sorbet server is initializing.';
           break;
         case ServerStatus.RESTARTING:
-          text = `${sorbetName}: Restarting ${this.getSpinner()}`;
-          tooltip = "The Sorbet server is restarting.";
+          text = '$(sync~spin) Sorbet: Restarting';
+          tooltip = 'The Sorbet server is restarting.';
           break;
         case ServerStatus.RUNNING:
-          text = `${sorbetName}: Idle`;
-          tooltip = "The Sorbet server is currently running.";
+          text = 'Sorbet: Idle';
+          tooltip = 'The Sorbet server is currently running.';
           break;
         default:
-          this.context.log.error("Invalid ServerStatus", this.serverStatus);
-          text = "";
-          tooltip = "";
+          this.context.log.error('Invalid ServerStatus', this.serverStatus);
+          text = '';
+          tooltip = '';
           break;
       }
+    }
+
+    if (tooltip && lspConfig?.type ) {
+      tooltip += `Configuration: ${lspConfig?.type}`;
     }
 
     this.statusBarItem.text = text;

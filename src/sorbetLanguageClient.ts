@@ -1,4 +1,4 @@
-import { Disposable, Event, EventEmitter, workspace } from "vscode";
+import { Disposable, Event, EventEmitter, workspace } from 'vscode';
 import {
   CloseAction,
   CloseHandlerResult,
@@ -8,13 +8,13 @@ import {
   GenericNotificationHandler,
   LanguageClient,
   ServerCapabilities,
-} from "vscode-languageclient/node";
-import { ChildProcess, spawn } from "child_process";
-import { stopProcess } from "./connections";
-import { createClient } from "./languageClient";
-import { instrumentLanguageClient } from "./languageClient.metrics";
-import { SorbetExtensionContext } from "./sorbetExtensionContext";
-import { ServerStatus, RestartReason } from "./types";
+} from 'vscode-languageclient/node';
+import { ChildProcess, spawn } from 'child_process';
+import { stopProcess } from './connections';
+import { createClient } from './languageClient';
+import { instrumentLanguageClient } from './languageClient.metrics';
+import { SorbetExtensionContext } from './sorbetExtensionContext';
+import { ServerStatus, RestartReason } from './types';
 
 const VALID_STATE_TRANSITIONS: ReadonlyMap<
   ServerStatus,
@@ -91,7 +91,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
      */
     const stopTimer = setTimeout(() => {
       stopped = true;
-      this.context.metrics.emitCountMetric("stop.timed_out", 1);
+      this.context.metrics.increment('stop.timed_out', 1);
       if (this.sorbetProcess?.pid) {
         stopProcess(this.sorbetProcess, this.context.log);
       }
@@ -101,8 +101,8 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
     this.languageClient.stop().then(() => {
       if (!stopped) {
         clearTimeout(stopTimer);
-        this.context.metrics.emitCountMetric("stop.success", 1);
-        this.context.log.info("Sorbet has stopped.");
+        this.context.metrics.increment('stop.success', 1);
+        this.context.log.info('Sorbet has stopped.');
       }
     });
   }
@@ -112,9 +112,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
    * available when the server has been initialized.
    */
   public get capabilities(): SorbetServerCapabilities | undefined {
-    return <SorbetServerCapabilities | undefined>(
-      this.languageClient.initializeResult?.capabilities
-    );
+    return this.languageClient.initializeResult?.capabilities as SorbetServerCapabilities | undefined;
   }
 
   /**
@@ -129,7 +127,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
    */
   public async start(): Promise<void> {
     if (!this.languageClient.needsStart()) {
-      this.context.log.debug("Ignored unnecessary start request");
+      this.context.log.debug('Ignored unnecessary start request');
       return;
     }
 
@@ -204,23 +202,23 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
    * Sorbet at most every MIN_TIME_BETWEEN_RETRIES_MS.
    */
   private startSorbetProcess(): Promise<ChildProcess> {
-    this.context.log.info("Running Sorbet LSP.");
-    const activeConfig = this.context.configuration.activeLspConfig;
+    this.context.log.info('Running Sorbet LSP.');
+    const activeConfig = this.context.configuration.lspConfig;
     const [command, ...args] = activeConfig?.command ?? [];
     if (!command) {
       let msg: string;
       if (!activeConfig) {
-        msg = "No active Sorbet configuration.";
+        msg = 'No active Sorbet configuration.';
         this.status = ServerStatus.DISABLED;
       } else {
-        msg = `Missing command-line data to start Sorbet. ConfigId:${activeConfig.id}`;
+        msg = `Missing command-line data to start Sorbet. Config:${activeConfig.type}`;
       }
 
       this.context.log.error(msg);
       return Promise.reject(new Error(msg));
     }
 
-    this.context.log.debug(">", command, ...args);
+    this.context.log.debug('>', command, ...args);
     this.sorbetProcess = spawn(command, args, {
       cwd: workspace.rootPath,
       env: { ...process.env, ...activeConfig?.env },
@@ -228,21 +226,21 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
     // N.B.: 'exit' is sometimes not invoked if the process exits with an error/fails to start, as per the Node.js docs.
     // So, we need to handle both events. ¯\_(ツ)_/¯
     this.sorbetProcess.on(
-      "exit",
+      'exit',
       (code: number | null, _signal: string | null) => {
         this.sorbetProcessExitCode = code ?? undefined;
       },
     );
-    this.sorbetProcess.on("error", (err?: NodeJS.ErrnoException) => {
+    this.sorbetProcess.on('error', (err?: NodeJS.ErrnoException) => {
       if (
         err &&
         this.status === ServerStatus.INITIALIZING &&
-        err.code === "ENOENT"
+        err.code === 'ENOENT'
       ) {
-        this.context.metrics.emitCountMetric("error.enoent", 1);
+        this.context.metrics.increment('error.enoent', 1);
         // We failed to start the process. The path to Sorbet is likely incorrect.
         this.wrappedLastError = `Could not start Sorbet with command: '${command} ${args.join(
-          " ",
+          ' ',
         )}'. Encountered error '${
           err.message
         }'. Is the path to Sorbet correct?`;
@@ -283,14 +281,14 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
       } else {
         reason = RestartReason.CRASH_LC_CLOSED;
         this.context.log.error(
-          "The Sorbet LSP process crashed exit_code",
+          'The Sorbet LSP process crashed exit_code',
           this.sorbetProcessExitCode,
         );
         this.context.log.error(
-          "The Node.js backtrace above is not useful.",
-          "If there is a C++ backtrace above, that is useful.",
-          "Otherwise, more useful output will be in the --debug-log-file to the Sorbet process",
-          "(if provided as a command-line argument).",
+          'The Node.js backtrace above is not useful.',
+          'If there is a C++ backtrace above, that is useful.',
+          'Otherwise, more useful output will be in the --debug-log-file to the Sorbet process',
+          '(if provided as a command-line argument).',
         );
       }
 

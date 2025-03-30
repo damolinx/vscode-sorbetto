@@ -1,15 +1,15 @@
-import { Disposable, Event, EventEmitter } from "vscode";
-import { SorbetLanguageClient } from "./sorbetLanguageClient";
-import { SorbetExtensionContext } from "./sorbetExtensionContext";
-import { RestartReason, ServerStatus, ShowOperationParams } from "./types";
+import { Disposable, Event, EventEmitter } from 'vscode';
+import { SorbetLanguageClient } from './sorbetLanguageClient';
+import { SorbetExtensionContext } from './sorbetExtensionContext';
+import { RestartReason, ServerStatus, ShowOperationParams } from './types';
 
 const MIN_TIME_BETWEEN_RETRIES_MS = 7000;
 
-export type StatusChangedEvent = {
+export interface StatusChangedEvent {
   status: ServerStatus;
   stopped?: true;
   error?: string;
-};
+}
 
 export class SorbetStatusProvider implements Disposable {
   private wrappedActiveLanguageClient?: SorbetLanguageClient;
@@ -89,8 +89,8 @@ export class SorbetStatusProvider implements Disposable {
    * event listeners are notified. Spurious events are filtered out.
    */
   private fireOnShowOperation(data: ShowOperationParams): void {
-    let changed: boolean = false;
-    if (data.status === "end") {
+    let changed = false;
+    if (data.status === 'end') {
       const filteredOps = this.operationStack.filter(
         (otherP) => otherP.operationName !== data.operationName,
       );
@@ -123,7 +123,7 @@ export class SorbetStatusProvider implements Disposable {
   /**
    * Sorbet client current operation stack.
    */
-  public get operations(): ReadonlyArray<Readonly<ShowOperationParams>> {
+  public get operations(): readonly Readonly<ShowOperationParams>[] {
     return this.operationStack;
   }
 
@@ -148,7 +148,7 @@ export class SorbetStatusProvider implements Disposable {
   public async restartSorbet(reason: RestartReason): Promise<void> {
     await this.stopSorbet(ServerStatus.RESTARTING);
     // `reason` is an enum type with a small and finite number of values.
-    this.context.metrics.emitCountMetric(`restart.${reason}`, 1);
+    this.context.metrics.increment(`restart.${reason}`, 1);
     await this.startSorbet();
   }
 
@@ -174,13 +174,13 @@ export class SorbetStatusProvider implements Disposable {
    */
   public async startSorbet(): Promise<void> {
     if (this.isStarting) {
-      this.context.log.trace("Ignored start request, already starting.");
+      this.context.log.trace('Ignored start request, already starting.');
       return;
     }
 
-    if (!this.context.configuration.activeLspConfig) {
+    if (!this.context.configuration.lspConfig) {
       this.context.log.info(
-        "Ignored start request, no active configuration. See https://sorbet.org/docs/vscode",
+        'Ignored start request, no active configuration. See https://sorbet.org/docs/vscode',
       );
       return;
     }
@@ -221,7 +221,7 @@ export class SorbetStatusProvider implements Disposable {
 
     this.disposables.push(
       newClient.onNotification(
-        "sorbet/showOperation",
+        'sorbet/showOperation',
         (params: ShowOperationParams) => {
           // Ignore event if this is not the current client (e.g. old client being shut down).
           if (this.activeLanguageClient === newClient) {

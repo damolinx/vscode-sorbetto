@@ -3,8 +3,8 @@ import {
   ProposedFeatures,
   InitializeParams,
   TextDocumentSyncKind,
-} from "vscode-languageserver/node";
-import { TestLanguageServerSpecialURIs } from "./testLanguageServerSpecialURIs";
+} from 'vscode-languageserver/node';
+import { TestLanguageServerSpecialURIs } from './testLanguageServerSpecialURIs';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -34,7 +34,7 @@ connection.onHover((e) => {
       process.exit(1);
       break; // Unreachable, but eslint doesn't know that.
     default:
-      throw new Error("Invalid request.");
+      throw new Error('Invalid request.');
   }
 });
 

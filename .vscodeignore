@@ -1,10 +1,8 @@
 .vscode/**
-.vscode-test/**
-out/**/*.map
-out/scripts/**
 out/test/**
-scripts/**
 src/**
+**/*.map
 .gitignore
+esbuild.mjs
+eslint.config.mjs
 tsconfig.json
-xvfb.out

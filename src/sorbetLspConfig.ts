@@ -1,4 +1,4 @@
-import { deepEqual, deepEqualEnv } from "./utils";
+import { deepEqual, deepEqualEnv } from './utils';
 
 /**
  * Sorbet LSP configuration (data-only).
@@ -23,7 +23,7 @@ export interface SorbetLspConfigData {
   /**
    * Command and arguments to execute, e.g. `["srb", "typecheck", "--lsp"]`.
    */
-  readonly command: ReadonlyArray<string>;
+  readonly command: readonly string[];
 }
 
 /**
@@ -49,7 +49,7 @@ export class SorbetLspConfig implements SorbetLspConfigData {
   /**
    * Command and arguments to execute, e.g. `["bundle", "exec", "srb", "typecheck", "--lsp"]`.
    */
-  public readonly command: ReadonlyArray<string>;
+  public readonly command: readonly string[];
 
   constructor(data: SorbetLspConfigData);
 
@@ -67,17 +67,17 @@ export class SorbetLspConfig implements SorbetLspConfigData {
     name: string,
     description: string,
     env: NodeJS.ProcessEnv,
-    command: ReadonlyArray<string>,
+    command: readonly string[],
   );
 
   constructor(
     idOrData: string | SorbetLspConfigData,
-    name: string = "",
-    description: string = "",
+    name = '',
+    description = '',
     env: NodeJS.ProcessEnv = {},
-    command: ReadonlyArray<string> = [],
+    command: readonly string[] = [],
   ) {
-    if (typeof idOrData === "string") {
+    if (typeof idOrData === 'string') {
       this.id = idOrData;
       this.name = name;
       this.description = description;
@@ -94,7 +94,7 @@ export class SorbetLspConfig implements SorbetLspConfigData {
 
   public toString(): string {
     return `${this.name}: ${this.description} [cmd: "${this.command.join(
-      " ",
+      ' ',
     )}"]`;
   }
 
@@ -102,8 +102,8 @@ export class SorbetLspConfig implements SorbetLspConfigData {
    * Deep equality.
    */
   public isEqualTo(other: any): boolean {
-    if (this === other) return true;
-    if (!(other instanceof SorbetLspConfig)) return false;
+    if (this === other) {return true;}
+    if (!(other instanceof SorbetLspConfig)) {return false;}
 
     return (
       this.id === other.id &&

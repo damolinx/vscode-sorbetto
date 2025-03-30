@@ -1,7 +1,4 @@
-.eslintcache
-package-lock.json
 out
-.vscode-test
-*.vsix
 node_modules
-yarn-error.log
+.vscode-test/
+*.vsix
