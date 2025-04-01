@@ -26,9 +26,9 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
 
     sinon.assert.calledOnce(showQuickPickSingleStub);
     assert.deepStrictEqual(showQuickPickSingleStub.firstCall.args[0], [
-      Action.ViewOutput,
-      Action.RestartSorbet,
       Action.ConfigureSorbet,
+      Action.RestartSorbet,
+      Action.ViewOutput,
     ]);
     assert.deepStrictEqual(showQuickPickSingleStub.firstCall.args[1], {
       placeHolder: 'Select an action',
