@@ -1,34 +1,50 @@
-import { Disposable, StatusBarAlignment, StatusBarItem, window } from 'vscode';
+import { Disposable, languages, LanguageStatusItem, LanguageStatusSeverity } from 'vscode';
 import { SHOW_ACTIONS_COMMAND_ID } from './commandIds';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { StatusChangedEvent } from './sorbetStatusProvider';
 import { RestartReason, ServerStatus } from './types';
-import { LspConfigType } from './configuration';
+import { SORBET_DOCUMENT_SELECTOR } from './languageClient';
 
 export class SorbetStatusBarEntry implements Disposable {
   private readonly context: SorbetExtensionContext;
   private readonly disposable: Disposable;
   private serverStatus: ServerStatus;
-  private readonly statusBarItem: StatusBarItem;
+  private readonly configItem: LanguageStatusItem;
+  private readonly statusItem: LanguageStatusItem;
 
   constructor(context: SorbetExtensionContext) {
     this.context = context;
     this.serverStatus = ServerStatus.DISABLED;
-    this.statusBarItem = window.createStatusBarItem(
-      StatusBarAlignment.Left,
-      10,
-    );
-    this.statusBarItem.command = SHOW_ACTIONS_COMMAND_ID;
+
+    this.configItem = languages.createLanguageStatusItem(
+      'ruby-sorbet-config',
+      SORBET_DOCUMENT_SELECTOR);
+    this.configItem.command = {
+      arguments: ['sorbetto.sorbetLspConfiguration'],
+      command: 'workbench.action.openSettings',
+      title: 'Open Settings',
+    };
+    this.configItem.text = 'Sorbet Configuration';
+
+    this.statusItem = languages.createLanguageStatusItem(
+      'ruby-sorbet-status',
+      SORBET_DOCUMENT_SELECTOR);
+    this.statusItem.command = {
+      command: SHOW_ACTIONS_COMMAND_ID,
+      title: 'Actions',
+      tooltip: 'Show available actions',
+    };
+    this.statusItem.text = 'Sorbet';
 
     this.disposable = Disposable.from(
       this.context.configuration.onDidChangeLspConfig(this.render, this),
       this.context.statusProvider.onStatusChanged(this.onServerStatusChanged, this),
       this.context.statusProvider.onShowOperation(this.render, this),
-      this.statusBarItem,
+      this.configItem,
+      this.statusItem,
     );
 
     this.render();
-    this.statusBarItem.show();
   }
 
   /**
@@ -44,6 +60,7 @@ export class SorbetStatusBarEntry implements Disposable {
     this.serverStatus = e.status;
     this.render();
     if (isError) {
+      this.statusItem.severity = LanguageStatusSeverity.Error;
       await this.context.statusProvider.restartSorbet(
         RestartReason.CRASH_EXT_ERROR,
       );
@@ -51,11 +68,12 @@ export class SorbetStatusBarEntry implements Disposable {
   }
 
   private render() {
+    const statusItem = this.statusItem;
     const { operations } = this.context.statusProvider;
     const { lspConfig } = this.context.configuration;
 
-    let text: string;
-    let tooltip: string;
+    this.configItem.detail = lspConfig?.type;
+
     // Errors should suppress operation animations / feedback.
     if (
       lspConfig &&
@@ -63,48 +81,47 @@ export class SorbetStatusBarEntry implements Disposable {
       operations.length > 0
     ) {
       const latestOp = operations[operations.length - 1];
-      text = `$(sync~spin) Sorbet: ${latestOp.description}`;
-      tooltip = 'The Sorbet server is currently running.';
+      setStatus({ busy: true, detail: latestOp.description });
     } else {
-      let serverError: string | undefined;
       switch (this.serverStatus) {
         case ServerStatus.DISABLED:
-          text = 'Sorbet: Disabled';
-          tooltip = 'The Sorbet server is disabled.';
+          setStatus({
+            severity: LanguageStatusSeverity.Warning,
+            status: 'Disabled',
+          });
           break;
         case ServerStatus.ERROR:
-          text = 'Sorbet: Error';
-          tooltip = 'Click for remediation items.';
-          serverError = this.context.statusProvider.serverError;
-          if (serverError) {
-            tooltip = `${serverError}\n${tooltip}`;
-          }
+          setStatus({
+            detail: this.context.statusProvider.serverError,
+            severity: LanguageStatusSeverity.Error,
+            status: 'Error',
+          });
           break;
         case ServerStatus.INITIALIZING:
-            text = '$(sync~spin) Sorbet: Initializing';
-          tooltip = 'The Sorbet server is initializing.';
+          setStatus({ busy: true, status: 'Initializing' });
           break;
         case ServerStatus.RESTARTING:
-          text = '$(sync~spin) Sorbet: Restarting';
-          tooltip = 'The Sorbet server is restarting.';
+          setStatus({ busy: true, status: 'Initializing', detail: 'Sorbet is being restarted' });
           break;
         case ServerStatus.RUNNING:
-          text = 'Sorbet: Idle';
-          tooltip = 'The Sorbet server is currently running.';
+          setStatus({ status: 'Idle' });
           break;
         default:
           this.context.log.error('Invalid ServerStatus', this.serverStatus);
-          text = '';
-          tooltip = '';
+          setStatus({
+            detail: `Unknown Status: ${this.serverStatus}`,
+            severity: LanguageStatusSeverity.Error,
+            status: 'Unknown',
+          });
           break;
       }
     }
 
-    if (tooltip && lspConfig?.type && lspConfig.type !== LspConfigType.Stable) {
-      tooltip += `\nConfiguration: ${lspConfig.type}`;
+    function setStatus(options: { busy?: boolean, detail?: string, severity?: LanguageStatusSeverity, status?: string }) {
+      statusItem.busy = options?.busy ?? false;
+      statusItem.detail = options?.detail;
+      statusItem.severity = options?.severity ?? LanguageStatusSeverity.Information;
+      statusItem.text = options?.status ? `Sorbet: ${options.status}` : 'Sorbet';
     }
-
-    this.statusBarItem.text = text;
-    this.statusBarItem.tooltip = tooltip;
   }
 }

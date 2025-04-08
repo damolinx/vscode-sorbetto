@@ -14,14 +14,11 @@ export const enum Action {
  */
 export async function showSorbetActions(): Promise<void> {
   const selectedAction = await window.showQuickPick(
-    [Action.ConfigureSorbet, Action.RestartSorbet, Action.ViewOutput], {
+    [Action.RestartSorbet, Action.ViewOutput], {
     placeHolder: 'Select an action',
   });
 
   switch (selectedAction) {
-    case Action.ConfigureSorbet:
-      await commands.executeCommand('workbench.action.openSettings', 'sorbetto.sorbetLspConfiguration');
-      break;
     case Action.RestartSorbet:
       await commands.executeCommand(SORBET_RESTART_COMMAND_ID, RestartReason.STATUS_BAR_BUTTON);
       break;

@@ -62,7 +62,8 @@ export async function activate(context: ExtensionContext) {
   // Register text editor commands
   const rtc = commands.registerTextEditorCommand;
   context.subscriptions.push(
-    rtc(cmdIds.COPY_SYMBOL_COMMAND_ID, (textEditor) => copySymbolToClipboard(extensionContext, textEditor)),
+    rtc(cmdIds.COPY_SYMBOL_COMMAND_ID, (textEditor) =>
+      copySymbolToClipboard(extensionContext, textEditor)),
   );
 
   // If enabled, verify Sorbet dependencies before running.

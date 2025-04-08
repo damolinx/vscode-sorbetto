@@ -1,8 +1,14 @@
-import { ErrorHandler, RevealOutputChannelOn } from 'vscode-languageclient';
+import { DocumentFilter, ErrorHandler, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { HighlightType } from './configuration';
 import { Log } from './log';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
+
+export const SORBET_DOCUMENT_SELECTOR: DocumentFilter[] = [
+  { language: 'ruby', scheme: 'file' },
+  // Support queries on generated files with sorbet:// URIs that do not exist editor-side.
+  { language: 'ruby', scheme: 'sorbet' },
+];
 
 /**
  * Create Language Client for Sorber Server.
@@ -28,11 +34,7 @@ export function createClient(
   );
 
   const client = new CustomLanguageClient('ruby', 'Sorbet', serverOptions, {
-    documentSelector: [
-      { language: 'ruby', scheme: 'file' },
-      // Support queries on generated files with sorbet:// URIs that do not exist editor-side.
-      { language: 'ruby', scheme: 'sorbet' },
-    ],
+    documentSelector: SORBET_DOCUMENT_SELECTOR,
     errorHandler,
     initializationOptions,
     initializationFailedHandler: (error) => {
