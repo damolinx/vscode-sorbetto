@@ -160,6 +160,7 @@
     },
     "configurationDefaults": {
       "[ruby]": {
+        "editor.defaultFormatter": "damolinx.damolinx-sorbetto",
         "editor.formatOnSave": true
       }
     },
