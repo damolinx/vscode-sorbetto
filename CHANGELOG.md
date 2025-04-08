@@ -1,5 +1,8 @@
 # Version history
 
+## 0.1.1
+- Removed unnecessary files fom .vsix.
+
 ## 0.1.0
 - Verification features:
   - Verify required `srb`, `bundle` during extension startup (can be disabled via config).
