@@ -2,13 +2,13 @@ import { commands, ExtensionContext, Uri, workspace } from 'vscode';
 import * as cmdIds from './commandIds';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { showSorbetActions } from './commands/showSorbetActions';
+import { verifyEnvironment } from './commands/verifyEnvironment';
+import { verifyWorkspace } from './commands/verifyWorkspace';
 import { SorbetContentProvider, SORBET_SCHEME } from './sorbetContentProvider';
 import { SorbetExtensionApiImpl } from './sorbetExtensionApi';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
-import { SorbetStatusBarEntry } from './sorbetStatusBarEntry';
+import { SorbetLanguageStatusItem } from './sorbetLanguageStatusItem';
 import { ServerStatus, RestartReason } from './types';
-import { verifyEnvironment } from './commands/verifyEnvironment';
-import { verifyWorkspace } from './commands/verifyWorkspace';
 
 /**
  * Extension entrypoint.
@@ -35,7 +35,7 @@ export async function activate(context: ExtensionContext) {
       extensionContext.statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE))
   );
 
-  const statusBarEntry = new SorbetStatusBarEntry(extensionContext);
+  const statusBarEntry = new SorbetLanguageStatusItem(extensionContext);
   context.subscriptions.push(statusBarEntry);
 
   // Register providers

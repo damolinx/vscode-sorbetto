@@ -1,11 +1,12 @@
 import { Disposable, languages, LanguageStatusItem, LanguageStatusSeverity } from 'vscode';
 import { SHOW_ACTIONS_COMMAND_ID } from './commandIds';
+import { SORBET_DOCUMENT_SELECTOR } from './languageClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { StatusChangedEvent } from './sorbetStatusProvider';
 import { RestartReason, ServerStatus } from './types';
-import { SORBET_DOCUMENT_SELECTOR } from './languageClient';
+import { LspConfigType } from './configuration';
 
-export class SorbetStatusBarEntry implements Disposable {
+export class SorbetLanguageStatusItem implements Disposable {
   private readonly context: SorbetExtensionContext;
   private readonly disposable: Disposable;
   private serverStatus: ServerStatus;
@@ -20,7 +21,7 @@ export class SorbetStatusBarEntry implements Disposable {
       'ruby-sorbet-config',
       SORBET_DOCUMENT_SELECTOR);
     this.configItem.command = {
-      arguments: ['sorbetto.sorbetLspConfiguration'],
+      arguments: ['sorbetto.sorbetLsp'],
       command: 'workbench.action.openSettings',
       title: 'Open Settings',
     };
@@ -69,10 +70,10 @@ export class SorbetStatusBarEntry implements Disposable {
 
   private render() {
     const statusItem = this.statusItem;
+    const configItem = this.configItem;
     const { operations } = this.context.statusProvider;
     const { lspConfig } = this.context.configuration;
-
-    this.configItem.detail = lspConfig?.type;
+    setConfig(lspConfig?.type);
 
     // Errors should suppress operation animations / feedback.
     if (
@@ -117,11 +118,22 @@ export class SorbetStatusBarEntry implements Disposable {
       }
     }
 
+    function setConfig(configType?: LspConfigType) {
+      if (configType) {
+        configItem.text = configType.charAt(0).toUpperCase() + configType.slice(1);
+        configItem.detail = 'Sorbet Configuration';
+
+      } else {
+        configItem.text = 'Sorbet';
+        configItem.detail = 'No Sorbet Configuration';
+      }
+    }
+
     function setStatus(options: { busy?: boolean, detail?: string, severity?: LanguageStatusSeverity, status?: string }) {
       statusItem.busy = options?.busy ?? false;
-      statusItem.detail = options?.detail;
+      statusItem.detail = options?.detail ?? (options?.status && 'Sorbet Status');
       statusItem.severity = options?.severity ?? LanguageStatusSeverity.Information;
-      statusItem.text = options?.status ? `Sorbet: ${options.status}` : 'Sorbet';
+      statusItem.text = options?.status ?? 'Unknown';
     }
   }
 }
