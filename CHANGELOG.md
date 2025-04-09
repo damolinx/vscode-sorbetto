@@ -1,5 +1,8 @@
 # Version history
 
+## 0.1.4
+- Handle `ENOENT` for a configuration command as a non-recoverable `Error`.
+
 ## 0.1.3
 - Update settings open when configuring activation verification.
 - Update status message when performing an operation.

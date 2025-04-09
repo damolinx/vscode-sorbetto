@@ -1,15 +1,16 @@
 import { Disposable, languages, LanguageStatusItem, LanguageStatusSeverity } from 'vscode';
 import { SHOW_ACTIONS_COMMAND_ID } from './commandIds';
+import { LspConfigType } from './configuration';
 import { SORBET_DOCUMENT_SELECTOR } from './languageClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { StatusChangedEvent } from './sorbetStatusProvider';
-import { RestartReason, ServerStatus } from './types';
-import { LspConfigType } from './configuration';
+import { ServerStatus } from './types';
 
-export class SorbetLanguageStatusItem implements Disposable {
+export class SorbetLanguageStatus implements Disposable {
   private readonly context: SorbetExtensionContext;
-  private readonly disposable: Disposable;
+  private readonly disposables: Disposable[];
   private serverStatus: ServerStatus;
+
   private readonly configItem: LanguageStatusItem;
   private readonly statusItem: LanguageStatusItem;
 
@@ -37,52 +38,36 @@ export class SorbetLanguageStatusItem implements Disposable {
     };
     this.statusItem.text = 'Sorbet';
 
-    this.disposable = Disposable.from(
+    this.disposables = [
       this.context.configuration.onDidChangeLspConfig(this.render, this),
-      this.context.statusProvider.onStatusChanged(this.onServerStatusChanged, this),
       this.context.statusProvider.onShowOperation(this.render, this),
+      this.context.statusProvider.onStatusChanged(this.onServerStatusChanged, this),
       this.configItem,
       this.statusItem,
-    );
-
-    this.render();
+    ];
   }
 
-  /**
-   * Dispose and free associated resources.
-   */
   public dispose() {
-    this.disposable.dispose();
+    Disposable.from(...this.disposables).dispose();
   }
 
   private async onServerStatusChanged(e: StatusChangedEvent): Promise<void> {
-    const isError =
-      this.serverStatus !== e.status && e.status === ServerStatus.ERROR;
     this.serverStatus = e.status;
     this.render();
-    if (isError) {
-      this.statusItem.severity = LanguageStatusSeverity.Error;
-      await this.context.statusProvider.restartSorbet(
-        RestartReason.CRASH_EXT_ERROR,
-      );
-    }
   }
 
   private render() {
     const statusItem = this.statusItem;
     const configItem = this.configItem;
-    const { operations } = this.context.statusProvider;
     const { lspConfig } = this.context.configuration;
+    const { operations } = this.context.statusProvider;
     setConfig(lspConfig?.type);
 
-    // Errors should suppress operation animations / feedback.
-    if (
-      lspConfig &&
-      this.serverStatus !== ServerStatus.ERROR &&
-      operations.length > 0
-    ) {
-      const latestOp = operations[operations.length - 1];
-      setStatus({ busy: true, status: latestOp.description });
+    if (this.serverStatus !== ServerStatus.ERROR && operations.length > 0) {
+      setStatus({
+        busy: true,
+        status: operations.at(-1)?.description
+      });
     } else {
       switch (this.serverStatus) {
         case ServerStatus.DISABLED:
@@ -99,10 +84,17 @@ export class SorbetLanguageStatusItem implements Disposable {
           });
           break;
         case ServerStatus.INITIALIZING:
-          setStatus({ busy: true, status: 'Initializing' });
+          setStatus({
+            busy: true,
+            status: 'Initializing'
+          });
           break;
         case ServerStatus.RESTARTING:
-          setStatus({ busy: true, status: 'Initializing', detail: 'Sorbet is being restarted' });
+          setStatus({
+            busy: true,
+            detail: 'Sorbet is being restarted',
+            status: 'Initializing',
+          });
           break;
         case ServerStatus.RUNNING:
           setStatus({ status: 'Idle' });

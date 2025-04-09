@@ -7,7 +7,7 @@ import { verifyWorkspace } from './commands/verifyWorkspace';
 import { SorbetContentProvider, SORBET_SCHEME } from './sorbetContentProvider';
 import { SorbetExtensionApiImpl } from './sorbetExtensionApi';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
-import { SorbetLanguageStatusItem } from './sorbetLanguageStatusItem';
+import { SorbetLanguageStatus } from './sorbetLanguageStatus';
 import { ServerStatus, RestartReason } from './types';
 
 /**
@@ -35,7 +35,7 @@ export async function activate(context: ExtensionContext) {
       extensionContext.statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE))
   );
 
-  const statusBarEntry = new SorbetLanguageStatusItem(extensionContext);
+  const statusBarEntry = new SorbetLanguageStatus(extensionContext);
   context.subscriptions.push(statusBarEntry);
 
   // Register providers

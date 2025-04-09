@@ -43,16 +43,21 @@ export type SorbetServerCapabilities = ServerCapabilities & {
   sorbetShowSymbolProvider: boolean;
 };
 
+interface ErrorInfo {
+  msg: string;
+  code: string;
+}
+
 export class SorbetLanguageClient implements Disposable, ErrorHandler {
   private readonly context: SorbetExtensionContext;
   private readonly languageClient: LanguageClient;
   private readonly onStatusChangeEmitter: EventEmitter<ServerStatus>;
   private readonly restart: (reason: RestartReason) => void;
-  private sorbetProcess?: ChildProcess;
   // Sometimes this is an errno, not a process exit code. This happens when set
   // via the `.on("error")` handler, instead of the `.on("exit")` handler.
-  private sorbetProcessExitCode?: number;
-  private wrappedLastError?: string;
+  private sorbetExitCode?: number;
+  private sorbetProcess?: ChildProcess;
+  private wrappedLastError?: ErrorInfo;
   private wrappedStatus: ServerStatus;
 
   constructor(
@@ -65,15 +70,11 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
       this.context.metrics,
     );
 
-    this.onStatusChangeEmitter = new EventEmitter<ServerStatus>();
+    this.onStatusChangeEmitter = new EventEmitter();
     this.restart = restart;
     this.wrappedStatus = ServerStatus.INITIALIZING;
   }
 
-  /**
-   * Implements the disposable interface so this object can be added to the context's subscriptions
-   * to keep it alive. Stops the language server and Sorbet processes, and removes UI items.
-   */
   public dispose() {
     this.onStatusChangeEmitter.dispose();
 
@@ -118,7 +119,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   /**
    * Last error message when {@link status} is {@link ServerStatus.ERROR}.
    */
-  public get lastError(): string | undefined {
+  public get lastError(): ErrorInfo | undefined {
     return this.wrappedLastError;
   }
 
@@ -221,31 +222,23 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
       cwd: workspace.rootPath,
       env: { ...process.env, ...activeConfig?.env },
     });
-    // N.B.: 'exit' is sometimes not invoked if the process exits with an error/fails to start, as per the Node.js docs.
-    // So, we need to handle both events. ¯\_(ツ)_/¯
     this.sorbetProcess.on(
       'exit',
       (code: number | null, _signal: string | null) => {
-        this.sorbetProcessExitCode = code ?? undefined;
+        this.sorbetExitCode = code ?? undefined;
       },
-    );
-    this.sorbetProcess.on('error', (err?: NodeJS.ErrnoException) => {
-      if (
-        err &&
-        this.status === ServerStatus.INITIALIZING &&
-        err.code === 'ENOENT'
-      ) {
+    ).on('error', (err?: NodeJS.ErrnoException) => {
+      this.sorbetExitCode = err?.errno;
+      this.sorbetProcess = undefined;
+      if (err?.code === 'ENOENT' && this.status === ServerStatus.INITIALIZING) {
         this.context.metrics.increment('error.enoent', 1);
-        // We failed to start the process. The path to Sorbet is likely incorrect.
-        this.wrappedLastError = `Could not start Sorbet with command: '${command} ${args.join(
-          ' ',
-        )}'. Encountered error '${
-          err.message
-        }'. Is the path to Sorbet correct?`;
+        this.wrappedLastError =
+        {
+          code: err.code,
+          msg: `Failed to start: ${command} ${args.join(' ')}. Error: ${err.message}`
+        };
         this.status = ServerStatus.ERROR;
       }
-      this.sorbetProcess = undefined;
-      this.sorbetProcessExitCode = err?.errno;
     });
     return Promise.resolve(this.sorbetProcess);
   }
@@ -265,7 +258,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   public closed(): CloseHandlerResult {
     if (this.status !== ServerStatus.ERROR) {
       let reason: RestartReason;
-      if (this.sorbetProcessExitCode === 11) {
+      if (this.sorbetExitCode === 11) {
         // 11 number chosen somewhat arbitrarily. Most important is that this doesn't
         // clobber the exit code of Sorbet itself (which means Sorbet cannot return 11).
         //
@@ -273,14 +266,14 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
         // wrapper scripts that people use with Sorbet. If this number has to
         // change for some reason, we should announce that.
         reason = RestartReason.WRAPPER_REFUSED_SPAWN;
-      } else if (this.sorbetProcessExitCode === 143) {
+      } else if (this.sorbetExitCode === 143) {
         // 143 = 128 + 15 and 15 is TERM signal
         reason = RestartReason.FORCIBLY_TERMINATED;
       } else {
         reason = RestartReason.CRASH_LC_CLOSED;
         this.context.log.error(
           'The Sorbet LSP process crashed exit_code',
-          this.sorbetProcessExitCode,
+          this.sorbetExitCode,
         );
         this.context.log.error(
           'The Node.js backtrace above is not useful.',
