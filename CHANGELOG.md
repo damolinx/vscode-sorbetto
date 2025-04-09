@@ -1,5 +1,9 @@
 # Version history
 
+## 0.1.3
+- Update settings open when configuring activation verification.
+- Update status message when performing an operation.
+
 ## 0.1.2
 - Provide snippets for several common Sorbet constructs.
 

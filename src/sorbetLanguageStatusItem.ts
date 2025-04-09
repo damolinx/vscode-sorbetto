@@ -82,7 +82,7 @@ export class SorbetLanguageStatusItem implements Disposable {
       operations.length > 0
     ) {
       const latestOp = operations[operations.length - 1];
-      setStatus({ busy: true, detail: latestOp.description });
+      setStatus({ busy: true, status: latestOp.description });
     } else {
       switch (this.serverStatus) {
         case ServerStatus.DISABLED:

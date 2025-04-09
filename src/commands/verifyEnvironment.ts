@@ -31,7 +31,7 @@ export async function verifyEnvironment() {
     if (option === START_OPTION) {
       result = true;
     } else if (option === CONFIGURE_OPTION) {
-      commands.executeCommand('workbench.action.openSettings', 'sorbetto.sorbetLspConfiguration');
+      commands.executeCommand('workbench.action.openSettings', 'sorbetto.verifyDependencies');
     } else if (option === DOC_OPTION) {
       env.openExternal(Uri.parse('https://sorbet.org/docs/adopting'));
     }
