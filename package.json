@@ -173,7 +173,13 @@
           "group": "9_cutcopypaste"
         }
       ]
-    }
+    },
+    "snippets": [
+      {
+        "language": "ruby",
+        "path": "resources/snippets.code-snippets"
+      }
+    ]
   },
   "scripts": {
     "compile": "npm run compile:check-types && node esbuild.mjs",
