@@ -1,5 +1,5 @@
-import { TextDocumentContentProvider, Uri } from 'vscode';
-import { CancellationToken, TextDocumentItem } from 'vscode-languageclient';
+import { CancellationToken, TextDocumentContentProvider, Uri } from 'vscode';
+import { TextDocumentItem } from 'vscode-languageclient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 
 /**
@@ -22,22 +22,23 @@ export class SorbetContentProvider implements TextDocumentContentProvider {
    */
   public async provideTextDocumentContent(
     uri: Uri,
-    _token?: CancellationToken,
+    token?: CancellationToken,
   ): Promise<string> {
     let content: string;
     const { activeLanguageClient: client } = this.context.statusProvider;
     if (client) {
-      this.context.log.info('Retrieving file contents', uri);
+      this.context.log.info('ContentProvider: Retrieving file contents', uri);
       const response = await client.sendRequest<TextDocumentItem>(
         'sorbet/readFile',
         {
           uri: uri.toString(),
         },
+        token
       );
-      content = response.text;
+      content = response?.text ?? '';
     } else {
-      this.context.log.info(
-        'Cannot retrieve file contents, no active Sorbet client',
+      this.context.log.warn(
+        'ContentProvider: No active Sorbet client',
         uri,
       );
       content = '';

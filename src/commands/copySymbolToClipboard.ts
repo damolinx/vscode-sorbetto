@@ -22,8 +22,8 @@ export async function copySymbolToClipboard(
   }
 
   const { activeLanguageClient: client } = context.statusProvider;
-  if (!client) {
-    context.log.warn('CopySymbol: No active Sorbet LSP.');
+  if (client?.status !== ServerStatus.RUNNING) {
+    context.log.warn('CopySymbol: No active Sorbet client.');
     return;
   }
 
@@ -34,12 +34,7 @@ export async function copySymbolToClipboard(
     return;
   }
 
-  if (client.status !== ServerStatus.RUNNING) {
-    context.log.warn('CopySymbol: Sorbet LSP is not ready.');
-    return;
-  }
-
-  const position = editor.selection.active;
+  const { active: position } = editor.selection;
   const params: TextDocumentPositionParams = {
     textDocument: {
       uri: editor.document.uri.toString(),
@@ -47,41 +42,32 @@ export async function copySymbolToClipboard(
     position,
   };
 
-  let response: SymbolInformation | undefined;
-  if (context.statusProvider.operations.length) {
-    response = await window.withProgress(
-      {
-        cancellable: true,
-        location: ProgressLocation.Notification,
-      },
-      async (progress, token) => {
-        progress.report({ message: 'Querying Sorbet …' });
-        const r = await client.sendRequest<SymbolInformation>(
-          'sorbet/showSymbol',
-          params,
-        );
+  let canceled = false;
+  const symbolInfo = await window.withProgress(
+    {
+      cancellable: true,
+      location: ProgressLocation.Notification,
+    },
+    async (progress, token) => {
+      progress.report({ message: 'Querying Sorbet …' });
+      const r = await client.sendRequest<SymbolInformation>(
+        'sorbet/showSymbol',
+        params,
+        token,
+      );
 
-        if (token.isCancellationRequested) {
-          context.log.debug(
-            `CopySymbol: Ignored canceled operation result. Symbol:${r.name}`,
-          );
-          return undefined;
-        } else {
-          return r;
-        }
-      },
-    );
+      canceled = token.isCancellationRequested;
+      return r || undefined;
+    },
+  );
+
+  if (symbolInfo) {
+    await env.clipboard.writeText(symbolInfo.name);
+    context.log.debug('CopySymbol: Copied symbol name', symbolInfo.name);
+  } else if (!canceled) {
+    window.showWarningMessage('No symbol information found current location');
+    context.log.debug('CopySymbol: No symbol name');
   } else {
-    response = await client.sendRequest<SymbolInformation>(
-      'sorbet/showSymbol',
-      params,
-    );
-  }
-
-  if (response) {
-    await env.clipboard.writeText(response.name);
-    context.log.debug(
-      `CopySymbol: Copied symbol name. Symbol:${response.name}`,
-    );
+    context.log.debug('CopySymbol: Canceled operation');
   }
 }

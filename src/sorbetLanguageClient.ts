@@ -1,4 +1,4 @@
-import { Disposable, Event, EventEmitter, workspace } from 'vscode';
+import { CancellationToken, Disposable, Event, EventEmitter, workspace } from 'vscode';
 import {
   CloseAction,
   CloseHandlerResult,
@@ -165,8 +165,9 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   public sendRequest<TResponse>(
     method: string,
     param: any,
-  ): Promise<TResponse> {
-    return this.languageClient.sendRequest<TResponse>(method, param);
+    token?: CancellationToken,
+  ): Promise<TResponse | null | undefined> {
+    return this.languageClient.sendRequest<TResponse>(method, param, token);
   }
 
   /**
