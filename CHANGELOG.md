@@ -1,5 +1,8 @@
 # Version history
 
+## 0.1.5
+- Update snippets.
+
 ## 0.1.4
 - Handle `ENOENT` for a configuration command as a non-recoverable `Error`.
 
@@ -12,7 +15,7 @@
 
 ## 0.1.1
 - Move `Sorbet` status bar item to be part of the `Ruby` language item for more standard behavior. 
-- Removed unnecessary files fom .vsix.
+- Remove unnecessary files fom .vsix.
 
 ## 0.1.0
 - Verification features:

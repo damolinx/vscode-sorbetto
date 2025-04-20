@@ -1,8 +1,8 @@
 {
   "Abstract": {
-    "description": "Create a Sorbet abstract class or module",
+    "description": "Sorbet abstract class or module",
     "isFileTemplate": true,
-    "prefix": ["abstract"],
+    "prefix": ["abstract_class_or_module"], 
     "body": [
       "${1|class,module|} ${2:AbstractName}",
       "  extend T::Sig",
@@ -11,63 +11,50 @@
       "  abstract!",
       "",
       "  sig { abstract.void }",
-      "  def ${3:method_name}; end",
+      "  def ${3:method_name}",
+      "    $0",
+      "  end",
       "",
       "end"
     ]
   },
   "Abstract Method": {
-    "description": "Create an abstract method",
+    "description": "Sorbet abstract method",
     "prefix": ["abstract_method"],
     "body": [
       "sig { abstract.void }",
-      "def ${1:method_name}; end",
+      "def ${1:method_name}",
+      "  $0",
+      "end",
     ]
   },
   "Enum": {
-    "description": "Create a Sorbet enum",
+    "description": "Sorbet enum",
     "isFileTemplate": true,
     "prefix": ["enum"],
     "body": [
       "class ${1:EnumName} < T::Enum",
       "  enums do",
-      "    ${2:Value} = new${3:('VALUE')}",
+      "    ${2:Value1} = new",
+      "    $0",
       "  end",
-      "end"
-    ]
-  },
-  "Final": {
-    "description": "Create a Sorbet final class or module",
-    "isFileTemplate": true,
-    "prefix": ["final"],
-    "body": [
-      "${1|class,module|} ${2:FinalName}",
-      "  extend T::Sig",
-      "  extend T::Helpers",
-      "",
-      "  final!",
-      "",
-      "  sig (:final) { void }",
-      "  def ${3:method_name}",
-      "  end",
-      "",
       "end"
     ]
   },
   "Final Method": {
-    "description": "Create a final method",
+    "description": "Sorbet final method",
     "prefix": ["final_method"],
     "body": [
       "sig (:final) { void }",
       "def ${1:method_name}",
-      "  ${2}",
+      "  $0",
       "end",
     ]
   },
   "Generic": {
-    "description": "Create a Sorbet generic class or module",
+    "description": "Sorbet generic class or module",
     "isFileTemplate": true,
-    "prefix": ["generic"],
+    "prefix": ["generic_class_or_module"],
     "body": [
       "${1|class,module|} ${2:GenericName}",
       "  extend T::Sig",
@@ -75,19 +62,20 @@
       "",
       "  ${3:Elem} = type_member",
       "",
-      " sig { params(${4:elem}: T.type_parameter(:$3)).void }",
-      " def initialize($4)",
-      "   @$4 = $4",
-      " end",
+      "  sig { params(${4:elem}: T.type_parameter(:$3)).void }",
+      "  def initialize($4)",
+      "    @$4 = $4",
+      "    $0",
+      "  end",
       "",
-      " sig { returns($3) }",
-      " def $4 = @$4",
+      "  sig { returns($3) }",
+      "  def $4 = @$4",
       "",
       "end"
     ]
   },
   "Generic Method": {
-    "description": "Create a generic method",
+    "description": "Sorbet generic method",
     "prefix": ["generic_method"],
     "body": [
       "sig do",
@@ -96,14 +84,14 @@
       "  .void",
       "end",
       "def ${1:method_name}($3)",
-      "  ${4}",
+      "  $0",
       "end",
     ]
   },
   "Interface": {
-    "description": "Create a Sorbet interface",
+    "description": "Sorbet interface",
     "isFileTemplate": true,
-    "prefix": ["interface"],
+    "prefix": ["interface_module"],
     "body": [
       "module ${1:InterfaceName}",
       "  extend T::Sig",
@@ -112,38 +100,42 @@
       "  interface!",
       "",
       "  sig { abstract.void }",
-      "  def ${2:method_name}; end",
+      "  def ${2:method_name}",
+      "    $0",
+      "  end",
       "",
       "end"
     ]
   },
   "Overridable Method": {
-    "description": "Create an overridable method",
+    "description": "Sorbet overridable method",
     "prefix": ["overridable_method"],
     "body": [
       "sig { overridable.void }",
       "def ${1:method_name}",
-      "  ${2}",
+      "  $0",
       "end",
     ]
   },
   "Override Method": {
-    "description": "Create an override method",
+    "description": "Override method",
     "prefix": ["override_method"],
     "body": [
       "sig { override.void }",
       "def ${1:method_name}",
-      "  ${2:super}",
+      "  super",
+      "  $0",
       "end",
     ]
   },
   "Struct": {
-    "description": "Create a Sorbet struct",
+    "description": "Sorbet struct",
     "isFileTemplate": true,
-    "prefix": ["struct"],
+    "prefix": ["struct_class"],
     "body": [
       "class ${1:StructName} < T::Struct",
-      "  ${2|prop,const|} :${3:prop_name}, ${4:type}",
+      "  ${2|prop,const|} :${3:name}, String",
+      "  $0",
       "end"
     ]
   },
