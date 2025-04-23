@@ -60,7 +60,7 @@ export class SorbetExtensionApiImpl implements Disposable {
     ];
   }
 
-  dispose() {
+  public dispose() {
     Disposable.from(...this.disposables).dispose();
   }
 

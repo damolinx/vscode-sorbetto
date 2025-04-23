@@ -51,7 +51,7 @@ export class Configuration implements Disposable {
     this.disposables = [
       this.onLspConfigChangeEmitter,
       {
-        dispose: () => this.restartFileWatchers.forEach((disposable) => disposable.dispose()),
+        dispose: () => Disposable.from(...this.restartFileWatchers).dispose(),
       },
       workspace.onDidChangeConfiguration((event) => {
         if (event.affectsConfiguration('sorbetto.sorbetLspConfiguration') || event.affectsConfiguration('sorbetto.additionalSorbetLspConfigurationArguments')) {
@@ -62,7 +62,7 @@ export class Configuration implements Disposable {
         } else if (event.affectsConfiguration('sorbetto.highlightUntyped')) {
           this.onLspOptionsChangeEmitter.fire({ name: 'highlightUntyped' });
         } else if (event.affectsConfiguration('sorbetto.restartFilePatterns')) {
-          this.restartFileWatchers.forEach((disposable) => disposable.dispose());
+          Disposable.from(...this.restartFileWatchers).dispose();
           this.restartFileWatchers = this.createFileWatchers();
           this.onLspOptionsChangeEmitter.fire({ name: 'restartFilePatterns' });
         } else if (event.affectsConfiguration('sorbetto.revealOutputOnError')) {
@@ -74,8 +74,8 @@ export class Configuration implements Disposable {
     ];
   }
 
-  dispose() {
-    this.disposables.forEach((disposable) => disposable.dispose());
+  public dispose() {
+    Disposable.from(...this.disposables).dispose();
   }
 
   private getLspConfigFromSettings(defaultValue = LspConfigType.Stable): LspConfig | undefined {

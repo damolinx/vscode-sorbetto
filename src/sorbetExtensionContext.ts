@@ -15,7 +15,7 @@ export class SorbetExtensionContext implements Disposable {
   constructor(context: ExtensionContext) {
     this.configuration = new Configuration();
     this.extensionContext = context;
-    this.logOutputChannel = window.createOutputChannel('Sorbetto', {log: true});
+    this.logOutputChannel = window.createOutputChannel('Sorbetto', { log: true });
     this.metrics = new NoOpMetricsClient();
     this.statusProvider = new SorbetStatusProvider(this);
 
@@ -26,11 +26,8 @@ export class SorbetExtensionContext implements Disposable {
     ];
   }
 
-  /**
-   * Dispose and free associated resources.
-   */
   public dispose() {
-    this.disposables.forEach((disposable) => disposable.dispose());
+    Disposable.from(...this.disposables).dispose();
   }
 
   /**
