@@ -5,7 +5,7 @@ const GEMFILE_HEADER: readonly string[] = ['source \'https://rubygems.org\'', ''
 const GEMFILE_DEPS: Readonly<Record<string, string>> = {
   'sorbet': 'gem \'sorbet\', :group => :development',
   'sorbet-runtime': 'gem \'sorbet-runtime\'',
-  'tapioca': 'gem \'tapioca\', require: false, :group => :development'
+  'tapioca': 'gem \'tapioca\', require: false, :group => :development',
 };
 
 export async function verifyWorkspace(pathOrUri?: string | Uri) {
@@ -19,7 +19,7 @@ export async function verifyWorkspace(pathOrUri?: string | Uri) {
   const edit = new WorkspaceEdit();
   const changes = await Promise.all([
     verifyGemfile(uri, edit),
-    verifySorbetConfig(uri, edit)
+    verifySorbetConfig(uri, edit),
   ]);
 
   if (changes.some((changed) => changed)) {

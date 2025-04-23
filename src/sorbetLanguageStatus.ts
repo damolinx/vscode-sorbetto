@@ -66,7 +66,7 @@ export class SorbetLanguageStatus implements Disposable {
     if (this.serverStatus !== ServerStatus.ERROR && operations.length > 0) {
       setStatus({
         busy: true,
-        status: operations.at(-1)?.description
+        status: operations.at(-1)?.description,
       });
     } else {
       switch (this.serverStatus) {
@@ -86,7 +86,7 @@ export class SorbetLanguageStatus implements Disposable {
         case ServerStatus.INITIALIZING:
           setStatus({
             busy: true,
-            status: 'Initializing'
+            status: 'Initializing',
           });
           break;
         case ServerStatus.RESTARTING:

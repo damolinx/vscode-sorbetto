@@ -33,7 +33,7 @@ export class SorbetContentProvider implements TextDocumentContentProvider {
         {
           uri: uri.toString(),
         },
-        token
+        token,
       );
       content = response?.text ?? '';
     } else {

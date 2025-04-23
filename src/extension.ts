@@ -32,7 +32,7 @@ export async function activate(context: ExtensionContext) {
       },
     ),
     extensionContext.configuration.onDidChangeLspOptions(() =>
-      extensionContext.statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE))
+      extensionContext.statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE)),
   );
 
   const statusBarEntry = new SorbetLanguageStatus(extensionContext);

@@ -34,7 +34,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     } as SorbetStatusProvider;
     const context = {
       log: createLogStub(),
-      statusProvider
+      statusProvider,
     } as SorbetExtensionContext;
 
     const provider = new SorbetContentProvider(context);
@@ -54,7 +54,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     const statusProvider = {} as SorbetStatusProvider;
     const context = {
       log: createLogStub(),
-      statusProvider
+      statusProvider,
     } as SorbetExtensionContext;
     const provider = new SorbetContentProvider(context);
     assert.strictEqual(await provider.provideTextDocumentContent(fileUri), '');

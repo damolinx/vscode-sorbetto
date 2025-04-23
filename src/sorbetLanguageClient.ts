@@ -236,7 +236,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
         this.wrappedLastError =
         {
           code: err.code,
-          msg: `Failed to start: ${command} ${args.join(' ')}. Error: ${err.message}`
+          msg: `Failed to start: ${command} ${args.join(' ')}. Error: ${err.message}`,
         };
         this.status = ServerStatus.ERROR;
       }

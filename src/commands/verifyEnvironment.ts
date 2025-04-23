@@ -24,7 +24,7 @@ export async function verifyEnvironment() {
       `Following dependencies are missing: ${missingCommands.join(', ')}. Sorbet will not be started automatically.`,
       START_OPTION,
       CONFIGURE_OPTION,
-      DOC_OPTION
+      DOC_OPTION,
     );
 
     // Don't await
@@ -43,7 +43,7 @@ export async function verifyEnvironment() {
 
   async function check(whereOrWhich: string, command: string): Promise<boolean> {
     return new Promise((resolve, _reject) =>
-      exec(`${whereOrWhich} ${command}`, (error) => resolve(error ? false : true))
+      exec(`${whereOrWhich} ${command}`, (error) => resolve(error ? false : true)),
     );
   }
 }

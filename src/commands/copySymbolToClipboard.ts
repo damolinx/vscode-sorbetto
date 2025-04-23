@@ -12,7 +12,7 @@ import { ServerStatus } from '../types';
  */
 export async function copySymbolToClipboard(
   context: SorbetExtensionContext,
-  editor: TextEditor
+  editor: TextEditor,
 ): Promise<void> {
   if (!editor.selection.isEmpty) {
     context.log.debug(

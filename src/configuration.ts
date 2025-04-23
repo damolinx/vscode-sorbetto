@@ -51,7 +51,7 @@ export class Configuration implements Disposable {
     this.disposables = [
       this.onLspConfigChangeEmitter,
       {
-        dispose: () => this.restartFileWatchers.forEach((disposable) => disposable.dispose())
+        dispose: () => this.restartFileWatchers.forEach((disposable) => disposable.dispose()),
       },
       workspace.onDidChangeConfiguration((event) => {
         if (event.affectsConfiguration('sorbetto.sorbetLspConfiguration') || event.affectsConfiguration('sorbetto.additionalSorbetLspConfigurationArguments')) {
@@ -70,7 +70,7 @@ export class Configuration implements Disposable {
         } else if (event.affectsConfiguration('sorbetto.typedFalseCompletionNudges')) {
           this.onLspOptionsChangeEmitter.fire({ name: 'typedFalseCompletionNudges' });
         }
-      })
+      }),
     ];
   }
 
