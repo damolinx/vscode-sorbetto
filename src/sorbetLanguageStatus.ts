@@ -51,7 +51,7 @@ export class SorbetLanguageStatus implements Disposable {
     Disposable.from(...this.disposables).dispose();
   }
 
-  private async onServerStatusChanged(e: StatusChangedEvent): Promise<void> {
+  private onServerStatusChanged(e: StatusChangedEvent): void {
     this.serverStatus = e.status;
     this.render();
   }
@@ -92,7 +92,7 @@ export class SorbetLanguageStatus implements Disposable {
         case ServerStatus.RESTARTING:
           setStatus({
             busy: true,
-            detail: 'Sorbet is being restarted',
+            detail: 'Sorbet is restarting',
             status: 'Initializing',
           });
           break;
