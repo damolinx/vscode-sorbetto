@@ -1,5 +1,5 @@
-import { Disposable, languages, LanguageStatusItem, LanguageStatusSeverity } from 'vscode';
-import { SHOW_ACTIONS_COMMAND_ID } from './commandIds';
+import { Disposable, languages, LanguageStatusItem, LanguageStatusSeverity, workspace } from 'vscode';
+import { SHOW_OUTPUT_COMMAND_ID } from './commandIds';
 import { LspConfigType } from './configuration';
 import { SORBET_DOCUMENT_SELECTOR } from './languageClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
@@ -18,25 +18,22 @@ export class SorbetLanguageStatus implements Disposable {
     this.context = context;
     this.serverStatus = ServerStatus.DISABLED;
 
-    this.configItem = languages.createLanguageStatusItem(
-      'ruby-sorbet-config',
-      SORBET_DOCUMENT_SELECTOR);
+    this.configItem = languages.createLanguageStatusItem('ruby-sorbet-config', SORBET_DOCUMENT_SELECTOR);
     this.configItem.command = {
       arguments: ['sorbetto.sorbetLsp'],
       command: 'workbench.action.openSettings',
-      title: 'Open Settings',
+      title: 'Settings',
+      tooltip: 'Open Sorbet Configuration Settings',
     };
-    this.configItem.text = 'Sorbet Configuration';
+    this.setConfig();
 
-    this.statusItem = languages.createLanguageStatusItem(
-      'ruby-sorbet-status',
-      SORBET_DOCUMENT_SELECTOR);
+    this.statusItem = languages.createLanguageStatusItem('ruby-sorbet-status', SORBET_DOCUMENT_SELECTOR);
     this.statusItem.command = {
-      command: SHOW_ACTIONS_COMMAND_ID,
-      title: 'Actions',
-      tooltip: 'Show available actions',
+      command: SHOW_OUTPUT_COMMAND_ID,
+      title: 'Output',
+      tooltip: 'Show Sorbet Output',
     };
-    this.statusItem.text = 'Sorbet';
+    this.setStatus({ status: 'Disabled' });
 
     this.disposables = [
       this.context.configuration.onDidChangeLspConfig(this.render, this),
@@ -57,51 +54,49 @@ export class SorbetLanguageStatus implements Disposable {
   }
 
   private render() {
-    const statusItem = this.statusItem;
-    const configItem = this.configItem;
     const { lspConfig } = this.context.configuration;
     const { operations } = this.context.statusProvider;
-    setConfig(lspConfig?.type);
+    this.setConfig(lspConfig?.type);
 
     if (this.serverStatus !== ServerStatus.ERROR && operations.length > 0) {
-      setStatus({
+      this.setStatus({
         busy: true,
         status: operations.at(-1)?.description,
       });
     } else {
       switch (this.serverStatus) {
         case ServerStatus.DISABLED:
-          setStatus({
+          this.setStatus({
             severity: LanguageStatusSeverity.Warning,
             status: 'Disabled',
           });
           break;
         case ServerStatus.ERROR:
-          setStatus({
+          this.setStatus({
             detail: this.context.statusProvider.serverError,
             severity: LanguageStatusSeverity.Error,
             status: 'Error',
           });
           break;
         case ServerStatus.INITIALIZING:
-          setStatus({
+          this.setStatus({
             busy: true,
             status: 'Initializing',
           });
           break;
         case ServerStatus.RESTARTING:
-          setStatus({
+          this.setStatus({
             busy: true,
             detail: 'Sorbet is restarting',
             status: 'Initializing',
           });
           break;
         case ServerStatus.RUNNING:
-          setStatus({ status: 'Idle' });
+          this.setStatus({ status: 'Idle' });
           break;
         default:
           this.context.log.error('Invalid ServerStatus', this.serverStatus);
-          setStatus({
+          this.setStatus({
             detail: `Unknown Status: ${this.serverStatus}`,
             severity: LanguageStatusSeverity.Error,
             status: 'Unknown',
@@ -109,23 +104,18 @@ export class SorbetLanguageStatus implements Disposable {
           break;
       }
     }
+  }
 
-    function setConfig(configType?: LspConfigType) {
-      if (configType) {
-        configItem.text = configType.charAt(0).toUpperCase() + configType.slice(1);
-        configItem.detail = 'Sorbet Configuration';
+  private setConfig(configType?: LspConfigType) {
+    const config = configType ?? workspace.getConfiguration().get('sorbetto.sorbetLspConfiguration', LspConfigType.Disabled);
+    this.configItem.detail = 'Sorbet Configuration';
+    this.configItem.text = config.charAt(0).toUpperCase() + config.slice(1);
+  }
 
-      } else {
-        configItem.text = 'Sorbet';
-        configItem.detail = 'No Sorbet Configuration';
-      }
-    }
-
-    function setStatus(options: { busy?: boolean, detail?: string, severity?: LanguageStatusSeverity, status?: string }) {
-      statusItem.busy = options?.busy ?? false;
-      statusItem.detail = options?.detail ?? (options?.status && 'Sorbet Status');
-      statusItem.severity = options?.severity ?? LanguageStatusSeverity.Information;
-      statusItem.text = options?.status ?? 'Unknown';
-    }
+  private setStatus(options?: { busy?: boolean, detail?: string, severity?: LanguageStatusSeverity, status?: string }) {
+    this.statusItem.busy = options?.busy ?? false;
+    this.statusItem.detail = options?.detail ?? (options?.status && 'Sorbet Status');
+    this.statusItem.severity = options?.severity ?? LanguageStatusSeverity.Information;
+    this.statusItem.text = options?.status ?? 'Unknown';
   }
 }

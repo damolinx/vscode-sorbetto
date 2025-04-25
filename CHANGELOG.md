@@ -1,5 +1,10 @@
 # Version history
 
+## 0.1.6
+- Update `Ruby` language item entries,
+- Fix: Remove `Sorbetto: Configure` command.
+- Fix: Missing `sorbet.savePackageFiles` command used by Sorbet.
+
 ## 0.1.5
 - Update snippets.
 

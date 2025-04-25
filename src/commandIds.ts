@@ -16,6 +16,11 @@ export const SHOW_ACTIONS_COMMAND_ID = `${EXTENSION_PREFIX}showAvailableActions`
 export const SHOW_OUTPUT_COMMAND_ID = `${EXTENSION_PREFIX}showOutput`;
 
 /**
+ * Save package files. This command name is required by Sorbet itself.
+ */
+export const SORBET_SAVE_PACKAGE_FILES_COMMAND_ID = 'sorbet.savePackageFiles';
+
+/**
  * Restart Sorbet.
  */
 export const SORBET_RESTART_COMMAND_ID = `${EXTENSION_PREFIX}restart`;

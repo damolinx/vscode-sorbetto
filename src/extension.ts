@@ -1,6 +1,7 @@
 import { commands, ExtensionContext, Uri, workspace } from 'vscode';
 import * as cmdIds from './commandIds';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
+import { savePackageFiles } from './commands/savePackageFiles';
 import { showSorbetActions } from './commands/showSorbetActions';
 import { verifyEnvironment } from './commands/verifyEnvironment';
 import { verifyWorkspace } from './commands/verifyWorkspace';
@@ -57,6 +58,12 @@ export async function activate(context: ExtensionContext) {
       extensionContext.statusProvider.restartSorbet(reason ?? RestartReason.COMMAND)),
     rc(cmdIds.VERIFY_WORKSPACE_COMMAND_ID, (pathOrUri?: string | Uri) =>
       verifyWorkspace(pathOrUri)),
+  );
+
+  // Register Sorbet-spec commands
+  context.subscriptions.push(
+    rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_COMMAND_ID, () =>
+      savePackageFiles(extensionContext)),
   );
 
   // Register text editor commands
