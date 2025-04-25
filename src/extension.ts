@@ -61,10 +61,12 @@ export async function activate(context: ExtensionContext) {
   );
 
   // Register Sorbet-spec commands
-  context.subscriptions.push(
-    rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_COMMAND_ID, () =>
-      savePackageFiles(extensionContext)),
-  );
+  if (!(await commands.getCommands(true)).includes(cmdIds.SORBET_SAVE_PACKAGE_FILES_COMMAND_ID)) {
+    context.subscriptions.push(
+      rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_COMMAND_ID, () =>
+        savePackageFiles(extensionContext)),
+    );
+  }
 
   // Register text editor commands
   const rtc = commands.registerTextEditorCommand;
