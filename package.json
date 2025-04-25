@@ -51,12 +51,7 @@
       },
       {
         "command": "sorbetto.restart",
-        "title": "Restart",
-        "category": "Sorbetto"
-      },
-      {
-        "command": "sorbetto.showOutput",
-        "title": "Show Output",
+        "title": "Restart Sorbet",
         "category": "Sorbetto"
       },
       {
