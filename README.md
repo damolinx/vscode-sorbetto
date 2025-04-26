@@ -30,3 +30,5 @@ Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefi
   <img width=600 src="https://github.com/user-attachments/assets/d03241d1-7f83-4485-a59c-be38264e18c0" alt="Sorbet snippets provided by Sorbetto" />
 </p>
 
+# Extension Logs
+Sorbetto uses a single output channel to log its exceptions and Sorbet's. The log level can be controlled via the standard `Developer: Set Log Level` commmand, seleting `Sorbetto` from the dropdown. See [VS Code documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
