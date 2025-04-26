@@ -22,3 +22,6 @@ Sorbetto replaces the custom `Sorbet` status bar item from the official extensio
 The following entries are available on the language status item:
 - `Sorbet Configuration`: shows the active Sorbet LSP configuration name as set via `sorbetto.sorbetLspConfiguration`, along with a quick `Settings` action to modify it.
 - `Sorbet Status`: displayes the current status of the Sorbet LSP, including a busy indicator. The `Output` action brings the `Sorbetto` Output pane into view for checking log entries.
+
+# Sorbet Snippets
+Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefinedsnippets) for standard Sorbet constructs. You can access them via the `Snippet: Fill File with Snippet` command on any open editor, as well as the `Snippet: Insert Snippet` on any `Ruby` editor. Additionally, each snippet has an associated trigger word that is recognized by IntelliSense while typing. For example, typing `abstract` will display the snippets for an abstract class, module or method, allowing for quick and intuitive code insertion. Use the `Snippet: Insert Snippet` from a `Ruby` editor to browse a list of all available snippets in your installed version of the extension.
