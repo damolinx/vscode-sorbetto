@@ -80,8 +80,8 @@
           "description": "Show a warning for untyped values.",
           "enum": [
             "disabled",
-            "everywhere-but-tests",
-            "everywhere"
+            "everywhere",
+            "everywhere-but-tests"
           ]
         },
         "sorbetto.restartFilePatterns": {
