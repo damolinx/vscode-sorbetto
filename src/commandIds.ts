@@ -6,11 +6,6 @@ const EXTENSION_PREFIX = 'sorbetto.';
 export const COPY_SYMBOL_COMMAND_ID = `${EXTENSION_PREFIX}copySymbolToClipboard`;
 
 /**
- * Show available actions.
- */
-export const SHOW_ACTIONS_COMMAND_ID = `${EXTENSION_PREFIX}showAvailableActions`;
-
-/**
  * Show Sorbet Output panel.
  */
 export const SHOW_OUTPUT_COMMAND_ID = `${EXTENSION_PREFIX}showOutput`;

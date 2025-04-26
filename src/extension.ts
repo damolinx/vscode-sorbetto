@@ -2,7 +2,6 @@ import { commands, ExtensionContext, Uri, workspace } from 'vscode';
 import * as cmdIds from './commandIds';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { savePackageFiles } from './commands/savePackageFiles';
-import { showSorbetActions } from './commands/showSorbetActions';
 import { verifyEnvironment } from './commands/verifyEnvironment';
 import { verifyWorkspace } from './commands/verifyWorkspace';
 import { SorbetContentProvider, SORBET_SCHEME } from './sorbetContentProvider';
@@ -50,8 +49,6 @@ export async function activate(context: ExtensionContext) {
   // Register commands
   const rc = commands.registerCommand;
   context.subscriptions.push(
-    rc(cmdIds.SHOW_ACTIONS_COMMAND_ID, () =>
-      showSorbetActions()),
     rc(cmdIds.SHOW_OUTPUT_COMMAND_ID, (preserveFocus?: boolean) =>
       extensionContext.logOutputChannel.show(preserveFocus ?? true)),
     rc(cmdIds.SORBET_RESTART_COMMAND_ID, (reason?: RestartReason) =>
