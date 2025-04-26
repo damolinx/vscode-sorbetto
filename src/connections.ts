@@ -33,4 +33,3 @@ export async function stopProcess(p: ChildProcess, log: Log, delayMS = 1000, sig
     log.warn('Failed to stop process', p.pid);
   }
 }
-
