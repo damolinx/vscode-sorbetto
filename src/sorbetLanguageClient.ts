@@ -78,32 +78,29 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   public dispose() {
     this.onStatusChangeEmitter.dispose();
 
-    let stopped = false;
-    /*
-     * stop() only invokes the then() callback after the language server
-     * ACKs the stop request.
-     * Stopping can time out if the language client is repeatedly failing to
-     * start (e.g. if network is down, or path to Sorbet is incorrect), or if
-     * Sorbet never ACKs the stop request.
-     * In the former case (which is the common case), VS code stops retrying
-     * the connection after we call stop(), but never invokes our callback.
-     * Thus, our solution is to wait 5 seconds for a callback, and stop the
-     * process if we haven't heard back.
-     */
-    const stopTimer = setTimeout(() => {
-      stopped = true;
-      this.context.metrics.increment('stop.timed_out', 1);
-      if (this.sorbetProcess?.pid) {
-        stopProcess(this.sorbetProcess, this.context.log);
-      }
+    const aterStop = (tag: string) => {
+      this.context.log.info('Stopped Sorbet process', this.sorbetProcess?.pid, tag);
+      this.context.metrics.increment('stop.success', 1);
       this.sorbetProcess = undefined;
-    }, 5000);
+    };
 
     this.languageClient.stop().then(() => {
-      if (!stopped) {
-        clearTimeout(stopTimer);
-        this.context.metrics.increment('stop.success', 1);
-        this.context.log.info('Sorbet has stopped.');
+      // Forcefully stopping the Sorbet process as in some scenarios it might
+      // still be running (give 5s)
+      // TODO: This might be a legacy or large project requirement as in test
+      // cases Sorbet process is already stopped by the time this code is hit.
+      if (this.sorbetProcess && this.sorbetProcess.exitCode) {
+        setTimeout(() => {
+          if (this.sorbetProcess && (typeof this.sorbetProcess.exitCode !== 'number')) {
+            stopProcess(this.sorbetProcess!, this.context.log)
+              .then(() => aterStop('(force)'))
+              .catch((err) => this.context.log.error('Failed to stop Sorbet process', err));
+          } else {
+            aterStop('(slow)');
+          }
+        }, 5000);
+      } else {
+        aterStop('');
       }
     });
   }
