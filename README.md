@@ -16,7 +16,7 @@ Sorbetto is a Visual Studio Code extension that provides Ruby language support u
 Sorbetto replaces the custom `Sorbet` status bar item from the official extension with direct integration with VS Code's [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for `Ruby`. This does not result in any loss in functionality, however, as it is possible to pin any entry from the pop-up onto the status bar. So if you preferred the status bar item experience, you still can have it.
 
 <p align=center>
-  <img width=400 src="https://github.com/user-attachments/assets/8e97edfc-97e9-4701-9699-5d23c9bb332a" alt="Ruby Language Item with Sorbetto entries and statusbar-pinned Status item." />
+  <img width=400 src="https://github.com/user-attachments/assets/8e97edfc-97e9-4701-9699-5d23c9bb332a" alt="Ruby Language Item with Sorbetto entries and statusbar-pinned Status item with Sorbet target Disabled configuration" />
 </p>
 
 The following entries are available on the language status item:
@@ -25,3 +25,8 @@ The following entries are available on the language status item:
 
 # Sorbet Snippets
 Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefinedsnippets) for standard Sorbet constructs. You can access them via the `Snippet: Fill File with Snippet` command on any open editor, as well as the `Snippet: Insert Snippet` on any `Ruby` editor. Additionally, each snippet has an associated trigger word that is recognized by IntelliSense while typing. For example, typing `abstract` will display the snippets for an abstract class, module or method, allowing for quick and intuitive code insertion. Use the `Snippet: Insert Snippet` from a `Ruby` editor to browse a list of all available snippets in your installed version of the extension.
+
+<p align=center>
+  <img width=600 src="https://github.com/user-attachments/assets/d03241d1-7f83-4485-a59c-be38264e18c0" alt="Sorbet snippets provided by Sorbetto" />
+</p>
+
