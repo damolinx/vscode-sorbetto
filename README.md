@@ -15,8 +15,10 @@ Sorbetto is a Visual Studio Code extension that provides Ruby language support u
 # Sorbet Language Status
 Sorbetto replaces the custom `Sorbet` status bar item from the official extension with direct integration with VS Code's [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for `Ruby`. This does not result in any loss in functionality, however, as it is possible to pin any entry from the pop-up onto the status bar. So if you preferred the status bar item experience, you still can have it.
 
+<p align=center>
+  <img width=400 src="https://github.com/user-attachments/assets/8e97edfc-97e9-4701-9699-5d23c9bb332a" alt="Ruby Language Item with Sorbetto entries and statusbar-pinned Status item." />
+</p>
+
 The following entries are available on the language status item:
 - `Sorbet Configuration`: shows the active Sorbet LSP configuration name as set via `sorbetto.sorbetLspConfiguration`, along with a quick `Settings` action to modify it.
 - `Sorbet Status`: displayes the current status of the Sorbet LSP, including a busy indicator. The `Output` action brings the `Sorbetto` Output pane into view for checking log entries.
-
-
