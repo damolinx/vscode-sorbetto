@@ -1,4 +1,6 @@
 import { Position, Uri, window, workspace, WorkspaceEdit } from 'vscode';
+import { executeCommandsInTerminal } from './utils';
+import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
 const GEMFILE_HEADER: readonly string[] = ['source \'https://rubygems.org\'', ''];
 
@@ -8,7 +10,7 @@ const GEMFILE_DEPS: Readonly<Record<string, string>> = {
   'tapioca': 'gem \'tapioca\', require: false, :group => :development',
 };
 
-export async function verifyWorkspace(pathOrUri?: string | Uri) {
+export async function setupWorkspace(context: SorbetExtensionContext, pathOrUri?: string | Uri) {
   const uri = pathOrUri
     ? (pathOrUri instanceof Uri ? pathOrUri : Uri.parse(pathOrUri))
     : await getTargetWorkspaceUri();
@@ -26,10 +28,16 @@ export async function verifyWorkspace(pathOrUri?: string | Uri) {
     // When files are only being created (not edited), `applyEdit` returns `false`
     // even on success so return value is useless to detect failures.
     await workspace.applyEdit(edit);
-    await window.showInformationMessage('Workspace verification completed. Updates were made to the workspace.');
+    context.log.info('Workspace verification: Added Gemfile and Sorbet config.');
   } else {
-    await window.showInformationMessage('Workspace verification completed. No changes were necessary.');
+    context.log.info('Workspace verification: No files were added.');
   }
+
+  await executeCommandsInTerminal({
+    commands: ['bundle config set --local path \'vendor/bundle\'', 'bundle install', 'bundle exec tapioca init'],
+    cwd: uri,
+    name: 'bundle install',
+  });
 }
 
 async function verifyGemfile(workspaceUri: Uri, edit: WorkspaceEdit): Promise<boolean> {
@@ -67,7 +75,7 @@ async function verifySorbetConfig(workspaceUri: Uri, edit: WorkspaceEdit): Promi
   const configFile = Uri.joinPath(workspaceUri, 'sorbet', 'config');
 
   if (!await workspace.fs.stat(configFile).then(() => true, () => false)) {
-    edit.createFile(configFile, { contents: Buffer.from('--dir=.') });
+    edit.createFile(configFile, { contents: Buffer.from('--dir=.\n--ignore=vendor/') });
     changed = true;
   }
   return changed;

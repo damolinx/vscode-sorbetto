@@ -32,3 +32,6 @@ Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefi
 
 # Extension Logs
 Sorbetto uses a single output channel to log its exceptions and Sorbet's. The log level can be controlled via the standard `Developer: Set Log Level` commmand, seleting `Sorbetto` from the dropdown. See [VS Code documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
+
+# Workspace Setup
+The `Setup Workspace` command automates all steps from [Adopting Sorbet](https://sorbet.org/docs/adopting) into a convenient place. When setting up `bundler`, it will force local installation of gems via `bundle config set --local path 'vendor/bundle'`. Don't use this command if you prefer globally installed gems, and follow the linked documentation to setup your workspace.

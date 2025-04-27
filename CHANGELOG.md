@@ -3,6 +3,8 @@
 ## 0.1.8
 - Update snippets.
 - Add icon.
+- Add `Install` CodeLens to `Gemfile`.
+- Change `Verify Workspace` to `Setup Workspace` which follows https://sorbet.org/docs/adopting.
 
 ## 0.1.7
 - Provide `sorbetto:sorbetStatus` context value.

@@ -60,8 +60,8 @@
         "enablement": "workbenchState != empty && sorbetto:sorbetStatus != disabled"
       },
       {
-        "command": "sorbetto.verify.workspace",
-        "title": "Verify Workspace",
+        "command": "sorbetto.setup.workspace",
+        "title": "Setup Workspace",
         "category": "Sorbetto",
         "enablement": "workbenchState != empty"
       }

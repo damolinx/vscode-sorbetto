@@ -1,11 +1,13 @@
-import { commands, ExtensionContext, Uri, workspace } from 'vscode';
+import { commands, ExtensionContext, languages, Uri, workspace } from 'vscode';
 import { SorbetExtensionApiImpl } from './api/sorbetExtensionApi';
 import { mapStatus } from './api/sorbetStatus';
 import * as cmdIds from './commandIds';
+import { bundleInstall } from './commands/bundleInstall';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { verifyEnvironment } from './commands/verifyEnvironment';
-import { verifyWorkspace } from './commands/verifyWorkspace';
+import { setupWorkspace } from './commands/setupWorkspace';
+import { BundleCodeLensProvider, GEMFILE_SELECTOR } from './providers/bundleCodeLensProvider';
 import { SorbetContentProvider, SORBET_SCHEME } from './sorbetContentProvider';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
@@ -44,6 +46,10 @@ export async function activate(context: ExtensionContext) {
 
   // Register providers
   context.subscriptions.push(
+    languages.registerCodeLensProvider(
+      GEMFILE_SELECTOR,
+      new BundleCodeLensProvider(),
+    ),
     workspace.registerTextDocumentContentProvider(
       SORBET_SCHEME,
       new SorbetContentProvider(extensionContext),
@@ -53,18 +59,20 @@ export async function activate(context: ExtensionContext) {
   // Register commands
   const rc = commands.registerCommand;
   context.subscriptions.push(
-    rc(cmdIds.SHOW_OUTPUT_COMMAND_ID, (preserveFocus?: boolean) =>
+    rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | Uri) =>
+      bundleInstall(extensionContext, gemfile)),
+    rc(cmdIds.SHOW_OUTPUT_ID, (preserveFocus?: boolean) =>
       extensionContext.logOutputChannel.show(preserveFocus ?? true)),
-    rc(cmdIds.SORBET_RESTART_COMMAND_ID, (reason?: RestartReason) =>
+    rc(cmdIds.SORBET_RESTART_ID, (reason?: RestartReason) =>
       extensionContext.statusProvider.restartSorbet(reason ?? RestartReason.COMMAND)),
-    rc(cmdIds.VERIFY_WORKSPACE_COMMAND_ID, (pathOrUri?: string | Uri) =>
-      verifyWorkspace(pathOrUri)),
+    rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) =>
+      setupWorkspace(extensionContext, pathOrUri)),
   );
 
   // Register Sorbet-spec commands
-  if (!(await commands.getCommands(true)).includes(cmdIds.SORBET_SAVE_PACKAGE_FILES_COMMAND_ID)) {
+  if (!(await commands.getCommands(true)).includes(cmdIds.SORBET_SAVE_PACKAGE_FILES_ID)) {
     context.subscriptions.push(
-      rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_COMMAND_ID, () =>
+      rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_ID, () =>
         savePackageFiles(extensionContext)),
     );
   }
@@ -72,7 +80,7 @@ export async function activate(context: ExtensionContext) {
   // Register text editor commands
   const rtc = commands.registerTextEditorCommand;
   context.subscriptions.push(
-    rtc(cmdIds.COPY_SYMBOL_COMMAND_ID, (textEditor) =>
+    rtc(cmdIds.COPY_SYMBOL_ID, (textEditor) =>
       copySymbolToClipboard(extensionContext, textEditor)),
   );
 

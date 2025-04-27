@@ -1,5 +1,5 @@
 import { Disposable, languages, LanguageStatusItem, LanguageStatusSeverity, workspace } from 'vscode';
-import { SHOW_OUTPUT_COMMAND_ID } from './commandIds';
+import { SHOW_OUTPUT_ID } from './commandIds';
 import { LspConfigType } from './configuration';
 import { SORBET_DOCUMENT_SELECTOR } from './languageClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
@@ -29,7 +29,7 @@ export class SorbetLanguageStatus implements Disposable {
 
     this.statusItem = languages.createLanguageStatusItem('ruby-sorbet-status', SORBET_DOCUMENT_SELECTOR);
     this.statusItem.command = {
-      command: SHOW_OUTPUT_COMMAND_ID,
+      command: SHOW_OUTPUT_ID,
       title: 'Output',
       tooltip: 'Show Sorbet Output',
     };
