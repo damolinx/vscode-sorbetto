@@ -20,7 +20,7 @@ Sorbetto replaces the custom `Sorbet` status bar item from the official extensio
 </p>
 
 The following entries are available on the language status item:
-- `Sorbet Configuration`: shows the active Sorbet LSP configuration name as set via `sorbetto.sorbetLspConfiguration`, along with a quick `Settings` action to modify it.
+- `Sorbet Configuration`: shows the active Sorbet LSP configuration name as set via `sorbetto.sorbetLspConfiguration`, along with a quick `Configure` action to modify it.
 - `Sorbet Status`: displayes the current status of the Sorbet LSP, including a busy indicator. The `Output` action brings the `Sorbetto` Output pane into view for checking log entries.
 
 # Sorbet Snippets

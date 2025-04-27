@@ -22,7 +22,7 @@ export class SorbetLanguageStatus implements Disposable {
     this.configItem.command = {
       arguments: ['sorbetto.sorbetLsp'],
       command: 'workbench.action.openSettings',
-      title: 'Settings',
+      title: 'Configure',
       tooltip: 'Open Sorbet Configuration Settings',
     };
     this.setConfig();
