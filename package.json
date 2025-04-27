@@ -52,7 +52,8 @@
       {
         "command": "sorbetto.restart",
         "title": "Restart Sorbet",
-        "category": "Sorbetto"
+        "category": "Sorbetto",
+        "enablement": "workbenchState != empty && sorbetto:sorbetStatus != disabled"
       },
       {
         "command": "sorbetto.verify.workspace",

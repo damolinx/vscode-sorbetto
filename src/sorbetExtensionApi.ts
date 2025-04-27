@@ -5,7 +5,7 @@ import { ServerStatus } from './types';
 /**
  * Status changes reported by extension.
  */
-const enum Status {
+export const enum Status {
   /**
    * Sorbet Language Server has been disabled.
    */
@@ -24,6 +24,22 @@ const enum Status {
    * if the server was previously stopped.
    */
   Start = 'start',
+}
+
+export function mapStatus(status: ServerStatus): Status | undefined {
+  switch (status) {
+    case ServerStatus.DISABLED:
+      return Status.Disabled;
+    case ServerStatus.ERROR:
+      return Status.Error;
+    case ServerStatus.INITIALIZING:
+    case ServerStatus.RESTARTING:
+      return Status.Start;
+    case ServerStatus.RUNNING:
+      return Status.Running;
+    default:
+      return undefined;
+  }
 }
 
 /**
@@ -47,12 +63,12 @@ export class SorbetExtensionApiImpl implements Disposable {
 
   constructor({ statusProvider }: SorbetExtensionContext) {
     this.onStatusChangedEmitter = new EventEmitter();
-    this.status = this.mapStatus(statusProvider.serverStatus);
+    this.status = mapStatus(statusProvider.serverStatus);
 
     this.disposables = [
       this.onStatusChangedEmitter,
       statusProvider.onStatusChanged((e) => {
-        const mappedStatus = this.mapStatus(e.status);
+        const mappedStatus = mapStatus(e.status);
         if (mappedStatus && this.status !== mappedStatus) {
           this.onStatusChangedEmitter.fire(mappedStatus);
         }
@@ -62,22 +78,6 @@ export class SorbetExtensionApiImpl implements Disposable {
 
   public dispose() {
     Disposable.from(...this.disposables).dispose();
-  }
-
-  private mapStatus(status: ServerStatus): Status | undefined {
-    switch (status) {
-      case ServerStatus.DISABLED:
-        return Status.Disabled;
-      case ServerStatus.ERROR:
-        return Status.Error;
-      case ServerStatus.INITIALIZING:
-      case ServerStatus.RESTARTING:
-        return Status.Start;
-      case ServerStatus.RUNNING:
-        return Status.Running;
-      default:
-        return undefined;
-    }
   }
 
   /**

@@ -5,7 +5,7 @@ import { savePackageFiles } from './commands/savePackageFiles';
 import { verifyEnvironment } from './commands/verifyEnvironment';
 import { verifyWorkspace } from './commands/verifyWorkspace';
 import { SorbetContentProvider, SORBET_SCHEME } from './sorbetContentProvider';
-import { SorbetExtensionApiImpl } from './sorbetExtensionApi';
+import { mapStatus, SorbetExtensionApiImpl } from './sorbetExtensionApi';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
 import { ServerStatus, RestartReason } from './types';
@@ -33,6 +33,9 @@ export async function activate(context: ExtensionContext) {
     ),
     extensionContext.configuration.onDidChangeLspOptions(() =>
       extensionContext.statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE)),
+    extensionContext.statusProvider.onStatusChanged((e) => {
+      commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(e.status));
+    })
   );
 
   const statusBarEntry = new SorbetLanguageStatus(extensionContext);

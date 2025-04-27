@@ -1,5 +1,9 @@
 # Version history
 
+## 0.1.7
+- Provide `sorbetto:sorbetStatus` context value.
+- Internal clean-up.
+
 ## 0.1.6
 - Update `Ruby` language item entries,
 - Remove `Sorbetto: Configure` command.
@@ -20,7 +24,7 @@
 - Provide snippets for several common Sorbet constructs.
 
 ## 0.1.1
-- Move `Sorbet` status bar item to be part of the `Ruby` language item for more standard behavior. 
+- Move `Sorbet` status bar item to be part of the `Ruby` language item for more standard behavior.
 - Remove unnecessary files fom .vsix.
 
 ## 0.1.0
