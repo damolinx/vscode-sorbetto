@@ -2,8 +2,10 @@
   "Abstract": {
     "description": "Sorbet abstract class or module",
     "isFileTemplate": true,
-    "prefix": ["abstract_class_or_module"], 
+    "prefix": ["abstract_class_or_module"],
     "body": [
+      "# typed: strict",
+      "",
       "${1|class,module|} ${2:AbstractName}",
       "  extend T::Sig",
       "  extend T::Helpers",
@@ -33,10 +35,11 @@
     "isFileTemplate": true,
     "prefix": ["enum"],
     "body": [
+      "# typed: strict",
+      "",
       "class ${1:EnumName} < T::Enum",
       "  enums do",
-      "    ${2:Value1} = new",
-      "    $0",
+      "    ${2:Value1} = new$0",
       "  end",
       "end"
     ]
@@ -56,6 +59,8 @@
     "isFileTemplate": true,
     "prefix": ["generic_class_or_module"],
     "body": [
+      "# typed: strict",
+      "",
       "${1|class,module|} ${2:GenericName}",
       "  extend T::Sig",
       "  extend T::Generic",
@@ -93,6 +98,8 @@
     "isFileTemplate": true,
     "prefix": ["interface_module"],
     "body": [
+      "# typed: strict",
+      "",
       "module ${1:InterfaceName}",
       "  extend T::Sig",
       "  extend T::Helpers",
@@ -133,6 +140,8 @@
     "isFileTemplate": true,
     "prefix": ["struct_class"],
     "body": [
+      "# typed: strict",
+      "",
       "class ${1:StructName} < T::Struct",
       "  ${2|prop,const|} :${3:name}, String",
       "  $0",
