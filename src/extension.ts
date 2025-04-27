@@ -1,11 +1,12 @@
 import { commands, ExtensionContext, Uri, workspace } from 'vscode';
+import { SorbetExtensionApiImpl } from './api/sorbetExtensionApi';
+import { mapStatus } from './api/sorbetStatus';
 import * as cmdIds from './commandIds';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { verifyEnvironment } from './commands/verifyEnvironment';
 import { verifyWorkspace } from './commands/verifyWorkspace';
 import { SorbetContentProvider, SORBET_SCHEME } from './sorbetContentProvider';
-import { mapStatus, SorbetExtensionApiImpl } from './sorbetExtensionApi';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
 import { ServerStatus, RestartReason } from './types';

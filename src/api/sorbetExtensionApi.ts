@@ -1,46 +1,6 @@
 import { Disposable, Event, EventEmitter } from 'vscode';
-import { SorbetExtensionContext } from './sorbetExtensionContext';
-import { ServerStatus } from './types';
-
-/**
- * Status changes reported by extension.
- */
-export const enum Status {
-  /**
-   * Sorbet Language Server has been disabled.
-   */
-  Disabled = 'disabled',
-  /**
-   * Sorbet Language Server encountered an error. This state does not correlate
-   * to code typing errors.
-   */
-  Error = 'error',
-  /**
-   * Sorbet Language Server is running.
-   */
-  Running = 'running',
-  /**
-   * Sorbet server is being started. The event might repeat in case of error or
-   * if the server was previously stopped.
-   */
-  Start = 'start',
-}
-
-export function mapStatus(status: ServerStatus): Status | undefined {
-  switch (status) {
-    case ServerStatus.DISABLED:
-      return Status.Disabled;
-    case ServerStatus.ERROR:
-      return Status.Error;
-    case ServerStatus.INITIALIZING:
-    case ServerStatus.RESTARTING:
-      return Status.Start;
-    case ServerStatus.RUNNING:
-      return Status.Running;
-    default:
-      return undefined;
-  }
-}
+import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { mapStatus, SorbetStatus } from './sorbetStatus';
 
 /**
  * Sorbet Extension API.
@@ -52,14 +12,14 @@ export function mapStatus(status: ServerStatus): Status | undefined {
  *  2. NEVER expose internal types directly.
  */
 export interface SorbetExtensionApi {
-  status?: Status;
-  readonly onStatusChanged?: Event<Status>;
+  status?: SorbetStatus;
+  readonly onStatusChanged?: Event<SorbetStatus>;
 }
 
 export class SorbetExtensionApiImpl implements Disposable {
   private readonly disposables: Disposable[];
-  private readonly onStatusChangedEmitter: EventEmitter<Status>;
-  private status?: Status;
+  private readonly onStatusChangedEmitter: EventEmitter<SorbetStatus>;
+  private status?: SorbetStatus;
 
   constructor({ statusProvider }: SorbetExtensionContext) {
     this.onStatusChangedEmitter = new EventEmitter();
