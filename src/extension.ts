@@ -35,7 +35,7 @@ export async function activate(context: ExtensionContext) {
       extensionContext.statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE)),
     extensionContext.statusProvider.onStatusChanged((e) => {
       commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(e.status));
-    })
+    }),
   );
 
   const statusBarEntry = new SorbetLanguageStatus(extensionContext);

@@ -2,6 +2,9 @@
 
 ## 0.1.7
 - Provide `sorbetto:sorbetStatus` context value.
+- `Copy Symbol to Clipboard` UX improvements:
+  - Progress UI only shown if operation takes longer than 2s.
+  - Disabled whenever Sorbet is in `error` or `disabled` state.
 - Internal clean-up.
 
 ## 0.1.6

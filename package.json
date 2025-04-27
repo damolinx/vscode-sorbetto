@@ -47,7 +47,7 @@
         "command": "sorbetto.copySymbolToClipboard",
         "title": "Copy Symbol to Clipboard",
         "category": "Sorbetto",
-        "enablement": "editorLangId == ruby && !editorHasSelection && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote)"
+        "enablement": "editorLangId == ruby && !editorHasSelection && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote) && sorbetto:sorbetStatus != disabled && sorbetto:sorbetStatus != error"
       },
       {
         "command": "sorbetto.restart",
