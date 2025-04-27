@@ -1,5 +1,8 @@
 # Version history
 
+## 0.1.8
+- Add icon.
+
 ## 0.1.7
 - Provide `sorbetto:sorbetStatus` context value.
 - `Copy Symbol to Clipboard` UX improvements:
