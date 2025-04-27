@@ -14,8 +14,12 @@
   "engines": {
     "vscode": "^1.77.0"
   },
+  "extensionKind": [
+    "workspace"
+  ],
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Snippets"
   ],
   "keywords": [
     "ruby",

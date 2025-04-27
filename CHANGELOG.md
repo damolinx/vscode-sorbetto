@@ -1,6 +1,7 @@
 # Version history
 
 ## 0.1.8
+- Update snippets.
 - Add icon.
 
 ## 0.1.7
