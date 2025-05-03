@@ -1,5 +1,10 @@
 # Version history
 
+## 0.1.9
+- Update LSP configuration -related names so they match `sorbetto.sorbetLsp`:
+ - `additionalSorbetLspConfigurationArguments` to `sorbetLspConfigurationAdditionalArguments`.
+ - `sorbetCustomLspConfiguration` to `sorbetLspCustomConfiguration`.
+ -
 ## 0.1.8
 - Update snippets.
 - Add icon.
@@ -14,7 +19,7 @@
 - Internal clean-up.
 
 ## 0.1.6
-- Update `Ruby` language item entries,
+- Update `Ruby` language item entries.
 - Remove `Sorbetto: Configure` command.
 - Remove `Sorbetto: Show Output` command.
 - Fix: Missing `sorbet.savePackageFiles` command used by Sorbet.

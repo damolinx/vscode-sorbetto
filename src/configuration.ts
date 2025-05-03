@@ -54,7 +54,7 @@ export class Configuration implements Disposable {
         dispose: () => Disposable.from(...this.restartFileWatchers).dispose(),
       },
       workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration('sorbetto.sorbetLspConfiguration') || event.affectsConfiguration('sorbetto.additionalSorbetLspConfigurationArguments')) {
+        if (event.affectsConfiguration('sorbetto.sorbetLspConfiguration') || event.affectsConfiguration('sorbetto.sorbetLspConfigurationAdditionalArguments')) {
           const previousConfig = this._lspConfig;
           const newLspConfig = this.getLspConfigFromSettings();
           this._lspConfig = newLspConfig;
@@ -79,8 +79,9 @@ export class Configuration implements Disposable {
   }
 
   private getLspConfigFromSettings(defaultValue = LspConfigType.Stable): LspConfig | undefined {
-    const lspConfigType = workspace.getConfiguration('sorbetto').get<LspConfigType>('sorbetLspConfiguration', defaultValue);
-    const additionalArguments = workspace.getConfiguration('sorbetto').get<string[]>('additionalSorbetLspConfigurationArguments', []);
+    const sorbettoConfig = workspace.getConfiguration('sorbetto');
+    const lspConfigType = sorbettoConfig.get<LspConfigType>('sorbetLspConfiguration', defaultValue);
+    const additionalArguments = sorbettoConfig.get<string[]>('sorbetLspConfigurationAdditionalArguments', []);
     const baseConfig = ['bundle', 'exec', 'srb', 'typecheck', '--lsp', ...additionalArguments];
     switch (lspConfigType) {
       case LspConfigType.Beta:
@@ -91,7 +92,7 @@ export class Configuration implements Disposable {
       case LspConfigType.Custom:
         return {
           type: LspConfigType.Custom,
-          command: workspace.getConfiguration('sorbetto').get<string[]>('sorbetCustomLspConfiguration', []),
+          command: sorbettoConfig.get<string[]>('sorbetLspCustomConfiguration', []),
         };
       case LspConfigType.Experimental:
         return {

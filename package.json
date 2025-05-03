@@ -69,16 +69,6 @@
     "configuration": {
       "title": "Sorbetto",
       "properties": {
-        "sorbetto.additionalSorbetLspConfigurationArguments": {
-          "type": "array",
-          "default": [],
-          "markdownDescription": "Specifies additional arguments to be passed to Sorbet in all configurations (except for `custom`), e.g. `--disable-watchman`",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          },
-          "uniqueItems": true
-        },
         "sorbetto.highlightUntypedCode": {
           "type": "string",
           "default": "disabled",
@@ -106,21 +96,15 @@
           "description": "Show the Output window on errors.",
           "default": false
         },
-        "sorbetto.sorbetCustomLspConfiguration": {
+        "sorbetto.sorbetLspConfigurationAdditionalArguments": {
           "type": "array",
-          "default": [
-            "bundle",
-            "exec",
-            "srb",
-            "typecheck",
-            "--lsp"
-          ],
+          "default": [],
+          "markdownDescription": "Specifies additional arguments to be passed to Sorbet in all configurations (except for `custom`), e.g. `--disable-watchman`",
           "items": {
             "type": "string",
             "minLength": 1
           },
-          "markdownDescription": "Specifies a custom LSP configuration. Only active when [`sorbetto.sorbetLspConfiguration`](#sorbetto.sorbetLspConfiguration) is set to `custom`.",
-          "minItems": 1
+          "uniqueItems": true
         },
         "sorbetto.sorbetLspConfiguration": {
           "type": "string",
@@ -138,8 +122,24 @@
             "Enable Sorbet language server **stable** features.",
             "Enable Sorbet language server **beta** features.",
             "Enable Sorbet language server **experimental** features (unstable).",
-            "Use configuration defined in the [`sorbetCustomLspConfiguration`](#sorbetto.sorbetLspConfiguration) setting."
+            "Use configuration defined in the [`sorbetLspCustomConfiguration`](#sorbetto.sorbetLspConfiguration) setting."
           ]
+        },
+        "sorbetto.sorbetLspCustomConfiguration": {
+          "type": "array",
+          "default": [
+            "bundle",
+            "exec",
+            "srb",
+            "typecheck",
+            "--lsp"
+          ],
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "markdownDescription": "Specifies a custom LSP configuration. Only active when [`sorbetto.sorbetLspConfiguration`](#sorbetto.sorbetLspConfiguration) is set to `custom`.",
+          "minItems": 1
         },
         "sorbetto.typedFalseCompletionNudges": {
           "type": "boolean",
