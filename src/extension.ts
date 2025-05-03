@@ -17,14 +17,14 @@ import { ServerStatus, RestartReason } from './types';
 /**
  * Extension entrypoint.
  */
-export async function activate(context: ExtensionContext) {
-  const extensionContext = new SorbetExtensionContext(context);
+export async function activate(extensionContext: ExtensionContext) {
+  const context = new SorbetExtensionContext(extensionContext);
 
-  context.subscriptions.push(
-    extensionContext,
-    extensionContext.configuration.onDidChangeLspConfig(
+  extensionContext.subscriptions.push(
+    context,
+    context.configuration.onDidChangeLspConfig(
       async ({ previousConfig, config }) => {
-        const { statusProvider } = extensionContext;
+        const { statusProvider } = context;
         if (previousConfig && config) {
           // Something about the config changed, so restart
           await statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE);
@@ -35,18 +35,18 @@ export async function activate(context: ExtensionContext) {
         }
       },
     ),
-    extensionContext.configuration.onDidChangeLspOptions(() =>
-      extensionContext.statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE)),
-    extensionContext.statusProvider.onStatusChanged((e) => {
+    context.configuration.onDidChangeLspOptions(() =>
+      context.statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE)),
+    context.statusProvider.onStatusChanged((e) => {
       commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(e.status));
     }),
   );
 
-  const statusBarEntry = new SorbetLanguageStatus(extensionContext);
-  context.subscriptions.push(statusBarEntry);
+  const statusBarEntry = new SorbetLanguageStatus(context);
+  extensionContext.subscriptions.push(statusBarEntry);
 
   // Register providers
-  context.subscriptions.push(
+  extensionContext.subscriptions.push(
     languages.registerCodeLensProvider(
       GEMFILE_SELECTOR,
       new BundleCodeLensProvider(),
@@ -58,46 +58,46 @@ export async function activate(context: ExtensionContext) {
     ),
     workspace.registerTextDocumentContentProvider(
       SORBET_SCHEME,
-      new SorbetContentProvider(extensionContext),
+      new SorbetContentProvider(context),
     ),
   );
 
   // Register commands
   const rc = commands.registerCommand;
-  context.subscriptions.push(
+  extensionContext.subscriptions.push(
     rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | Uri) =>
-      bundleInstall(extensionContext, gemfile)),
+      bundleInstall(context, gemfile)),
     rc(cmdIds.SHOW_OUTPUT_ID, (preserveFocus?: boolean) =>
-      extensionContext.logOutputChannel.show(preserveFocus ?? true)),
+      context.logOutputChannel.show(preserveFocus ?? true)),
     rc(cmdIds.SORBET_RESTART_ID, (reason?: RestartReason) =>
-      extensionContext.statusProvider.restartSorbet(reason ?? RestartReason.COMMAND)),
+      context.statusProvider.restartSorbet(reason ?? RestartReason.COMMAND)),
     rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) =>
-      setupWorkspace(extensionContext, pathOrUri)),
+      setupWorkspace(context, pathOrUri)),
   );
 
   // Register Sorbet-spec commands
-  context.subscriptions.push(
+  extensionContext.subscriptions.push(
     rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_ID, () =>
-      savePackageFiles(extensionContext)),
+      savePackageFiles(context)),
   );
 
   // Register text editor commands
   const rtc = commands.registerTextEditorCommand;
-  context.subscriptions.push(
+  extensionContext.subscriptions.push(
     rtc(cmdIds.COPY_SYMBOL_ID, (textEditor) =>
-      copySymbolToClipboard(extensionContext, textEditor)),
+      copySymbolToClipboard(context, textEditor)),
   );
 
   // If enabled, verify Sorbet dependencies before running.
-  if (extensionContext.configuration.lspConfig &&
+  if (context.configuration.lspConfig &&
     (!workspace.getConfiguration('sorbetto').get('verifyDependencies', true)
       || await verifyEnvironment())) {
     // Start the extension.
-    await extensionContext.statusProvider.startSorbet();
+    await context.statusProvider.startSorbet();
   }
 
   // This exposes Sorbet Extension API.
-  const api = new SorbetExtensionApiImpl(extensionContext);
-  context.subscriptions.push(api);
+  const api = new SorbetExtensionApiImpl(context);
+  extensionContext.subscriptions.push(api);
   return api.toApi();
 }
