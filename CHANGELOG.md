@@ -2,10 +2,11 @@
 
 ## 0.1.9
 - Add `package` snippet.
+- Add `watchman` to environment verification list.
 - Update LSP configuration -related names so they match `sorbetto.sorbetLsp`:
  - `additionalSorbetLspConfigurationArguments` to `sorbetLspConfigurationAdditionalArguments`.
  - `sorbetCustomLspConfiguration` to `sorbetLspCustomConfiguration`.
--`# typed` -sigil completion provider.
+- `# typed` -sigil completion provider.
 
 ## 0.1.8
 - Update snippets.
