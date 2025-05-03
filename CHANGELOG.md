@@ -1,6 +1,7 @@
 # Version history
 
 ## 0.1.9
+- Add `package` snippet.
 - Update LSP configuration -related names so they match `sorbetto.sorbetLsp`:
  - `additionalSorbetLspConfigurationArguments` to `sorbetLspConfigurationAdditionalArguments`.
  - `sorbetCustomLspConfiguration` to `sorbetLspCustomConfiguration`.

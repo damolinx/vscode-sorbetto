@@ -135,6 +135,18 @@
       "end",
     ]
   },
+  "Package": {
+    "description": "Sorbet package (requires `--stripe-packages` LSP option)",
+    "isFileTemplate": true,
+    "prefix": ["package"],
+    "body": [
+      "# typed: strict",
+      "",
+      "class ${1:PackageName} < PackageSpec",
+      "  $0",
+      "end"
+    ]
+  },
   "Struct": {
     "description": "Sorbet struct",
     "isFileTemplate": true,
