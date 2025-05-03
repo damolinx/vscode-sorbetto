@@ -5,6 +5,7 @@ Sorbetto is a Visual Studio Code extension that provides Ruby language support u
 - Uses the [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem).
 - Provides a collection of snippets for Sorbet constructs to make common patterns easier to insert and speed up development.
 - Performs automatic dependency checks (e.g., `bundle`, `srb`) and streamlines workspace setup, ensuring a smoother startup experience.
+- `# typed` -sigil completion provider.
 
 ## Maintainability Updates
 - Minimum VSCode version updated to 1.77, allowing use of more recent extensibility APIs.

@@ -4,7 +4,8 @@
 - Update LSP configuration -related names so they match `sorbetto.sorbetLsp`:
  - `additionalSorbetLspConfigurationArguments` to `sorbetLspConfigurationAdditionalArguments`.
  - `sorbetCustomLspConfiguration` to `sorbetLspCustomConfiguration`.
- -
+-`# typed` -sigil completion provider.
+
 ## 0.1.8
 - Update snippets.
 - Add icon.

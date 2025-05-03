@@ -8,6 +8,7 @@ import { savePackageFiles } from './commands/savePackageFiles';
 import { verifyEnvironment } from './commands/verifyEnvironment';
 import { setupWorkspace } from './commands/setupWorkspace';
 import { BundleCodeLensProvider, GEMFILE_SELECTOR } from './providers/bundleCodeLensProvider';
+import { TYPED_SELECTOR, TYPED_TRIGGER_CHARACTERS, TypedOptionsCompletionProvider } from './providers/typedOptionsCompletionProvider';
 import { SorbetContentProvider, SORBET_SCHEME } from './sorbetContentProvider';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
@@ -49,6 +50,11 @@ export async function activate(context: ExtensionContext) {
     languages.registerCodeLensProvider(
       GEMFILE_SELECTOR,
       new BundleCodeLensProvider(),
+    ),
+    languages.registerCompletionItemProvider(
+      TYPED_SELECTOR,
+      new TypedOptionsCompletionProvider(),
+      ...TYPED_TRIGGER_CHARACTERS,
     ),
     workspace.registerTextDocumentContentProvider(
       SORBET_SCHEME,
