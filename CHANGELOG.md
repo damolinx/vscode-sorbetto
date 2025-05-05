@@ -1,5 +1,8 @@
 # Version history
 
+## 0.1.10
+- Improve detection of relevant configuration changes.
+
 ## 0.1.9
 - Add `package` snippet.
 - Add `watchman` to environment verification list.

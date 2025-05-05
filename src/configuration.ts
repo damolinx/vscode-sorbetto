@@ -54,11 +54,16 @@ export class Configuration implements Disposable {
         dispose: () => Disposable.from(...this.restartFileWatchers).dispose(),
       },
       workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration('sorbetto.sorbetLspConfiguration') || event.affectsConfiguration('sorbetto.sorbetLspConfigurationAdditionalArguments')) {
-          const previousConfig = this._lspConfig;
-          const newLspConfig = this.getLspConfigFromSettings();
-          this._lspConfig = newLspConfig;
-          this.onLspConfigChangeEmitter.fire({ config: this._lspConfig, previousConfig });
+        if (event.affectsConfiguration('sorbetto.sorbetLspConfiguration')) {
+          this.onConfigurationChanged();
+        } else if (event.affectsConfiguration('sorbetto.sorbetLspConfigurationAdditionalArguments')) {
+          if (this._lspConfig?.type !== LspConfigType.Custom) {
+            this.onConfigurationChanged();
+          }
+        } else if (event.affectsConfiguration('sorbetto.sorbetLspCustomConfiguration')) {
+          if (this._lspConfig?.type === LspConfigType.Custom) {
+            this.onConfigurationChanged();
+          }
         } else if (event.affectsConfiguration('sorbetto.highlightUntyped')) {
           this.onLspOptionsChangeEmitter.fire({ name: 'highlightUntyped' });
         } else if (event.affectsConfiguration('sorbetto.restartFilePatterns')) {
@@ -72,6 +77,13 @@ export class Configuration implements Disposable {
         }
       }),
     ];
+  }
+
+  private onConfigurationChanged() {
+    const previousConfig = this._lspConfig;
+    const newLspConfig = this.getLspConfigFromSettings();
+    this._lspConfig = newLspConfig;
+    this.onLspConfigChangeEmitter.fire({ config: this._lspConfig, previousConfig });
   }
 
   public dispose() {
