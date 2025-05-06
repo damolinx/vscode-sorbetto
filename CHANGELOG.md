@@ -2,6 +2,7 @@
 
 ## 0.1.10
 - Improve detection of relevant configuration changes.
+- Wire https://rubygems.org/ as autocomplete provider in Gemfile.
 
 ## 0.1.9
 - Add `package` snippet.

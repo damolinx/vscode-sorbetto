@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
-export const TYPED_SELECTOR = { scheme: 'file', language: 'ruby' };
-export const TYPED_TRIGGER_CHARACTERS = [':'];
+export const TYPED_SELECTOR: vscode.DocumentSelector = { scheme: 'file', language: 'ruby' };
+export const TYPED_TRIGGER_CHARACTERS: readonly string[] = [':'];
 
 /**
  * Provide autocompletion for `typed` options.
