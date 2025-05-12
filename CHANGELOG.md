@@ -1,5 +1,9 @@
 # Version history
 
+## 0.2.0
+ - Update `require_relative`on rename.
+   - Limited to files being renamed, not ones referencing them (future).
+
 ## 0.1.10
 - Improve detection of relevant configuration changes.
 - Wire https://rubygems.org/ as autocomplete provider in Gemfile.

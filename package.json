@@ -81,7 +81,7 @@
         },
         "sorbetto.restartFilePatterns": {
           "type": "array",
-            "description": "Workspace files patterns that force a restart of the Sorbet language server.",
+          "description": "Workspace files patterns that force a restart of the Sorbet language server.",
           "items": {
             "type": "string"
           },
@@ -96,20 +96,10 @@
           "description": "Show the Output window on errors.",
           "default": false
         },
-        "sorbetto.sorbetLspConfigurationAdditionalArguments": {
-          "type": "array",
-          "default": [],
-          "markdownDescription": "Specifies additional arguments to be passed to Sorbet in all configurations (except for `custom`), e.g. `--disable-watchman`",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          },
-          "uniqueItems": true
-        },
         "sorbetto.sorbetLspConfiguration": {
           "type": "string",
           "default": "stable",
-            "description": "Specifies the LSP configuration to use.",
+          "description": "Specifies the LSP configuration to use.",
           "enum": [
             "disabled",
             "stable",
@@ -124,6 +114,16 @@
             "Enable Sorbet language server **experimental** features (unstable).",
             "Use configuration defined in the [`sorbetLspCustomConfiguration`](#sorbetto.sorbetLspConfiguration) setting."
           ]
+        },
+        "sorbetto.sorbetLspConfigurationAdditionalArguments": {
+          "type": "array",
+          "default": [],
+          "markdownDescription": "Specifies additional arguments to be passed to Sorbet in all configurations (except for `custom`), e.g. `--disable-watchman`",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
         },
         "sorbetto.sorbetLspCustomConfiguration": {
           "type": "array",
@@ -143,7 +143,12 @@
         },
         "sorbetto.typedFalseCompletionNudges": {
           "type": "boolean",
-          "description": "Display an auto-complete nudge in `typed: false` files.",
+          "markdownDescription": "Display an auto-complete nudge in `typed: false` files.",
+          "default": true
+        },
+        "sorbetto.updateRequireRelative": {
+          "type": "boolean",
+          "markdownDescription": "Update `require_relative` statements when moving files.",
           "default": true
         },
         "sorbetto.verifyDependencies": {

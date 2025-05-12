@@ -4,6 +4,7 @@ import { mapStatus } from './api/sorbetStatus';
 import * as cmdIds from './commandIds';
 import { bundleInstall } from './commands/bundleInstall';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
+import { handleRename } from './commands/handleRename';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { verifyEnvironment } from './commands/verifyEnvironment';
 import { setupWorkspace } from './commands/setupWorkspace';
@@ -92,6 +93,13 @@ export async function activate(extensionContext: ExtensionContext) {
     rtc(cmdIds.COPY_SYMBOL_ID, (textEditor) =>
       copySymbolToClipboard(context, textEditor)),
   );
+
+  // Register configurable features
+  if (workspace.getConfiguration('sorbetto').get('updateRequireRelative', true)) {
+    extensionContext.subscriptions.push(
+      workspace.onDidRenameFiles((e) => handleRename(context, e.files)));
+  }
+
 
   // If enabled, verify Sorbet dependencies before running.
   if (context.configuration.lspConfig &&
