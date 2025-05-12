@@ -1,8 +1,9 @@
 # Version history
 
 ## 0.2.0
- - Update `require_relative`on rename.
-   - Limited to files being renamed, not ones referencing them (future).
+- Update `require_relative`on rename.
+  - Limited to files being renamed, not ones referencing them (future).
+- `Disabled` status shows `Start` instead of `Output` action.
 
 ## 0.1.10
 - Improve detection of relevant configuration changes.

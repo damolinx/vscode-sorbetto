@@ -1,10 +1,22 @@
-import { Disposable, languages, LanguageStatusItem, LanguageStatusSeverity, workspace } from 'vscode';
-import { SHOW_OUTPUT_ID } from './commandIds';
+import { Command, Disposable, languages, LanguageStatusItem, LanguageStatusSeverity, workspace } from 'vscode';
+import { SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commandIds';
 import { LspConfigType } from './configuration';
 import { SORBET_DOCUMENT_SELECTOR } from './languageClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { StatusChangedEvent } from './sorbetStatusProvider';
 import { ServerStatus } from './types';
+
+const StartCommand: Command = {
+  command: SORBET_RESTART_ID,
+  title: 'Start',
+  tooltip: 'Start Sorbet',
+};
+
+const ShowOutputCommand: Command = {
+  command: SHOW_OUTPUT_ID,
+  title: 'Output',
+  tooltip: 'Show Sorbet Output',
+};
 
 export class SorbetLanguageStatus implements Disposable {
   private readonly context: SorbetExtensionContext;
@@ -28,12 +40,7 @@ export class SorbetLanguageStatus implements Disposable {
     this.setConfig();
 
     this.statusItem = languages.createLanguageStatusItem('ruby-sorbet-status', SORBET_DOCUMENT_SELECTOR);
-    this.statusItem.command = {
-      command: SHOW_OUTPUT_ID,
-      title: 'Output',
-      tooltip: 'Show Sorbet Output',
-    };
-    this.setStatus({ status: 'Disabled' });
+    this.setStatus({ status: 'Disabled', command: StartCommand });
 
     this.disposables = [
       this.context.configuration.onDidChangeLspConfig(this.render, this),
@@ -67,6 +74,7 @@ export class SorbetLanguageStatus implements Disposable {
       switch (this.serverStatus) {
         case ServerStatus.DISABLED:
           this.setStatus({
+            command: StartCommand,
             severity: LanguageStatusSeverity.Warning,
             status: 'Disabled',
           });
@@ -112,8 +120,9 @@ export class SorbetLanguageStatus implements Disposable {
     this.configItem.text = config.charAt(0).toUpperCase() + config.slice(1);
   }
 
-  private setStatus(options?: { busy?: boolean, detail?: string, severity?: LanguageStatusSeverity, status?: string }) {
+  private setStatus(options?: { busy?: boolean, command?: Command, detail?: string, severity?: LanguageStatusSeverity, status?: string }) {
     this.statusItem.busy = options?.busy ?? false;
+    this.statusItem.command = options?.command ?? ShowOutputCommand;
     this.statusItem.detail = options?.detail ?? (options?.status && 'Sorbet Status');
     this.statusItem.severity = options?.severity ?? LanguageStatusSeverity.Information;
     this.statusItem.text = options?.status ?? 'Unknown';
