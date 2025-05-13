@@ -16,7 +16,7 @@ export class GemfileCompletionProvider implements vscode.CompletionItemProvider 
     if (groups && groups.hint.length >= MINIMUM_HINT_LENGTH) {
       const suggestions = await getGems(groups.hint);
       return suggestions.map(gemName => {
-        const item = new vscode.CompletionItem(gemName, vscode.CompletionItemKind.Reference)
+        const item = new vscode.CompletionItem(gemName, vscode.CompletionItemKind.Reference);
         if (!groups.endQuote) {
           item.insertText = gemName + groups.startQuote;
         }
