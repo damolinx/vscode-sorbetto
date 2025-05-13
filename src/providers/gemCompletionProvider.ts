@@ -14,11 +14,17 @@ export class GemCompletionProvider implements vscode.CompletionItemProvider {
     _token: vscode.CancellationToken,
     _context: vscode.CompletionContext,
   ): Promise<vscode.CompletionItem[] | undefined> {
-    const line = document.lineAt(position).text.substring(0, position.character);
-    const hint = line.match(/^\s*gem\s*(['"])(?<hint>[^"']+)\1?$/)?.groups?.hint;
-    if (hint && hint.length >= MINIMUM_HINT_LENGTH) {
-      const suggestions = await getGems(hint);
-      return suggestions.map(gemName => new vscode.CompletionItem(gemName, vscode.CompletionItemKind.Reference));
+    const line = document.lineAt(position).text.substring(0, position.character + 1);
+    const groups = line.match(/^\s*gem\s*(?<startQuote>['"])(?<hint>[^"']+)(?<endQuote>\1?)$/)?.groups;
+    if (groups && groups.hint.length >= MINIMUM_HINT_LENGTH) {
+      const suggestions = await getGems(groups.hint);
+      return suggestions.map(gemName => {
+        const item = new vscode.CompletionItem(gemName, vscode.CompletionItemKind.Reference)
+        if (!groups.endQuote) {
+          item.insertText = gemName + groups.startQuote;
+        }
+        return item;
+      });
     }
 
     return;
