@@ -1,9 +1,18 @@
 import * as vscode from 'vscode';
 import * as https from 'https';
 
-export const GEMFILE_SELECTOR: vscode.DocumentSelector = { scheme: 'file', pattern: '**/Gemfile' };
 export const MINIMUM_HINT_LENGTH = 1;
 
+export function registerGemfileCompletionProvider(): vscode.Disposable {
+  return vscode.languages.registerCompletionItemProvider(
+    { pattern: '**/Gemfile', scheme: 'file' },
+    new GemfileCompletionProvider(),
+  );
+}
+
+/**
+ * Completion provider for `gem` entries in Gemfile files.
+ */
 export class GemfileCompletionProvider implements vscode.CompletionItemProvider {
   async provideCompletionItems(
     document: vscode.TextDocument,

@@ -5,7 +5,7 @@ import * as sinon from 'sinon';
 
 import { SorbetLanguageClient } from '../../sorbetLanguageClient';
 import { SorbetExtensionContext } from '../../sorbetExtensionContext';
-import { SorbetContentProvider } from '../../sorbetContentProvider';
+import { SorbetContentProvider } from '../../providers/sorbetContentProvider';
 import { SorbetStatusProvider } from '../../sorbetStatusProvider';
 import { createLogStub } from './testUtils';
 

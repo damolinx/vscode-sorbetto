@@ -1,7 +1,14 @@
 import * as vscode from 'vscode';
 
-export const TYPED_SELECTOR: vscode.DocumentSelector = { scheme: 'file', language: 'ruby' };
-export const TYPED_TRIGGER_CHARACTERS: readonly string[] = [':'];
+export const TRIGGER_CHARACTERS: readonly string[] = [':'];
+
+export function registerTypedOptionsCompletionProvider(): vscode.Disposable {
+  return vscode.languages.registerCompletionItemProvider(
+    { scheme: 'file', language: 'ruby' },
+    new TypedOptionsCompletionProvider(),
+    ...TRIGGER_CHARACTERS,
+  );
+}
 
 /**
  * Provide autocompletion for `typed` options.
@@ -15,7 +22,7 @@ export class TypedOptionsCompletionProvider implements vscode.CompletionItemProv
   ): Promise<vscode.CompletionItem[] | undefined> {
     const line = document.lineAt(position).text.substring(0, position.character);
 
-    if (TYPED_TRIGGER_CHARACTERS.some(c => c === context.triggerCharacter) || context.triggerKind == vscode.CompletionTriggerKind.Invoke) {
+    if (TRIGGER_CHARACTERS.some(c => c === context.triggerCharacter) || context.triggerKind == vscode.CompletionTriggerKind.Invoke) {
       if (/^\s*#\s*typed:/.test(line)) {
         return ([
           ['ignore', new vscode.MarkdownString('Sorbet completely ignores file.')],

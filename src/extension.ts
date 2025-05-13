@@ -1,4 +1,4 @@
-import { commands, ExtensionContext, languages, Uri, workspace } from 'vscode';
+import { commands, ExtensionContext, Uri, workspace } from 'vscode';
 import { SorbetExtensionApiImpl } from './api/sorbetExtensionApi';
 import { mapStatus } from './api/sorbetStatus';
 import * as cmdIds from './commandIds';
@@ -8,10 +8,11 @@ import { handleRename } from './commands/handleRename';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { verifyEnvironment } from './commands/verifyEnvironment';
 import { setupWorkspace } from './commands/setupWorkspace';
-import { GemfileCodeLensProvider, GEMFILE_SELECTOR } from './providers/gemfileCodeLensProvider';
-import { GemfileCompletionProvider } from './providers/gemfileCompletionProvider';
-import { TYPED_SELECTOR, TYPED_TRIGGER_CHARACTERS, TypedOptionsCompletionProvider } from './providers/typedOptionsCompletionProvider';
-import { SorbetContentProvider, SORBET_SCHEME } from './sorbetContentProvider';
+import { registerGemfileCodeLensProvider } from './providers/gemfileCodeLensProvider';
+import { registerGemfileCompletionProvider } from './providers/gemfileCompletionProvider';
+import { registerRequireCompletionProvider } from './providers/requireCompletionProvider';
+import { registerSorbetContentProvider } from './providers/sorbetContentProvider';
+import { registerTypedOptionsCompletionProvider } from './providers/typedOptionsCompletionProvider';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
 import { ServerStatus, RestartReason } from './types';
@@ -49,23 +50,11 @@ export async function activate(extensionContext: ExtensionContext) {
 
   // Register providers
   extensionContext.subscriptions.push(
-    languages.registerCodeLensProvider(
-      GEMFILE_SELECTOR,
-      new GemfileCodeLensProvider(),
-    ),
-    languages.registerCompletionItemProvider(
-      GEMFILE_SELECTOR,
-      new GemfileCompletionProvider(),
-    ),
-    languages.registerCompletionItemProvider(
-      TYPED_SELECTOR,
-      new TypedOptionsCompletionProvider(),
-      ...TYPED_TRIGGER_CHARACTERS,
-    ),
-    workspace.registerTextDocumentContentProvider(
-      SORBET_SCHEME,
-      new SorbetContentProvider(context),
-    ),
+    registerGemfileCodeLensProvider(),
+    registerGemfileCompletionProvider(),
+    registerRequireCompletionProvider(),
+    registerSorbetContentProvider(context),
+    registerTypedOptionsCompletionProvider(),
   );
 
   // Register commands

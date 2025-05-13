@@ -2,8 +2,10 @@
 Sorbetto is a Visual Studio Code extension that provides Ruby language support using [Sorbet](https://github.com/sorbet/sorbet), a static type checker for Ruby. It is a fork of the official [extension](https://github.com/sorbet/sorbet/tree/master/vscode_extension), focusing on *user experience* (UX) and *maintainability* improvements.
 
 ## Features
-- Uses the [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem).
-- Provides a collection of snippets for Sorbet constructs to make common patterns easier to insert and speed up development.
+- Supports [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for Ruby.
+- Provides code snippets for common Sorbet constructs to make them easier to use.
+- `require_relative` are automatically updated on file move, adn receive path autocomplete durign development.
+- `GemFile` receive `gem` autocomplete and custom actions.
 - Performs automatic dependency checks (e.g., `bundle`, `srb`) and streamlines workspace setup, ensuring a smoother startup experience.
 - `# typed` -sigil completion provider.
 
@@ -13,8 +15,8 @@ Sorbetto is a Visual Studio Code extension that provides Ruby language support u
 - Shipped dependencies limited to Language Client library, reducing complexity and risk.
 - Migrating to `esbuild` enables minification and bundling, resulting in a significantly smaller runtime code footprint.
 
-# Sorbet Language Status
-Sorbetto replaces the custom **Sorbet** status bar item from the official extension with direct integration with VS Code's [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for Ruby. This does not result in any loss in functionality, however, as it is possible to pin any entry from the pop-up onto the status bar. So if you preferred the status bar item experience, you still can have it.
+# Sorbet Language Status Item
+Sorbetto replaces the custom **Sorbet** status bar item from the official extension with the standard [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for Ruby. This approach enables displaying multiple status entries with accompanying actions in a unified and consistent UI. It possible to pin specific entries to the status bar for quick access, preserving functionality from the official extension design.
 
 <p align=center>
   <img width=400 src="https://github.com/user-attachments/assets/1221a120-7f99-4c06-9630-02685794faf6" alt="Ruby Language Item with Sorbetto entries and statusbar-pinned Status item with Sorbet in Idle state target Stable   configuration" />
@@ -31,8 +33,8 @@ Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefi
   <img width=600 src="https://github.com/user-attachments/assets/d03241d1-7f83-4485-a59c-be38264e18c0" alt="Sorbet snippets provided by Sorbetto" />
 </p>
 
-# Extension Logs
-Sorbetto uses a single output channel to log its exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** commmand, seleting **Sorbetto** from the dropdown. See [VS Code documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
-
 # Workspace Setup
 The **Setup Workspace** command automates all steps from [Adopting Sorbet](https://sorbet.org/docs/adopting) into a convenient place. When setting up `bundler`, it will force local installation of gems via `bundle config set --local path 'vendor/bundle'`. Don't use this command if you prefer globally installed gems, and follow the linked documentation to setup your workspace.
+
+# Extension Logs
+Sorbetto uses a single output channel to log its exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** commmand, seleting **Sorbetto** from the dropdown. See [VS Code documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.

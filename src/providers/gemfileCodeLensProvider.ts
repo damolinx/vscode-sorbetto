@@ -1,19 +1,25 @@
-import { CancellationToken, CodeLens, CodeLensProvider, DocumentFilter, Range, TextDocument } from 'vscode';
+import * as vscode from 'vscode';
 import { BUNDLE_INSTALL_ID } from '../commandIds';
 
-export const GEMFILE_SELECTOR: DocumentFilter[] = [
-  { pattern: '**/Gemfile', scheme: 'file' },
-];
+export function registerGemfileCodeLensProvider(): vscode.Disposable {
+  return vscode.languages.registerCodeLensProvider(
+    { pattern: '**/Gemfile', scheme: 'file' },
+    new GemfileCodeLensProvider(),
+  );
+}
 
-export class GemfileCodeLensProvider implements CodeLensProvider {
-  provideCodeLenses(document: TextDocument, _token: CancellationToken): CodeLens[] {
-    const bundleCodeLens = new CodeLens(
-      new Range(0, 0, 0, 0), {
+/**
+ * CodeLens actions provider for Gemfile files.
+ */
+export class GemfileCodeLensProvider implements vscode.CodeLensProvider {
+  provideCodeLenses(document: vscode.TextDocument, _token: vscode.CancellationToken): vscode.CodeLens[] {
+    const bundleInstallCodeLens = new vscode.CodeLens(
+      new vscode.Range(0, 0, 0, 0), {
       arguments: [document.uri],
       command: BUNDLE_INSTALL_ID,
       title: 'Install',
       tooltip: 'Run \'bundle install\'',
     });
-    return [bundleCodeLens];
+    return [bundleInstallCodeLens];
   }
 }

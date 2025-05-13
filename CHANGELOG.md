@@ -2,9 +2,10 @@
 
 ## 0.2.1
 - Autocomplete in `Gemfile` adds trailing quote if needed.
+- Autocomplete `require_relative` paths.
 
 ## 0.2.0
-- Update `require_relative`on rename.
+- Update `require_relative` on rename.
   - Limited to files being renamed, not ones referencing them (future).
 - `Disabled` status shows `Start` instead of `Output` action.
 
