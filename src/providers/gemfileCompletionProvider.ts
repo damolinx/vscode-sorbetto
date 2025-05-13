@@ -2,12 +2,9 @@ import * as vscode from 'vscode';
 import * as https from 'https';
 
 export const GEMFILE_SELECTOR: vscode.DocumentSelector = { scheme: 'file', pattern: '**/Gemfile' };
-const MINIMUM_HINT_LENGTH = 1;
+export const MINIMUM_HINT_LENGTH = 1;
 
-/**
- * Provide autocompletion for `gem` values.
- */
-export class GemCompletionProvider implements vscode.CompletionItemProvider {
+export class GemfileCompletionProvider implements vscode.CompletionItemProvider {
   async provideCompletionItems(
     document: vscode.TextDocument,
     position: vscode.Position,

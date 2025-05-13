@@ -5,7 +5,7 @@ export const GEMFILE_SELECTOR: DocumentFilter[] = [
   { pattern: '**/Gemfile', scheme: 'file' },
 ];
 
-export class BundleCodeLensProvider implements CodeLensProvider {
+export class GemfileCodeLensProvider implements CodeLensProvider {
   provideCodeLenses(document: TextDocument, _token: CancellationToken): CodeLens[] {
     const bundleCodeLens = new CodeLens(
       new Range(0, 0, 0, 0), {

@@ -8,8 +8,8 @@ import { handleRename } from './commands/handleRename';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { verifyEnvironment } from './commands/verifyEnvironment';
 import { setupWorkspace } from './commands/setupWorkspace';
-import { BundleCodeLensProvider, GEMFILE_SELECTOR } from './providers/bundleCodeLensProvider';
-import { GemCompletionProvider } from './providers/gemCompletionProvider';
+import { GemfileCodeLensProvider, GEMFILE_SELECTOR } from './providers/gemfileCodeLensProvider';
+import { GemfileCompletionProvider } from './providers/gemfileCompletionProvider';
 import { TYPED_SELECTOR, TYPED_TRIGGER_CHARACTERS, TypedOptionsCompletionProvider } from './providers/typedOptionsCompletionProvider';
 import { SorbetContentProvider, SORBET_SCHEME } from './sorbetContentProvider';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
@@ -51,11 +51,11 @@ export async function activate(extensionContext: ExtensionContext) {
   extensionContext.subscriptions.push(
     languages.registerCodeLensProvider(
       GEMFILE_SELECTOR,
-      new BundleCodeLensProvider(),
+      new GemfileCodeLensProvider(),
     ),
     languages.registerCompletionItemProvider(
       GEMFILE_SELECTOR,
-      new GemCompletionProvider(),
+      new GemfileCompletionProvider(),
     ),
     languages.registerCompletionItemProvider(
       TYPED_SELECTOR,
