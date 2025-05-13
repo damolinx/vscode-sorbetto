@@ -56,7 +56,7 @@ export class RequireCompletionProvider implements vscode.CompletionItemProvider 
         return { path: initialHint };
       }
 
-      let initialHintDir = dirname(initialHint);
+      const initialHintDir = dirname(initialHint);
       testPath = resolve(baseDir, initialHintDir);
       if (existsSync(testPath)) {
         return { path: `${initialHintDir}/`, filter: basename(initialHint) };
