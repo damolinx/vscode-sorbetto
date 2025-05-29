@@ -2,11 +2,18 @@ import { Range, TextDocument, Uri, workspace, WorkspaceEdit } from 'vscode';
 import { dirname, extname, relative, sep } from 'path';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
+/**
+ * Regex to match `require_relative` statements in Ruby files.
+ */
 const REQUIRE_RELATIVE_REGEX = /(?<before>require_relative\s+(['"]))(?<path>.+)\2/g;
 
 interface FileRename { readonly oldUri: Uri; readonly newUri: Uri }
 interface RequireMatch { readonly range: Range; readonly path: string; }
 
+/**
+ * Update `require_relative` statements after a file rename.  Currently, only
+ * files being renamed are updated, not files referencing them.
+ */
 export async function handleRename(_context: SorbetExtensionContext, renames: readonly FileRename[]) {
   const renameMap = new Map(
     renames
@@ -14,7 +21,7 @@ export async function handleRename(_context: SorbetExtensionContext, renames: re
       .map((entry) => [entry.oldUri.fsPath, entry]),
   );
   if (renameMap.size === 0) {
-    return; // No interesting files
+    return; // No files to update
   }
 
   const workspaceEdit = new WorkspaceEdit();
@@ -24,7 +31,7 @@ export async function handleRename(_context: SorbetExtensionContext, renames: re
     const document = await workspace.openTextDocument(newUri);
     const matches = findRequires(document);
     if (matches.length === 0) {
-      continue; // No `require_relative`
+      continue; // No require_relative to update
     }
 
     const updated = await updateRequires(workspaceEdit, oldUri, newUri, matches, renameMap);
@@ -57,19 +64,25 @@ function findRequires(document: TextDocument): RequireMatch[] {
 
 async function updateRequires(
   edit: WorkspaceEdit,
-  oldUri: Uri, newUri: Uri,
+  oldUri: Uri,
+  newUri: Uri,
   matches: RequireMatch[],
   renameMap: Map<string, FileRename>):
   Promise<boolean> {
+
   const oldDirUri = Uri.file(dirname(oldUri.fsPath));
   const newDirUri = Uri.file(dirname(newUri.fsPath));
 
+  let updates = 0;
   for (let i = matches.length - 1; i >= 0; i--) {
     const match = matches[i];
     const requireUri = getCurrentRequireFullPath(oldDirUri, match);
-    edit.replace(newUri, match.range, getNewRequireRelativePath(newDirUri, requireUri));
+    if (await shouldUpdate(requireUri)) {
+      edit.replace(newUri, match.range, getTargetRequireRelativePath(newDirUri, requireUri));
+      updates++;
+    }
   }
-  return matches.length > 0;
+  return updates > 0;
 
   function getCurrentRequireFullPath(base: Uri, match: RequireMatch) {
     let requireUri = Uri.joinPath(base, match.path);
@@ -80,11 +93,18 @@ async function updateRequires(
     return requireUri;
   }
 
-  function getNewRequireRelativePath(from: Uri, requireUri: Uri) {
+  function getTargetRequireRelativePath(from: Uri, requireUri: Uri) {
     let newRequirePath = relative(from.fsPath, requireUri.fsPath);
     if (sep !== '/') {
       newRequirePath = newRequirePath.replaceAll(sep, '/');
     }
     return newRequirePath;
+  }
+
+  async function shouldUpdate(requireUri: Uri) {
+    const requireUriWithRb = requireUri.path.endsWith('.rb')
+      ? requireUri
+      : requireUri.with({ path: requireUri.path + '.rb' });
+    return workspace.fs.stat(requireUriWithRb).then(() => true, () => false);
   }
 }

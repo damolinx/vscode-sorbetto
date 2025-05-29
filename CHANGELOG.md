@@ -1,5 +1,8 @@
 # Version history
 
+## 0.2.2
+- Improve updating of `require_relative` statements on file renames.
+
 ## 0.2.1
 - Autocomplete in `Gemfile` adds trailing quote if needed.
 - Autocomplete `require_relative` paths.
