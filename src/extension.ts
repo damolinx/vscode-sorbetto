@@ -5,9 +5,10 @@ import * as cmdIds from './commandIds';
 import { bundleInstall } from './commands/bundleInstall';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { handleRename } from './commands/handleRename';
+import { restartSorbet } from './commands/restartSorbet';
 import { savePackageFiles } from './commands/savePackageFiles';
-import { verifyEnvironment } from './commands/verifyEnvironment';
 import { setupWorkspace } from './commands/setupWorkspace';
+import { verifyEnvironment } from './commands/verifyEnvironment';
 import { registerGemfileCodeLensProvider } from './providers/gemfileCodeLensProvider';
 import { registerGemfileCompletionProvider } from './providers/gemfileCompletionProvider';
 import { registerRequireCompletionProvider } from './providers/requireCompletionProvider';
@@ -40,9 +41,9 @@ export async function activate(extensionContext: ExtensionContext) {
     ),
     context.configuration.onDidChangeLspOptions(() =>
       context.statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE)),
-    context.statusProvider.onStatusChanged((e) => {
-      commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(e.status));
-    }),
+    context.statusProvider.onStatusChanged((e) =>
+      commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(e.status)),
+    ),
   );
 
   const statusBarEntry = new SorbetLanguageStatus(context);
@@ -64,8 +65,8 @@ export async function activate(extensionContext: ExtensionContext) {
       bundleInstall(context, gemfile)),
     rc(cmdIds.SHOW_OUTPUT_ID, (preserveFocus?: boolean) =>
       context.logOutputChannel.show(preserveFocus ?? true)),
-    rc(cmdIds.SORBET_RESTART_ID, (reason?: RestartReason) =>
-      context.statusProvider.restartSorbet(reason ?? RestartReason.COMMAND)),
+    rc(cmdIds.SORBET_RESTART_ID, (reason = RestartReason.COMMAND) =>
+      restartSorbet(context, reason)),
     rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) =>
       setupWorkspace(context, pathOrUri)),
   );
@@ -89,6 +90,8 @@ export async function activate(extensionContext: ExtensionContext) {
       workspace.onDidRenameFiles((e) => handleRename(context, e.files)));
   }
 
+  // Initialize: start in disabled state until client reports status.
+  commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(ServerStatus.DISABLED));
 
   // If enabled, verify Sorbet dependencies before running.
   if (context.configuration.lspConfig &&

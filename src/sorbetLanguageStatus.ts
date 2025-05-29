@@ -33,7 +33,7 @@ export class SorbetLanguageStatus implements Disposable {
     this.configItem = languages.createLanguageStatusItem('ruby-sorbet-config', SORBET_DOCUMENT_SELECTOR);
     this.configItem.command = {
       arguments: ['sorbetto.sorbetLsp'],
-      command: 'workbench.action.openSettings',
+      command: 'workbench.action.openWorkspaceSettings',
       title: 'Configure',
       tooltip: 'Open Sorbet Configuration Settings',
     };

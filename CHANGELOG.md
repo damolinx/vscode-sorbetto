@@ -2,6 +2,8 @@
 
 ## 0.2.2
 - Improve updating of `require_relative` statements on file renames.
+- Handle `Disabled` state better from different actions.
+- Use `workbench.action.openWorkspaceSettings`, instead of `workbench.action.openSettings`, when opening settings.
 
 ## 0.2.1
 - Autocomplete in `Gemfile` adds trailing quote if needed.
