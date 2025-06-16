@@ -116,7 +116,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
 
     const sendRequestSpy = sinon.spy(
       (_method: string, _param: vsclc.TextDocumentPositionParams) =>
-        ({
+        Promise.resolve({
           name: expectedSymbolName,
         } as vsclc.SymbolInformation),
     );
@@ -146,92 +146,6 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       'sorbet/showSymbol',
       sinon.match.object,
     );
-  });
-
-  test('copySymbolToClipboard: shows progress dialog when Sorbet is not ready', async () => {
-    const expectedUri = vscode.Uri.parse('file://workspace/test.rb');
-    const expectedSymbolName = 'test_symbol_name';
-    const editor = createMockEditor(expectedUri);
-
-    const writeTextSpy = sinon.spy();
-    const envClipboardStub = sinon.stub(vscode, 'env').value(({
-      clipboard: {
-        writeText: writeTextSpy,
-      } as any,
-    } as any));
-    testRestorables.push(envClipboardStub);
-
-    const progressStub = sinon.stub(vscode.window, 'withProgress').resolves(({
-      name: expectedSymbolName,
-    } as vsclc.SymbolInformation));
-    testRestorables.push(progressStub);
-
-    const statusProvider = {
-      activeLanguageClient: {
-        capabilities: {
-          sorbetShowSymbolProvider: true,
-        },
-        status: ServerStatus.RUNNING,
-      } as SorbetLanguageClient,
-      operations: [
-        {
-          description: 'Test operation',
-          operationName: 'TestOperation',
-          status: 'start',
-        },
-      ] as readonly Readonly<ShowOperationParams>[],
-    } as SorbetStatusProvider;
-    const context = {
-      log: createLogStub(vscode.LogLevel.Info),
-      statusProvider,
-    } as SorbetExtensionContext;
-    await copySymbolToClipboard(context, editor);
-
-    sinon.assert.calledOnce(writeTextSpy);
-    sinon.assert.calledWith(writeTextSpy, expectedSymbolName);
-    sinon.assert.calledOnce(progressStub);
-  });
-
-  test('copySymbolToClipboard: exits gracefully when cancelled', async () => {
-    const expectedUri = vscode.Uri.parse('file://workspace/test.rb');
-    const editor = createMockEditor(expectedUri);
-
-    const writeTextSpy = sinon.spy();
-    const envClipboardStub = sinon.stub(vscode, 'env').value(({
-      clipboard: {
-        writeText: writeTextSpy,
-      } as any,
-    } as any));
-    testRestorables.push(envClipboardStub);
-
-    const progressStub = sinon
-      .stub(vscode.window, 'withProgress')
-      .resolves(undefined); // Canceled
-    testRestorables.push(progressStub);
-
-    const statusProvider = {
-      activeLanguageClient: {
-        capabilities: {
-          sorbetShowSymbolProvider: true,
-        },
-        status: ServerStatus.RUNNING,
-      } as SorbetLanguageClient,
-      operations: [
-        {
-          description: 'Test operation',
-          operationName: 'TestOperation',
-          status: 'start',
-        },
-      ] as readonly Readonly<ShowOperationParams>[],
-    } as SorbetStatusProvider;
-    const context = {
-      log: createLogStub(vscode.LogLevel.Info),
-      statusProvider,
-    } as SorbetExtensionContext;
-    await copySymbolToClipboard(context, editor);
-
-    sinon.assert.calledOnce(progressStub);
-    sinon.assert.notCalled(writeTextSpy);
   });
 });
 

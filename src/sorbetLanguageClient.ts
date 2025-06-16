@@ -157,7 +157,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   }
 
   /**
-   * Send a request to language server. See {@link LanguageClient.sendRequest}.
+   * Send a request to the language server. See {@link LanguageClient.sendRequest}.
    */
   public sendRequest<TResponse>(
     method: string,
