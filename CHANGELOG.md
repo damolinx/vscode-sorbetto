@@ -1,7 +1,7 @@
 # Version history
 
 # 0.2.3
-- Upgrade minimum VS Code version to 1.99
+- Upgrade minimum VS Code version to 1.96.
 
 ## 0.2.2
 - Improve updating of `require_relative` statements on file renames.
