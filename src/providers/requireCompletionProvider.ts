@@ -81,7 +81,7 @@ export class RequireCompletionProvider implements vscode.CompletionItemProvider 
           }
           return result;
         })
-        .filter(e => e !== undefined);
+        .filter((e) => e !== undefined);
 
       function normalizeToRequire(path: string): string {
         return (sep !== '/') ? path.replaceAll(sep, '/') : path;

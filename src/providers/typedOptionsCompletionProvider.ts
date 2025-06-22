@@ -22,7 +22,7 @@ export class TypedOptionsCompletionProvider implements vscode.CompletionItemProv
   ): Promise<vscode.CompletionItem[] | undefined> {
     const line = document.lineAt(position).text.substring(0, position.character);
 
-    if (TRIGGER_CHARACTERS.some(c => c === context.triggerCharacter) || context.triggerKind == vscode.CompletionTriggerKind.Invoke) {
+    if (TRIGGER_CHARACTERS.some((c) => c === context.triggerCharacter) || context.triggerKind == vscode.CompletionTriggerKind.Invoke) {
       if (/^\s*#\s*typed:/.test(line)) {
         return ([
           ['ignore', new vscode.MarkdownString('Sorbet completely ignores file.')],

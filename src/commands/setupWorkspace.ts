@@ -59,7 +59,7 @@ async function verifyGemfile(workspaceUri: Uri, edit: WorkspaceEdit): Promise<bo
   return changed;
 
   async function getRequiredGems(gemfile: Uri): Promise<string[]> {
-    const contents = await workspace.fs.readFile(gemfile).then(buffer => buffer.toString());
+    const contents = await workspace.fs.readFile(gemfile).then((buffer) => buffer.toString());
     const requiredStmts: string[] = [];
     for (const [name, stmt] of Object.entries(GEMFILE_DEPS)) {
       if (!new RegExp(`gem\\s+(['"])${name}\\1`).test(contents)) {

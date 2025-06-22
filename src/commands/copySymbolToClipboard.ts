@@ -68,7 +68,7 @@ async function withProgress<T>(task: (token: CancellationToken) => Promise<T>, p
     });
 
   await Promise.race([
-    new Promise<void>(resolve => setTimeout(resolve, progressDelayMS))
+    new Promise<void>((resolve) => setTimeout(resolve, progressDelayMS))
       .then(() => {
         if (!resolved) {
           window.withProgress(
