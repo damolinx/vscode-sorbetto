@@ -2,6 +2,8 @@
 
 # 0.2.3
 - Upgrade minimum VS Code version to 1.96.
+- Remove `sorbetto.revealOutputOnError` setting.
+- Improve internal definitions of Sorbet LSP APIs as defined in [docs](https://sorbet.org/docs/lsp#initialize-request).
 
 ## 0.2.2
 - Improve updating of `require_relative` statements on file renames.

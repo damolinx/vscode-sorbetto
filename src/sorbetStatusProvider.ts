@@ -2,7 +2,8 @@ import { Disposable, Event, EventEmitter } from 'vscode';
 import { Log } from './log';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageClient } from './sorbetLanguageClient';
-import { RestartReason, ServerStatus, ShowOperationParams } from './types';
+import { RestartReason, ServerStatus } from './types';
+import { ShowOperationParams } from './lsp/showOperationNotification';
 
 const MIN_TIME_BETWEEN_RETRIES_MS = 7000;
 

@@ -1,7 +1,8 @@
 import { Disposable, Event, EventEmitter, FileSystemWatcher, workspace } from 'vscode';
+import { HighlightType } from './lsp/highlightType';
 
 export interface LspOptionsChangeEvent {
-  readonly name: 'highlightUntyped' | 'restartFilePatterns' | 'revealOutputOnError' | 'typedFalseCompletionNudges';
+  readonly name: 'highlightUntyped' | 'restartFilePatterns' | 'typedFalseCompletionNudges';
 }
 
 export interface LspConfigurationChangeEvent {
@@ -19,12 +20,6 @@ export interface LspConfig {
   command: readonly string[];
   env?: Record<string, string | undefined>;
   type: LspConfigType;
-}
-
-export enum HighlightType {
-  Disabled = 'disabled',
-  Everywhere = 'everywhere',
-  EverywhereButTests = 'everywhere-but-tests',
 }
 
 export enum LspConfigType {
@@ -70,8 +65,6 @@ export class Configuration implements Disposable {
           Disposable.from(...this.restartFileWatchers).dispose();
           this.restartFileWatchers = this.createFileWatchers();
           this.onLspOptionsChangeEmitter.fire({ name: 'restartFilePatterns' });
-        } else if (event.affectsConfiguration('sorbetto.revealOutputOnError')) {
-          this.onLspOptionsChangeEmitter.fire({ name: 'revealOutputOnError' });
         } else if (event.affectsConfiguration('sorbetto.typedFalseCompletionNudges')) {
           this.onLspOptionsChangeEmitter.fire({ name: 'typedFalseCompletionNudges' });
         }
@@ -145,10 +138,6 @@ export class Configuration implements Disposable {
    */
   public get onDidChangeLspOptions(): Event<LspOptionsChangeEvent> {
     return this.onLspOptionsChangeEmitter.event;
-  }
-
-  public get revealOutputOnError(): boolean {
-    return workspace.getConfiguration('sorbetto').get('revealOutputOnError', false);
   }
 
   private createFileWatchers(): FileSystemWatcher[] {

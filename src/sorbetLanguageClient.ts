@@ -6,13 +6,12 @@ import {
   ErrorHandler,
   ErrorHandlerResult,
   GenericNotificationHandler,
-  LanguageClient,
   ServerCapabilities,
 } from 'vscode-languageclient/node';
 import { ChildProcess, spawn } from 'child_process';
 import { stopProcess } from './connections';
-import { createClient } from './languageClient';
 import { instrumentLanguageClient } from './languageClient.metrics';
+import { createClient, SorbetClient } from './lsp/languageClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus, RestartReason } from './types';
 
@@ -50,7 +49,7 @@ interface ErrorInfo {
 
 export class SorbetLanguageClient implements Disposable, ErrorHandler {
   private readonly context: SorbetExtensionContext;
-  private readonly languageClient: LanguageClient;
+  private readonly languageClient: SorbetClient;
   private readonly onStatusChangeEmitter: EventEmitter<ServerStatus>;
   private readonly restart: (reason: RestartReason) => void;
   // Sometimes this is an errno, not a process exit code. This happens when set
@@ -78,7 +77,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   public dispose() {
     this.onStatusChangeEmitter.dispose();
 
-    const aterStop = (tag: string) => {
+    const afterStop = (tag: string) => {
       this.context.log.info('Stopped Sorbet process', this.sorbetProcess?.pid, tag);
       this.context.metrics.increment('stop.success', 1);
       this.sorbetProcess = undefined;
@@ -93,14 +92,14 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
         setTimeout(() => {
           if (this.sorbetProcess && (typeof this.sorbetProcess.exitCode !== 'number')) {
             stopProcess(this.sorbetProcess!, this.context.log)
-              .then(() => aterStop('(force)'))
+              .then(() => afterStop('(force)'))
               .catch((err) => this.context.log.error('Failed to stop Sorbet process', err));
           } else {
-            aterStop('(slow)');
+            afterStop('(slow)');
           }
         }, 5000);
       } else {
-        aterStop('');
+        afterStop('');
       }
     });
   }

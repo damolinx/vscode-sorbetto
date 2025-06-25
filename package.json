@@ -91,11 +91,6 @@
           ],
           "uniqueItems": true
         },
-        "sorbetto.revealOutputOnError": {
-          "type": "boolean",
-          "description": "Show the Output window on errors.",
-          "default": false
-        },
         "sorbetto.sorbetLspConfiguration": {
           "type": "string",
           "default": "stable",

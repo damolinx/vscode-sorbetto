@@ -1,12 +1,3 @@
-/**
- * The parameters set along with a sorbet/showOperation notification from the server.
- */
-export interface ShowOperationParams {
-  operationName: string;
-  description: string;
-  status: 'start' | 'end';
-}
-
 // Reasons why Sorbet might be restarted.
 export enum RestartReason {
   // Command manuallyinvoked from command palette

@@ -1,7 +1,7 @@
 import { Command, Disposable, languages, LanguageStatusItem, LanguageStatusSeverity, workspace } from 'vscode';
 import { SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commandIds';
 import { LspConfigType } from './configuration';
-import { SORBET_DOCUMENT_SELECTOR } from './languageClient';
+import { SORBET_DOCUMENT_SELECTOR } from './lsp/constants';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { StatusChangedEvent } from './sorbetStatusProvider';
 import { ServerStatus } from './types';

@@ -5,10 +5,11 @@ import * as sinon from 'sinon';
 
 import { createLogStub } from '../testUtils';
 import { copySymbolToClipboard } from '../../../commands/copySymbolToClipboard';
+import { ShowOperationParams } from '../../../lsp/showOperationNotification';
 import { SorbetLanguageClient } from '../../../sorbetLanguageClient';
 import { SorbetExtensionContext } from '../../../sorbetExtensionContext';
 import { SorbetStatusProvider } from '../../../sorbetStatusProvider';
-import { ServerStatus, ShowOperationParams } from '../../../types';
+import { ServerStatus } from '../../../types';
 
 suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
   let testRestorables: { restore: () => void }[];
