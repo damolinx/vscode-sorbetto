@@ -1,5 +1,8 @@
 # Version history
 
+# 0.2.4
+- Rollback anonymous client.
+
 # 0.2.3
 - Upgrade minimum VS Code version to 1.96.
 - Remove `sorbetto.revealOutputOnError` setting.

@@ -1,5 +1,5 @@
-import { Disposable } from "vscode-languageclient";
-import { InitializationOptions } from "./initializationOptions";
+import { Disposable } from 'vscode-languageclient';
+import { InitializationOptions } from './initializationOptions';
 
 /**
  * See https://sorbet.org/docs/lsp#workspacedidchangeconfiguration-notification
