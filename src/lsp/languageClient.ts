@@ -8,12 +8,6 @@ import { ShowSymbolRequest } from './showSymbolRequest';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { WorkspaceDidChangeConfigurationNotification } from './workspaceDidChangeConfigurationNotification';
 
-export type SorbetClient = LanguageClient
-  & ReadFileRequest
-  & ShowOperationNotification
-  & ShowSymbolRequest
-  & WorkspaceDidChangeConfigurationNotification;
-
 /**
  * Create a {@link LanguageClient client} for Sorbet.
  */
@@ -22,23 +16,9 @@ export function createClient(
   serverOptions: ServerOptions,
   errorHandler: ErrorHandler,
 ): SorbetClient {
-  const client = new class extends LanguageClient {
-    error(message: string, data?: any, showNotification?: boolean | 'force')
-      : void {
-      // Override `force` to prevent notifications dialogs from showing up in
-      // unintended scenarios (still ocurring in LanguageClient v9).
-      // Example messages:
-      // - Sorbet client: couldn't create connection to server.
-      // - Connection to server got closed. Server will not be restarted.
-      super.error(
-        message,
-        data,
-        showNotification === 'force' ? true : showNotification,
-      );
-    }
-  }
+  const client = new SorbetClient
     (
-      'ruby',
+      'ruby.sorbet',
       'Sorbet',
       serverOptions,
       {
@@ -68,5 +48,25 @@ export function createClient(
       supportsOperationNotifications: true,
       supportsSorbetURIs: true,
     };
+  }
+}
+
+export class SorbetClient extends LanguageClient implements
+  ReadFileRequest,
+  ShowOperationNotification,
+  ShowSymbolRequest,
+  WorkspaceDidChangeConfigurationNotification {
+  error(message: string, data?: any, showNotification?: boolean | 'force')
+    : void {
+    // Override `force` to prevent notifications dialogs from showing up in
+    // unintended scenarios (still ocurring in LanguageClient v9).
+    // Example messages:
+    // - Sorbet client: couldn't create connection to server.
+    // - Connection to server got closed. Server will not be restarted.
+    super.error(
+      message,
+      data,
+      showNotification === 'force' ? true : showNotification,
+    );
   }
 }
