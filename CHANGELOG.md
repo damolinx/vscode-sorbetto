@@ -1,9 +1,9 @@
 # Version history
 
-# 0.3.0
+# 0.2.5
 - Fixes to prevent error notifications when logging to Output Pane is expected.
-- Settings changes:
-  - Replace `sorbetto.sorbetLspConfigurationAdditionalArguments` setting with `sorbetto.sorbetLspBaseConfiguration` for improved flexibility.
+- Replace `sorbetto.sorbetLspConfigurationAdditionalArguments` setting with `sorbetto.sorbetLspBaseConfiguration` for improved flexibility.
+- Several changes on configuration handling including fixes.
 
 # 0.2.4
 - Rollback anonymous client.
