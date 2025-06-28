@@ -1,13 +1,13 @@
 import {
-  LanguageClient,
   LanguageClientOptions,
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
 import * as assert from 'assert';
-import { TestLanguageServerSpecialURIs } from './testLanguageServerSpecialURIs';
-import { instrumentLanguageClient } from '../../observability/languageClient';
-import { Metrics, Tags } from '../../observability/metrics';
+import { TestLanguageServerSpecialURIs } from '../testLanguageServerSpecialURIs';
+import { SorbetClient } from '../../../lsp/languageClient';
+import { instrumentLanguageClient } from '../../../observability/languageClient';
+import { Metrics, Tags } from '../../../observability/metrics';
 
 const enum MetricType {
   Increment,
@@ -42,7 +42,7 @@ class RecordingMetrics implements Metrics {
 }
 
 // Uninitialized client. Call start and await on it before use.
-function createLanguageClient(): LanguageClient {
+function createLanguageClient(): SorbetClient {
   // The server is implemented in node
   const serverModule = require.resolve('./testLanguageServer');
   // The debug options for the server
@@ -67,7 +67,7 @@ function createLanguageClient(): LanguageClient {
   };
 
   // Create the language client and start the client.
-  const client = new LanguageClient(
+  const client = new SorbetClient(
     'languageServerExample',
     'Language Server Example',
     serverOptions,

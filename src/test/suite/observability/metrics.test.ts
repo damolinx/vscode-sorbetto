@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as sinon from 'sinon';
-import { NoopMetrics } from '../../observability/metrics';
+import { NoopMetrics } from '../../../observability/metrics';
 
 suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
   let testRestorables: { restore: () => void }[];

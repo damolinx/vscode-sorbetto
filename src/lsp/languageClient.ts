@@ -7,6 +7,7 @@ import { ShowOperationNotification } from './showOperationNotification';
 import { ShowSymbolRequest } from './showSymbolRequest';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { WorkspaceDidChangeConfigurationNotification } from './workspaceDidChangeConfigurationNotification';
+import { SorbetInitializeResult } from './initializeResult';
 
 /**
  * Create a {@link LanguageClient client} for Sorbet.
@@ -56,6 +57,7 @@ export class SorbetClient extends LanguageClient implements
   ShowOperationNotification,
   ShowSymbolRequest,
   WorkspaceDidChangeConfigurationNotification {
+
   error(message: string, data?: any, showNotification?: boolean | 'force')
     : void {
     // Override `force` to prevent notifications dialogs from showing up in
@@ -66,5 +68,9 @@ export class SorbetClient extends LanguageClient implements
       data,
       showNotification === 'force' || showNotification,
     );
+  }
+
+  get initializeResult(): SorbetInitializeResult | undefined {
+    return super.initializeResult as SorbetInitializeResult | undefined;
   }
 }

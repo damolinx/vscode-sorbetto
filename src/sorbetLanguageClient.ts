@@ -6,10 +6,10 @@ import {
   ErrorHandler,
   ErrorHandlerResult,
   GenericNotificationHandler,
-  ServerCapabilities,
 } from 'vscode-languageclient/node';
 import { ChildProcess, spawn } from 'child_process';
 import { stopProcess } from './connections';
+import { SorbetServerCapabilities } from './lsp/initializeResult';
 import { createClient, SorbetClient } from './lsp/languageClient';
 import { instrumentLanguageClient } from './observability/languageClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
@@ -37,10 +37,6 @@ const VALID_STATE_TRANSITIONS: ReadonlyMap<
   // Error is a terminal state for this class.
   [ServerStatus.ERROR, new Set()],
 ]);
-
-export type SorbetServerCapabilities = ServerCapabilities & {
-  sorbetShowSymbolProvider: boolean;
-};
 
 interface ErrorInfo {
   msg: string;
@@ -109,7 +105,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
    * available when the server has been initialized.
    */
   public get capabilities(): SorbetServerCapabilities | undefined {
-    return this.languageClient.initializeResult?.capabilities as SorbetServerCapabilities | undefined;
+    return this.languageClient.initializeResult?.capabilities;
   }
 
   /**
