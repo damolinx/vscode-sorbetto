@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as sinon from 'sinon';
-import { NoOpMetricsClient } from '../../metricsClient';
+import { NoopMetrics } from '../../metrics';
 
 suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
   let testRestorables: { restore: () => void }[];
@@ -18,7 +18,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     const expectedCount = 123;
     const expectedTags = { foo: 'bar' };
 
-    const client = new NoOpMetricsClient();
+    const client = new NoopMetrics();
     const incrementStub = sinon.stub(client, 'increment');
     testRestorables.push(incrementStub);
 
@@ -42,7 +42,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     const expectedCount = 123;
     const expectedTags = { foo: 'bar' };
 
-    const client = new NoOpMetricsClient();
+    const client = new NoopMetrics();
     const timingStub = sinon.stub(client, 'timing');
     testRestorables.push(timingStub);
 

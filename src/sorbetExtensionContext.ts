@@ -1,14 +1,14 @@
 import { Disposable, ExtensionContext, LogOutputChannel, window } from 'vscode';
 import { Configuration } from './configuration';
 import { Log } from './log';
-import { MetricsClient, NoOpMetricsClient } from './metricsClient';
+import { LogMetrics, Metrics } from './metrics';
 import { SorbetStatusProvider } from './sorbetStatusProvider';
 
 export class SorbetExtensionContext implements Disposable {
   public readonly configuration: Configuration;
   private readonly disposables: Disposable[];
   public readonly extensionContext: ExtensionContext;
-  public readonly metrics: MetricsClient;
+  public readonly metrics: Metrics;
   public readonly statusProvider: SorbetStatusProvider;
   public readonly logOutputChannel: LogOutputChannel;
 
@@ -16,7 +16,7 @@ export class SorbetExtensionContext implements Disposable {
     this.configuration = new Configuration();
     this.extensionContext = context;
     this.logOutputChannel = window.createOutputChannel('Sorbetto', { log: true });
-    this.metrics = new NoOpMetricsClient();
+    this.metrics = new LogMetrics(this.log);
     this.statusProvider = new SorbetStatusProvider(this);
 
     this.disposables = [

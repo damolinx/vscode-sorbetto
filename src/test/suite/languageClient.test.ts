@@ -7,7 +7,7 @@ import {
 import * as assert from 'assert';
 import { TestLanguageServerSpecialURIs } from './testLanguageServerSpecialURIs';
 import { instrumentLanguageClient } from '../../languageClient.metrics';
-import { MetricsClient, Tags } from '../../metricsClient';
+import { Metrics, Tags } from '../../metrics';
 
 const enum MetricType {
   Increment,
@@ -15,7 +15,7 @@ const enum MetricType {
   Timing,
 }
 
-class RecordingMetricsClient implements MetricsClient {
+class RecordingMetrics implements Metrics {
   private metrics: [MetricType, string, number, Tags][] = [];
 
   getAndResetMetrics(): [MetricType, string, number, Tags][] {
@@ -24,35 +24,21 @@ class RecordingMetricsClient implements MetricsClient {
     return rv;
   }
 
-  async increment(
-    metricName: string,
-    count = 1,
-    tags: Readonly<Record<string, string>> = {},
-  ): Promise<void> {
-    this.metrics.push([MetricType.Increment, metricName, count, tags]);
+  increment(metric: string, count = 1, tags: Tags = {}): void {
+    this.metrics.push([MetricType.Increment, metric, count, tags]);
   }
 
-  async gauge(
-    metricName: string,
-    value: number,
-    tags: Readonly<Record<string, string>> = {},
-  ): Promise<void> {
-    this.metrics.push([MetricType.Gauge, metricName, value, tags]);
+  gauge(metric: string, value: number, tags: Tags = {}): void {
+    this.metrics.push([MetricType.Gauge, metric, value, tags]);
   }
 
-  async timing(
-    metricName: string,
-    value: number | Date,
-    tags: Tags = {},
-  ): Promise<void> {
+  timing(metric: string, value: number | Date, tags: Tags = {}): void {
     const rawValue =
       typeof value === 'number' ? value : Date.now() - value.valueOf();
-    this.metrics.push([MetricType.Timing, metricName, rawValue, tags]);
+    this.metrics.push([MetricType.Timing, metric, rawValue, tags]);
   }
 
-  async flush(): Promise<void> {
-    // No-op
-  }
+  flush(): void { }
 }
 
 // Uninitialized client. Call start and await on it before use.
@@ -93,10 +79,10 @@ function createLanguageClient(): LanguageClient {
 
 suite('LanguageClient', () => {
   suite('Metrics', () => {
-    let metricsEmitter: RecordingMetricsClient;
+    let metricsEmitter: RecordingMetrics;
 
     suiteSetup(() => {
-      metricsEmitter = new RecordingMetricsClient();
+      metricsEmitter = new RecordingMetrics();
     });
 
     test('Shims language clients and records latency metrics', async () => {
@@ -165,7 +151,7 @@ suite('LanguageClient', () => {
     });
   });
 
-  function assertTimingMetric(client: RecordingMetricsClient, success: 'true' | 'false') {
+  function assertTimingMetric(client: RecordingMetrics, success: 'true' | 'false') {
     const metrics = client.getAndResetMetrics();
     assert.strictEqual(metrics.length, 1);
     assert.strictEqual(typeof metrics[0][2], 'number');
