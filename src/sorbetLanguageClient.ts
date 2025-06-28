@@ -200,22 +200,23 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
    * Sorbet at most every MIN_TIME_BETWEEN_RETRIES_MS.
    */
   private startSorbetProcess(): Promise<ChildProcess> {
-    this.context.log.info('Running Sorbet LSP.');
     const activeConfig = this.context.configuration.lspConfig;
-    const [command, ...args] = activeConfig?.command ?? [];
-    if (!command) {
+    this.context.log.info('Start Sorbet. Configuration:', activeConfig?.type);
+
+    const [cmd, ...args] = activeConfig?.command ?? [];
+    if (!cmd) {
       let msg: string;
       if (!activeConfig) {
         msg = 'No active Sorbet configuration.';
         this.status = ServerStatus.DISABLED;
       } else {
-        msg = `Missing command-line data to start Sorbet. Config:${activeConfig.type}`;
+        msg = `Missing command-line data to start Sorbet. Configuration: ${activeConfig.type}`;
       }
       return Promise.reject(msg);
     }
 
-    this.context.log.debug('>', command, ...args);
-    this.sorbetProcess = spawn(command, args, {
+    this.context.log.debug('>', cmd, ...args);
+    this.sorbetProcess = spawn(cmd, args, {
       cwd: workspace.rootPath,
       env: { ...process.env, ...activeConfig?.env },
     });
@@ -249,7 +250,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
     }
     return {
       action: ErrorAction.Shutdown,
-      handled: true
+      handled: true,
     };
   }
 
@@ -287,7 +288,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
 
     return {
       action: CloseAction.DoNotRestart,
-      handled: true
+      handled: true,
     };
   }
 }

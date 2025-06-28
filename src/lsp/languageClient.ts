@@ -33,19 +33,18 @@ export function createClient(
   return client;
 
   function createInitializationFailedHandler(): InitializationFailedHandler {
-    const { log } = context;
     return (error) => {
-      log.error('Failed to initialize Sorbet', error);
+      context.log.error('Failed to initialize Sorbet', error);
       return false;
     };
   }
 
   function createInitializationOptions()
     : InitializationOptions {
-    const { configuration } = context;
+    const { configuration: { highlightUntyped, typedFalseCompletionNudges } } = context;
     return {
-      enableTypedFalseCompletionNudges: configuration.typedFalseCompletionNudges,
-      highlightUntyped: configuration.highlightUntyped,
+      enableTypedFalseCompletionNudges: typedFalseCompletionNudges,
+      highlightUntyped: highlightUntyped,
       supportsOperationNotifications: true,
       supportsSorbetURIs: true,
     };
@@ -61,9 +60,7 @@ export class SorbetClient extends LanguageClient implements
     : void {
     // Override `force` to prevent notifications dialogs from showing up in
     // unintended scenarios (still ocurring in LanguageClient v9).
-    // Example messages:
     // - Sorbet client: couldn't create connection to server.
-    // - Connection to server got closed. Server will not be restarted.
     super.error(
       message,
       data,

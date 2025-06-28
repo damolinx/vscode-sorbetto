@@ -4,8 +4,9 @@ import {
   TextDocumentPositionParams,
 } from 'vscode-languageclient/node';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
-import { ServerStatus } from '../types';
 import { Log } from '../log';
+import { REQUEST_METHOD } from '../lsp/showSymbolRequest';
+import { ServerStatus } from '../types';
 
 /**
  * Copy symbol at current.
@@ -45,7 +46,10 @@ export async function copySymbolToClipboard(
   // avoid having long operation surprisingly overwrite the current clipboard
   // contents, a cancelable progress notification is shown after 2s.
   const symbolInfo = await withProgress(
-    (token) => client.sendRequest<SymbolInformation>('sorbet/showSymbol', params, token),
+    (token) => client.sendRequest<SymbolInformation>(
+      REQUEST_METHOD,
+      params,
+      token),
     2000,
     context.log);
 

@@ -1,9 +1,9 @@
 import { Disposable, Event, EventEmitter } from 'vscode';
 import { Log } from './log';
+import { NOTIFICATION_METHOD, ShowOperationParams } from './lsp/showOperationNotification';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageClient } from './sorbetLanguageClient';
 import { RestartReason, ServerStatus } from './types';
-import { ShowOperationParams } from './lsp/showOperationNotification';
 
 const MIN_TIME_BETWEEN_RETRIES_MS = 7000;
 
@@ -194,11 +194,13 @@ export class SorbetStatusProvider implements Disposable {
           this.context,
           (reason: RestartReason) => this.restartSorbet(reason),
         );
-        newClient.onNotification('sorbet/showOperation', (params: ShowOperationParams) => {
-          if (this.activeLanguageClient === newClient) {
-            this.fireOnShowOperation(params);
-          }
-        });
+        newClient.onNotification(
+          NOTIFICATION_METHOD,
+          (params: ShowOperationParams) => {
+            if (this.activeLanguageClient === newClient) {
+              this.fireOnShowOperation(params);
+            }
+          });
         newClient.onStatusChange((status: ServerStatus) => {
           if (this.activeLanguageClient === newClient) {
             this.fireOnStatusChanged({ status, error: newClient.lastError?.msg });

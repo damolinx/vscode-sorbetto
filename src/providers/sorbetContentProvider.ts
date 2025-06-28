@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { TextDocumentItem } from 'vscode-languageclient';
+import { REQUEST_METHOD } from '../lsp/readFileRequest';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
 /**
@@ -7,6 +8,9 @@ import { SorbetExtensionContext } from '../sorbetExtensionContext';
  */
 export const SORBET_SCHEME = 'sorbet';
 
+/**
+ * Register a content provider for the {@link SORBET_SCHEME sorbet:} scheme.
+ */
 export function registerSorbetContentProvider(context: SorbetExtensionContext): vscode.Disposable {
   return vscode.workspace.registerTextDocumentContentProvider(
     SORBET_SCHEME,
@@ -15,7 +19,7 @@ export function registerSorbetContentProvider(context: SorbetExtensionContext): 
 }
 
 /**
- * Content provider for URIs with `sorbet` scheme.
+ * Content provider for URIs with {@link SORBET_SCHEME sorbet:} scheme.
  */
 export class SorbetContentProvider implements vscode.TextDocumentContentProvider {
   private readonly context: SorbetExtensionContext;
@@ -24,30 +28,23 @@ export class SorbetContentProvider implements vscode.TextDocumentContentProvider
     this.context = context;
   }
 
-  /**
-   * Provide textual content for a given uri.
-   */
   public async provideTextDocumentContent(
     uri: vscode.Uri,
     token?: vscode.CancellationToken,
   ): Promise<string> {
-    let content: string;
     const { activeLanguageClient: client } = this.context.statusProvider;
-    if (client) {
-      this.context.log.info('ContentProvider: Retrieving file contents', uri);
-      const response = await client.sendRequest<TextDocumentItem>(
-        'sorbet/readFile',
-        { uri: uri.toString() },
-        token,
-      );
-      content = response?.text ?? '';
-    } else {
-      this.context.log.warn(
-        'ContentProvider: No active Sorbet client',
-        uri,
-      );
-      content = '';
+    if (!client) {
+      throw new Error('Sorbet is not running, cannot load file contents');
     }
+
+    const response = await client.sendRequest<TextDocumentItem>(
+      REQUEST_METHOD,
+      { uri: uri.toString() },
+      token,
+    );
+    const content = response?.text ?? '';
+    this.context.log.debug('ContentProvider: Retrieve', uri.path, content.length);
+
     return content;
   }
 }
