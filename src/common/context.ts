@@ -1,6 +1,6 @@
 
 import * as vscode from 'vscode';
-import { mapStatus } from '../api/sorbetStatus';
+import { mapStatus } from '../api/status';
 import { ServerStatus } from '../types';
 
 export function setSorbetStatus(status: ServerStatus) {

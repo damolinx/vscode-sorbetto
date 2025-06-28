@@ -1,5 +1,5 @@
 import { commands, ExtensionContext, Uri, workspace } from 'vscode';
-import { SorbetExtensionApiImpl } from './api/sorbetExtensionApi';
+import { ExtensionApiProvider } from './api/extensionApiProvider';
 import * as cmdIds from './commands/commandIds';
 import { bundleInstall } from './commands/bundleInstall';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
@@ -101,8 +101,8 @@ export async function activate(extensionContext: ExtensionContext) {
     await context.statusProvider.startSorbet();
   }
 
-  // This exposes Sorbet Extension API.
-  const api = new SorbetExtensionApiImpl(context);
+  // Extension API
+  const api = new ExtensionApiProvider(context);
   extensionContext.subscriptions.push(api);
   return api.toApi();
 }
