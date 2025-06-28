@@ -1,6 +1,6 @@
 import { Disposable, Event, EventEmitter } from 'vscode';
 import { NOTIFICATION_METHOD, ShowOperationParams } from './lsp/showOperationNotification';
-import { Log } from './observability/log';
+import { Log } from './common/log';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageClient } from './sorbetLanguageClient';
 import { RestartReason, ServerStatus } from './types';

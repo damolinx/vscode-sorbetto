@@ -1,4 +1,5 @@
 import { Disposable, Event, EventEmitter, FileSystemWatcher, workspace } from 'vscode';
+import * as cfg from './common/configuration';
 import { HighlightType } from './lsp/highlightType';
 
 export interface LspOptionsChangeEvent {
@@ -84,9 +85,9 @@ export class Configuration implements Disposable {
   }
 
   private getLspConfigFromSettings(defaultValue = LspConfigType.Stable): LspConfig | undefined {
-    const sorbettoConfig = workspace.getConfiguration('sorbetto');
-    const lspConfigType = sorbettoConfig.get<LspConfigType>('sorbetLspConfiguration', defaultValue);
-    const additionalArguments = sorbettoConfig.get<string[]>('sorbetLspConfigurationAdditionalArguments', []);
+    const extensionConfig = cfg.getConfiguration();
+    const lspConfigType = cfg.getValue('sorbetLspConfiguration', defaultValue, extensionConfig);
+    const additionalArguments = cfg.getValue('sorbetLspConfigurationAdditionalArguments', [], extensionConfig);
     const baseConfig = ['bundle', 'exec', 'srb', 'typecheck', '--lsp', ...additionalArguments];
     switch (lspConfigType) {
       case LspConfigType.Beta:
@@ -97,7 +98,7 @@ export class Configuration implements Disposable {
       case LspConfigType.Custom:
         return {
           type: LspConfigType.Custom,
-          command: sorbettoConfig.get<string[]>('sorbetLspCustomConfiguration', []),
+          command: cfg.getValue('sorbetLspCustomConfiguration', [], extensionConfig),
         };
       case LspConfigType.Experimental:
         return {
@@ -116,7 +117,7 @@ export class Configuration implements Disposable {
   }
 
   public get highlightUntyped(): HighlightType {
-    return workspace.getConfiguration('sorbetto').get('highlightUntyped', HighlightType.Disabled);
+    return cfg.getValue('highlightUntyped', HighlightType.Disabled);
   }
 
   /**
@@ -141,7 +142,7 @@ export class Configuration implements Disposable {
   }
 
   private createFileWatchers(): FileSystemWatcher[] {
-    const configFilePatterns = workspace.getConfiguration('sorbetto').get<string[]>('restartFilePatterns', []);
+    const configFilePatterns = cfg.getValue('restartFilePatterns', []);
     return configFilePatterns.map((pattern) => {
       const watcher = workspace.createFileSystemWatcher(pattern);
       const onConfigChange = () => this.onLspOptionsChangeEmitter.fire({ name: 'restartFilePatterns' });
@@ -153,6 +154,6 @@ export class Configuration implements Disposable {
   }
 
   public get typedFalseCompletionNudges(): boolean {
-    return workspace.getConfiguration('sorbetto').get('typedFalseCompletionNudges', true);
+    return cfg.getValue('typedFalseCompletionNudges', true);
   }
 }

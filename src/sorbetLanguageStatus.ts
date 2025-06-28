@@ -1,5 +1,6 @@
-import { Command, Disposable, languages, LanguageStatusItem, LanguageStatusSeverity, workspace } from 'vscode';
-import { SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commandIds';
+import { Command, Disposable, languages, LanguageStatusItem, LanguageStatusSeverity } from 'vscode';
+import { SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commands/commandIds';
+import * as cfg from './common/configuration';
 import { LspConfigType } from './configuration';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/constants';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
@@ -115,7 +116,7 @@ export class SorbetLanguageStatus implements Disposable {
   }
 
   private setConfig(configType?: LspConfigType) {
-    const config = configType ?? workspace.getConfiguration().get('sorbetto.sorbetLspConfiguration', LspConfigType.Disabled);
+    const config = configType ?? cfg.getValue('sorbetto.sorbetLspConfiguration', LspConfigType.Disabled);
     this.configItem.detail = 'Sorbet Configuration';
     this.configItem.text = config.charAt(0).toUpperCase() + config.slice(1);
   }

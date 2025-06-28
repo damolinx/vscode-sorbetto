@@ -8,10 +8,10 @@ import {
   GenericNotificationHandler,
 } from 'vscode-languageclient/node';
 import { ChildProcess, spawn } from 'child_process';
+import { instrumentLanguageClient } from './common/metrics';
 import { stopProcess } from './connections';
 import { SorbetServerCapabilities } from './lsp/initializeResult';
 import { createClient, SorbetClient } from './lsp/languageClient';
-import { instrumentLanguageClient } from './observability/languageClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus, RestartReason } from './types';
 

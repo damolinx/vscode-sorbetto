@@ -1,12 +1,8 @@
 import * as vscode from 'vscode';
 import { TextDocumentItem } from 'vscode-languageclient';
+import { SORBET_SCHEME } from '../lsp/constants';
 import { REQUEST_METHOD } from '../lsp/readFileRequest';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
-
-/**
- * URI scheme supported by {@link SorbetContentProvider}.
- */
-export const SORBET_SCHEME = 'sorbet';
 
 /**
  * Register a content provider for the {@link SORBET_SCHEME sorbet:} scheme.

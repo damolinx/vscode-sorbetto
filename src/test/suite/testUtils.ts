@@ -1,5 +1,5 @@
 import { LogLevel } from 'vscode';
-import { Log } from '../../observability/log';
+import { Log } from '../../common/log';
 
 /**
  * Stub {@link Log} interface.

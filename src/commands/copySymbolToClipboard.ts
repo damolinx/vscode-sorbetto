@@ -3,9 +3,9 @@ import {
   SymbolInformation,
   TextDocumentPositionParams,
 } from 'vscode-languageclient/node';
+import { Log } from '../common/log';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { REQUEST_METHOD } from '../lsp/showSymbolRequest';
-import { Log } from '../observability/log';
 import { ServerStatus } from '../types';
 
 /**

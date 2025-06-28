@@ -1,7 +1,7 @@
 import { Disposable, ExtensionContext, LogOutputChannel, window } from 'vscode';
 import { Configuration } from './configuration';
-import { Log } from './observability/log';
-import { LogMetrics, Metrics } from './observability/metrics';
+import { Log } from './common/log';
+import { LogMetrics, Metrics } from './common/metrics';
 import { SorbetStatusProvider } from './sorbetStatusProvider';
 
 export class SorbetExtensionContext implements Disposable {

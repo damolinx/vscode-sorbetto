@@ -1,11 +1,12 @@
-import { commands, MessageItem, window, workspace } from 'vscode';
+import { commands, MessageItem, window } from 'vscode';
+import * as cfg from '../common/configuration';
 import { LspConfigType } from '../configuration';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { RestartReason, ServerStatus } from '../types';
 
 export async function restartSorbet(context: SorbetExtensionContext, reason: RestartReason = RestartReason.COMMAND) {
   if (context.statusProvider.serverStatus === ServerStatus.DISABLED
-    && workspace.getConfiguration().get('sorbetto.sorbetLspConfiguration', LspConfigType.Disabled) === LspConfigType.Disabled) {
+    && cfg.getValue('sorbetLspConfiguration', LspConfigType.Disabled) === LspConfigType.Disabled) {
     const updateConfigItem: MessageItem = { title: 'Configure' };
     const selection = await window.showWarningMessage(
       'Sorbet is disabled by configuration.',

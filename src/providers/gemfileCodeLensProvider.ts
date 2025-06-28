@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { BUNDLE_INSTALL_ID } from '../commandIds';
+import { BUNDLE_INSTALL_ID } from '../commands/commandIds';
 
 export function registerGemfileCodeLensProvider(): vscode.Disposable {
   return vscode.languages.registerCodeLensProvider(

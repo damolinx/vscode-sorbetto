@@ -1,7 +1,6 @@
 import { commands, ExtensionContext, Uri, workspace } from 'vscode';
 import { SorbetExtensionApiImpl } from './api/sorbetExtensionApi';
-import { mapStatus } from './api/sorbetStatus';
-import * as cmdIds from './commandIds';
+import * as cmdIds from './commands/commandIds';
 import { bundleInstall } from './commands/bundleInstall';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { handleRename } from './commands/handleRename';
@@ -9,6 +8,8 @@ import { restartSorbet } from './commands/restartSorbet';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { setupWorkspace } from './commands/setupWorkspace';
 import { verifyEnvironment } from './commands/verifyEnvironment';
+import * as cfg from './common/configuration';
+import * as ctx from './common/context';
 import { registerGemfileCodeLensProvider } from './providers/gemfileCodeLensProvider';
 import { registerGemfileCompletionProvider } from './providers/gemfileCompletionProvider';
 import { registerRequireCompletionProvider } from './providers/requireCompletionProvider';
@@ -42,7 +43,7 @@ export async function activate(extensionContext: ExtensionContext) {
     context.configuration.onDidChangeLspOptions(() =>
       context.statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE)),
     context.statusProvider.onStatusChanged((e) =>
-      commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(e.status)),
+      ctx.setSorbetStatus(e.status),
     ),
   );
 
@@ -85,18 +86,17 @@ export async function activate(extensionContext: ExtensionContext) {
   );
 
   // Register configurable features
-  if (workspace.getConfiguration('sorbetto').get('updateRequireRelative', true)) {
+  if (cfg.getValue('updateRequireRelative', true)) {
     extensionContext.subscriptions.push(
       workspace.onDidRenameFiles((e) => handleRename(context, e.files)));
   }
 
   // Initialize: start in disabled state until client reports status.
-  commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(ServerStatus.DISABLED));
+  ctx.setSorbetStatus(ServerStatus.DISABLED);
 
   // If enabled, verify Sorbet dependencies before running.
   if (context.configuration.lspConfig &&
-    (!workspace.getConfiguration('sorbetto').get('verifyDependencies', true)
-      || await verifyEnvironment(context))) {
+    (!cfg.getValue('verifyDependencies', true) || await verifyEnvironment(context))) {
     // Start the extension.
     await context.statusProvider.startSorbet();
   }
