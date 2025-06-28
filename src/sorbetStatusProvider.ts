@@ -1,6 +1,6 @@
 import { Disposable, Event, EventEmitter } from 'vscode';
-import { NOTIFICATION_METHOD, ShowOperationParams } from './lsp/showOperationNotification';
 import { Log } from './common/log';
+import { NOTIFICATION_METHOD, ShowOperationParams } from './lsp/showOperationNotification';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageClient } from './sorbetLanguageClient';
 import { RestartReason, ServerStatus } from './types';
@@ -172,9 +172,8 @@ export class SorbetStatusProvider implements Disposable {
    * Start Sorbet.
    */
   public async startSorbet(): Promise<void> {
-    if (!this.context.configuration.lspConfig) {
-      this.context.log.info('Ignored start request, no active configuration.',
-        'See https://sorbet.org/docs/vscode');
+    if (this.context.configuration.lspDisabled) {
+      this.context.log.warn('Ignored start request, disabled by configuration.');
       return;
     }
     if (this.isStarting) {

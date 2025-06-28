@@ -1,15 +1,14 @@
 import { commands, ExtensionContext, Uri, workspace } from 'vscode';
 import { ExtensionApiProvider } from './api/extensionApiProvider';
-import * as cmdIds from './commands/commandIds';
+import { mapStatus } from './api/status';
 import { bundleInstall } from './commands/bundleInstall';
+import * as cmdIds from './commands/commandIds';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { handleRename } from './commands/handleRename';
 import { restartSorbet } from './commands/restartSorbet';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { setupWorkspace } from './commands/setupWorkspace';
 import { verifyEnvironment } from './commands/verifyEnvironment';
-import * as cfg from './common/configuration';
-import * as ctx from './common/context';
 import { registerGemfileCodeLensProvider } from './providers/gemfileCodeLensProvider';
 import { registerGemfileCompletionProvider } from './providers/gemfileCompletionProvider';
 import { registerRequireCompletionProvider } from './providers/requireCompletionProvider';
@@ -24,29 +23,12 @@ import { ServerStatus, RestartReason } from './types';
  */
 export async function activate(extensionContext: ExtensionContext) {
   const context = new SorbetExtensionContext(extensionContext);
-
   extensionContext.subscriptions.push(
     context,
-    context.configuration.onDidChangeLspConfig(
-      async ({ previousConfig, config }) => {
-        const { statusProvider } = context;
-        if (previousConfig && config) {
-          // Something about the config changed, so restart
-          await statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE);
-        } else if (previousConfig) {
-          await statusProvider.stopSorbet(ServerStatus.DISABLED);
-        } else {
-          await statusProvider.startSorbet();
-        }
-      },
-    ),
-    context.configuration.onDidChangeLspOptions(() =>
-      context.statusProvider.restartSorbet(RestartReason.CONFIG_CHANGE)),
-    context.statusProvider.onStatusChanged((e) =>
-      ctx.setSorbetStatus(e.status),
-    ),
+    context.statusProvider.onStatusChanged(({ status }) => setSorbetStatusContext(status)),
   );
 
+  // Register Language Status Item
   const statusBarEntry = new SorbetLanguageStatus(context);
   extensionContext.subscriptions.push(statusBarEntry);
 
@@ -64,16 +46,12 @@ export async function activate(extensionContext: ExtensionContext) {
   extensionContext.subscriptions.push(
     rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | Uri) =>
       bundleInstall(context, gemfile)),
+    rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) =>
+      setupWorkspace(context, pathOrUri)),
     rc(cmdIds.SHOW_OUTPUT_ID, (preserveFocus?: boolean) =>
       context.logOutputChannel.show(preserveFocus ?? true)),
     rc(cmdIds.SORBET_RESTART_ID, (reason = RestartReason.COMMAND) =>
       restartSorbet(context, reason)),
-    rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) =>
-      setupWorkspace(context, pathOrUri)),
-  );
-
-  // Register Sorbet-spec commands
-  extensionContext.subscriptions.push(
     rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_ID, () =>
       savePackageFiles(context)),
   );
@@ -86,17 +64,17 @@ export async function activate(extensionContext: ExtensionContext) {
   );
 
   // Register configurable features
-  if (cfg.getValue('updateRequireRelative', true)) {
+  if (context.configuration.getValue('updateRequireRelative', true)) {
     extensionContext.subscriptions.push(
-      workspace.onDidRenameFiles((e) => handleRename(context, e.files)));
+      workspace.onDidRenameFiles(({ files }) => handleRename(context, files)));
   }
 
   // Initialize: start in disabled state until client reports status.
-  ctx.setSorbetStatus(ServerStatus.DISABLED);
+  setSorbetStatusContext(ServerStatus.DISABLED);
 
   // If enabled, verify Sorbet dependencies before running.
-  if (context.configuration.lspConfig &&
-    (!cfg.getValue('verifyDependencies', true) || await verifyEnvironment(context))) {
+  if (!context.configuration.lspDisabled &&
+    (!context.configuration.getValue('verifyDependencies', true) || await verifyEnvironment(context))) {
     // Start the extension.
     await context.statusProvider.startSorbet();
   }
@@ -105,4 +83,8 @@ export async function activate(extensionContext: ExtensionContext) {
   const api = new ExtensionApiProvider(context);
   extensionContext.subscriptions.push(api);
   return api.toApi();
+}
+
+export function setSorbetStatusContext(status: ServerStatus) {
+  commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(status));
 }

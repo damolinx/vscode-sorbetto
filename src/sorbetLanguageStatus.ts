@@ -1,7 +1,6 @@
 import { Command, Disposable, languages, LanguageStatusItem, LanguageStatusSeverity } from 'vscode';
 import { SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commands/commandIds';
-import * as cfg from './common/configuration';
-import { LspConfigType } from './configuration';
+import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/constants';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { StatusChangedEvent } from './sorbetStatusProvider';
@@ -62,9 +61,9 @@ export class SorbetLanguageStatus implements Disposable {
   }
 
   private render() {
-    const { lspConfig } = this.context.configuration;
+    const { lspConfigurationType } = this.context.configuration;
     const { operations } = this.context.statusProvider;
-    this.setConfig(lspConfig?.type);
+    this.setConfig(lspConfigurationType);
 
     if (this.serverStatus !== ServerStatus.ERROR && operations.length > 0) {
       this.setStatus({
@@ -115,8 +114,8 @@ export class SorbetLanguageStatus implements Disposable {
     }
   }
 
-  private setConfig(configType?: LspConfigType) {
-    const config = configType ?? cfg.getValue('sorbetto.sorbetLspConfiguration', LspConfigType.Disabled);
+  private setConfig(configType?: LspConfigurationType) {
+    const config = configType ?? this.context.configuration.lspConfigurationType;
     this.configItem.detail = 'Sorbet Configuration';
     this.configItem.text = config.charAt(0).toUpperCase() + config.slice(1);
   }

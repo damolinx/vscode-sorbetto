@@ -1,9 +1,7 @@
 // Reasons why Sorbet might be restarted.
 export enum RestartReason {
-  // Command manuallyinvoked from command palette
+  // Command manually invoked from command palette
   COMMAND = 'command',
-  // Manually invoked from the user clicking on "Restart Sorbet" in status bar popup
-  STATUS_BAR_BUTTON = 'status_bar_button',
   // For environments where a wrapper script protects the `sorbet` invocation,
   // and fails to start it under certain circumstances (for example, an rsync
   // client not running in the background, or a VPN not being connected).
@@ -17,6 +15,7 @@ export enum RestartReason {
   // Extension (non-LanguageClient) error
   CRASH_EXT_ERROR = 'crash_ext_error',
   CONFIG_CHANGE = 'config_change',
+  TRIGGER_FILES = 'trigger_files',
 }
 
 // Note: Sorbet is either running/in the process or running, or in an error state. There's no benign idle/not running state.

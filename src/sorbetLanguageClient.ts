@@ -9,6 +9,7 @@ import {
 } from 'vscode-languageclient/node';
 import { ChildProcess, spawn } from 'child_process';
 import { instrumentLanguageClient } from './common/metrics';
+import { buildLspConfiguration } from './configuration/lspConfiguration';
 import { stopProcess } from './connections';
 import { SorbetServerCapabilities } from './lsp/initializeResult';
 import { createClient, SorbetClient } from './lsp/languageClient';
@@ -196,26 +197,25 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
    * Sorbet at most every MIN_TIME_BETWEEN_RETRIES_MS.
    */
   private startSorbetProcess(): Promise<ChildProcess> {
-    const activeConfig = this.context.configuration.lspConfig;
-    this.context.log.info('Start Sorbet. Configuration:', activeConfig?.type);
-
-    const [cmd, ...args] = activeConfig?.command ?? [];
-    if (!cmd) {
-      let msg: string;
-      if (!activeConfig) {
-        msg = 'No active Sorbet configuration.';
-        this.status = ServerStatus.DISABLED;
-      } else {
-        msg = `Missing command-line data to start Sorbet. Configuration: ${activeConfig.type}`;
-      }
-      return Promise.reject(msg);
+    this.context.log.info('Start Sorbet. Configuration:', this.context.configuration.lspConfigurationType);
+    const lspConfig = buildLspConfiguration(this.context.configuration);
+    if (!lspConfig) {
+      return Promise.reject('Missing LSP configuration');
+    }
+    if (workspace.workspaceFolders?.at(1)) {
+      this.context.log.warn('Multi-root workspaces are unsupported, targeting first workspace:',
+        workspace.workspaceFolders[0].name,
+      );
     }
 
-    this.context.log.debug('>', cmd, ...args);
-    this.sorbetProcess = spawn(cmd, args, {
-      cwd: workspace.rootPath,
-      env: { ...process.env, ...activeConfig?.env },
-    });
+    this.context.log.debug('>', lspConfig.cmd, ...lspConfig.args);
+    this.sorbetProcess = spawn(
+      lspConfig.cmd,
+      lspConfig.args,
+      {
+        cwd: workspace.workspaceFolders?.at(0)?.uri.fsPath,
+        env: { ...process.env, ...lspConfig?.env },
+      });
     this.sorbetProcess.on(
       'exit',
       (code: number | null, _signal: string | null) => {

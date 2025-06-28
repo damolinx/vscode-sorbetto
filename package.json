@@ -81,7 +81,7 @@
         },
         "sorbetto.restartFilePatterns": {
           "type": "array",
-          "description": "Workspace files patterns that force a restart of the Sorbet language server.",
+          "description": "Glob patterns that would force a restart of Sorbet.",
           "items": {
             "type": "string"
           },
@@ -104,21 +104,27 @@
           ],
           "markdownEnumDescriptions": [
             "Disable Sorbet language server.",
-            "Enable Sorbet language server **stable** features.",
-            "Enable Sorbet language server **beta** features.",
-            "Enable Sorbet language server **experimental** features (unstable).",
+            "Enable Sorbet language server.",
+            "Enable Sorbet language server with all **beta** features enabled.",
+            "Enable Sorbet language server with all **experimental** features enabled (unstable).",
             "Use configuration defined in the [`sorbetLspCustomConfiguration`](#sorbetto.sorbetLspConfiguration) setting."
           ]
         },
-        "sorbetto.sorbetLspConfigurationAdditionalArguments": {
+         "sorbetto.sorbetLspBaseConfiguration": {
           "type": "array",
-          "default": [],
-          "markdownDescription": "Specifies additional arguments to be passed to Sorbet in all configurations (except for `custom`), e.g. `--disable-watchman`",
+          "default": [
+            "bundle",
+            "exec",
+            "srb",
+            "typecheck",
+            "--lsp"
+          ],
           "items": {
             "type": "string",
             "minLength": 1
           },
-          "uniqueItems": true
+          "markdownDescription": "Specifies the base LSP configuration. Used when [`sorbetto.sorbetLspConfiguration`](#sorbetto.sorbetLspConfiguration) is not `custom`.",
+          "minItems": 1
         },
         "sorbetto.sorbetLspCustomConfiguration": {
           "type": "array",
@@ -133,7 +139,7 @@
             "type": "string",
             "minLength": 1
           },
-          "markdownDescription": "Specifies a custom LSP configuration. Only active when [`sorbetto.sorbetLspConfiguration`](#sorbetto.sorbetLspConfiguration) is set to `custom`.",
+          "markdownDescription": "Specifies a custom LSP configuration. Only active when [`sorbetto.sorbetLspConfiguration`](#sorbetto.sorbetLspConfiguration) is `custom`.",
           "minItems": 1
         },
         "sorbetto.typedFalseCompletionNudges": {

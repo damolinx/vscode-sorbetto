@@ -2,12 +2,12 @@ import { ErrorHandler, InitializationFailedHandler, RevealOutputChannelOn } from
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { SORBET_DOCUMENT_SELECTOR } from './constants';
 import { InitializationOptions } from './initializationOptions';
+import { SorbetInitializeResult } from './initializeResult';
 import { ReadFileRequest } from './readFileRequest';
 import { ShowOperationNotification } from './showOperationNotification';
 import { ShowSymbolRequest } from './showSymbolRequest';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { WorkspaceDidChangeConfigurationNotification } from './workspaceDidChangeConfigurationNotification';
-import { SorbetInitializeResult } from './initializeResult';
 
 /**
  * Create a {@link LanguageClient client} for Sorbet.
@@ -42,10 +42,10 @@ export function createClient(
 
   function createInitializationOptions()
     : InitializationOptions {
-    const { configuration: { highlightUntyped, typedFalseCompletionNudges } } = context;
+    const { configuration: { highlightUntypedCode, nudgeTypedFalseCompletion } } = context;
     return {
-      enableTypedFalseCompletionNudges: typedFalseCompletionNudges,
-      highlightUntyped: highlightUntyped,
+      enableTypedFalseCompletionNudges: nudgeTypedFalseCompletion,
+      highlightUntyped: highlightUntypedCode,
       supportsOperationNotifications: true,
       supportsSorbetURIs: true,
     };

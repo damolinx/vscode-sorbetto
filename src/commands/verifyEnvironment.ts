@@ -2,12 +2,8 @@ import { commands, env, Uri, window } from 'vscode';
 import { exec } from 'child_process';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
-export async function verifyEnvironment(context: SorbetExtensionContext) {
+export async function verifyEnvironment(_context: SorbetExtensionContext) {
   const commandsToCheck = ['srb', 'bundle'];
-  if (!context.configuration.lspConfig?.command.includes('--disable-watchman')) {
-    commandsToCheck.unshift('watchman');
-  }
-
   const missingCommands: string[] = [];
   const whereOrWhichCommand = process.platform === 'win32' ? 'where' : 'which';
 
