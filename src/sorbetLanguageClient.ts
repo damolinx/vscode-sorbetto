@@ -10,8 +10,8 @@ import {
 } from 'vscode-languageclient/node';
 import { ChildProcess, spawn } from 'child_process';
 import { stopProcess } from './connections';
-import { instrumentLanguageClient } from './languageClient.metrics';
 import { createClient, SorbetClient } from './lsp/languageClient';
+import { instrumentLanguageClient } from './observability/languageClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus, RestartReason } from './types';
 

@@ -1,5 +1,5 @@
 import { ChildProcess } from 'child_process';
-import { Log } from './log';
+import { Log } from './observability/log';
 
 /**
  * Attempts to stop the given child process, allowing to configure

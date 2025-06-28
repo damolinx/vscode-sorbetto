@@ -1,5 +1,5 @@
 import { LogLevel } from 'vscode';
-import { Log } from '../../log';
+import { Log } from '../../observability/log';
 
 /**
  * Stub {@link Log} interface.
@@ -7,11 +7,11 @@ import { Log } from '../../log';
  */
 export function createLogStub(level = LogLevel.Error): Log {
   return {
-    debug: () => {},
-    error: () => {},
-    info: () => {},
-    trace: () => {},
-    warn: () => {},
+    debug: () => { },
+    error: () => { },
+    info: () => { },
+    trace: () => { },
+    warn: () => { },
     logLevel: level,
   };
 }

@@ -1,6 +1,6 @@
 import { AbstractMessageSignature } from 'vscode-jsonrpc/lib/common/messages';
-import { SorbetClient } from './lsp/languageClient';
 import { Metrics } from './metrics';
+import { SorbetClient } from '../lsp/languageClient';
 
 /**
  * Shims the language client object so that all requests sent get timed.

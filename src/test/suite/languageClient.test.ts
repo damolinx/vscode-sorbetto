@@ -6,8 +6,8 @@ import {
 } from 'vscode-languageclient/node';
 import * as assert from 'assert';
 import { TestLanguageServerSpecialURIs } from './testLanguageServerSpecialURIs';
-import { instrumentLanguageClient } from '../../languageClient.metrics';
-import { Metrics, Tags } from '../../metrics';
+import { instrumentLanguageClient } from '../../observability/languageClient';
+import { Metrics, Tags } from '../../observability/metrics';
 
 const enum MetricType {
   Increment,
