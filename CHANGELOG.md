@@ -1,5 +1,8 @@
 # Version history
 
+# 0.2.5
+- Fixes to prevent error notifications when logging to Output Pane is expected.
+
 # 0.2.4
 - Rollback anonymous client.
 

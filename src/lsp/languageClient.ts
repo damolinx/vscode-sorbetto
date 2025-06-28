@@ -1,4 +1,4 @@
-import { ErrorHandler, InitializationFailedHandler } from 'vscode-languageclient';
+import { ErrorHandler, InitializationFailedHandler, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { SORBET_DOCUMENT_SELECTOR } from './constants';
 import { InitializationOptions } from './initializationOptions';
@@ -27,6 +27,7 @@ export function createClient(
         initializationFailedHandler: createInitializationFailedHandler(),
         initializationOptions: createInitializationOptions(),
         outputChannel: context.logOutputChannel,
+        revealOutputChannelOn: RevealOutputChannelOn.Never,
       });
 
   return client;
@@ -66,7 +67,7 @@ export class SorbetClient extends LanguageClient implements
     super.error(
       message,
       data,
-      showNotification === 'force' ? true : showNotification,
+      showNotification === 'force' || showNotification,
     );
   }
 }
