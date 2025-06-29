@@ -1,18 +1,26 @@
-import { CancellationToken, Disposable, Event, EventEmitter, workspace } from 'vscode';
+import { CancellationToken, Disposable, Event, EventEmitter, SymbolInformation, workspace } from 'vscode';
 import {
   CloseAction,
   CloseHandlerResult,
   ErrorAction,
   ErrorHandler,
   ErrorHandlerResult,
-  GenericNotificationHandler,
+  NotificationHandler,
+  TextDocumentIdentifier,
+  TextDocumentItem,
+  TextDocumentPositionParams,
 } from 'vscode-languageclient/node';
 import { ChildProcess, spawn } from 'child_process';
 import { instrumentLanguageClient } from './common/metrics';
 import { buildLspConfiguration } from './configuration/lspConfiguration';
 import { stopProcess } from './connections';
+import { InitializationOptions } from './lsp/initializationOptions';
 import { SorbetServerCapabilities } from './lsp/initializeResult';
 import { createClient, SorbetClient } from './lsp/languageClient';
+import { READ_FILE_REQUEST_METHOD } from './lsp/readFileRequest';
+import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
+import { SHOW_OPERATION_NOTIFICATION_METHOD, SorbetShowOperationParams } from './lsp/showOperationNotification';
+import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, SorbetDidChangeConfigurationParams } from './lsp/workspaceDidChangeConfigurationNotification';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus, RestartReason } from './types';
 
@@ -136,13 +144,21 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   }
 
   /**
-   * Register a handler for a language server notification. See {@link LanguageClient.onNotification}.
+   * Register a handler for 'workspace/didChangeConfiguration' notifications.
+   * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification
    */
-  public onNotification(
-    method: string,
-    handler: GenericNotificationHandler,
-  ): Disposable {
-    return this.languageClient.onNotification(method, handler);
+  public onDidChangeConfigurationNotification(handler: NotificationHandler<InitializationOptions>)
+    : Disposable {
+    return this.languageClient.onNotification(DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, handler);
+  }
+
+  /**
+  * Register a handler for 'sorbet/showOperation' notifications.
+  * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification
+  */
+  public onShowOperationNotification(handler: NotificationHandler<SorbetShowOperationParams>)
+    : Disposable {
+    return this.languageClient.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, handler);
   }
 
   /**
@@ -153,21 +169,43 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   }
 
   /**
-   * Send a request to the language server. See {@link LanguageClient.sendRequest}.
-   */
-  public sendRequest<TResponse>(
-    method: string,
-    param: any,
-    token?: CancellationToken,
-  ): Promise<TResponse | null | undefined> {
-    return this.languageClient.sendRequest<TResponse>(method, param, token);
+ * Send a `sorbet/readFile` request to the language server.
+ * See https://sorbet.org/docs/lsp#sorbetreadfile-request.
+ */
+  public sendReadFileRequest(param: TextDocumentIdentifier, token?: CancellationToken)
+    : Promise<TextDocumentItem | undefined> {
+    return this.languageClient.sendRequest<TextDocumentItem>(
+      READ_FILE_REQUEST_METHOD, param, token) ?? undefined;
   }
 
   /**
-   * Send a notification to language server. See {@link LanguageClient.sendNotification}.
+ * Send a `sorbet/showSymbol` request to the language server.
+ * See https://sorbet.org/docs/lsp#sorbetshowsymbol-request.
+ */
+  public sendShowSymbolRequest(param: TextDocumentPositionParams, token?: CancellationToken)
+    : Promise<SymbolInformation | undefined> {
+    return this.languageClient.sendRequest<SymbolInformation>(
+      SHOW_SYMBOL_REQUEST_METHOD, param, token) ?? undefined;
+  }
+
+  /**
+   * Send a `workspace/didChangeConfiguration` notification to the language server.
+   * See https://sorbet.org/docs/lsp#workspacedidchangeconfiguration-notification.
    */
-  public sendNotification(method: string, param: any): Promise<void> {
-    return this.languageClient.sendNotification(method, param);
+  public sendDidChangeConfigurationNotification(param: SorbetDidChangeConfigurationParams)
+    : Promise<void> {
+    return this.languageClient.sendNotification(
+      DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, param);
+  }
+
+  /**
+   * Send a `sorbet/showOperation` notification to the language server.
+   * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification.
+   */
+  public sendShowOperationNotification(param: any)
+    : Promise<void> {
+    return this.languageClient.sendNotification(
+      SHOW_OPERATION_NOTIFICATION_METHOD, param);
   }
 
   /**

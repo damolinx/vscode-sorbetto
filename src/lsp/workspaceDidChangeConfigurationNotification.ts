@@ -1,14 +1,18 @@
-import { Disposable } from 'vscode-languageclient';
+import { DidChangeConfigurationParams, Disposable, NotificationHandler } from 'vscode-languageclient';
 import { InitializationOptions } from './initializationOptions';
 
-export const NOTIFICATION_METHOD = 'workspace/didChangeConfiguration';
+export const DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD = 'workspace/didChangeConfiguration';
+
+export interface SorbetDidChangeConfigurationParams extends DidChangeConfigurationParams {
+  settings: InitializationOptions;
+}
 
 /**
  * See https://sorbet.org/docs/lsp#workspacedidchangeconfiguration-notification
  */
 export interface WorkspaceDidChangeConfigurationNotification {
   onNotification(
-    method: typeof NOTIFICATION_METHOD,
-    handler: (params: InitializationOptions) => void):
+    method: typeof DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD,
+    handler: NotificationHandler<SorbetDidChangeConfigurationParams>):
     Disposable;
 }

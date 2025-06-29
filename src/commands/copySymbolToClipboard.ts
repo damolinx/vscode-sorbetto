@@ -1,11 +1,7 @@
 import { CancellationToken, CancellationTokenSource, env, ProgressLocation, TextEditor, window } from 'vscode';
-import {
-  SymbolInformation,
-  TextDocumentPositionParams,
-} from 'vscode-languageclient/node';
+import { TextDocumentPositionParams } from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
-import { REQUEST_METHOD } from '../lsp/showSymbolRequest';
 import { ServerStatus } from '../types';
 
 /**
@@ -46,10 +42,7 @@ export async function copySymbolToClipboard(
   // avoid having long operation surprisingly overwrite the current clipboard
   // contents, a cancelable progress notification is shown after 2s.
   const symbolInfo = await withProgress(
-    (token) => client.sendRequest<SymbolInformation>(
-      REQUEST_METHOD,
-      params,
-      token),
+    (token) => client.sendShowSymbolRequest(params, token),
     2000,
     context.log);
 

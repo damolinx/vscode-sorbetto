@@ -5,7 +5,7 @@ import * as sinon from 'sinon';
 
 import { createLogStub } from '../testUtils';
 import { copySymbolToClipboard } from '../../../commands/copySymbolToClipboard';
-import { ShowOperationParams } from '../../../lsp/showOperationNotification';
+import { SorbetShowOperationParams } from '../../../lsp/showOperationNotification';
 import { SorbetLanguageClient } from '../../../sorbetLanguageClient';
 import { SorbetExtensionContext } from '../../../sorbetExtensionContext';
 import { SorbetStatusProvider } from '../../../sorbetStatusProvider';
@@ -127,10 +127,10 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
         capabilities: {
           sorbetShowSymbolProvider: true,
         },
-        sendRequest: sendRequestSpy as any,
+        sendShowSymbolRequest: sendRequestSpy as any,
         status: ServerStatus.RUNNING,
       } as SorbetLanguageClient,
-      operations: [] as readonly Readonly<ShowOperationParams>[],
+      operations: [] as readonly Readonly<SorbetShowOperationParams>[],
     } as SorbetStatusProvider;
     const context = {
       log: createLogStub(vscode.LogLevel.Info),

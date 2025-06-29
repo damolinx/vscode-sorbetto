@@ -1,6 +1,6 @@
 import { Disposable, Event, EventEmitter } from 'vscode';
 import { Log } from './common/log';
-import { NOTIFICATION_METHOD, ShowOperationParams } from './lsp/showOperationNotification';
+import { SorbetShowOperationParams } from './lsp/showOperationNotification';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageClient } from './sorbetLanguageClient';
 import { RestartReason, ServerStatus } from './types';
@@ -20,8 +20,8 @@ export class SorbetStatusProvider implements Disposable {
   /** Mutex for startSorbet. Prevents us from starting multiple processes at once. */
   private isStarting: boolean;
   private lastSorbetRetryTime: number;
-  private operationStack: ShowOperationParams[];
-  private readonly onShowOperationEmitter: EventEmitter<ShowOperationParams>;
+  private operationStack: SorbetShowOperationParams[];
+  private readonly onShowOperationEmitter: EventEmitter<SorbetShowOperationParams>;
   private readonly onStatusChangedEmitter: EventEmitter<StatusChangedEvent>;
 
   constructor(context: SorbetExtensionContext) {
@@ -87,7 +87,7 @@ export class SorbetStatusProvider implements Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified. Spurious events are filtered out.
    */
-  private fireOnShowOperation(data: ShowOperationParams): void {
+  private fireOnShowOperation(data: SorbetShowOperationParams): void {
     let changed = false;
     if (data.status === 'end') {
       const filteredOps = this.operationStack.filter(
@@ -122,14 +122,14 @@ export class SorbetStatusProvider implements Disposable {
   /**
    * Sorbet client current operation stack.
    */
-  public get operations(): readonly Readonly<ShowOperationParams>[] {
+  public get operations(): readonly Readonly<SorbetShowOperationParams>[] {
     return this.operationStack;
   }
 
   /**
-   * Event raised on a {@link ShowOperationParams show-operation} event.
+   * Event raised on a {@link SorbetShowOperationParams  show-operation} event.
    */
-  public get onShowOperation(): Event<ShowOperationParams> {
+  public get onShowOperation(): Event<SorbetShowOperationParams> {
     return this.onShowOperationEmitter.event;
   }
 
@@ -193,13 +193,11 @@ export class SorbetStatusProvider implements Disposable {
           this.context,
           (reason: RestartReason) => this.restartSorbet(reason),
         );
-        newClient.onNotification(
-          NOTIFICATION_METHOD,
-          (params: ShowOperationParams) => {
-            if (this.activeLanguageClient === newClient) {
-              this.fireOnShowOperation(params);
-            }
-          });
+        newClient.onShowOperationNotification((params: SorbetShowOperationParams) => {
+          if (this.activeLanguageClient === newClient) {
+            this.fireOnShowOperation(params);
+          }
+        });
         newClient.onStatusChange((status: ServerStatus) => {
           if (this.activeLanguageClient === newClient) {
             this.fireOnStatusChanged({ status, error: newClient.lastError?.msg });

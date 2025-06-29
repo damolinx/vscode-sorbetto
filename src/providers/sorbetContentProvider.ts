@@ -1,7 +1,5 @@
 import * as vscode from 'vscode';
-import { TextDocumentItem } from 'vscode-languageclient';
 import { SORBET_SCHEME } from '../lsp/constants';
-import { REQUEST_METHOD } from '../lsp/readFileRequest';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
 /**
@@ -33,11 +31,7 @@ export class SorbetContentProvider implements vscode.TextDocumentContentProvider
       throw new Error('Sorbet is not running, cannot load file contents');
     }
 
-    const response = await client.sendRequest<TextDocumentItem>(
-      REQUEST_METHOD,
-      { uri: uri.toString() },
-      token,
-    );
+    const response = await client.sendReadFileRequest({ uri: uri.toString() }, token);
     const content = response?.text ?? '';
     this.context.log.debug('ContentProvider: Retrieve', uri.path, content.length);
 

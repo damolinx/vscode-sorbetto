@@ -1,10 +1,10 @@
-import { Disposable } from 'vscode-languageclient';
+import { Disposable, NotificationHandler } from 'vscode-languageclient';
 
-export const NOTIFICATION_METHOD = 'sorbet/showOperation';
+export const SHOW_OPERATION_NOTIFICATION_METHOD = 'sorbet/showOperation';
 
 export type OperationStatus = 'start' | 'end';
 
-export interface ShowOperationParams {
+export interface SorbetShowOperationParams {
   /**
    * A stable identifier for this operation.
    */
@@ -25,7 +25,7 @@ export interface ShowOperationParams {
  */
 export interface ShowOperationNotification {
   onNotification(
-    method: typeof NOTIFICATION_METHOD,
-    handler: (params: ShowOperationParams) => void):
+    method: typeof SHOW_OPERATION_NOTIFICATION_METHOD,
+    handler: NotificationHandler<SorbetShowOperationParams>):
     Disposable;
 }
