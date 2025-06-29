@@ -7,6 +7,7 @@ import * as assert from 'assert';
 import { TestLanguageServerSpecialURIs } from '../testLanguageServerSpecialURIs';
 import { instrumentLanguageClient, Metrics, Tags } from '../../../common/metrics';
 import { SorbetClient } from '../../../lsp/languageClient';
+import { createLogStub } from '../testUtils';
 
 const enum MetricType {
   Increment,
@@ -71,6 +72,7 @@ function createLanguageClient(): SorbetClient {
     'Language Server Example',
     serverOptions,
     clientOptions,
+    createLogStub(),
   );
 
   return client;

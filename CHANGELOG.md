@@ -1,5 +1,11 @@
 # Version history
 
+# 0.2.6
+- Internal implementation changes.
+- Clean-up `error` log formatting coming from `vscode-LanguageClient`.
+- Fixes tracking of `restartFilePattern`.
+- Metrics are visible when using `trace`-level logging (before they were just dropped).
+
 # 0.2.5
 - Fixes to prevent error notifications when logging to Output Pane is expected.
 - Replace `sorbetto.sorbetLspConfigurationAdditionalArguments` setting with `sorbetto.sorbetLspBaseConfiguration` for improved flexibility.
