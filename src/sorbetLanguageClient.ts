@@ -24,6 +24,8 @@ import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, SorbetDidChangeConfigurat
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus, RestartReason } from './types';
 
+const SORBET_EXIT_TIMEOUT_MS = 5000;
+
 const VALID_STATE_TRANSITIONS: ReadonlyMap<
   ServerStatus,
   ReadonlySet<ServerStatus>
@@ -56,12 +58,13 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   private readonly context: SorbetExtensionContext;
   private readonly languageClient: SorbetClient;
   private readonly onStatusChangeEmitter: EventEmitter<ServerStatus>;
-  // Sometimes this is an errno, not a process exit code. This happens when set
-  // via the `.on("error")` handler, instead of the `.on("exit")` handler.
-  private sorbetExitCode?: number;
-  private sorbetProcess?: ChildProcess;
   private wrappedLastError?: ErrorInfo;
   private wrappedStatus: ServerStatus;
+
+  private sorbetProcessInfo?: {
+    exitPromise: Promise<void>;
+    process: ChildProcess;
+  };
 
   constructor(context: SorbetExtensionContext) {
     this.context = context;
@@ -76,30 +79,18 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
 
   public dispose() {
     this.onStatusChangeEmitter.dispose();
-
-    const afterStop = (tag: string) => {
-      this.context.log.info('Stopped Sorbet process', this.sorbetProcess?.pid, ...tag);
-      this.context.metrics.increment('stop.success', 1);
-      this.sorbetProcess = undefined;
-    };
-
     this.languageClient.stop().then(() => {
       // Forcefully stopping the Sorbet process as in some scenarios it might
-      // still be running (give 5s)
+      // still be running (give 5s).
       // TODO: This might be a legacy or large project requirement as in test
       // cases Sorbet process is already stopped by the time this code is hit.
-      if (this.sorbetProcess && this.sorbetProcess.exitCode) {
+      if (this.sorbetProcessInfo?.process.pid) {
         setTimeout(() => {
-          if (this.sorbetProcess && (typeof this.sorbetProcess.exitCode !== 'number')) {
-            stopProcess(this.sorbetProcess!, this.context.log)
-              .then(() => afterStop('(force)'))
+          if (this.sorbetProcessInfo?.process.pid) {
+            stopProcess(this.sorbetProcessInfo.process, this.context.log)
               .catch((err) => this.context.log.error('Failed to stop Sorbet process', err));
-          } else {
-            afterStop('(slow)');
           }
-        }, 5000);
-      } else {
-        afterStop('');
+        }, SORBET_EXIT_TIMEOUT_MS);
       }
     });
   }
@@ -240,34 +231,44 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
         workspace.workspaceFolders[0].name,
       );
     }
-
     this.context.log.info('>', lspConfig.cmd, ...lspConfig.args);
-    this.sorbetProcess = spawn(
+
+    this.wrappedLastError = undefined;
+    this.status = ServerStatus.INITIALIZING;
+
+    const configuredProcess = spawn(
       lspConfig.cmd,
       lspConfig.args,
       {
         cwd: workspace.workspaceFolders?.at(0)?.uri.fsPath,
         env: { ...process.env, ...lspConfig?.env },
       });
-    this.sorbetProcess.on(
-      'exit',
-      (code: number | null, _signal: string | null) => {
-        this.sorbetExitCode = code ?? undefined;
-      },
-    ).on('error', (err?: NodeJS.ErrnoException) => {
-      this.sorbetExitCode = err?.errno;
-      this.sorbetProcess = undefined;
-      if (err?.code === 'ENOENT' && this.status === ServerStatus.INITIALIZING) {
-        this.context.metrics.increment('error.enoent', 1);
-        this.wrappedLastError =
-        {
-          code: err.code,
-          msg: `Failed to start Sorbet: ${err.message}`,
-        };
-        this.status = ServerStatus.ERROR;
-      }
+    const exitPromise = new Promise<void>((resolve) => {
+      configuredProcess.on(
+        'exit',
+        (code: number | null, _signal: string | null) => {
+          this.context.log.trace('Sorbet LSP process exited.', configuredProcess.pid, code);
+          this.sorbetProcessInfo = undefined;
+          resolve();
+        },
+      ).on('error', (err?: NodeJS.ErrnoException) => {
+        this.context.log.debug('Sorbet LSP process failed.', configuredProcess.pid ?? 'no_pid', err);
+        if (err?.code === 'ENOENT' && this.status === ServerStatus.INITIALIZING) {
+          this.sorbetProcessInfo = undefined;
+          this.wrappedLastError = {
+            code: err.code,
+            msg: `Failed to start Sorbet: ${err.message}`,
+          };
+          this.status = ServerStatus.ERROR;
+        }
+      });
     });
-    return Promise.resolve(this.sorbetProcess);
+    this.sorbetProcessInfo = {
+      process: configuredProcess,
+      exitPromise,
+    };
+
+    return Promise.resolve(this.sorbetProcessInfo.process);
   }
 
   /** ErrorHandler interface */
@@ -283,36 +284,41 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
     };
   }
 
-  public closed(): CloseHandlerResult {
+  public async closed(): Promise<CloseHandlerResult> {
     if (this.status !== ServerStatus.ERROR) {
-      let reason: RestartReason;
-      if (this.sorbetExitCode === 11) {
-        // 11 number chosen somewhat arbitrarily. Most important is that this doesn't
-        // clobber the exit code of Sorbet itself (which means Sorbet cannot return 11).
-        //
-        // The only thing that matters is that this value is kept in sync with any
-        // wrapper scripts that people use with Sorbet. If this number has to
-        // change for some reason, we should announce that.
-        reason = RestartReason.WRAPPER_REFUSED_SPAWN;
-      } else if (this.sorbetExitCode === 143) {
-        // 143 = 128 + 15 and 15 is TERM signal
-        reason = RestartReason.FORCIBLY_TERMINATED;
-      } else {
-        reason = RestartReason.CRASH_LC_CLOSED;
-        this.context.log.error(
-          'The Sorbet LSP process crashed exit_code',
-          this.sorbetExitCode,
-        );
-        this.context.log.error(
-          'The Node.js backtrace above is not useful.',
-          'If there is a C++ backtrace above, that is useful.',
-          'Otherwise, more useful output will be in the --debug-log-file to the Sorbet process',
-          '(if provided as a command-line argument).',
-        );
+      let reason = RestartReason.CRASH_LC_CLOSED;
+      let restart = true;
+
+      await this.sorbetProcessInfo?.exitPromise;
+      switch (this.sorbetProcessInfo?.process.exitCode) {
+        case 11:
+          // Custom: 11 is a value picked for runner scripts.
+          // This is kept for compat with Sorbet Extension.
+          reason = RestartReason.WRAPPER_REFUSED_SPAWN;
+          break;
+        case 127:
+          restart = false;
+          break;
+        case 130: // SIGINT
+        case 137: // SIGKILL
+        case 143: // SIGTERM
+          reason = RestartReason.FORCIBLY_TERMINATED;
+          break;
+        default:
+          this.context.log.error('Sorbet LSP process crashed. ExitCode:',
+            this.sorbetProcessInfo?.process.exitCode,
+            '\nOnly Sorbet-specific C++ backtraces may be useful; other stacks are likely infrastructural.',
+            '\nAdditional logs are written to the path specified by --debug-log-file, if set in your Sorbet LSP configuration.',
+          );
+          break;
       }
 
-      this.status = ServerStatus.RESTARTING;
-      this.context.clientManager.restartSorbet(reason);
+      if (restart) {
+        this.status = ServerStatus.RESTARTING;
+        this.context.clientManager.restartSorbet(reason ?? RestartReason.CRASH_LC_CLOSED);
+      } else {
+        this.status = ServerStatus.ERROR;
+      }
     }
 
     return {

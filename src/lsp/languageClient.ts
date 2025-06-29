@@ -84,7 +84,7 @@ export class SorbetClient extends LanguageClient implements
     function data2String(data: any) {
       if (data instanceof ResponseError) {
         const responseError = data;
-        return `Message: ${responseError.message} (Code: ${responseError.code})\n ${responseError.data ? '\n' + responseError.data.toString() : ''}`;
+        return `Message: ${responseError.message} - Code: ${responseError.code}\n ${responseError.data ? '\n' + responseError.data.toString() : ''}`;
       }
       if (data instanceof Error) {
         if (typeof data.stack === 'string') {
