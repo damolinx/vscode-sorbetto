@@ -129,10 +129,7 @@ export class SorbetClientManager implements vscode.Disposable {
         await throttle(previousAttempt, this.context.log);
         previousAttempt = Date.now();
 
-        const client = new SorbetLanguageClient(
-          this.context,
-          (reason: RestartReason) => this.restartSorbet(reason),
-        );
+        const client = new SorbetLanguageClient(this.context);
         this.sorbetClient = client;
 
         await client.start().catch((reason) => {

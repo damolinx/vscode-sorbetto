@@ -56,7 +56,6 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   private readonly context: SorbetExtensionContext;
   private readonly languageClient: SorbetClient;
   private readonly onStatusChangeEmitter: EventEmitter<ServerStatus>;
-  private readonly restart: (reason: RestartReason) => void;
   // Sometimes this is an errno, not a process exit code. This happens when set
   // via the `.on("error")` handler, instead of the `.on("exit")` handler.
   private sorbetExitCode?: number;
@@ -64,10 +63,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   private wrappedLastError?: ErrorInfo;
   private wrappedStatus: ServerStatus;
 
-  constructor(
-    context: SorbetExtensionContext,
-    restart: (reason: RestartReason) => void,
-  ) {
+  constructor(context: SorbetExtensionContext) {
     this.context = context;
     this.languageClient = instrumentLanguageClient(
       createClient(context, () => this.startSorbetProcess(), this),
@@ -75,7 +71,6 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
     );
 
     this.onStatusChangeEmitter = new EventEmitter();
-    this.restart = restart;
     this.wrappedStatus = ServerStatus.INITIALIZING;
   }
 
@@ -246,7 +241,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
       );
     }
 
-    this.context.log.debug('>', lspConfig.cmd, ...lspConfig.args);
+    this.context.log.info('>', lspConfig.cmd, ...lspConfig.args);
     this.sorbetProcess = spawn(
       lspConfig.cmd,
       lspConfig.args,
@@ -280,7 +275,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   public error(): ErrorHandlerResult {
     if (this.status !== ServerStatus.ERROR) {
       this.status = ServerStatus.RESTARTING;
-      this.restart(RestartReason.CRASH_LC_ERROR);
+      this.context.clientManager.restartSorbet(RestartReason.CRASH_LC_ERROR);
     }
     return {
       action: ErrorAction.Shutdown,
@@ -317,7 +312,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
       }
 
       this.status = ServerStatus.RESTARTING;
-      this.restart(reason);
+      this.context.clientManager.restartSorbet(reason);
     }
 
     return {
