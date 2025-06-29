@@ -1,17 +1,18 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "ES2022",
+    "target": "es2022",
     "outDir": "out",
-    "sourceMap": true,
     "rootDir": "src",
+    "sourceMap": true,
     "skipLibCheck": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
+    "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": true
   },
   "exclude": [
     "node_modules",

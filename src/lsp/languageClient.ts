@@ -58,7 +58,7 @@ export class SorbetClient extends LanguageClient implements
   ShowSymbolRequest,
   WorkspaceDidChangeConfigurationNotification {
 
-  error(message: string, data?: any, showNotification?: boolean | 'force')
+  override error(message: string, data?: any, showNotification?: boolean | 'force')
     : void {
     // Override `force` to prevent notifications dialogs from showing up in
     // unintended scenarios (still ocurring in LanguageClient v9).
@@ -70,7 +70,7 @@ export class SorbetClient extends LanguageClient implements
     );
   }
 
-  get initializeResult(): SorbetInitializeResult | undefined {
+  override get initializeResult(): SorbetInitializeResult | undefined {
     return super.initializeResult as SorbetInitializeResult | undefined;
   }
 }
