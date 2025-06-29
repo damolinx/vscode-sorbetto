@@ -76,7 +76,7 @@ export async function activate(extensionContext: ExtensionContext) {
   if (!context.configuration.lspDisabled &&
     (!context.configuration.getValue('verifyDependencies', true) || await verifyEnvironment(context))) {
     // Start the extension.
-    await context.statusProvider.startSorbet();
+    await context.clientManager.startSorbet();
   }
 
   // Extension API

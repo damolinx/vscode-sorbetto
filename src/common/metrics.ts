@@ -35,17 +35,30 @@ export class LogMetrics implements Metrics {
   }
 
   increment(metric: string, count: number, tags?: Tags): void {
-    this.log.trace('Increment', metric, count, tags);
+    if (tags) {
+      this.log.trace('Increment', metric, count, tags);
+    } else {
+      this.log.trace('Increment', metric, count);
+    }
   }
 
   gauge(metric: string, value: number, tags?: Tags): void {
-    this.log.trace('Gauge', metric, value, tags);
+    if (tags) {
+      this.log.trace('Gauge', metric, value, tags);
+    } else {
+      this.log.trace('Gauge', metric, value);
+    }
   }
 
   timing(metric: string, value: number | Date, tags?: Tags): void {
     if (this.log.logLevel == LogLevel.Trace) {
       const time = Date.now() - (typeof value === 'number' ? value : value.getTime());
-      this.log.trace('Timing', metric, time, tags);
+      if (tags) {
+        this.log.trace('Timing', metric, time, tags);
+      } else {
+
+        this.log.trace('Timing', metric, time);
+      }
     }
   }
 

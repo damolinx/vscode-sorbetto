@@ -17,5 +17,5 @@ export async function restartSorbet(context: SorbetExtensionContext, reason: Res
     return;
   }
 
-  await context.statusProvider.restartSorbet(reason);
+  await context.clientManager.restartSorbet(reason);
 }

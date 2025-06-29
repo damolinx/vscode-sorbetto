@@ -81,7 +81,7 @@ export class SorbetLanguageStatus implements Disposable {
           break;
         case ServerStatus.ERROR:
           this.setStatus({
-            detail: this.context.statusProvider.serverError,
+            detail: this.context.clientManager.sorbetClient?.lastError?.msg,
             severity: LanguageStatusSeverity.Error,
             status: 'Error',
           });

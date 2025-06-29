@@ -1,11 +1,7 @@
 import { Disposable, Event, EventEmitter } from 'vscode';
-import { Log } from './common/log';
 import { SorbetShowOperationParams } from './lsp/showOperationNotification';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
-import { SorbetLanguageClient } from './sorbetLanguageClient';
-import { RestartReason, ServerStatus } from './types';
-
-const MIN_TIME_BETWEEN_RETRIES_MS = 7000;
+import { ServerStatus } from './types';
 
 export interface StatusChangedEvent {
   status: ServerStatus;
@@ -14,20 +10,14 @@ export interface StatusChangedEvent {
 }
 
 export class SorbetStatusProvider implements Disposable {
-  private wrappedActiveLanguageClient?: SorbetLanguageClient;
   private readonly context: SorbetExtensionContext;
   private readonly disposables: Disposable[];
-  /** Mutex for startSorbet. Prevents us from starting multiple processes at once. */
-  private isStarting: boolean;
-  private lastSorbetRetryTime: number;
   private operationStack: SorbetShowOperationParams[];
   private readonly onShowOperationEmitter: EventEmitter<SorbetShowOperationParams>;
   private readonly onStatusChangedEmitter: EventEmitter<StatusChangedEvent>;
 
   constructor(context: SorbetExtensionContext) {
     this.context = context;
-    this.isStarting = false;
-    this.lastSorbetRetryTime = 0;
     this.operationStack = [];
     this.onShowOperationEmitter = new EventEmitter();
     this.onStatusChangedEmitter = new EventEmitter();
@@ -35,51 +25,20 @@ export class SorbetStatusProvider implements Disposable {
     this.disposables = [
       this.onShowOperationEmitter,
       this.onStatusChangedEmitter,
+      this.context.clientManager.onClientChanged((client) => {
+        if (client) {
+          client.onShowOperationNotification((params: SorbetShowOperationParams) =>
+            this.fireOnShowOperation(params));
+          client.onStatusChange((status: ServerStatus) =>
+            this.fireOnStatusChanged({ status, error: client.lastError?.msg }),
+          );
+        }
+      }),
     ];
   }
 
   public dispose() {
     Disposable.from(...this.disposables).dispose();
-  }
-
-  /**
-   * Current Sorbet client, if any.
-   */
-  public get activeLanguageClient(): SorbetLanguageClient | undefined {
-    return this.wrappedActiveLanguageClient;
-  }
-
-  private set activeLanguageClient(value: SorbetLanguageClient | undefined) {
-    if (this.wrappedActiveLanguageClient === value) {
-      return;
-    }
-
-    // Clean-up existing client, if any.
-    if (this.wrappedActiveLanguageClient) {
-      this.wrappedActiveLanguageClient.dispose();
-      const i = this.disposables.indexOf(this.wrappedActiveLanguageClient);
-      if (i !== -1) {
-        this.disposables.splice(i, 1);
-      }
-    }
-
-    // Register new client for clean-up, if any.
-    if (value) {
-      const i = this.disposables.indexOf(value);
-      if (i === -1) {
-        this.disposables.push(value);
-      }
-    }
-
-    this.wrappedActiveLanguageClient = value;
-
-    // State might have changed based on new client.
-    if (this.wrappedActiveLanguageClient) {
-      this.fireOnStatusChanged({
-        status: this.wrappedActiveLanguageClient.status,
-        error: this.wrappedActiveLanguageClient.lastError?.msg,
-      });
-    }
   }
 
   /**
@@ -113,7 +72,8 @@ export class SorbetStatusProvider implements Disposable {
    * event listeners are notified.
    */
   private fireOnStatusChanged(data: StatusChangedEvent): void {
-    if (data.stopped) {
+    const { sorbetClient } = this.context.clientManager;
+    if (!sorbetClient || sorbetClient.status === ServerStatus.DISABLED) {
       this.operationStack = [];
     }
     this.onStatusChangedEmitter.fire(data);
@@ -127,7 +87,7 @@ export class SorbetStatusProvider implements Disposable {
   }
 
   /**
-   * Event raised on a {@link SorbetShowOperationParams  show-operation} event.
+   * Event raised on a {@link SorbetShowOperationParams show-operation} notification.
    */
   public get onShowOperation(): Event<SorbetShowOperationParams> {
     return this.onShowOperationEmitter.event;
@@ -141,106 +101,9 @@ export class SorbetStatusProvider implements Disposable {
   }
 
   /**
-   * Restart Sorbet.
-   * @param reason Telemetry reason.
-   */
-  public async restartSorbet(reason: RestartReason): Promise<void> {
-    await this.stopSorbet(ServerStatus.RESTARTING);
-    // `reason` is an enum type with a small and finite number of values.
-    this.context.metrics.increment(`restart.${reason}`, 1);
-    await this.startSorbet();
-  }
-
-  /**
-   * Error information, if {@link serverStatus} is {@link ServerStatus.ERROR}
-   */
-  public get serverError(): string | undefined {
-    return this.activeLanguageClient?.lastError?.msg;
-  }
-
-  /**
    * Return current {@link ServerStatus server status}.
    */
   public get serverStatus(): ServerStatus {
-    return (
-      this.activeLanguageClient?.status ||
-      (this.isStarting ? ServerStatus.RESTARTING : ServerStatus.DISABLED)
-    );
-  }
-
-  /**
-   * Start Sorbet.
-   */
-  public async startSorbet(): Promise<void> {
-    if (this.context.configuration.lspDisabled) {
-      this.context.log.warn('Ignored start request, disabled by configuration.');
-      return;
-    }
-    if (this.isStarting) {
-      this.context.log.debug('Ignored start request, already starting.');
-      return;
-    }
-
-    let retry = false;
-    this.isStarting = true;
-    try {
-      do {
-        await debounceStartAttempt(this.lastSorbetRetryTime, this.context.log);
-        this.lastSorbetRetryTime = Date.now();
-
-        // Create client
-        const newClient = new SorbetLanguageClient(
-          this.context,
-          (reason: RestartReason) => this.restartSorbet(reason),
-        );
-        newClient.onShowOperationNotification((params: SorbetShowOperationParams) => {
-          if (this.activeLanguageClient === newClient) {
-            this.fireOnShowOperation(params);
-          }
-        });
-        newClient.onStatusChange((status: ServerStatus) => {
-          if (this.activeLanguageClient === newClient) {
-            this.fireOnStatusChanged({ status, error: newClient.lastError?.msg });
-          }
-        });
-
-        // Set before starting events might have callers checking this value
-        this.activeLanguageClient = newClient;
-
-        try {
-          // Start client
-          await newClient.start();
-          retry = false;
-        } catch (err) {
-          if (newClient.lastError?.code === 'ENOENT') {
-            this.context.log.error('Failed to start Sorbet with non-recoverable ENOENT', err);
-            retry = false;
-          } else {
-            retry = true;
-          }
-        }
-      } while (retry);
-    } finally {
-      this.isStarting = false;
-    }
-
-    async function debounceStartAttempt(lastAttempt: number, log: Log): Promise<void> {
-      const sleepMS = MIN_TIME_BETWEEN_RETRIES_MS - (Date.now() - lastAttempt);
-      if (sleepMS > 0) {
-        log.debug(`Waiting ${sleepMS.toFixed(0)}ms before restarting`);
-        await new Promise((res) => setTimeout(res, sleepMS));
-        log.debug('Done waiting');
-      }
-    }
-  }
-
-  /**
-   * Stop Sorbet.
-   * @param newStatus Status to report.
-   */
-  public async stopSorbet(newStatus: ServerStatus): Promise<void> {
-    // Use property-setter to ensure proper clean-up.
-    this.activeLanguageClient = undefined;
-    this.fireOnStatusChanged({ status: newStatus, stopped: true });
+    return this.context.clientManager.sorbetClient?.status || ServerStatus.DISABLED;
   }
 }

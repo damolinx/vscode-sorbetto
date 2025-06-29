@@ -2,14 +2,14 @@ import * as vscode from 'vscode';
 import { Log } from './common/log';
 import { LogMetrics, Metrics } from './common/metrics';
 import { Configuration } from './configuration/configuration';
-import { SorbetLifecycleManager } from './sorbetLifecycleManager';
+import { SorbetClientManager } from './sorbetClientManager';
 import { SorbetStatusProvider } from './sorbetStatusProvider';
 
 export class SorbetExtensionContext implements vscode.Disposable {
   public readonly configuration: Configuration;
   private readonly disposables: vscode.Disposable[];
   public readonly extensionContext: vscode.ExtensionContext;
-  public readonly lifecycleManager: SorbetLifecycleManager;
+  public readonly clientManager: SorbetClientManager;
   public readonly logOutputChannel: vscode.LogOutputChannel;
   public readonly metrics: Metrics;
   public readonly statusProvider: SorbetStatusProvider;
@@ -18,14 +18,14 @@ export class SorbetExtensionContext implements vscode.Disposable {
     this.configuration = new Configuration();
     this.extensionContext = context;
     this.logOutputChannel = vscode.window.createOutputChannel('Sorbetto', { log: true });
+
+    this.clientManager = new SorbetClientManager(this);
     this.metrics = new LogMetrics(this.log);
     this.statusProvider = new SorbetStatusProvider(this);
 
-    this.lifecycleManager = new SorbetLifecycleManager(this.configuration, this.statusProvider);
-
     this.disposables = [
       this.configuration,
-      this.lifecycleManager,
+      this.clientManager,
       this.logOutputChannel,
       this.statusProvider,
     ];

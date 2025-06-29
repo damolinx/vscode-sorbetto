@@ -26,12 +26,12 @@ export class SorbetContentProvider implements vscode.TextDocumentContentProvider
     uri: vscode.Uri,
     token?: vscode.CancellationToken,
   ): Promise<string> {
-    const { activeLanguageClient: client } = this.context.statusProvider;
-    if (!client) {
+    const { sorbetClient } = this.context.clientManager;
+    if (!sorbetClient) {
       throw new Error('Sorbet is not running, cannot load file contents');
     }
 
-    const response = await client.sendReadFileRequest({ uri: uri.toString() }, token);
+    const response = await sorbetClient.sendReadFileRequest({ uri: uri.toString() }, token);
     const content = response?.text ?? '';
     this.context.log.debug('ContentProvider: Retrieve', uri.path, content.length);
 

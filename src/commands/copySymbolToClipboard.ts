@@ -17,13 +17,13 @@ export async function copySymbolToClipboard(
     return;
   }
 
-  const { activeLanguageClient: client } = context.statusProvider;
-  if (client?.status !== ServerStatus.RUNNING) {
+  const { sorbetClient } = context.clientManager;
+  if (sorbetClient?.status !== ServerStatus.RUNNING) {
     context.log.warn('CopySymbol: No active Sorbet client.');
     return;
   }
 
-  if (!client.capabilities?.sorbetShowSymbolProvider) {
+  if (!sorbetClient.capabilities?.sorbetShowSymbolProvider) {
     context.log.warn(
       'CopySymbol: Sorbet LSP does not support \'showSymbol\' capability.',
     );
@@ -42,7 +42,7 @@ export async function copySymbolToClipboard(
   // avoid having long operation surprisingly overwrite the current clipboard
   // contents, a cancelable progress notification is shown after 2s.
   const symbolInfo = await withProgress(
-    (token) => client.sendShowSymbolRequest(params, token),
+    (token) => sorbetClient.sendShowSymbolRequest(params, token),
     2000,
     context.log);
 

@@ -3,9 +3,10 @@ import * as assert from 'assert';
 import * as path from 'path';
 import * as sinon from 'sinon';
 
+import { SorbetContentProvider } from '../../providers/sorbetContentProvider';
 import { SorbetLanguageClient } from '../../sorbetLanguageClient';
 import { SorbetExtensionContext } from '../../sorbetExtensionContext';
-import { SorbetContentProvider } from '../../providers/sorbetContentProvider';
+import { SorbetClientManager } from '../../sorbetClientManager';
 import { SorbetStatusProvider } from '../../sorbetStatusProvider';
 import { createLogStub } from './testUtils';
 
@@ -24,17 +25,16 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     const fileUri = vscode.Uri.parse('sorbet:/test/file', true);
     const expectedContents = '';
 
-    const sendRequestSpy = sinon.spy(async (_method, _params) => ({
+    const sendRequestSpy = sinon.spy(async (_params) => ({
       text: expectedContents,
     }));
-    const statusProvider = {
-      activeLanguageClient: ({
-        sendRequest: sendRequestSpy,
-      } as unknown) as SorbetLanguageClient,
-    } as SorbetStatusProvider;
     const context = {
       log: createLogStub(),
-      statusProvider,
+      clientManager: {
+        sorbetClient: ({
+          sendReadFileRequest: sendRequestSpy,
+        } as unknown) as SorbetLanguageClient,
+      } as SorbetClientManager,
     } as SorbetExtensionContext;
 
     const provider = new SorbetContentProvider(context);
@@ -43,8 +43,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       expectedContents,
     );
 
-    sinon.assert.calledOnce(sendRequestSpy);
-    sinon.assert.calledWith(sendRequestSpy, 'sorbet/readFile', {
+    sinon.assert.calledOnceWithMatch(sendRequestSpy, {
       uri: fileUri.toString(),
     });
   });

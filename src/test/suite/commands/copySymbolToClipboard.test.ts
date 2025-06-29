@@ -5,10 +5,9 @@ import * as sinon from 'sinon';
 
 import { createLogStub } from '../testUtils';
 import { copySymbolToClipboard } from '../../../commands/copySymbolToClipboard';
-import { SorbetShowOperationParams } from '../../../lsp/showOperationNotification';
-import { SorbetLanguageClient } from '../../../sorbetLanguageClient';
+import { SorbetClientManager } from '../../../sorbetClientManager';
 import { SorbetExtensionContext } from '../../../sorbetExtensionContext';
-import { SorbetStatusProvider } from '../../../sorbetStatusProvider';
+import { SorbetLanguageClient } from '../../../sorbetLanguageClient';
 import { ServerStatus } from '../../../types';
 
 suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
@@ -34,12 +33,9 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     } as any));
     testRestorables.push(envClipboardStub);
 
-    const statusProvider = {
-      activeLanguageClient: undefined,
-    } as SorbetStatusProvider;
     const context = {
       log: createLogStub(vscode.LogLevel.Info),
-      statusProvider,
+      clientManager: { sorbetClient: undefined } as SorbetClientManager,
     } as SorbetExtensionContext;
     await copySymbolToClipboard(context, editor);
 
@@ -58,14 +54,13 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     } as any));
     testRestorables.push(envClipboardStub);
 
-    const statusProvider = {
-      activeLanguageClient: {
-        status: ServerStatus.DISABLED,
-      } as SorbetLanguageClient,
-    } as SorbetStatusProvider;
     const context = {
       log: createLogStub(vscode.LogLevel.Info),
-      statusProvider,
+      clientManager: {
+        sorbetClient: {
+          status: ServerStatus.DISABLED,
+        },
+      } as SorbetClientManager,
     } as SorbetExtensionContext;
     await copySymbolToClipboard(context, editor);
 
@@ -83,19 +78,16 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       } as any,
     } as any));
     testRestorables.push(envClipboardStub);
-
-    const statusProvider = {
-      activeLanguageClient: {
-        capabilities: {
-          sorbetShowSymbolProvider: false,
-        },
-        status: ServerStatus.RUNNING,
-      } as SorbetLanguageClient,
-    } as SorbetStatusProvider;
-
     const context = {
       log: createLogStub(vscode.LogLevel.Info),
-      statusProvider,
+      clientManager: {
+        sorbetClient: {
+          capabilities: {
+            sorbetShowSymbolProvider: false,
+          },
+          status: ServerStatus.RUNNING,
+        } as SorbetLanguageClient,
+      },
     } as SorbetExtensionContext;
     await copySymbolToClipboard(context, editor);
 
@@ -116,37 +108,30 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     testRestorables.push(envClipboardStub);
 
     const sendRequestSpy = sinon.spy(
-      (_method: string, _param: vsclc.TextDocumentPositionParams) =>
+      (_param: vsclc.TextDocumentPositionParams) =>
         Promise.resolve({
           name: expectedSymbolName,
         } as vsclc.SymbolInformation),
     );
 
-    const statusProvider = {
-      activeLanguageClient: {
-        capabilities: {
-          sorbetShowSymbolProvider: true,
-        },
-        sendShowSymbolRequest: sendRequestSpy as any,
-        status: ServerStatus.RUNNING,
-      } as SorbetLanguageClient,
-      operations: [] as readonly Readonly<SorbetShowOperationParams>[],
-    } as SorbetStatusProvider;
     const context = {
       log: createLogStub(vscode.LogLevel.Info),
-      statusProvider,
+      clientManager: {
+        sorbetClient: {
+          capabilities: {
+            sorbetShowSymbolProvider: true,
+          },
+          sendShowSymbolRequest: sendRequestSpy as any,
+          status: ServerStatus.RUNNING,
+        } as SorbetLanguageClient,
+      } as SorbetClientManager,
     } as SorbetExtensionContext;
 
     await copySymbolToClipboard(context, editor);
 
     sinon.assert.calledOnce(writeTextSpy);
     sinon.assert.calledWith(writeTextSpy, expectedSymbolName);
-    sinon.assert.calledOnce(sendRequestSpy);
-    sinon.assert.calledWith(
-      sendRequestSpy,
-      'sorbet/showSymbol',
-      sinon.match.object,
-    );
+    sinon.assert.calledOnceWithMatch(sendRequestSpy, sinon.match.object);
   });
 });
 

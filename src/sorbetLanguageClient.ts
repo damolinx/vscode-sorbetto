@@ -83,7 +83,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
     this.onStatusChangeEmitter.dispose();
 
     const afterStop = (tag: string) => {
-      this.context.log.info('Stopped Sorbet process', this.sorbetProcess?.pid, tag);
+      this.context.log.info('Stopped Sorbet process', this.sorbetProcess?.pid, ...tag);
       this.context.metrics.increment('stop.success', 1);
       this.sorbetProcess = undefined;
     };
