@@ -36,7 +36,7 @@ export function createClient(
 
   function createInitializationFailedHandler(): InitializationFailedHandler {
     return (error) => {
-      context.log.error('Failed to initialize Sorbet', error);
+      context.log.error('Failed to initialize Sorbet.', error);
       return false;
     };
   }
