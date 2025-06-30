@@ -30,7 +30,7 @@ export class SorbetStatusProvider implements Disposable {
           );
         }
       }),
-      { dispose: () => this.disposeClientEventDisposables() }
+      { dispose: () => this.disposeClientEventDisposables() },
     ];
   }
 

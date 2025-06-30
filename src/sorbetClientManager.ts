@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { Log } from './common/log';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
+import { E_COMMAND_NOT_FOUND } from './processUtils';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageClient } from './sorbetLanguageClient';
 import { RestartReason, ServerStatus } from './types';
@@ -132,26 +133,27 @@ export class SorbetClientManager implements vscode.Disposable {
         const client = new SorbetLanguageClient(this.context);
         this.sorbetClient = client;
 
-        await client.start().catch((reason) => {
-          retry = client.lastError?.code !== 'ENOENT';
-          if (!retry) {
-            this.context.log.error('Failed to start Sorbet with non-recoverable error', client.lastError?.code, reason);
+        try {
+          await client.start();
+          this.startFileWatchers();
+        } catch {
+          const errorInfo = await client.sorbetProcess!.exit;
+          if (errorInfo?.code === 'ENOENT' || errorInfo?.errno === E_COMMAND_NOT_FOUND) {
+            this.context.log.error('Failed to start Sorbet with non-recoverable error:', errorInfo.code || errorInfo.errno);
+            retry = false;
+          } else {
+            retry = true;
           }
-        });
+          client.dispose();
+        }
       } while (retry);
-
-      this.startFileWatchers();
     });
 
     async function withLock(context: any, task: () => Promise<void>): Promise<void> {
       if (!context['__startLock']) {
         context['__startLock'] = true;
-        try {
-          await task();
-        }
-        finally {
-          delete context['__startLock'];
-        }
+        try { await task(); }
+        finally { delete context['__startLock']; }
       }
     }
 

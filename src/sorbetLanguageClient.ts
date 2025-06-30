@@ -1,70 +1,30 @@
-import { CancellationToken, Disposable, Event, EventEmitter, SymbolInformation, workspace } from 'vscode';
-import {
-  CloseAction,
-  CloseHandlerResult,
-  ErrorAction,
-  ErrorHandler,
-  ErrorHandlerResult,
-  NotificationHandler,
-  TextDocumentIdentifier,
-  TextDocumentItem,
-  TextDocumentPositionParams,
-} from 'vscode-languageclient/node';
-import { ChildProcess, spawn } from 'child_process';
+import * as vscode from 'vscode';
+import * as vslc from 'vscode-languageclient/node';
+import { ChildProcess } from 'child_process';
 import { instrumentLanguageClient } from './common/metrics';
 import { buildLspConfiguration } from './configuration/lspConfiguration';
-import { stopProcess } from './connections';
 import { InitializationOptions } from './lsp/initializationOptions';
 import { SorbetServerCapabilities } from './lsp/initializeResult';
 import { createClient, SorbetClient } from './lsp/languageClient';
 import { READ_FILE_REQUEST_METHOD } from './lsp/readFileRequest';
-import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
 import { SHOW_OPERATION_NOTIFICATION_METHOD, SorbetShowOperationParams } from './lsp/showOperationNotification';
+import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
 import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, SorbetDidChangeConfigurationParams } from './lsp/workspaceDidChangeConfigurationNotification';
+import { E_COMMAND_NOT_FOUND, E_SIGINT, E_SIGKILL, E_SIGTERM, ErrorInfo, ProcessWithExitPromise, spawnWithExitPromise, stopProcess } from './processUtils';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus, RestartReason } from './types';
 
 const SORBET_EXIT_TIMEOUT_MS = 5000;
 
-const VALID_STATE_TRANSITIONS: ReadonlyMap<
-  ServerStatus,
-  ReadonlySet<ServerStatus>
-> = new Map<ServerStatus, Set<ServerStatus>>([
-  [
-    ServerStatus.INITIALIZING,
-    new Set([
-      ServerStatus.ERROR,
-      ServerStatus.RESTARTING,
-      ServerStatus.RUNNING,
-    ]),
-  ],
-  [
-    ServerStatus.RUNNING,
-    new Set([ServerStatus.ERROR, ServerStatus.RESTARTING]),
-  ],
-  [ServerStatus.DISABLED, new Set([ServerStatus.INITIALIZING])],
-  // Restarting is a terminal state. The restart occurs by terminating this LanguageClient and creating a new one.
-  [ServerStatus.RESTARTING, new Set()],
-  // Error is a terminal state for this class.
-  [ServerStatus.ERROR, new Set()],
-]);
-
-interface ErrorInfo {
-  msg: string;
-  code: string;
-}
-
-export class SorbetLanguageClient implements Disposable, ErrorHandler {
+export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandler {
   private readonly context: SorbetExtensionContext;
   private readonly languageClient: SorbetClient;
-  private readonly onStatusChangeEmitter: EventEmitter<ServerStatus>;
+  private readonly onStatusChangeEmitter: vscode.EventEmitter<ServerStatus>;
+  public sorbetProcess?: ProcessWithExitPromise;
+  public sorbetRestartReason?: RestartReason;
+
   private wrappedLastError?: ErrorInfo;
   private wrappedStatus: ServerStatus;
-
-  private sorbetProcessInfo?: {
-    exitPromise: Promise<void>;
-    process: ChildProcess;
-  };
 
   constructor(context: SorbetExtensionContext) {
     this.context = context;
@@ -73,7 +33,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
       this.context.metrics,
     );
 
-    this.onStatusChangeEmitter = new EventEmitter();
+    this.onStatusChangeEmitter = new vscode.EventEmitter();
     this.wrappedStatus = ServerStatus.INITIALIZING;
   }
 
@@ -84,10 +44,10 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
       // still be running (give 5s).
       // TODO: This might be a legacy or large project requirement as in test
       // cases Sorbet process is already stopped by the time this code is hit.
-      if (this.sorbetProcessInfo?.process.pid) {
+      if (this.sorbetProcess?.process.pid) {
         setTimeout(() => {
-          if (this.sorbetProcessInfo?.process.pid) {
-            stopProcess(this.sorbetProcessInfo.process, this.context.log)
+          if (this.sorbetProcess?.process.pid) {
+            stopProcess(this.sorbetProcess.process, this.context.log)
               .catch((err) => this.context.log.error('Failed to stop Sorbet process', err));
           }
         }, SORBET_EXIT_TIMEOUT_MS);
@@ -133,8 +93,8 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
    * Register a handler for 'workspace/didChangeConfiguration' notifications.
    * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification
    */
-  public onDidChangeConfigurationNotification(handler: NotificationHandler<InitializationOptions>)
-    : Disposable {
+  public onDidChangeConfigurationNotification(handler: vslc.NotificationHandler<InitializationOptions>)
+    : vscode.Disposable {
     return this.languageClient.onNotification(DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, handler);
   }
 
@@ -142,15 +102,15 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   * Register a handler for 'sorbet/showOperation' notifications.
   * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification
   */
-  public onShowOperationNotification(handler: NotificationHandler<SorbetShowOperationParams>)
-    : Disposable {
+  public onShowOperationNotification(handler: vslc.NotificationHandler<SorbetShowOperationParams>)
+    : vscode.Disposable {
     return this.languageClient.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, handler);
   }
 
   /**
    * Event fired on {@link status} changes.
    */
-  public get onStatusChange(): Event<ServerStatus> {
+  public get onStatusChange(): vscode.Event<ServerStatus> {
     return this.onStatusChangeEmitter.event;
   }
 
@@ -158,9 +118,9 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
  * Send a `sorbet/readFile` request to the language server.
  * See https://sorbet.org/docs/lsp#sorbetreadfile-request.
  */
-  public sendReadFileRequest(param: TextDocumentIdentifier, token?: CancellationToken)
-    : Promise<TextDocumentItem | undefined> {
-    return this.languageClient.sendRequest<TextDocumentItem>(
+  public sendReadFileRequest(param: vslc.TextDocumentIdentifier, token?: vscode.CancellationToken)
+    : Promise<vslc.TextDocumentItem | undefined> {
+    return this.languageClient.sendRequest<vslc.TextDocumentItem>(
       READ_FILE_REQUEST_METHOD, param, token) ?? undefined;
   }
 
@@ -168,9 +128,9 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
  * Send a `sorbet/showSymbol` request to the language server.
  * See https://sorbet.org/docs/lsp#sorbetshowsymbol-request.
  */
-  public sendShowSymbolRequest(param: TextDocumentPositionParams, token?: CancellationToken)
-    : Promise<SymbolInformation | undefined> {
-    return this.languageClient.sendRequest<SymbolInformation>(
+  public sendShowSymbolRequest(param: vslc.TextDocumentPositionParams, token?: vscode.CancellationToken)
+    : Promise<vslc.SymbolInformation | undefined> {
+    return this.languageClient.sendRequest<vslc.SymbolInformation>(
       SHOW_SYMBOL_REQUEST_METHOD, param, token) ?? undefined;
   }
 
@@ -202,14 +162,8 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
   }
 
   private set status(newStatus: ServerStatus) {
-    if (this.status === newStatus) {
+    if (this.wrappedStatus === newStatus) {
       return;
-    }
-
-    if (!VALID_STATE_TRANSITIONS.get(this.status)?.has(newStatus)) {
-      this.context.log.error(
-        `Invalid Sorbet server transition: ${this.status} => ${newStatus}}`,
-      );
     }
 
     this.wrappedStatus = newStatus;
@@ -220,109 +174,80 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
    * Runs a Sorbet process using the current active configuration. Debounced so that it runs
    * Sorbet at most every MIN_TIME_BETWEEN_RETRIES_MS.
    */
-  private startSorbetProcess(): Promise<ChildProcess> {
+  private async startSorbetProcess(): Promise<ChildProcess> {
     this.context.log.info('Start Sorbet. Configuration:', this.context.configuration.lspConfigurationType);
     const lspConfig = buildLspConfiguration(this.context.configuration);
     if (!lspConfig) {
-      return Promise.reject('Missing LSP configuration');
+      throw new Error('Missing LSP configuration');
     }
-    if (workspace.workspaceFolders?.at(1)) {
-      this.context.log.warn('Multi-root workspaces are unsupported, targeting first workspace:',
-        workspace.workspaceFolders[0].name,
-      );
-    }
+
+    this.status = ServerStatus.INITIALIZING;
     this.context.log.info('>', lspConfig.cmd, ...lspConfig.args);
 
-    this.wrappedLastError = undefined;
-    this.status = ServerStatus.INITIALIZING;
-
-    const configuredProcess = spawn(
-      lspConfig.cmd,
-      lspConfig.args,
-      {
-        cwd: workspace.workspaceFolders?.at(0)?.uri.fsPath,
-        env: { ...process.env, ...lspConfig?.env },
-      });
-    const exitPromise = new Promise<void>((resolve) => {
-      configuredProcess.on(
-        'exit',
-        (code: number | null, _signal: string | null) => {
-          this.context.log.trace('Sorbet LSP process exited.', configuredProcess.pid, code);
-          this.sorbetProcessInfo = undefined;
-          resolve();
-        },
-      ).on('error', (err?: NodeJS.ErrnoException) => {
-        this.context.log.debug('Sorbet LSP process failed.', configuredProcess.pid ?? 'no_pid', err);
-        if (err?.code === 'ENOENT' && this.status === ServerStatus.INITIALIZING) {
-          this.sorbetProcessInfo = undefined;
-          this.wrappedLastError = {
-            code: err.code,
-            msg: `Failed to start Sorbet: ${err.message}`,
-          };
-          this.status = ServerStatus.ERROR;
-        }
-      });
+    this.sorbetProcess = spawnWithExitPromise(lspConfig.cmd, lspConfig.args, {
+      cwd: vscode.workspace.workspaceFolders?.at(0)?.uri.fsPath,
+      env: { ...process.env, ...lspConfig?.env },
     });
-    this.sorbetProcessInfo = {
-      process: configuredProcess,
-      exitPromise,
-    };
+    this.sorbetProcess.exit = this.sorbetProcess.exit.then((errorInfo) => {
+      this.wrappedLastError = errorInfo;
+      const pid = this.sorbetProcess?.process.pid ?? '«no pid»';
+      if (errorInfo) {
+        this.context.log.trace('Sorbet LSP process failed.', pid, errorInfo);
+        this.status = ServerStatus.ERROR;
+      } else {
+        this.context.log.trace('Sorbet LSP process exited.', pid);
+      }
+      return errorInfo;
+    });
 
-    return Promise.resolve(this.sorbetProcessInfo.process);
+    return this.sorbetProcess.process;
   }
 
   /** ErrorHandler interface */
 
-  public error(): ErrorHandlerResult {
-    if (this.status !== ServerStatus.ERROR) {
-      this.status = ServerStatus.RESTARTING;
-      this.context.clientManager.restartSorbet(RestartReason.CRASH_LC_ERROR);
-    }
+  public error(): vslc.ErrorHandlerResult {
     return {
-      action: ErrorAction.Shutdown,
+      action: vslc.ErrorAction.Shutdown,
       handled: true,
     };
   }
 
-  public async closed(): Promise<CloseHandlerResult> {
+  public async closed(): Promise<vslc.CloseHandlerResult> {
     if (this.status !== ServerStatus.ERROR) {
-      let reason = RestartReason.CRASH_LC_CLOSED;
       let restart = true;
 
-      await this.sorbetProcessInfo?.exitPromise;
-      switch (this.sorbetProcessInfo?.process.exitCode) {
+      await this.sorbetProcess?.exit;
+      const exitCode = this.sorbetProcess?.process.exitCode;
+      switch (exitCode) {
         case 11:
           // Custom: 11 is a value picked for runner scripts.
           // This is kept for compat with Sorbet Extension.
-          reason = RestartReason.WRAPPER_REFUSED_SPAWN;
+          this.sorbetRestartReason = RestartReason.WRAPPER_REFUSED_SPAWN;
           break;
-        case 127:
+        case E_COMMAND_NOT_FOUND:
+          this.sorbetRestartReason = undefined;
           restart = false;
           break;
-        case 130: // SIGINT
-        case 137: // SIGKILL
-        case 143: // SIGTERM
-          reason = RestartReason.FORCIBLY_TERMINATED;
+        case E_SIGINT:
+        case E_SIGKILL:
+        case E_SIGTERM:
+          this.sorbetRestartReason = RestartReason.FORCIBLY_TERMINATED;
           break;
         default:
+          this.sorbetRestartReason = RestartReason.CRASH_LC_CLOSED;
           this.context.log.error('Sorbet LSP process crashed. ExitCode:',
-            this.sorbetProcessInfo?.process.exitCode,
+            this.sorbetProcess?.process.exitCode,
             '\nOnly Sorbet-specific C++ backtraces may be useful; other stacks are likely infrastructural.',
             '\nAdditional logs are written to the path specified by --debug-log-file, if set in your Sorbet LSP configuration.',
           );
           break;
       }
 
-      if (restart) {
-        this.status = ServerStatus.RESTARTING;
-        this.context.clientManager.restartSorbet(reason ?? RestartReason.CRASH_LC_CLOSED);
-      } else {
-        this.status = ServerStatus.ERROR;
-      }
+      this.status = restart ? ServerStatus.RESTARTING : ServerStatus.ERROR;
     }
 
     return {
-      action: CloseAction.DoNotRestart,
+      action: vslc.CloseAction.DoNotRestart,
       handled: true,
     };
   }

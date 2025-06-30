@@ -42,9 +42,9 @@ export class SorbetLanguageStatus implements Disposable {
     this.setStatus({ status: 'Disabled', command: StartCommand });
 
     this.disposables = [
-      this.context.configuration.onDidChangeLspConfig(this.render, this),
-      this.context.statusProvider.onShowOperation(this.render, this),
-      this.context.statusProvider.onStatusChanged(this.onServerStatusChanged, this),
+      this.context.configuration.onDidChangeLspConfig(() => this.render()),
+      this.context.statusProvider.onShowOperation(() => this.render()),
+      this.context.statusProvider.onStatusChanged((status) => this.onServerStatusChanged(status)),
       this.configItem,
       this.statusItem,
     ];
@@ -80,7 +80,7 @@ export class SorbetLanguageStatus implements Disposable {
           break;
         case ServerStatus.ERROR:
           this.setStatus({
-            detail: this.context.clientManager.sorbetClient?.lastError?.msg,
+            detail: this.context.clientManager.sorbetClient?.lastError?.message,
             severity: LanguageStatusSeverity.Error,
             status: 'Error',
           });

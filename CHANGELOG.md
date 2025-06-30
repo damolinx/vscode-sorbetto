@@ -1,5 +1,9 @@
 # Version history
 
+# 0.2.7
+- Fix: Inconsistent handling of `ENOENT` and errno=127. Further work is needed.
+- Fix: Custom configuration update does not restart Sorbet.
+
 # 0.2.6
 - Internal implementation changes.
 - Clean-up `error` log formatting coming from `vscode-LanguageClient`.
