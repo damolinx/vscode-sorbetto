@@ -21,13 +21,13 @@ export enum RestartReason {
 // Note: Sorbet is either running/in the process or running, or in an error state. There's no benign idle/not running state.
 export const enum ServerStatus {
   // The language client is disabled.
-  DISABLED,
+  DISABLED = 'Disabled',
   // The language client is restarting.
-  RESTARTING,
+  RESTARTING = 'Restarting',
   // The language client is initializing.
-  INITIALIZING,
+  INITIALIZING = 'Initializing',
   // The language client is running, and so is Sorbet.
-  RUNNING,
+  RUNNING = 'Running',
   // An error has occurred. The user must dismiss the error.
-  ERROR,
+  ERROR = 'Error',
 }
