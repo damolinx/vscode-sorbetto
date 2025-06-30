@@ -3,7 +3,6 @@ import { SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commands/commandIds';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/constants';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
-import { StatusChangedEvent } from './sorbetStatusProvider';
 import { ServerStatus } from './types';
 
 const StartCommand: Command = {
@@ -51,12 +50,12 @@ export class SorbetLanguageStatus implements Disposable {
     ];
   }
 
-  public dispose() {
+  dispose(): void {
     Disposable.from(...this.disposables).dispose();
   }
 
-  private onServerStatusChanged(e: StatusChangedEvent): void {
-    this.serverStatus = e.status;
+  private onServerStatusChanged(status: ServerStatus): void {
+    this.serverStatus = status;
     this.render();
   }
 

@@ -3,21 +3,17 @@ import { SorbetShowOperationParams } from './lsp/showOperationNotification';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus } from './types';
 
-export interface StatusChangedEvent {
-  status: ServerStatus;
-  stopped?: true;
-  error?: string;
-}
-
 export class SorbetStatusProvider implements Disposable {
   private readonly context: SorbetExtensionContext;
+  private readonly clientEventDisposables: Disposable[];
   private readonly disposables: Disposable[];
   private operationStack: SorbetShowOperationParams[];
   private readonly onShowOperationEmitter: EventEmitter<SorbetShowOperationParams>;
-  private readonly onStatusChangedEmitter: EventEmitter<StatusChangedEvent>;
+  private readonly onStatusChangedEmitter: EventEmitter<ServerStatus>;
 
   constructor(context: SorbetExtensionContext) {
     this.context = context;
+    this.clientEventDisposables = [];
     this.operationStack = [];
     this.onShowOperationEmitter = new EventEmitter();
     this.onStatusChangedEmitter = new EventEmitter();
@@ -26,19 +22,24 @@ export class SorbetStatusProvider implements Disposable {
       this.onShowOperationEmitter,
       this.onStatusChangedEmitter,
       this.context.clientManager.onClientChanged((client) => {
+        this.disposeClientEventDisposables();
         if (client) {
-          client.onShowOperationNotification((params: SorbetShowOperationParams) =>
-            this.fireOnShowOperation(params));
-          client.onStatusChange((status: ServerStatus) =>
-            this.fireOnStatusChanged({ status, error: client.lastError?.msg }),
+          this.clientEventDisposables.push(
+            client.onShowOperationNotification((params) => this.fireOnShowOperation(params)),
+            client.onStatusChange((status) => this.fireOnStatusChanged(status)),
           );
         }
       }),
     ];
   }
 
-  public dispose() {
+  dispose(): void {
     Disposable.from(...this.disposables).dispose();
+  }
+
+  disposeClientEventDisposables(): void {
+    Disposable.from(...this.clientEventDisposables).dispose();
+    this.clientEventDisposables.length = 0;
   }
 
   /**
@@ -71,12 +72,12 @@ export class SorbetStatusProvider implements Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified.
    */
-  private fireOnStatusChanged(data: StatusChangedEvent): void {
+  private fireOnStatusChanged(status: ServerStatus): void {
     const { sorbetClient } = this.context.clientManager;
     if (!sorbetClient || sorbetClient.status === ServerStatus.DISABLED) {
       this.operationStack = [];
     }
-    this.onStatusChangedEmitter.fire(data);
+    this.onStatusChangedEmitter.fire(status);
   }
 
   /**
@@ -96,7 +97,7 @@ export class SorbetStatusProvider implements Disposable {
   /**
    * Event raised on {@link ServerStatus status} changes.
    */
-  public get onStatusChanged(): Event<StatusChangedEvent> {
+  public get onStatusChanged(): Event<ServerStatus> {
     return this.onStatusChangedEmitter.event;
   }
 

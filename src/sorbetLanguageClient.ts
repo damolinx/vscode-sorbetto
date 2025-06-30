@@ -77,7 +77,7 @@ export class SorbetLanguageClient implements Disposable, ErrorHandler {
     this.wrappedStatus = ServerStatus.INITIALIZING;
   }
 
-  public dispose() {
+  dispose(): void {
     this.onStatusChangeEmitter.dispose();
     this.languageClient.stop().then(() => {
       // Forcefully stopping the Sorbet process as in some scenarios it might
