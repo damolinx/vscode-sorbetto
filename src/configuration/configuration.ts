@@ -21,7 +21,7 @@ export class Configuration implements vscode.Disposable {
           if (![LspConfigurationType.Custom, LspConfigurationType.Disabled].includes(this.lspConfigurationType)) {
             this.onDidChangeLspConfigurationEmitter.fire();
           }
-        } else if (affectsConfiguration(`${EXTENSION_PREFIX}sorbetLspCustomConfiguration`)) {
+        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetLspCustomConfiguration`)) {
           if (this.lspConfigurationType === LspConfigurationType.Custom) {
             this.onDidChangeLspConfigurationEmitter.fire();
           }
