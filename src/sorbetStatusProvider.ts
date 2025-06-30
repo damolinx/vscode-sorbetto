@@ -4,8 +4,8 @@ import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus } from './types';
 
 export class SorbetStatusProvider implements Disposable {
-  private readonly context: SorbetExtensionContext;
   private readonly clientEventDisposables: Disposable[];
+  private readonly context: SorbetExtensionContext;
   private readonly disposables: Disposable[];
   private operationStack: SorbetShowOperationParams[];
   private readonly onShowOperationEmitter: EventEmitter<SorbetShowOperationParams>;
@@ -30,6 +30,7 @@ export class SorbetStatusProvider implements Disposable {
           );
         }
       }),
+      { dispose: () => this.disposeClientEventDisposables() }
     ];
   }
 
