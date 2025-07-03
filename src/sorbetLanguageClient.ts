@@ -219,6 +219,9 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
       await this.sorbetProcess?.exit;
       const exitCode = this.sorbetProcess?.process.exitCode;
       switch (exitCode) {
+        case 0:
+          this.sorbetRestartReason = undefined;
+          break;
         case 11:
           // Custom: 11 is a value picked for runner scripts.
           // This is kept for compat with Sorbet Extension.
