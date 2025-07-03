@@ -6,10 +6,10 @@ import { SorbetClientManager } from './sorbetClientManager';
 import { SorbetStatusProvider } from './sorbetStatusProvider';
 
 export class SorbetExtensionContext implements vscode.Disposable {
+  public readonly clientManager: SorbetClientManager;
   public readonly configuration: Configuration;
   private readonly disposables: vscode.Disposable[];
   public readonly extensionContext: vscode.ExtensionContext;
-  public readonly clientManager: SorbetClientManager;
   public readonly logOutputChannel: vscode.LogOutputChannel;
   public readonly metrics: Metrics;
   public readonly statusProvider: SorbetStatusProvider;
