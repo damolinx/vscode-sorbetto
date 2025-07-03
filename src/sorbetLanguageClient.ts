@@ -10,11 +10,9 @@ import { READ_FILE_REQUEST_METHOD } from './lsp/readFileRequest';
 import { SHOW_OPERATION_NOTIFICATION_METHOD, SorbetShowOperationParams } from './lsp/showOperationNotification';
 import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
 import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, SorbetDidChangeConfigurationParams } from './lsp/workspaceDidChangeConfigurationNotification';
-import { E_COMMAND_NOT_FOUND, E_SIGKILL, E_SIGTERM, ErrorInfo, ProcessWithExitPromise, spawnWithExitPromise, stopProcess } from './processUtils';
+import { E_COMMAND_NOT_FOUND, E_SIGKILL, E_SIGTERM, ErrorInfo, ProcessWithExitPromise, spawnWithExitPromise } from './processUtils';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus, RestartReason } from './types';
-
-const SORBET_EXIT_TIMEOUT_MS = 5000;
 
 export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandler {
   private readonly context: SorbetExtensionContext;
@@ -39,19 +37,9 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
 
   dispose(): void {
     this.onStatusChangeEmitter.dispose();
-    this.languageClient.stop().then(() => {
-      // Forcefully stopping the Sorbet process as in some scenarios it might
-      // still be running (give 5s).
-      // TODO: This might be a legacy or large project requirement as in test
-      // cases Sorbet process is already stopped by the time this code is hit.
-      if (this.sorbetProcess?.process.pid) {
-        setTimeout(() => {
-          if (this.sorbetProcess?.process.pid) {
-            stopProcess(this.sorbetProcess.process, this.context.log)
-              .catch((err) => this.context.log.error('Failed to stop Sorbet process', err));
-          }
-        }, SORBET_EXIT_TIMEOUT_MS);
-      }
+    this.languageClient.stop();
+    this.sorbetProcess?.exit.catch((err) => {
+      this.context.log.error('Error while stopping Sorbet process', err);
     });
   }
 
