@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import { ErrorHandler, InitializationFailedHandler, LanguageClientOptions, ResponseError, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { SORBET_DOCUMENT_SELECTOR } from './constants';
@@ -15,6 +16,7 @@ import { Log } from '../common/log';
  */
 export function createClient(
   context: SorbetExtensionContext,
+  workspaceFolder: vscode.WorkspaceFolder,
   serverOptions: ServerOptions,
   errorHandler: ErrorHandler,
 ): SorbetClient {
@@ -30,6 +32,7 @@ export function createClient(
       outputChannel: context.logOutputChannel,
       progressOnInitialization: true,
       revealOutputChannelOn: RevealOutputChannelOn.Never,
+      workspaceFolder,
     },
     context.log);
 

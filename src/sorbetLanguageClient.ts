@@ -24,10 +24,14 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
   private wrappedLastError?: ErrorInfo;
   private wrappedStatus: ServerStatus;
 
-  constructor(context: SorbetExtensionContext) {
+  constructor(context: SorbetExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
     this.context = context;
     this.languageClient = instrumentLanguageClient(
-      createClient(context, () => this.startSorbetProcess(), this),
+      createClient(
+        context,
+        workspaceFolder,
+        () => this.startSorbetProcess(workspaceFolder),
+        this),
       this.context.metrics,
     );
 
@@ -162,7 +166,7 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
    * Runs a Sorbet process using the current active configuration. Debounced so that it runs
    * Sorbet at most every MIN_TIME_BETWEEN_RETRIES_MS.
    */
-  private async startSorbetProcess(): Promise<ChildProcess> {
+  private async startSorbetProcess(workspaceFolder: vscode.WorkspaceFolder): Promise<ChildProcess> {
     this.context.log.info('Start Sorbet. Configuration:', this.context.configuration.lspConfigurationType);
     const lspConfig = buildLspConfiguration(this.context.configuration);
     if (!lspConfig) {
@@ -173,7 +177,7 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
     this.context.log.info('>', lspConfig.cmd, ...lspConfig.args);
 
     this.sorbetProcess = spawnWithExitPromise(lspConfig.cmd, lspConfig.args, {
-      cwd: vscode.workspace.workspaceFolders?.at(0)?.uri.fsPath,
+      cwd: workspaceFolder.uri.fsPath,
       env: { ...process.env, ...lspConfig?.env },
     });
     this.sorbetProcess.exit = this.sorbetProcess.exit.then((errorInfo) => {

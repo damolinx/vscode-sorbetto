@@ -122,6 +122,11 @@ export class SorbetClientManager implements vscode.Disposable {
       return;
     }
 
+    const workspaceFolder = vscode.workspace.workspaceFolders?.at(0);
+    if (!workspaceFolder) {
+      throw new Error('Unexpected missing target workspace folder');
+    }
+
     await withLock(this, async () => {
       let retry = false;
       let previousAttempt = 0;
@@ -130,7 +135,7 @@ export class SorbetClientManager implements vscode.Disposable {
         await throttle(previousAttempt, this.context.log);
         previousAttempt = Date.now();
 
-        const client = new SorbetLanguageClient(this.context);
+        const client = new SorbetLanguageClient(this.context, workspaceFolder);
         this.sorbetClient = client;
 
         try {
