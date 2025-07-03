@@ -3,7 +3,6 @@ import { ChildProcess, spawn, SpawnOptionsWithoutStdio } from 'child_process';
 import { Log } from './common/log';
 
 export const E_COMMAND_NOT_FOUND = 127;
-export const E_SIGINT = 128 + constants.signals.SIGINT;
 export const E_SIGKILL = 128 + constants.signals.SIGKILL;
 export const E_SIGTERM = 128 + constants.signals.SIGTERM;
 
@@ -53,7 +52,7 @@ export function spawnWithExitPromise(
 export async function stopProcess(p: ChildProcess, log: Log, delayMS = 1000, signals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM', 'SIGKILL']) {
   let exited = false;
   if (typeof p.exitCode === 'number') {
-    log.debug('Process has already exited.', p.pid, p.exitCode);
+    log.debug('Process has already exited:', p.pid, p.exitCode);
     return;
   }
 

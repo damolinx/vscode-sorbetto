@@ -10,7 +10,7 @@ import { READ_FILE_REQUEST_METHOD } from './lsp/readFileRequest';
 import { SHOW_OPERATION_NOTIFICATION_METHOD, SorbetShowOperationParams } from './lsp/showOperationNotification';
 import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
 import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, SorbetDidChangeConfigurationParams } from './lsp/workspaceDidChangeConfigurationNotification';
-import { E_COMMAND_NOT_FOUND, E_SIGINT, E_SIGKILL, E_SIGTERM, ErrorInfo, ProcessWithExitPromise, spawnWithExitPromise, stopProcess } from './processUtils';
+import { E_COMMAND_NOT_FOUND, E_SIGKILL, E_SIGTERM, ErrorInfo, ProcessWithExitPromise, spawnWithExitPromise, stopProcess } from './processUtils';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus, RestartReason } from './types';
 
@@ -231,7 +231,6 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
           this.sorbetRestartReason = undefined;
           restart = false;
           break;
-        case E_SIGINT:
         case E_SIGKILL:
         case E_SIGTERM:
           this.sorbetRestartReason = RestartReason.FORCIBLY_TERMINATED;
