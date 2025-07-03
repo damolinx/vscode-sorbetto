@@ -28,6 +28,7 @@ export function createClient(
       initializationFailedHandler: createInitializationFailedHandler(),
       initializationOptions: createInitializationOptions(),
       outputChannel: context.logOutputChannel,
+      progressOnInitialization: true,
       revealOutputChannelOn: RevealOutputChannelOn.Never,
     },
     context.log);
