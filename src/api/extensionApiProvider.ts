@@ -2,6 +2,7 @@ import { Disposable, EventEmitter } from 'vscode';
 import { ExtensionApi } from './extensionApi';
 import { mapStatus, SorbetStatus } from './status';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ServerStatus } from '../types';
 
 /**
  * {@link ExtensionApi Extension API } provider.
@@ -13,7 +14,7 @@ export class ExtensionApiProvider implements Disposable {
 
   constructor({ statusProvider }: SorbetExtensionContext) {
     this.onStatusChangedEmitter = new EventEmitter();
-    this.status = mapStatus(statusProvider.serverStatus);
+    this.status = mapStatus(ServerStatus.DISABLED); //TODO:
 
     this.disposables = [
       this.onStatusChangedEmitter,

@@ -2,6 +2,7 @@ import { Disposable, Event, EventEmitter } from 'vscode';
 import { SorbetShowOperationParams } from './lsp/showOperationNotification';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus } from './types';
+import { SorbetLanguageClient } from './sorbetLanguageClient';
 
 export class SorbetStatusProvider implements Disposable {
   private readonly clientEventDisposables: Disposable[];
@@ -26,7 +27,7 @@ export class SorbetStatusProvider implements Disposable {
         if (client) {
           this.clientEventDisposables.push(
             client.onShowOperationNotification((params) => this.fireOnShowOperation(params)),
-            client.onStatusChange((status) => this.fireOnStatusChanged(status)),
+            client.onStatusChange((status) => this.fireOnStatusChanged(client, status)),
           );
         }
       }),
@@ -73,9 +74,8 @@ export class SorbetStatusProvider implements Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified.
    */
-  private fireOnStatusChanged(status: ServerStatus): void {
-    const { sorbetClient } = this.context.clientManager;
-    if (!sorbetClient || sorbetClient.status === ServerStatus.DISABLED) {
+  private fireOnStatusChanged(client: SorbetLanguageClient, status: ServerStatus): void {
+    if (client.status === ServerStatus.DISABLED) {
       this.operationStack = [];
     }
     this.onStatusChangedEmitter.fire(status);
@@ -100,12 +100,5 @@ export class SorbetStatusProvider implements Disposable {
    */
   public get onStatusChanged(): Event<ServerStatus> {
     return this.onStatusChangedEmitter.event;
-  }
-
-  /**
-   * Return current {@link ServerStatus server status}.
-   */
-  public get serverStatus(): ServerStatus {
-    return this.context.clientManager.sorbetClient?.status || ServerStatus.DISABLED;
   }
 }

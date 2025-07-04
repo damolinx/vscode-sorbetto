@@ -1,4 +1,4 @@
-import { CancellationToken, CancellationTokenSource, env, ProgressLocation, TextEditor, window } from 'vscode';
+import { CancellationToken, CancellationTokenSource, env, ProgressLocation, TextEditor, window, workspace } from 'vscode';
 import { TextDocumentPositionParams } from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
@@ -17,13 +17,13 @@ export async function copySymbolToClipboard(
     return;
   }
 
-  const { sorbetClient } = context.clientManager;
-  if (sorbetClient?.status !== ServerStatus.RUNNING) {
-    context.log.warn('CopySymbol: No active Sorbet client.');
+  const client = context.clientManager.getClient(editor.document.uri);
+  if (client?.status !== ServerStatus.RUNNING) {
+    context.log.warn('CopySymbol: No active Sorbet client.', workspace.asRelativePath(editor.document.uri));
     return;
   }
 
-  if (!sorbetClient.capabilities?.sorbetShowSymbolProvider) {
+  if (!client.capabilities?.sorbetShowSymbolProvider) {
     context.log.warn(
       'CopySymbol: Sorbet LSP does not support \'showSymbol\' capability.',
     );
@@ -42,7 +42,7 @@ export async function copySymbolToClipboard(
   // avoid having long operation surprisingly overwrite the current clipboard
   // contents, a cancelable progress notification is shown after 2s.
   const symbolInfo = await withProgress(
-    (token) => sorbetClient.sendShowSymbolRequest(params, token),
+    (token) => client.sendShowSymbolRequest(params, token),
     2000,
     context.log);
 

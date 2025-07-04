@@ -20,6 +20,7 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
   private readonly onStatusChangeEmitter: vscode.EventEmitter<ServerStatus>;
   public sorbetProcess?: ProcessWithExitPromise;
   public sorbetRestartReason?: RestartReason;
+  public readonly workspaceFolder: vscode.WorkspaceFolder;
 
   private wrappedLastError?: ErrorInfo;
   private wrappedStatus: ServerStatus;
@@ -34,6 +35,7 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
         this),
       this.context.metrics,
     );
+    this.workspaceFolder = workspaceFolder;
 
     this.onStatusChangeEmitter = new vscode.EventEmitter();
     this.wrappedStatus = ServerStatus.INITIALIZING;

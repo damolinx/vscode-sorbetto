@@ -1,4 +1,4 @@
-import { Command, Disposable, languages, LanguageStatusItem, LanguageStatusSeverity } from 'vscode';
+import { Command, Disposable, languages, LanguageStatusItem, LanguageStatusSeverity, window } from 'vscode';
 import { SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commands/commandIds';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/constants';
@@ -80,7 +80,8 @@ export class SorbetLanguageStatus implements Disposable {
           break;
         case ServerStatus.ERROR:
           this.setStatus({
-            detail: this.context.clientManager.sorbetClient?.lastError?.message,
+            detail: window.activeTextEditor &&
+              this.context.clientManager.getClient(window.activeTextEditor.document.uri)?.lastError?.message,
             severity: LanguageStatusSeverity.Error,
             status: 'Error',
           });

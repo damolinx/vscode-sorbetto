@@ -9,21 +9,37 @@ import { RestartReason, ServerStatus } from './types';
 const MIN_TIME_BETWEEN_RETRIES_MS = 7000;
 
 export class SorbetClientManager implements vscode.Disposable {
-  private _sorbetClient?: SorbetLanguageClient;
+
+  private readonly clients: Map<string, SorbetLanguageClient>;
   private readonly context: SorbetExtensionContext;
   private readonly disposables: vscode.Disposable[];
   private readonly onClientChangedEmitter: vscode.EventEmitter<SorbetLanguageClient | undefined>;
   private restartWatchers?: vscode.FileSystemWatcher[];
 
   constructor(context: SorbetExtensionContext) {
+    this.clients = new Map();
     this.context = context;
+    this.onClientChangedEmitter = new vscode.EventEmitter();
+
     this.disposables = [
-      this.onClientChangedEmitter = new vscode.EventEmitter(),
-      this.context.configuration.onDidChangeLspConfig(() => this.handleLspConfigurationChanged()),
-      this.context.configuration.onDidChangeLspOptions((option) => this.handleLspOptionChanged(option)),
-      { dispose: () => this.sorbetClient?.dispose() },
-      { dispose: () => this.disposeFileWatchers() },
+      this.onClientChangedEmitter,
+      this.context.configuration.onDidChangeLspConfig(
+        () => this.handleLspConfigurationChanged()),
+      this.context.configuration.onDidChangeLspOptions(
+        (option) => this.handleLspOptionChanged(option)),
+      {
+        dispose: () => {
+          this.disposeFileWatchers();
+        },
+      },
+      {
+        dispose: () => {
+          vscode.Disposable.from(...this.clients.values());
+          this.clients.clear();
+        },
+      },
     ];
+    // TODO: vscode.workspace.onDidChangeWorkspaceFolders;
   }
 
   dispose(): void {
@@ -49,8 +65,10 @@ export class SorbetClientManager implements vscode.Disposable {
   private async handleLspOptionChanged(option: string): Promise<void> {
     switch (option) {
       case 'highlightUntypedCode':
-        await this.context.clientManager.sorbetClient?.sendDidChangeConfigurationNotification(
-          { settings: { highlightUntyped: this.context.configuration.highlightUntypedCode } });
+        await Promise.all([...this.clients.values()]
+          .map((client) => client.sendDidChangeConfigurationNotification(
+            { settings: { highlightUntyped: this.context.configuration.highlightUntypedCode } }),
+          ));
         break;
       case 'restartFilePatterns':
         this.startFileWatchers(true);
@@ -69,27 +87,21 @@ export class SorbetClientManager implements vscode.Disposable {
   }
 
   /**
-   * Current client, if any.
+   * Client associated with `contextFolder`.
    */
-  public get sorbetClient(): SorbetLanguageClient | undefined {
-    return this._sorbetClient;
-  }
-
-  /**
-   * Set current client and fires {@link onClientChanged}.
-   */
-  private set sorbetClient(value: SorbetLanguageClient | undefined) {
-    if (this._sorbetClient !== value) {
-      this._sorbetClient = value;
-      this.onClientChangedEmitter.fire(value);
-    }
+  public getClient(folderOrUri: vscode.WorkspaceFolder | vscode.Uri): SorbetLanguageClient | undefined {
+    return this.clients.get(
+      (folderOrUri instanceof vscode.Uri ? folderOrUri : folderOrUri.uri).toString());
   }
 
   private startFileWatchers(force = false): void {
-    if (this.restartWatchers && !force) {
-      return;
+    if (this.restartWatchers) {
+      if (!force) {
+        return;
+      }
+      this.disposeFileWatchers();
     }
-    this.disposeFileWatchers();
+
     const onChangeListener = () => this.restartSorbet(RestartReason.TRIGGER_FILES);
     this.restartWatchers = this.context.configuration.restartFilePatterns
       .map((pattern) => {
@@ -102,63 +114,65 @@ export class SorbetClientManager implements vscode.Disposable {
     this.context.log.trace('Created restart FS watchers', this.restartWatchers.length);
   }
 
-  public async restartSorbet(reason: RestartReason): Promise<void> {
-    this.context.metrics.increment('restart', 1, { reason });
-    await this.stopSorbet(ServerStatus.RESTARTING);
-    await this.startSorbet();
+  public async restartSorbet(reason: RestartReason, ...workspaceFolders: vscode.WorkspaceFolder[]): Promise<void> {
+    this.context.metrics.increment('restart', workspaceFolders.length, { reason });
+    await Promise.all(workspaceFolders.map(async (workspaceFolder) => {
+      await this.stopSorbet(ServerStatus.RESTARTING, workspaceFolder);
+      await this.startSorbet(workspaceFolder);
+    }));
   }
 
   /**
    * Start Sorbet.
    */
-  public async startSorbet(): Promise<void> {
+  public async startSorbet(...workspaceFolders: vscode.WorkspaceFolder[]): Promise<void> {
     //TODO: figure out if config is needed
     if (this.context.configuration.lspDisabled) {
       this.context.log.warn('Ignored start request, disabled by configuration.');
       return;
     }
-    if (this.sorbetClient) {
-      this.context.log.debug('Ignored start request, already running.');
-      return;
-    }
 
-    const workspaceFolder = vscode.workspace.workspaceFolders?.at(0);
-    if (!workspaceFolder) {
-      throw new Error('Unexpected missing target workspace folder');
-    }
+    const startPromises = workspaceFolders
+      .filter(({ uri }) => !this.clients.has(uri.toString()))
+      .map((workspaceFolder) => withLock(
+        this,
+        workspaceFolder.uri.fsPath,
+        async () => {
+          let retry = false;
+          let previousAttempt = 0;
 
-    await withLock(this, async () => {
-      let retry = false;
-      let previousAttempt = 0;
+          do {
+            await throttle(previousAttempt, this.context.log);
+            previousAttempt = Date.now();
 
-      do {
-        await throttle(previousAttempt, this.context.log);
-        previousAttempt = Date.now();
+            const client = new SorbetLanguageClient(this.context, workspaceFolder);
+            this.clients.set(client.workspaceFolder.uri.toString(), client);
+            this.onClientChangedEmitter.fire(client);
 
-        const client = new SorbetLanguageClient(this.context, workspaceFolder);
-        this.sorbetClient = client;
+            try {
+              await client.start();
+              this.startFileWatchers(); // TODO
+            } catch {
+              const errorInfo = await client.sorbetProcess!.exit;
+              if (errorInfo?.code === 'ENOENT' || errorInfo?.errno === E_COMMAND_NOT_FOUND) {
+                this.context.log.error('Failed to start Sorbet with non-recoverable error:', errorInfo.code || errorInfo.errno);
+                retry = false;
+              } else {
+                retry = true;
+              }
+              client.dispose();
+            }
+          } while (retry);
+        }),
+      );
 
-        try {
-          await client.start();
-          this.startFileWatchers();
-        } catch {
-          const errorInfo = await client.sorbetProcess!.exit;
-          if (errorInfo?.code === 'ENOENT' || errorInfo?.errno === E_COMMAND_NOT_FOUND) {
-            this.context.log.error('Failed to start Sorbet with non-recoverable error:', errorInfo.code || errorInfo.errno);
-            retry = false;
-          } else {
-            retry = true;
-          }
-          client.dispose();
-        }
-      } while (retry);
-    });
+    await Promise.all(startPromises);
 
-    async function withLock(context: any, task: () => Promise<void>): Promise<void> {
-      if (!context['__startLock']) {
-        context['__startLock'] = true;
+    async function withLock(manager: any, lock: string, task: () => Promise<void>): Promise<void> {
+      if (!manager[lock]) {
+        manager[lock] = true;
         try { await task(); }
-        finally { delete context['__startLock']; }
+        finally { delete manager[lock]; }
       }
     }
 
@@ -171,16 +185,19 @@ export class SorbetClientManager implements vscode.Disposable {
     }
   }
 
-  /**
-   * Stop Sorbet.
-   */
-  public async stopSorbet(status: ServerStatus = ServerStatus.DISABLED): Promise<void> {
-    if (!this.sorbetClient) {
-      this.context.log.debug('Ignored stop request, not running.');
-      return;
+  public stopSorbet(status: ServerStatus = ServerStatus.DISABLED, ...workspaceFolders: vscode.WorkspaceFolder[]): void {
+    for (const { uri } of workspaceFolders) {
+      const client = this.clients.get(uri.toString());
+      if (client) {
+        this.context.log.debug('Stop client.', uri);
+        client.dispose();
+        this.clients.delete(uri.toString());
+      } else {
+        this.context.log.trace('Stop client ignored, not running.', uri);
+      }
     }
-    this.sorbetClient.dispose();
-    this.sorbetClient = undefined;
+
+    // TODO:
     if (status !== ServerStatus.RESTARTING) {
       this.disposeFileWatchers();
     }
