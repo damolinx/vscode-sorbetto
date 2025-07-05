@@ -1,5 +1,8 @@
 # Version history
 
+# 0.2.9
+- Improve Sorbet start logic.
+
 # 0.2.8
 - Simplify `SorbetLanguageClient.dispose` logic.
 

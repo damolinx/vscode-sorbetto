@@ -139,12 +139,20 @@ export class SorbetClientManager implements vscode.Disposable {
         this.sorbetClient = client;
 
         try {
-          await client.start();
-          this.startFileWatchers();
+          const { process: { exitCode } } = await client.start();
+          if (typeof exitCode === 'number') {
+            this.context.log.error('Sorbet LSP started but exited immediately. Check configuration:',
+              this.context.configuration.lspConfigurationType);
+            client.status = ServerStatus.ERROR;
+            client.dispose();
+            retry = false;
+          } else {
+            this.startFileWatchers();
+          }
         } catch {
           const errorInfo = await client.sorbetProcess!.exit;
           if (errorInfo?.code === 'ENOENT' || errorInfo?.errno === E_COMMAND_NOT_FOUND) {
-            this.context.log.error('Failed to start Sorbet with non-recoverable error:', errorInfo.code || errorInfo.errno);
+            this.context.log.error('Sorbet LSP failed to start with non-recoverable error.', errorInfo.code || errorInfo.errno);
             retry = false;
           } else {
             retry = true;

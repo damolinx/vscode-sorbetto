@@ -65,10 +65,10 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
   /**
    * Resolves when client is ready to serve requests.
    */
-  public async start(): Promise<void> {
+  public async start(): Promise<ProcessWithExitPromise> {
     if (!this.languageClient.needsStart()) {
       this.context.log.debug('Ignored unnecessary start request');
-      return;
+      return this.sorbetProcess!;
     }
 
     this.status = ServerStatus.INITIALIZING;
@@ -79,6 +79,8 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
     if (this.status === ServerStatus.INITIALIZING) {
       this.status = ServerStatus.RUNNING;
     }
+
+    return this.sorbetProcess!;
   }
 
   /**
@@ -153,7 +155,7 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
     return this.wrappedStatus;
   }
 
-  private set status(newStatus: ServerStatus) {
+  public set status(newStatus: ServerStatus) {
     if (this.wrappedStatus === newStatus) {
       return;
     }
@@ -187,7 +189,7 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
         this.context.log.trace('Sorbet LSP process failed.', pid, errorInfo);
         this.status = ServerStatus.ERROR;
       } else {
-        this.context.log.trace('Sorbet LSP process exited.', pid);
+        this.context.log.trace('Sorbet LSP process exited.', pid, this.sorbetProcess?.process.exitCode);
       }
       return errorInfo;
     });
