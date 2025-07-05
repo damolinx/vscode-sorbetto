@@ -3,12 +3,16 @@ import { LspConfigurationType } from './lspConfigurationType';
 import { EXTENSION_PREFIX } from '../constants';
 import { HighlightType } from '../lsp/highlightType';
 
-export type LspOptions = 'highlightUntypedCode' | 'restartFilePatterns' | 'typedFalseCompletionNudges';
+export type LspConfigurationOptions =
+  'highlightUntypedCode' |
+  'highlightUntypedDiagnosticSeverity' |
+  'restartFilePatterns' |
+  'typedFalseCompletionNudges';
 
 export class Configuration implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private readonly onDidChangeLspConfigurationEmitter: vscode.EventEmitter<void>;
-  private readonly onDidChangeLspOptionsEmitter: vscode.EventEmitter<LspOptions>;
+  private readonly onDidChangeLspOptionsEmitter: vscode.EventEmitter<LspConfigurationOptions>;
 
   constructor() {
     this.disposables = [
@@ -40,15 +44,17 @@ export class Configuration implements vscode.Disposable {
     vscode.Disposable.from(...this.disposables).dispose();
   }
 
-  private getConfiguration(): vscode.WorkspaceConfiguration {
+  private get configuration(): vscode.WorkspaceConfiguration {
     return vscode.workspace.getConfiguration(EXTENSION_PREFIX);
   }
 
   /**
    * Return a value from {@link EXTENSION_PREFIX} configuration.
    */
-  public getValue<T>(section: string, defaultValue: T, configuration = this.getConfiguration()): T {
-    return configuration.get(section, defaultValue);
+  public getValue<T>(section: string): T | undefined;
+  public getValue<T>(section: string, defaultValue: T): T;
+  public getValue<T>(section: string, defaultValue?: T): T | undefined {
+    return this.configuration.get(section, defaultValue);
   }
 
   /**
@@ -61,13 +67,13 @@ export class Configuration implements vscode.Disposable {
   /**
    * Whether to highlight usages of untyped even outside of `# typed: strong` files.
    */
-  public get highlightUntypedCode(): HighlightType {
-    return this.getValue('highlightUntypedCode', HighlightType.Disabled);
+  public get highlightUntypedCode(): HighlightType | undefined {
+    return this.getValue<HighlightType>('highlightUntypedCode');
   }
 
   /**
-  * Whether the Sorbet LSP is disabled by {@link lspConfigurationType configuration}.
-  */
+   * Whether the Sorbet LSP is disabled by {@link lspConfigurationType configuration}.
+   */
   public get lspDisabled(): boolean {
     return this.lspConfigurationType === LspConfigurationType.Disabled;
   }
@@ -76,8 +82,8 @@ export class Configuration implements vscode.Disposable {
    * Whether to show a notice explaining when Sorbet refuses to provide completion
    * results because a file is `# typed: false`.
    */
-  public get nudgeTypedFalseCompletion(): boolean {
-    return this.getValue('typedFalseCompletionNudges', true);
+  public get nudgeTypedFalseCompletion(): boolean | undefined {
+    return this.getValue('typedFalseCompletionNudges');
   }
 
   /**
@@ -97,7 +103,7 @@ export class Configuration implements vscode.Disposable {
   /**
    * Event that is fired when the LSP options change.
    */
-  public get onDidChangeLspOptions(): vscode.Event<LspOptions> {
+  public get onDidChangeLspOptions(): vscode.Event<LspConfigurationOptions> {
     return this.onDidChangeLspOptionsEmitter.event;
   }
 
