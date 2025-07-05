@@ -9,7 +9,7 @@ import { createClient, SorbetClient } from './lsp/languageClient';
 import { READ_FILE_REQUEST_METHOD } from './lsp/readFileRequest';
 import { SHOW_OPERATION_NOTIFICATION_METHOD, SorbetShowOperationParams } from './lsp/showOperationNotification';
 import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
-import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, SorbetDidChangeConfigurationParams } from './lsp/workspaceDidChangeConfigurationNotification';
+import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from './lsp/workspaceDidChangeConfigurationNotification';
 import { E_COMMAND_NOT_FOUND, E_SIGKILL, E_SIGTERM, ErrorInfo, ProcessWithExitPromise, spawnWithExitPromise } from './processUtils';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus, RestartReason } from './types';
@@ -130,10 +130,10 @@ export class SorbetLanguageClient implements vscode.Disposable, vslc.ErrorHandle
    * Send a `workspace/didChangeConfiguration` notification to the language server.
    * See https://sorbet.org/docs/lsp#workspacedidchangeconfiguration-notification.
    */
-  public sendDidChangeConfigurationNotification(param: SorbetDidChangeConfigurationParams)
+  public sendDidChangeConfigurationNotification(param: InitializationOptions)
     : Promise<void> {
     return this.languageClient.sendNotification(
-      DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, param);
+      DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, { settings: param });
   }
 
   /**

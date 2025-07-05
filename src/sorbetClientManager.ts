@@ -50,7 +50,7 @@ export class SorbetClientManager implements vscode.Disposable {
     switch (option) {
       case 'highlightUntypedCode':
         await this.sorbetClient?.sendDidChangeConfigurationNotification(
-          { settings: { highlightUntyped: this.context.configuration.highlightUntypedCode } });
+          { highlightUntyped: this.context.configuration.highlightUntypedCode });
         break;
       case 'restartFilePatterns':
         this.startFileWatchers(true);
