@@ -1,7 +1,8 @@
 # Version history
 
 # 0.2.9
-- Improve Sorbet start logic.
+- Rewrite `SorbetClient` and update `SorbetClientManager`.
+  - Restart reason tracking is coarser after this.
 
 # 0.2.8
 - Simplify `SorbetLanguageClient.dispose` logic.
