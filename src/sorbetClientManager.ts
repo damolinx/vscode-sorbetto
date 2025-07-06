@@ -1,18 +1,19 @@
 import * as vscode from 'vscode';
 import { Log } from './common/log';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
-import { E_COMMAND_NOT_FOUND } from './processUtils';
+import { E_COMMAND_NOT_FOUND, ErrorInfo } from './processUtils';
+import { SorbetClient } from './sorbetClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
-import { SorbetLanguageClient } from './sorbetLanguageClient';
 import { RestartReason, ServerStatus } from './types';
+import { buildLspConfiguration } from './configuration/lspConfiguration';
 
 const MIN_TIME_BETWEEN_RETRIES_MS = 7000;
 
 export class SorbetClientManager implements vscode.Disposable {
-  private _sorbetClient?: SorbetLanguageClient;
+  private _sorbetClient?: SorbetClient;
   private readonly context: SorbetExtensionContext;
   private readonly disposables: vscode.Disposable[];
-  private readonly onClientChangedEmitter: vscode.EventEmitter<SorbetLanguageClient | undefined>;
+  private readonly onClientChangedEmitter: vscode.EventEmitter<SorbetClient | undefined>;
   private restartWatchers?: vscode.FileSystemWatcher[];
 
   constructor(context: SorbetExtensionContext) {
@@ -64,21 +65,21 @@ export class SorbetClientManager implements vscode.Disposable {
   /**
   * Event raised on a {@link sorbetClient} change.
   */
-  public get onClientChanged(): vscode.Event<SorbetLanguageClient | undefined> {
+  public get onClientChanged(): vscode.Event<SorbetClient | undefined> {
     return this.onClientChangedEmitter.event;
   }
 
   /**
    * Current client, if any.
    */
-  public get sorbetClient(): SorbetLanguageClient | undefined {
+  public get sorbetClient(): SorbetClient | undefined {
     return this._sorbetClient;
   }
 
   /**
    * Set current client and fires {@link onClientChanged}.
    */
-  private set sorbetClient(value: SorbetLanguageClient | undefined) {
+  private set sorbetClient(value: SorbetClient | undefined) {
     if (this._sorbetClient !== value) {
       this._sorbetClient = value;
       this.onClientChangedEmitter.fire(value);
@@ -124,7 +125,12 @@ export class SorbetClientManager implements vscode.Disposable {
 
     const workspaceFolder = vscode.workspace.workspaceFolders?.at(0);
     if (!workspaceFolder) {
-      throw new Error('Unexpected missing target workspace folder');
+      throw new Error('Missing target workspace folder');
+    }
+
+    const configuration = buildLspConfiguration(this.context.configuration);
+    if (!configuration) {
+      throw new Error('Missing target configuration');
     }
 
     await withLock(this, async () => {
@@ -135,7 +141,7 @@ export class SorbetClientManager implements vscode.Disposable {
         await throttle(previousAttempt, this.context.log);
         previousAttempt = Date.now();
 
-        const client = new SorbetLanguageClient(this.context, workspaceFolder);
+        const client = new SorbetClient(this.context, workspaceFolder, configuration);
         this.sorbetClient = client;
 
         try {
@@ -145,13 +151,13 @@ export class SorbetClientManager implements vscode.Disposable {
               this.context.configuration.lspConfigurationType);
             client.status = ServerStatus.ERROR;
             client.dispose();
-            retry = false;
           } else {
             this.startFileWatchers();
           }
+          retry = false;
         } catch {
-          const errorInfo = await client.sorbetProcess!.exit;
-          if (errorInfo?.code === 'ENOENT' || errorInfo?.errno === E_COMMAND_NOT_FOUND) {
+          const errorInfo = await client.lspProcess?.exit;
+          if (errorInfo && isUnrecoverable(errorInfo)) {
             this.context.log.error('Sorbet LSP failed to start with non-recoverable error.', errorInfo.code || errorInfo.errno);
             retry = false;
           } else {
@@ -161,6 +167,12 @@ export class SorbetClientManager implements vscode.Disposable {
         }
       } while (retry);
     });
+
+    function isUnrecoverable(errorInfo: ErrorInfo): boolean {
+      return errorInfo && (
+        (errorInfo.code !== undefined && ['EACCES', 'ENOENT'].includes(errorInfo.code))
+        || errorInfo.errno === E_COMMAND_NOT_FOUND);
+    }
 
     async function withLock(context: any, task: () => Promise<void>): Promise<void> {
       if (!context['__startLock']) {

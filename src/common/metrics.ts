@@ -1,7 +1,7 @@
 import { LogLevel } from 'vscode';
 import { AbstractMessageSignature } from 'vscode-jsonrpc/lib/common/messages';
 import { Log } from './log';
-import { SorbetClient } from '../lsp/languageClient';
+import { SorbetLanguageClient } from '../lsp/languageClient';
 
 export type Tags = Record<string, string>;
 
@@ -79,8 +79,8 @@ export class NoopMetrics implements Metrics {
  * Shims the language client object so that all requests sent get timed.
  * @returns The instrumented language client.
  */
-export function instrumentLanguageClient(client: SorbetClient, metrics: Metrics)
-  : SorbetClient {
+export function instrumentLanguageClient(client: SorbetLanguageClient, metrics: Metrics)
+  : SorbetLanguageClient {
   const originalSendRequest = client.sendRequest;
   client.sendRequest = async (methodOrType: string | AbstractMessageSignature, ...args: any[]) => {
     const metric = `latency.${getRequestName(methodOrType)}_ms`;

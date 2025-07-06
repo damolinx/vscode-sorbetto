@@ -4,7 +4,6 @@ import * as path from 'path';
 import * as sinon from 'sinon';
 
 import { SorbetContentProvider } from '../../providers/sorbetContentProvider';
-import { SorbetLanguageClient } from '../../sorbetLanguageClient';
 import { SorbetExtensionContext } from '../../sorbetExtensionContext';
 import { SorbetClientManager } from '../../sorbetClientManager';
 import { SorbetStatusProvider } from '../../sorbetStatusProvider';
@@ -33,7 +32,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       clientManager: {
         sorbetClient: ({
           sendReadFileRequest: sendRequestSpy,
-        } as unknown) as SorbetLanguageClient,
+        } as unknown) as unknown,
       } as SorbetClientManager,
     } as SorbetExtensionContext;
 

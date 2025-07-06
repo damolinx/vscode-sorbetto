@@ -23,7 +23,7 @@ export async function copySymbolToClipboard(
     return;
   }
 
-  if (!sorbetClient.capabilities?.sorbetShowSymbolProvider) {
+  if (!sorbetClient.lspClient.initializeResult?.capabilities.sorbetShowSymbolProvider) {
     context.log.warn(
       'CopySymbol: Sorbet LSP does not support \'showSymbol\' capability.',
     );

@@ -10,7 +10,7 @@ export interface LspConfiguration {
 
 export function buildLspConfiguration(config: Configuration): LspConfiguration | undefined {
   const { lspConfigurationType: type } = config;
-  switch (config.lspConfigurationType) {
+  switch (type) {
     case LspConfigurationType.Beta:
       return parse(config.sorbetLspBaseConfiguration, '--enable-all-beta-lsp-features');
     case LspConfigurationType.Custom:

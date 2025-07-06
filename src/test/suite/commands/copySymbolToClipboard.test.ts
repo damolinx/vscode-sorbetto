@@ -7,7 +7,6 @@ import { createLogStub } from '../testUtils';
 import { copySymbolToClipboard } from '../../../commands/copySymbolToClipboard';
 import { SorbetClientManager } from '../../../sorbetClientManager';
 import { SorbetExtensionContext } from '../../../sorbetExtensionContext';
-import { SorbetLanguageClient } from '../../../sorbetLanguageClient';
 import { ServerStatus } from '../../../types';
 
 suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
@@ -82,11 +81,15 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       log: createLogStub(vscode.LogLevel.Info),
       clientManager: {
         sorbetClient: {
-          capabilities: {
-            sorbetShowSymbolProvider: false,
+          lspClient: {
+            initializeResult: {
+              capabilities: {
+                sorbetShowSymbolProvider: false,
+              },
+            },
           },
           status: ServerStatus.RUNNING,
-        } as SorbetLanguageClient,
+        } as unknown,
       },
     } as SorbetExtensionContext;
     await copySymbolToClipboard(context, editor);
@@ -118,12 +121,16 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
       log: createLogStub(vscode.LogLevel.Info),
       clientManager: {
         sorbetClient: {
-          capabilities: {
-            sorbetShowSymbolProvider: true,
+          lspClient: {
+            initializeResult: {
+              capabilities: {
+                sorbetShowSymbolProvider: true,
+              },
+            },
           },
           sendShowSymbolRequest: sendRequestSpy as any,
           status: ServerStatus.RUNNING,
-        } as SorbetLanguageClient,
+        } as unknown,
       } as SorbetClientManager,
     } as SorbetExtensionContext;
 

@@ -80,7 +80,7 @@ export class SorbetLanguageStatus implements Disposable {
           break;
         case ServerStatus.ERROR:
           this.setStatus({
-            detail: this.context.clientManager.sorbetClient?.lastError?.message,
+            detail: 'Sorbet LSP ran into an error. See Output panel for details',
             severity: LanguageStatusSeverity.Error,
             status: 'Error',
           });

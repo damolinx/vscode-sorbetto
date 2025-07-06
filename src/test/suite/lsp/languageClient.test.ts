@@ -6,7 +6,7 @@ import {
 import * as assert from 'assert';
 import { TestLanguageServerSpecialURIs } from '../testLanguageServerSpecialURIs';
 import { instrumentLanguageClient, Metrics, Tags } from '../../../common/metrics';
-import { SorbetClient } from '../../../lsp/languageClient';
+import { SorbetLanguageClient } from '../../../lsp/languageClient';
 import { createLogStub } from '../testUtils';
 
 const enum MetricType {
@@ -42,7 +42,7 @@ class RecordingMetrics implements Metrics {
 }
 
 // Uninitialized client. Call start and await on it before use.
-function createLanguageClient(): SorbetClient {
+function createLanguageClient(): SorbetLanguageClient {
   // The server is implemented in node
   const serverModule = require.resolve('./testLanguageServer');
   // The debug options for the server
@@ -67,7 +67,7 @@ function createLanguageClient(): SorbetClient {
   };
 
   // Create the language client and start the client.
-  const client = new SorbetClient(
+  const client = new SorbetLanguageClient(
     'languageServerExample',
     'Language Server Example',
     serverOptions,

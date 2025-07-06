@@ -19,8 +19,8 @@ export function createClient(
   workspaceFolder: vscode.WorkspaceFolder,
   serverOptions: ServerOptions,
   errorHandler: ErrorHandler,
-): SorbetClient {
-  const client = new SorbetClient(
+): SorbetLanguageClient {
+  const client = new SorbetLanguageClient(
     'ruby.sorbet',
     'Sorbet',
     serverOptions,
@@ -57,7 +57,7 @@ export function createClient(
   }
 }
 
-export class SorbetClient extends LanguageClient implements
+export class SorbetLanguageClient extends LanguageClient implements
   ReadFileRequest,
   ShowOperationNotification,
   ShowSymbolRequest,
