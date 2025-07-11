@@ -141,6 +141,7 @@ export class SorbetClientManager implements vscode.Disposable {
         }
         retryAttemptTimestamp = Date.now();
 
+        this.context.log.debug('Start attempt —', 1 + (MAX_RETRIES - retryCount), 'of', MAX_RETRIES);
         const client = new SorbetClient(this.context, workspaceFolder, configuration);
         this.sorbetClient = client;
 
@@ -148,10 +149,10 @@ export class SorbetClientManager implements vscode.Disposable {
           const { process: { exitCode } } = await client.start();
           if (typeof exitCode === 'number') {
             if (exitCode === LEGACY_RETRY_EXITCODE) {
-              this.context.log.warn('Sorbet LSP exited immediately after startup with known retry exit code:', exitCode);
+              this.context.log.warn('Sorbet LSP exited after startup with known retry exit code:', exitCode);
               retry = true;
             } else {
-              this.context.log.error('Sorbet LSP exited immediately after startup. Check configuration:',
+              this.context.log.error('Sorbet LSP exited after startup. Check configuration:',
                 this.context.configuration.lspConfigurationType);
               retry = false;
             }
@@ -183,7 +184,7 @@ export class SorbetClientManager implements vscode.Disposable {
     async function throttle(previous: number, log: Log): Promise<void> {
       const sleepMS = MIN_TIME_BETWEEN_RETRIES_MS - (Date.now() - previous);
       if (sleepMS > 0) {
-        log.debug('Start throttled (ms):', sleepMS.toFixed(0));
+        log.debug('Start throttled —', sleepMS, 'ms');
         await new Promise((res) => setTimeout(res, sleepMS));
       }
     }

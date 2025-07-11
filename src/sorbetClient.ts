@@ -178,7 +178,7 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
 
     const { process: lspProcess } = this.lspProcess;
     if (lspProcess.pid !== undefined) {
-      this.context.log.info('> pid: ', lspProcess.pid);
+      this.context.log.info('> pid', lspProcess.pid);
     }
 
     this.lspProcess.exit = this.lspProcess.exit.then(
