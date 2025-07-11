@@ -7,6 +7,7 @@ import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { RestartReason, ServerStatus } from './types';
 import { buildLspConfiguration } from './configuration/lspConfiguration';
 
+const LEGACY_RETRY_EXITCODE = 11;
 const MAX_RETRIES = 15;
 const MIN_TIME_BETWEEN_RETRIES_MS = 10000;
 
@@ -146,14 +147,20 @@ export class SorbetClientManager implements vscode.Disposable {
         try {
           const { process: { exitCode } } = await client.start();
           if (typeof exitCode === 'number') {
-            this.context.log.error('Sorbet LSP started but exited immediately. Check configuration:',
-              this.context.configuration.lspConfigurationType);
+            if (exitCode === LEGACY_RETRY_EXITCODE) {
+              this.context.log.warn('Sorbet LSP exited immediately after startup with known retry exit code:', exitCode);
+              retry = true;
+            } else {
+              this.context.log.error('Sorbet LSP exited immediately after startup. Check configuration:',
+                this.context.configuration.lspConfigurationType);
+              retry = false;
+            }
             client.status = ServerStatus.ERROR;
             client.dispose();
           } else {
             this.startFileWatchers();
+            retry = false;
           }
-          retry = false;
         } catch {
           const errorInfo = await client.lspProcess?.exit;
           if (errorInfo && isUnrecoverable(errorInfo)) {
