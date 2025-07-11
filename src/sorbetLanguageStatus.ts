@@ -115,8 +115,9 @@ export class SorbetLanguageStatus implements Disposable {
 
   private setConfig(configType?: LspConfigurationType) {
     const config = configType ?? this.context.configuration.lspConfigurationType;
+    const titleCasedConfig = config.charAt(0).toUpperCase() + config.slice(1);
     this.configItem.detail = 'Sorbet Configuration';
-    this.configItem.text = config.charAt(0).toUpperCase() + config.slice(1);
+    this.configItem.text = `$(ruby) ${titleCasedConfig}`;
   }
 
   private setStatus(options?: { busy?: boolean, command?: Command, detail?: string, severity?: LanguageStatusSeverity, status?: string }) {
@@ -124,6 +125,6 @@ export class SorbetLanguageStatus implements Disposable {
     this.statusItem.command = options?.command ?? ShowOutputCommand;
     this.statusItem.detail = options?.detail ?? (options?.status && 'Sorbet Status');
     this.statusItem.severity = options?.severity ?? LanguageStatusSeverity.Information;
-    this.statusItem.text = options?.status ?? 'Unknown';
+    this.statusItem.text = `$(ruby) ${options?.status ?? 'Unknown'}`;
   }
 }

@@ -1,5 +1,8 @@
 # Version history
 
+# 0.2.10
+- Use ruby codicon on status language entries.
+
 # 0.2.9
 - Rewrite `SorbetClient` and update `SorbetClientManager`.
   - Restart reason tracking is coarser after this.
