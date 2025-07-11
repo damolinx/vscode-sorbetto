@@ -113,11 +113,6 @@ export class SorbetClientManager implements vscode.Disposable {
    * Start Sorbet.
    */
   public async startSorbet(): Promise<void> {
-    //TODO: figure out if config is needed
-    if (this.context.configuration.lspDisabled) {
-      this.context.log.warn('Ignored start request, disabled by configuration.');
-      return;
-    }
     if (this.sorbetClient) {
       this.context.log.debug('Ignored start request, already running.');
       return;
@@ -158,7 +153,7 @@ export class SorbetClientManager implements vscode.Disposable {
         } catch {
           const errorInfo = await client.lspProcess?.exit;
           if (errorInfo && isUnrecoverable(errorInfo)) {
-            this.context.log.error('Sorbet LSP failed to start with non-recoverable error.', errorInfo.code || errorInfo.errno);
+            this.context.log.error('Sorbet LSP failed to start with unrecoverable error.', errorInfo.code || errorInfo.errno);
             retry = false;
           } else {
             retry = true;
