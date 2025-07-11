@@ -2,6 +2,9 @@
 
 # 0.2.10
 - Use ruby codicon on status language entries.
+- Update Sorbet LSP start logic:
+  - limit restart attempts to 15 (before it was unlimited).
+  - set time between restarts to 10s (before it was 7s).
 
 # 0.2.9
 - Rewrite `SorbetClient` and update `SorbetClientManager`.

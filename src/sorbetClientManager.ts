@@ -7,7 +7,8 @@ import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { RestartReason, ServerStatus } from './types';
 import { buildLspConfiguration } from './configuration/lspConfiguration';
 
-const MIN_TIME_BETWEEN_RETRIES_MS = 7000;
+const MAX_RETRIES = 15;
+const MIN_TIME_BETWEEN_RETRIES_MS = 10000;
 
 export class SorbetClientManager implements vscode.Disposable {
   private _sorbetClient?: SorbetClient;
@@ -129,12 +130,15 @@ export class SorbetClientManager implements vscode.Disposable {
     }
 
     await withLock(this, async () => {
+      let retryAttemptTimestamp = 0;
       let retry = false;
-      let previousAttempt = 0;
+      let retryCount = MAX_RETRIES;
 
       do {
-        await throttle(previousAttempt, this.context.log);
-        previousAttempt = Date.now();
+        if (retryAttemptTimestamp) {
+          await throttle(retryAttemptTimestamp, this.context.log);
+        }
+        retryAttemptTimestamp = Date.now();
 
         const client = new SorbetClient(this.context, workspaceFolder, configuration);
         this.sorbetClient = client;
@@ -160,7 +164,7 @@ export class SorbetClientManager implements vscode.Disposable {
           }
           client.dispose();
         }
-      } while (retry);
+      } while (retry && --retryCount);
     });
 
     function isUnrecoverable(errorInfo: ErrorInfo): boolean {
@@ -169,19 +173,19 @@ export class SorbetClientManager implements vscode.Disposable {
         || errorInfo.errno === E_COMMAND_NOT_FOUND);
     }
 
-    async function withLock(context: any, task: () => Promise<void>): Promise<void> {
-      if (!context['__startLock']) {
-        context['__startLock'] = true;
-        try { await task(); }
-        finally { delete context['__startLock']; }
-      }
-    }
-
     async function throttle(previous: number, log: Log): Promise<void> {
       const sleepMS = MIN_TIME_BETWEEN_RETRIES_MS - (Date.now() - previous);
       if (sleepMS > 0) {
         log.debug('Start throttled (ms):', sleepMS.toFixed(0));
         await new Promise((res) => setTimeout(res, sleepMS));
+      }
+    }
+
+    async function withLock(context: any, task: () => Promise<void>): Promise<void> {
+      if (!context['__startLock']) {
+        context['__startLock'] = true;
+        try { await task(); }
+        finally { delete context['__startLock']; }
       }
     }
   }
