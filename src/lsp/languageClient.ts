@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ErrorHandler, InitializationFailedHandler, LanguageClientOptions, ResponseError, RevealOutputChannelOn } from 'vscode-languageclient';
+import * as vslc from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { SORBET_DOCUMENT_SELECTOR } from './constants';
 import { InitializationOptions } from './initializationOptions';
@@ -18,7 +18,7 @@ export function createClient(
   context: SorbetExtensionContext,
   workspaceFolder: vscode.WorkspaceFolder,
   serverOptions: ServerOptions,
-  errorHandler: ErrorHandler,
+  errorHandler: vslc.ErrorHandler,
 ): SorbetLanguageClient {
   const client = new SorbetLanguageClient(
     'ruby.sorbet',
@@ -31,14 +31,14 @@ export function createClient(
       initializationOptions: createInitializationOptions(),
       outputChannel: context.logOutputChannel,
       progressOnInitialization: true,
-      revealOutputChannelOn: RevealOutputChannelOn.Never,
+      revealOutputChannelOn: vslc.RevealOutputChannelOn.Never,
       workspaceFolder,
     },
     context.log);
 
   return client;
 
-  function createInitializationFailedHandler(): InitializationFailedHandler {
+  function createInitializationFailedHandler(): vslc.InitializationFailedHandler {
     return (error) => {
       context.log.error('Failed to initialize Sorbet.', error);
       return false;
@@ -65,7 +65,11 @@ export class SorbetLanguageClient extends LanguageClient implements
 
   private readonly log: Log;
 
-  constructor(id: string, name: string, serverOptions: ServerOptions, clientOptions: LanguageClientOptions, log: Log) {
+  constructor(
+    id: string,
+    name: string,
+    serverOptions: ServerOptions,
+    clientOptions: vslc.LanguageClientOptions, log: Log) {
     super(id, name, serverOptions, clientOptions);
     this.log = log;
   }
@@ -85,7 +89,7 @@ export class SorbetLanguageClient extends LanguageClient implements
     }
 
     function data2String(data: any) {
-      if (data instanceof ResponseError) {
+      if (data instanceof vslc.ResponseError) {
         const responseError = data;
         return `Message: ${responseError.message} - Code: ${responseError.code}\n ${responseError.data ? '\n' + responseError.data.toString() : ''}`;
       }
