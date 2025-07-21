@@ -26,7 +26,7 @@ export class SorbetStatusProvider implements Disposable {
         if (client) {
           this.clientEventDisposables.push(
             client.onShowOperationNotification((params) => this.fireOnShowOperation(params)),
-            client.onStatusChange((status) => this.fireOnStatusChanged(status)),
+            client.onStatusChanged((status) => this.fireOnStatusChanged(status)),
           );
         }
       }),

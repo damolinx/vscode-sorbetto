@@ -25,8 +25,8 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
   private readonly disposables: vscode.Disposable[];
   public readonly lspClient: SorbetLanguageClient;
   public lspProcess?: ProcessWithExitPromise;
-  private readonly onStatusChangeEmitter: vscode.EventEmitter<ServerStatus>;
-  private readonly workspaceFolder: vscode.WorkspaceFolder;
+  private readonly onStatusChangedEmitter: vscode.EventEmitter<ServerStatus>;
+  public readonly workspaceFolder: vscode.WorkspaceFolder;
 
   constructor(
     context: SorbetExtensionContext,
@@ -44,11 +44,11 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
         this),
       this.context.metrics,
     );
-    this.onStatusChangeEmitter = new vscode.EventEmitter();
+    this.onStatusChangedEmitter = new vscode.EventEmitter();
     this.workspaceFolder = workspaceFolder;
 
     this.disposables = [
-      this.onStatusChangeEmitter,
+      this.onStatusChangedEmitter,
       { dispose: () => this.lspClient.dispose(SORBET_CLIENT_DISPOSE_TIMEOUT_MS) },
     ];
   }
@@ -92,8 +92,8 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
   /**
    * Event fired on {@link status} changes.
    */
-  public get onStatusChange(): vscode.Event<ServerStatus> {
-    return this.onStatusChangeEmitter.event;
+  public get onStatusChanged(): vscode.Event<ServerStatus> {
+    return this.onStatusChangedEmitter.event;
   }
 
   /**
@@ -146,7 +146,7 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
     }
 
     this._status = value;
-    this.onStatusChangeEmitter.fire(value);
+    this.onStatusChangedEmitter.fire(value);
   }
 
   public async start(): Promise<ProcessWithExitPromise> {
