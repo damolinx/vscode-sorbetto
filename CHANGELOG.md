@@ -1,7 +1,10 @@
 # Version history
+# 0.2.11
+- Remove verification of dependencies on extension activation to simplify the path to multi-root workspace support.
+  - `sorbetto.verifyDependencies` setting is removed.
 
 # 0.2.10
-- Use ruby codicon on status language entries.
+- Use `ruby` codicon on status language entries.
 - Update Sorbet LSP start logic:
   - Limit restart attempts to 15 (before it was unlimited).
   - Set time between restarts to 10s (before it was 7s).

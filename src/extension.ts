@@ -8,7 +8,6 @@ import { handleRename } from './commands/handleRename';
 import { restartSorbet } from './commands/restartSorbet';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { setupWorkspace } from './commands/setupWorkspace';
-import { verifyEnvironment } from './commands/verifyEnvironment';
 import { registerGemfileCodeLensProvider } from './providers/gemfileCodeLensProvider';
 import { registerGemfileCompletionProvider } from './providers/gemfileCompletionProvider';
 import { registerRequireCompletionProvider } from './providers/requireCompletionProvider';
@@ -72,10 +71,8 @@ export async function activate(extensionContext: ExtensionContext) {
   // Initialize: start in disabled state until client reports status.
   setSorbetStatusContext(ServerStatus.DISABLED);
 
-  // If enabled, verify Sorbet dependencies before running.
-  if (!context.configuration.lspDisabled &&
-    (!context.configuration.getValue('verifyDependencies', true) || await verifyEnvironment(context))) {
-    // Start the extension.
+  // If enabled, start the extension.
+  if (!context.configuration.isDisabled) {
     await context.clientManager.startSorbet();
   }
 

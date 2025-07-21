@@ -74,7 +74,7 @@ export class Configuration implements vscode.Disposable {
   /**
    * Whether the Sorbet LSP is disabled by {@link lspConfigurationType configuration}.
    */
-  public get lspDisabled(): boolean {
+  public get isDisabled(): boolean {
     return this.lspConfigurationType === LspConfigurationType.Disabled;
   }
 

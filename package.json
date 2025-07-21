@@ -151,11 +151,6 @@
           "type": "boolean",
           "markdownDescription": "Update `require_relative` statements when moving files.",
           "default": true
-        },
-        "sorbetto.verifyDependencies": {
-          "type": "boolean",
-          "default": true,
-          "description": "Verify dependencies during extension activation."
         }
       }
     },
