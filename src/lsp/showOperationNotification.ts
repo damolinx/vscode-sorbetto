@@ -26,6 +26,6 @@ export interface SorbetShowOperationParams {
 export interface ShowOperationNotification {
   onNotification(
     method: typeof SHOW_OPERATION_NOTIFICATION_METHOD,
-    handler: NotificationHandler<SorbetShowOperationParams>):
-    Disposable;
+    handler: NotificationHandler<SorbetShowOperationParams>
+  ): Disposable;
 }

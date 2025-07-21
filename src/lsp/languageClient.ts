@@ -70,8 +70,7 @@ export class SorbetLanguageClient extends LanguageClient implements
     this.log = log;
   }
 
-  override error(message: string, data?: any, _showNotification?: boolean | 'force')
-    : void {
+  override error(message: string, data?: any, _showNotification?: boolean | 'force'): void {
     // Primary goal is to override `force` to prevent notifications dialogs
     // from showing up in unintended scenarios (as of Language Client v9).
     // - Sorbet client: couldn't create connection to server.

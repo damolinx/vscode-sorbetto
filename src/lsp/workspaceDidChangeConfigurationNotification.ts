@@ -13,6 +13,6 @@ export interface SorbetDidChangeConfigurationParams extends DidChangeConfigurati
 export interface WorkspaceDidChangeConfigurationNotification {
   onNotification(
     method: typeof DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD,
-    handler: NotificationHandler<SorbetDidChangeConfigurationParams>):
-    Disposable;
+    handler: NotificationHandler<SorbetDidChangeConfigurationParams>
+  ): Disposable;
 }

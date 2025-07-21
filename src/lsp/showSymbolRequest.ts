@@ -11,6 +11,6 @@ export interface ShowSymbolRequest {
   sendRequest(
     method: typeof SHOW_SYMBOL_REQUEST_METHOD,
     param: TextDocumentPositionParams,
-    token?: CancellationToken):
-    Promise<SymbolInformation>
+    token?: CancellationToken
+  ): Promise<SymbolInformation>
 }
