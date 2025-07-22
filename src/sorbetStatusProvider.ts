@@ -1,22 +1,31 @@
-import { Disposable, Event, EventEmitter } from 'vscode';
+import * as vscode from 'vscode';
 import { SorbetShowOperationParams } from './lsp/showOperationNotification';
+import { SorbetClient } from './sorbetClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus } from './types';
 
-export class SorbetStatusProvider implements Disposable {
-  private readonly clientEventDisposables: Disposable[];
+export interface SorbetClientEvent {
+  readonly client: SorbetClient;
+};
+
+export interface ShowOperationEvent extends SorbetClientEvent {
+  readonly operationParams: SorbetShowOperationParams;
+};
+
+export class SorbetStatusProvider implements vscode.Disposable {
+  private readonly clientEventDisposables: vscode.Disposable[];
   private readonly context: SorbetExtensionContext;
-  private readonly disposables: Disposable[];
+  private readonly disposables: vscode.Disposable[];
   private operationStack: SorbetShowOperationParams[];
-  private readonly onShowOperationEmitter: EventEmitter<SorbetShowOperationParams>;
-  private readonly onStatusChangedEmitter: EventEmitter<ServerStatus>;
+  private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
+  private readonly onStatusChangedEmitter: vscode.EventEmitter<SorbetClientEvent>;
 
   constructor(context: SorbetExtensionContext) {
     this.context = context;
     this.clientEventDisposables = [];
     this.operationStack = [];
-    this.onShowOperationEmitter = new EventEmitter();
-    this.onStatusChangedEmitter = new EventEmitter();
+    this.onShowOperationEmitter = new vscode.EventEmitter();
+    this.onStatusChangedEmitter = new vscode.EventEmitter();
 
     this.disposables = [
       this.onShowOperationEmitter,
@@ -25,8 +34,8 @@ export class SorbetStatusProvider implements Disposable {
         this.disposeClientEventDisposables();
         if (client) {
           this.clientEventDisposables.push(
-            client.onShowOperationNotification((params) => this.fireOnShowOperation(params)),
-            client.onStatusChanged((status) => this.fireOnStatusChanged(status)),
+            client.onShowOperationNotification((params) => this.fireOnShowOperation(client, params)),
+            client.onStatusChanged((_status) => this.fireOnStatusChanged(client)),
           );
         }
       }),
@@ -35,11 +44,11 @@ export class SorbetStatusProvider implements Disposable {
   }
 
   dispose(): void {
-    Disposable.from(...this.disposables).dispose();
+    vscode.Disposable.from(...this.disposables).dispose();
   }
 
   disposeClientEventDisposables(): void {
-    Disposable.from(...this.clientEventDisposables).dispose();
+    vscode.Disposable.from(...this.clientEventDisposables).dispose();
     this.clientEventDisposables.length = 0;
   }
 
@@ -48,23 +57,23 @@ export class SorbetStatusProvider implements Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified. Spurious events are filtered out.
    */
-  private fireOnShowOperation(data: SorbetShowOperationParams): void {
+  private fireOnShowOperation(client: SorbetClient, operationParams: SorbetShowOperationParams): void {
     let changed = false;
-    if (data.status === 'end') {
+    if (operationParams.status === 'end') {
       const filteredOps = this.operationStack.filter(
-        (otherP) => otherP.operationName !== data.operationName,
+        (otherP) => otherP.operationName !== operationParams.operationName,
       );
       if (filteredOps.length !== this.operationStack.length) {
         this.operationStack = filteredOps;
         changed = true;
       }
     } else {
-      this.operationStack.push(data);
+      this.operationStack.push(operationParams);
       changed = true;
     }
 
     if (changed) {
-      this.onShowOperationEmitter.fire(data);
+      this.onShowOperationEmitter.fire({ client, operationParams });
     }
   }
 
@@ -73,12 +82,11 @@ export class SorbetStatusProvider implements Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified.
    */
-  private fireOnStatusChanged(status: ServerStatus): void {
-    const { sorbetClient } = this.context.clientManager;
-    if (!sorbetClient || sorbetClient.status === ServerStatus.DISABLED) {
+  private fireOnStatusChanged(client: SorbetClient): void {
+    if (!client || client.status === ServerStatus.DISABLED) {
       this.operationStack = [];
     }
-    this.onStatusChangedEmitter.fire(status);
+    this.onStatusChangedEmitter.fire({ client });
   }
 
   /**
@@ -91,14 +99,14 @@ export class SorbetStatusProvider implements Disposable {
   /**
    * Event raised on a {@link SorbetShowOperationParams show-operation} notification.
    */
-  public get onShowOperation(): Event<SorbetShowOperationParams> {
+  public get onShowOperation(): vscode.Event<ShowOperationEvent> {
     return this.onShowOperationEmitter.event;
   }
 
   /**
    * Event raised on {@link ServerStatus status} changes.
    */
-  public get onStatusChanged(): Event<ServerStatus> {
+  public get onStatusChanged(): vscode.Event<SorbetClientEvent> {
     return this.onStatusChangedEmitter.event;
   }
 

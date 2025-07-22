@@ -17,7 +17,7 @@ export class ExtensionApiProvider implements Disposable {
 
     this.disposables = [
       this.onStatusChangedEmitter,
-      statusProvider.onStatusChanged((status) => {
+      statusProvider.onStatusChanged(({ client: { status } }) => {
         const mappedStatus = mapStatus(status);
         if (mappedStatus && this.status !== mappedStatus) {
           this.onStatusChangedEmitter.fire(mappedStatus);

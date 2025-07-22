@@ -24,7 +24,7 @@ export async function activate(extensionContext: ExtensionContext) {
   const context = new SorbetExtensionContext(extensionContext);
   extensionContext.subscriptions.push(
     context,
-    context.statusProvider.onStatusChanged(setSorbetStatusContext),
+    context.statusProvider.onStatusChanged(({ client: { status } }) => setSorbetStatusContext(status)),
   );
 
   // Register Language Status Item
