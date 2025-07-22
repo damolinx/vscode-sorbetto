@@ -1,45 +1,45 @@
 # Version history
 
-# 0.2.11
+## 0.2.11
 - Upgrade minimum VS Code version to 1.99.
 - Updates fopr future support of multi-root workspaces:
   - Language Status iotem tracks now current active text editor.
   - Remove verification of dependencies on extension activation.
   - Remove `sorbetto.verifyDependencies` setting is removed.
 
-# 0.2.10
+## 0.2.10
 - Use `ruby` codicon on status language entries.
 - Update Sorbet LSP start logic:
   - Limit restart attempts to 15 (before it was unlimited).
   - Set time between restarts to 10s (before it was 7s).
   - Wire legacy retry exit code 11.
 
-# 0.2.9
+## 0.2.9
 - Rewrite `SorbetClient` and update `SorbetClientManager`.
   - Restart reason tracking is coarser after this.
 
-# 0.2.8
+## 0.2.8
 - Simplify `SorbetLanguageClient.dispose` logic.
 
-# 0.2.7
+## 0.2.7
 - Fix: Inconsistent handling of `ENOENT` and errno=127. Further work is needed.
 - Fix: Custom configuration update does not restart Sorbet.
 
-# 0.2.6
+## 0.2.6
 - Internal implementation changes.
 - Clean-up `error` log formatting coming from `vscode-LanguageClient`.
 - Fixes tracking of `restartFilePattern`.
 - Metrics are visible when using `trace`-level logging (before they were just dropped).
 
-# 0.2.5
+## 0.2.5
 - Fixes to prevent error notifications when logging to Output Pane is expected.
 - Replace `sorbetto.sorbetLspConfigurationAdditionalArguments` setting with `sorbetto.sorbetLspBaseConfiguration` for improved flexibility.
 - Several changes on configuration handling including fixes.
 
-# 0.2.4
+## 0.2.4
 - Rollback anonymous client.
 
-# 0.2.3
+## 0.2.3
 - Upgrade minimum VS Code version to 1.96.
 - Remove `sorbetto.revealOutputOnError` setting.
 - Improve internal definitions of Sorbet LSP APIs as defined in [docs](https://sorbet.org/docs/lsp#initialize-request).
