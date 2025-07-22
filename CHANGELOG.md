@@ -1,7 +1,11 @@
 # Version history
+
 # 0.2.11
-- Remove verification of dependencies on extension activation to simplify the path to multi-root workspace support.
-  - `sorbetto.verifyDependencies` setting is removed.
+- Upgrade minimum VS Code version to 1.99.
+- Updates fopr future support of multi-root workspaces:
+  - Language Status iotem tracks now current active text editor.
+  - Remove verification of dependencies on extension activation.
+  - Remove `sorbetto.verifyDependencies` setting is removed.
 
 # 0.2.10
 - Use `ruby` codicon on status language entries.
