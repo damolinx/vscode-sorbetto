@@ -16,6 +16,7 @@ import { registerTypedOptionsCompletionProvider } from './providers/typedOptions
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
 import { ServerStatus, RestartReason } from './types';
+import { anySorbetWorkspace } from './workspaceUtils';
 
 /**
  * Extension entrypoint.
@@ -72,7 +73,7 @@ export async function activate(extensionContext: ExtensionContext) {
   setSorbetStatusContext(ServerStatus.DISABLED);
 
   // If enabled, start the extension.
-  if (!context.configuration.isDisabled) {
+  if (!context.configuration.isDisabled && await anySorbetWorkspace()) {
     await context.clientManager.startSorbet();
   }
 

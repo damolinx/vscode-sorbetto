@@ -1,5 +1,8 @@
 # Version history
 
+## 0.2.12
+- Provide actions for "no workspace" and "workspace not set up" scenarios
+
 ## 0.2.11
 - Upgrade minimum VS Code version to 1.99.
 - Updates fopr future support of multi-root workspaces:
