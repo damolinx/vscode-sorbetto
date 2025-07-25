@@ -1,17 +1,17 @@
 # Version history
 
 ## 0.2.12
-- Provide actions for "no workspace" and "workspace not set up" scenarios
+- Improve handling of: no workspace, workspace not setup, and Sorbet-disabled scenarios.
 
 ## 0.2.11
 - Upgrade minimum VS Code version to 1.99.
-- Updates fopr future support of multi-root workspaces:
+- Updates fpr future support of multi-root workspaces:
   - Language Status iotem tracks now current active text editor.
   - Remove verification of dependencies on extension activation.
   - Remove `sorbetto.verifyDependencies` setting is removed.
 
 ## 0.2.10
-- Use `ruby` codicon on status language entries.
+- Use `ruby` icon on status language entries.
 - Update Sorbet LSP start logic:
   - Limit restart attempts to 15 (before it was unlimited).
   - Set time between restarts to 10s (before it was 7s).
