@@ -100,20 +100,22 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
    * Send a `sorbet/readFile` request to the language server.
    * See https://sorbet.org/docs/lsp#sorbetreadfile-request.
    */
-  public sendReadFileRequest(param: vslc.TextDocumentIdentifier, token?: vscode.CancellationToken)
-    : Promise<vslc.TextDocumentItem> {
-    return this.lspClient.sendRequest<vslc.TextDocumentItem>(
+  public async sendReadFileRequest(param: vslc.TextDocumentIdentifier, token?: vscode.CancellationToken)
+    : Promise<vslc.TextDocumentItem | undefined> {
+    const content = await this.lspClient.sendRequest<vslc.TextDocumentItem>(
       READ_FILE_REQUEST_METHOD, param, token);
+    return content ?? undefined;
   }
 
   /**
    * Send a `sorbet/showSymbol` request to the language server.
    * See https://sorbet.org/docs/lsp#sorbetshowsymbol-request.
    */
-  public sendShowSymbolRequest(param: vslc.TextDocumentPositionParams, token?: vscode.CancellationToken)
-    : Promise<vslc.SymbolInformation> {
-    return this.lspClient.sendRequest<vslc.SymbolInformation>(
+  public async sendShowSymbolRequest(param: vslc.TextDocumentPositionParams, token?: vscode.CancellationToken)
+    : Promise<vslc.SymbolInformation | undefined> {
+    const symbolInfo = await this.lspClient.sendRequest<vslc.SymbolInformation>(
       SHOW_SYMBOL_REQUEST_METHOD, param, token);
+    return symbolInfo ?? undefined;
   }
 
   /**

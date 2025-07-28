@@ -12,11 +12,6 @@ export async function copySymbolToClipboard(
   context: SorbetExtensionContext,
   editor: TextEditor,
 ): Promise<void> {
-  if (!editor.selection.isEmpty) {
-    context.log.warn('CopySymbol: Non-empty selection, cannot determine target symbol.');
-    return;
-  }
-
   const { sorbetClient } = context.clientManager;
   if (sorbetClient?.status !== ServerStatus.RUNNING) {
     context.log.warn('CopySymbol: No active Sorbet client.');
@@ -30,12 +25,12 @@ export async function copySymbolToClipboard(
     return;
   }
 
-  const { active: position } = editor.selection;
+  const selectionEmpty = editor.selection.isEmpty;
   const params: TextDocumentPositionParams = {
+    position: editor.selection.start,
     textDocument: {
       uri: editor.document.uri.toString(),
     },
-    position,
   };
 
   // If Sorbet is busy, retrieving symbol information might take a while. To
@@ -47,10 +42,13 @@ export async function copySymbolToClipboard(
     context.log);
 
   if (symbolInfo) {
-    await env.clipboard.writeText(symbolInfo.name);
     context.log.info('CopySymbol: Copied symbol to clipboard:', symbolInfo.name);
+    await env.clipboard.writeText(symbolInfo.name);
   } else {
     context.log.info('CopySymbol: No symbol found.');
+    await window.showWarningMessage(selectionEmpty
+      ? 'No symbol found at cursor location.'
+      : 'No symbol found at the start of your selection.');
   }
 }
 

@@ -51,7 +51,7 @@
         "command": "sorbetto.copySymbolToClipboard",
         "title": "Copy Symbol to Clipboard",
         "category": "Sorbetto",
-        "enablement": "workbenchState != empty && editorLangId == ruby && !editorHasSelection && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote) && sorbetto:sorbetStatus != disabled && sorbetto:sorbetStatus != error"
+        "enablement": "workbenchState != empty && editorLangId == ruby && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote) && sorbetto:sorbetStatus != disabled && sorbetto:sorbetStatus != error"
       },
       {
         "command": "sorbetto.restart",
@@ -164,9 +164,9 @@
     "menus": {
       "editor/context": [
         {
-          "when": "resourceLangId == ruby",
           "command": "sorbetto.copySymbolToClipboard",
-          "group": "9_cutcopypaste"
+          "group": "9_cutcopypaste",
+          "when": "workbenchState != empty && resourceLangId == ruby"
         }
       ]
     },

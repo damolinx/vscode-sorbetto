@@ -1,5 +1,10 @@
 # Version history
 
+## 0.2.13
+- Improve `Copy Symbol to Clipboard`:
+  - Enable even when there is a selection.
+  - Hide when there is no workspace open.
+
 ## 0.2.12
 - Improve handling of: no workspace, workspace not setup, and Sorbet-disabled scenarios.
 
