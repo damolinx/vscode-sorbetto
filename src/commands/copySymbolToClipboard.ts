@@ -33,9 +33,9 @@ export async function copySymbolToClipboard(
     },
   };
 
-  // If Sorbet is busy, retrieving symbol information might take a while. To
-  // avoid having long operation surprisingly overwrite the current clipboard
-  // contents, a cancelable progress notification is shown after 2s.
+  // If Sorbet is busy, retrieving symbol information might take a while.
+  // To avoid having a long operation unexpectedly write to the clipboard,
+  // a cancelable progress notification is shown after 2s.
   const symbolInfo = await withProgress(
     (token) => sorbetClient.sendShowSymbolRequest(params, token),
     2000,
