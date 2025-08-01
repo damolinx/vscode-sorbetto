@@ -45,7 +45,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     this.setStatus({ status: 'Disabled', command: StartCommand });
 
     const withClientHandler = ({ client }: SorbetClientEvent) => {
-      if (this.shouldRender(client)) {
+      if (client.inScope()) {
         this.render(client);
       }
     };
@@ -68,14 +68,6 @@ export class SorbetLanguageStatus implements vscode.Disposable {
 
   dispose(): void {
     vscode.Disposable.from(...this.disposables).dispose();
-  }
-
-  private shouldRender(client: SorbetClient): boolean {
-    const uri = vscode.window.activeTextEditor?.document.uri;
-    if (!uri) {
-      return false;
-    }
-    return vscode.workspace.getWorkspaceFolder(uri)?.name === client.workspaceFolder.name;
   }
 
   private render(client: SorbetClient) {

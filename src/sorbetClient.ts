@@ -9,7 +9,7 @@ import { READ_FILE_REQUEST_METHOD } from './lsp/readFileRequest';
 import { SHOW_OPERATION_NOTIFICATION_METHOD, SorbetShowOperationParams } from './lsp/showOperationNotification';
 import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
 import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from './lsp/workspaceDidChangeConfigurationNotification';
-import { ProcessWithExitPromise, spawnWithExitPromise } from './processUtils';
+import { ProcessWithExitPromise, spawnWithExitPromise } from './common/processUtils';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus } from './types';
 
@@ -26,7 +26,7 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
   public readonly lspClient: SorbetLanguageClient;
   public lspProcess?: ProcessWithExitPromise;
   private readonly onStatusChangedEmitter: vscode.EventEmitter<ServerStatus>;
-  public readonly workspaceFolder: vscode.WorkspaceFolder;
+  private readonly workspaceFolder: vscode.WorkspaceFolder;
 
   constructor(
     context: SorbetExtensionContext,
@@ -69,6 +69,16 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
       action: vslc.ErrorAction.Shutdown,
       handled: true,
     };
+  }
+
+  /**
+   * Evaluates if {@link uri} is in scope of {@link workspaceFolder}. If {@link uri}
+   * is missing, it defaults to `vscode.window.activeTextEditor`'s.
+   */
+  public inScope(uri?: vscode.Uri): boolean {
+    const targetUri = uri ?? vscode.window.activeTextEditor?.document.uri;
+    return !!targetUri
+      && vscode.workspace.getWorkspaceFolder(targetUri)?.name === this.workspaceFolder.name;
   }
 
   /**

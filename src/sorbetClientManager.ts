@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { Log } from './common/log';
+import { E_COMMAND_NOT_FOUND, ErrorInfo } from './common/processUtils';
+import { buildLspConfiguration } from './configuration/lspConfiguration';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
-import { E_COMMAND_NOT_FOUND, ErrorInfo } from './processUtils';
 import { SorbetClient } from './sorbetClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { RestartReason, ServerStatus } from './types';
-import { buildLspConfiguration } from './configuration/lspConfiguration';
 
 const LEGACY_RETRY_EXITCODE = 11;
 const MAX_RETRIES = 15;
