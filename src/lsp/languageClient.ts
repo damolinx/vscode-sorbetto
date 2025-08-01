@@ -47,10 +47,11 @@ export function createClient(
 
   function createInitializationOptions()
     : InitializationOptions {
-    const { configuration: { highlightUntypedCode, nudgeTypedFalseCompletion } } = context;
+    const { configuration } = context;
     return {
-      enableTypedFalseCompletionNudges: nudgeTypedFalseCompletion,
-      highlightUntyped: highlightUntypedCode,
+      enableTypedFalseCompletionNudges: configuration.nudgeTypedFalseCompletion,
+      highlightUntyped: configuration.highlightUntypedCode,
+      highlightUntypedDiagnosticSeverity: configuration.highlightUntypedCodeDiagnosticSeverity,
       supportsOperationNotifications: true,
       supportsSorbetURIs: true,
     };

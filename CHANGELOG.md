@@ -1,16 +1,19 @@
 # Version history
 
+## 0.2.14
+- Support controlling untyped-code highlight severity.
+
 ## 0.2.13
 - Improve `Copy Symbol to Clipboard`:
   - Enable even when there is a selection.
   - Hide when there is no workspace open.
 
 ## 0.2.12
-- Improve handling of: no workspace, workspace not setup, and Sorbet-disabled scenarios.
+- Improve handling of no workspace, workspace not setup, and Sorbet-disabled scenarios.
 
 ## 0.2.11
 - Upgrade minimum VS Code version to 1.99.
-- Updates fpr future support of multi-root workspaces:
+- Updates for future support of multi-root workspaces:
   - Language Status iotem tracks now current active text editor.
   - Remove verification of dependencies on extension activation.
   - Remove `sorbetto.verifyDependencies` setting is removed.

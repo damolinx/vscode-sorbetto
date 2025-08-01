@@ -72,11 +72,28 @@
         "sorbetto.highlightUntypedCode": {
           "type": "string",
           "default": "disabled",
-          "description": "Show a warning for untyped values.",
+          "description": "Highlight untyped code.",
           "enum": [
             "disabled",
             "everywhere",
             "everywhere-but-tests"
+          ]
+        },
+        "sorbetto.highlightUntypedCodeDiagnosticSeverity": {
+          "type": "string",
+          "default": "Warning",
+          "description": "Diagnostic severity used when reporting untyped code.",
+          "enum": [
+            "Error",
+            "Warning",
+            "Information",
+            "Hint"
+          ],
+          "enumDescriptions": [
+            "Red squiggles",
+            "Yellow squiggles",
+            "Blue squiggles",
+            "No squiggles"
           ]
         },
         "sorbetto.restartFilePatterns": {

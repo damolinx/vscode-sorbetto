@@ -1,13 +1,8 @@
 import * as vscode from 'vscode';
+import { LspConfigurationOptions } from './lspConfigurationOptions';
 import { LspConfigurationType } from './lspConfigurationType';
 import { EXTENSION_PREFIX } from '../constants';
 import { HighlightType } from '../lsp/highlightType';
-
-export type LspConfigurationOptions =
-  'highlightUntypedCode' |
-  'highlightUntypedDiagnosticSeverity' |
-  'restartFilePatterns' |
-  'typedFalseCompletionNudges';
 
 export class Configuration implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
@@ -31,6 +26,8 @@ export class Configuration implements vscode.Disposable {
           }
         } else if (affectsConfiguration(`${EXTENSION_PREFIX}.highlightUntypedCode`)) {
           this.onDidChangeLspOptionsEmitter.fire('highlightUntypedCode');
+        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.highlightUntypedCodeDiagnosticSeverity`)) {
+          this.onDidChangeLspOptionsEmitter.fire('highlightUntypedCodeDiagnosticSeverity');
         } else if (affectsConfiguration(`${EXTENSION_PREFIX}.restartFilePatterns`)) {
           this.onDidChangeLspOptionsEmitter.fire('restartFilePatterns');
         } else if (affectsConfiguration(`${EXTENSION_PREFIX}.typedFalseCompletionNudges`)) {
@@ -69,6 +66,13 @@ export class Configuration implements vscode.Disposable {
    */
   public get highlightUntypedCode(): HighlightType | undefined {
     return this.getValue<HighlightType>('highlightUntypedCode');
+  }
+
+  /**
+   * Whether to highlight usages of untyped even outside of `# typed: strong` files.
+   */
+  public get highlightUntypedCodeDiagnosticSeverity(): vscode.DiagnosticSeverity | undefined {
+    return this.getValue<vscode.DiagnosticSeverity>('highlightUntypedCodeDiagnosticSeverity');
   }
 
   /**

@@ -102,7 +102,7 @@ export class SorbetClientManager implements vscode.Disposable {
         watcher.onDidDelete(onChangeListener);
         return watcher;
       });
-    this.context.log.trace('Created restart FS watchers', this.restartWatchers.length);
+    this.context.log.trace('Created restart FS watchers', this.restartWatchers!.length);
   }
 
   public async restartSorbet(reason: RestartReason): Promise<void> {
