@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import * as https from 'https';
 
-export const TRIGGER_CHARACTERS: readonly string[] = ['"', "'"];
+export const TRIGGER_CHARACTERS: readonly string[] = ['"', '\''];
 
 export function registerGemfileCompletionProvider(): vscode.Disposable {
   return vscode.languages.registerCompletionItemProvider(
     { pattern: '**/Gemfile' },
     new GemfileCompletionProvider(),
-    ...TRIGGER_CHARACTERS
+    ...TRIGGER_CHARACTERS,
   );
 }
 
@@ -34,7 +34,7 @@ export class GemfileCompletionProvider implements vscode.CompletionItemProvider 
     }
 
     const gems = await getGems(match.groups.hint || 'a');
-    return new vscode.CompletionList(gems.map(gem => {
+    return new vscode.CompletionList(gems.map((gem) => {
       const item = new vscode.CompletionItem(gem, vscode.CompletionItemKind.Reference);
       item.insertText = gem;
       return item;
@@ -50,7 +50,7 @@ export class GemfileCompletionProvider implements vscode.CompletionItemProvider 
             .on('error', (_err) => resolve([]));
         });
         token.onCancellationRequested(() =>
-          request.destroy(new Error('Request canceled'))
+          request.destroy(new Error('Request canceled')),
         );
       });
     }
