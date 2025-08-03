@@ -73,7 +73,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   private render(client: SorbetClient) {
     const { lspConfigurationType } = this.context.configuration;
     const { operations } = this.context.statusProvider;
-    this.setConfig(lspConfigurationType);
+    this.setConfig({ configType: lspConfigurationType });
 
     if (client.status !== ServerStatus.ERROR && operations.length > 0) {
       this.setStatus({
@@ -124,8 +124,10 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     }
   }
 
-  private setConfig(configType?: LspConfigurationType) {
-    const config = configType ?? this.context.configuration.lspConfigurationType;
+  private setConfig(options?: {
+    configType?: LspConfigurationType
+  }): void {
+    const config = options?.configType ?? this.context.configuration.lspConfigurationType;
     const titleCasedConfig = config.charAt(0).toUpperCase() + config.slice(1);
     this.configItem.command = OpenConfigurationSettings;
     this.configItem.detail = 'Sorbet Configuration';
@@ -138,10 +140,10 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     detail?: string,
     severity?: vscode.LanguageStatusSeverity,
     status?: string
-  }) {
+  }): void {
     this.statusItem.busy = options?.busy ?? false;
     this.statusItem.command = options?.command ?? ShowOutputCommand;
-    this.statusItem.detail = options?.detail ?? (options?.status && 'Sorbet Status');
+    this.statusItem.detail = options?.detail ?? 'Sorbet Status';
     this.statusItem.severity = options?.severity ?? vscode.LanguageStatusSeverity.Information;
     this.statusItem.text = `$(ruby) ${options?.status ?? 'Unknown'}`;
   }
