@@ -18,8 +18,8 @@ export interface InitializationOptions {
    */
   highlightUntyped?: boolean | HighlightType;
   /**
-   * {@link DiagnosticSeverity Severity} to report usages of untyped at. Applies only when
-   * {@link highlightUntyped} is enabled. Defaults to {@link DiagnosticSeverity.Information}
+   * {@link DiagnosticSeverity Severity} to highlight usages of untyped at. Applies only when
+   * {@link highlightUntyped} is enabled. Defaults to {@link DiagnosticSeverity.Warning}.
    * when undefined.
    * See https://sorbet.org/docs/vscode#sorbethighlightuntypeddiagnosticseverity
    */

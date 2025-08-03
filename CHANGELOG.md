@@ -1,5 +1,9 @@
 # Version history
 
+## 0.2.15
+- Improve completion provider behavior for `Gemfile` files.
+- Fix: highlight severity setting serialized as name, rather than value, when sent to Sorbet.
+
 ## 0.2.14
 - Support controlling untyped-code highlight severity.
 

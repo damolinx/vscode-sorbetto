@@ -69,10 +69,11 @@ export class Configuration implements vscode.Disposable {
   }
 
   /**
-   * Whether to highlight usages of untyped even outside of `# typed: strong` files.
+   * {@link DiagnosticSeverity Severity} to highlight usages of untyped at.
    */
   public get highlightUntypedCodeDiagnosticSeverity(): vscode.DiagnosticSeverity | undefined {
-    return this.getValue<vscode.DiagnosticSeverity>('highlightUntypedCodeDiagnosticSeverity');
+    const strValue = this.getValue<string>('highlightUntypedCodeDiagnosticSeverity');
+    return strValue !== undefined ? vscode.DiagnosticSeverity[strValue as keyof typeof vscode.DiagnosticSeverity] : undefined;
   }
 
   /**
