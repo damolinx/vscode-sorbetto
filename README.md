@@ -10,7 +10,7 @@ Sorbetto is a Visual Studio Code extension that provides Ruby language support u
 - `# typed` -sigil completion provider.
 
 ## Maintainability Updates
-- Minimum VSCode version updated to 1.77, allowing use of more recent extensibility APIs.
+- Minimum VS Code version updated to 1.99, allowing use of more recent extensibility APIs.
 - Language Client library updated to version 9.0.
 - Shipped dependencies limited to Language Client library, reducing complexity and risk.
 - Migrating to `esbuild` enables minification and bundling, resulting in a significantly smaller runtime code footprint.
@@ -37,4 +37,4 @@ Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefi
 The **Setup Workspace** command automates all steps from [Adopting Sorbet](https://sorbet.org/docs/adopting) into a convenient place. When setting up `bundler`, it will force local installation of gems via `bundle config set --local path 'vendor/bundle'`. Don't use this command if you prefer globally installed gems, and follow the linked documentation to set up your workspace.
 
 # Extension Logs
-Sorbetto uses a single output channel to log its exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [VS Code documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
+Sorbetto uses a single output channel to log its exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
