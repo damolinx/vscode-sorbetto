@@ -56,7 +56,7 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
   }
 
   dispose() {
-    vscode.Disposable.from(...this.disposables);
+    vscode.Disposable.from(...this.disposables).dispose();
   }
 
   closed(): vslc.CloseHandlerResult {

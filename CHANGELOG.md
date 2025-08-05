@@ -2,6 +2,7 @@
 
 ## 0.2.17
 - Add `enableWatchman` setting to control forced or automatic use of `watchman`.
+- Fix: Multiple Sorbet clioents active after restart.
 
 ## 0.2.16
 - Quickfix action to fix all instances of a given error code across all files.
