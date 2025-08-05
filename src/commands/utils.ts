@@ -1,6 +1,6 @@
 import { TerminalOptions, Uri, window } from 'vscode';
 
-export async function executeCommandsInTerminal(options: { commands: string[], name?: string, cwd?: string | Uri }) {
+export async function executeCommandsInTerminal(options: { commands: string[], name?: string, cwd?: string | Uri, preserveFocus?: boolean }) {
   const terminalOptions: TerminalOptions = {
     cwd: options.cwd,
     name: options.name,
@@ -14,5 +14,5 @@ export async function executeCommandsInTerminal(options: { commands: string[], n
   }
 
   const terminal = window.createTerminal(terminalOptions);
-  terminal.show();
+  terminal.show(options.preserveFocus);
 }

@@ -1,6 +1,11 @@
 import { EXTENSION_PREFIX } from '../constants';
 
 /**
+ * Run `srb tc --autocorrect`
+ */
+export const AUTOCORRECT_ALL_ID = `_${EXTENSION_PREFIX}.autocorrectAll`;
+
+/**
  * Run `bundle install`.
  */
 export const BUNDLE_INSTALL_ID = `_${EXTENSION_PREFIX}.bundleInstall`;

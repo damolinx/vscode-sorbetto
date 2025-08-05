@@ -19,6 +19,7 @@ export function createClient(
   workspaceFolder: vscode.WorkspaceFolder,
   serverOptions: ServerOptions,
   errorHandler: vslc.ErrorHandler,
+  middleware?: vslc.Middleware,
 ): SorbetLanguageClient {
   const client = new SorbetLanguageClient(
     'ruby.sorbet',
@@ -29,6 +30,7 @@ export function createClient(
       errorHandler,
       initializationFailedHandler: createInitializationFailedHandler(),
       initializationOptions: createInitializationOptions(),
+      middleware: middleware,
       outputChannel: context.logOutputChannel,
       progressOnInitialization: true,
       revealOutputChannelOn: vslc.RevealOutputChannelOn.Never,

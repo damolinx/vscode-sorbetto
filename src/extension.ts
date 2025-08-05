@@ -1,6 +1,7 @@
 import { commands, ExtensionContext, Uri, workspace } from 'vscode';
 import { ExtensionApiProvider } from './api/extensionApiProvider';
 import { mapStatus } from './api/status';
+import { autocorrectAll } from './commands/autocorrectAll';
 import { bundleInstall } from './commands/bundleInstall';
 import * as cmdIds from './commands/commandIds';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
@@ -44,6 +45,8 @@ export async function activate(extensionContext: ExtensionContext) {
   // Register commands
   const rc = commands.registerCommand;
   extensionContext.subscriptions.push(
+    rc(cmdIds.AUTOCORRECT_ALL_ID, (code: string | number, contextUri: Uri) =>
+      autocorrectAll(code, contextUri)),
     rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | Uri) =>
       bundleInstall(context, gemfile)),
     rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) =>

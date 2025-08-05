@@ -1,5 +1,8 @@
 # Version history
 
+## 0.2.16
+- Quickfix action to fix all instances of a given error code across all files.
+
 ## 0.2.15
 - Improve completion provider behavior for `Gemfile` files.
 - Fix: highlight severity setting serialized as name, rather than value, when sent to Sorbet.

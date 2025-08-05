@@ -8,6 +8,7 @@ Sorbetto is a Visual Studio Code extension that provides Ruby language support u
 - `GemFile` receives `gem` autocomplete and custom actions.
 - Performs automatic dependency checks (e.g., `bundle`, `srb`) and streamlines workspace setup, ensuring a smoother startup experience.
 - `# typed` -sigil completion provider.
+- Improved quickfix actions, e.g. fix all instances of a given error code across all files ([documentation](https://sorbet.org/docs/cli#limiting-autocorrect-suggestions)).
 
 ## Maintainability Updates
 - Minimum VS Code version updated to 1.99, allowing use of more recent extensibility APIs.

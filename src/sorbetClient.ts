@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient/node';
 import { ChildProcess } from 'child_process';
 import { instrumentLanguageClient } from './common/metrics';
+import { ProcessWithExitPromise, spawnWithExitPromise } from './common/processUtils';
 import { LspConfiguration } from './configuration/lspConfiguration';
 import { InitializationOptions } from './lsp/initializationOptions';
 import { createClient, SorbetLanguageClient } from './lsp/languageClient';
@@ -9,8 +10,8 @@ import { READ_FILE_REQUEST_METHOD } from './lsp/readFileRequest';
 import { SHOW_OPERATION_NOTIFICATION_METHOD, SorbetShowOperationParams } from './lsp/showOperationNotification';
 import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
 import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from './lsp/workspaceDidChangeConfigurationNotification';
-import { ProcessWithExitPromise, spawnWithExitPromise } from './common/processUtils';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
+import { SorbetMiddleware } from './sorbetMiddleware';
 import { ServerStatus } from './types';
 
 /**
@@ -41,7 +42,8 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
         context,
         workspaceFolder,
         () => this.startClient(),
-        this),
+        this,
+        new SorbetMiddleware()),
       this.context.metrics,
     );
     this.onStatusChangedEmitter = new vscode.EventEmitter();
