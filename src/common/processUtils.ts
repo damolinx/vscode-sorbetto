@@ -1,5 +1,5 @@
 import { constants } from 'os';
-import { ChildProcess, spawn, SpawnOptionsWithoutStdio } from 'child_process';
+import { ChildProcess, exec, spawn, SpawnOptionsWithoutStdio } from 'child_process';
 
 export const E_COMMAND_NOT_FOUND = 127;
 export const E_SIGKILL = 128 + constants.signals.SIGKILL;
@@ -42,4 +42,11 @@ export function spawnWithExitPromise(
       });
   });
   return { process: childProcess, exit: exitPromise };
+}
+
+export async function isAvailable(command: string): Promise<boolean> {
+  const whereOrWhich = process.platform === 'win32' ? 'where' : 'which';
+  return new Promise((resolve, _reject) =>
+    exec(`${whereOrWhich} ${command}`, (error) => resolve(error ? false : true)),
+  );
 }

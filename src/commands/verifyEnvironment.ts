@@ -1,14 +1,13 @@
 import { commands, env, Uri, window } from 'vscode';
-import { exec } from 'child_process';
+import { isAvailable } from '../common/processUtils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
 export async function verifyEnvironment(_context: SorbetExtensionContext) {
   const commandsToCheck = ['srb', 'bundle'];
   const missingCommands: string[] = [];
-  const whereOrWhichCommand = process.platform === 'win32' ? 'where' : 'which';
 
   for (const command of commandsToCheck) {
-    const exists = await check(whereOrWhichCommand, command);
+    const exists = await isAvailable(command);
     if (exists) {
       break;
     } else {
@@ -50,10 +49,4 @@ export async function verifyEnvironment(_context: SorbetExtensionContext) {
   }
 
   return true;
-
-  async function check(whereOrWhich: string, command: string): Promise<boolean> {
-    return new Promise((resolve, _reject) =>
-      exec(`${whereOrWhich} ${command}`, (error) => resolve(error ? false : true)),
-    );
-  }
 }

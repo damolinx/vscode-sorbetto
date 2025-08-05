@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { EnableWatchmanType } from './enableWatchmanType';
 import { LspConfigurationOptions } from './lspConfigurationOptions';
 import { LspConfigurationType } from './lspConfigurationType';
 import { EXTENSION_PREFIX } from '../constants';
@@ -24,6 +25,8 @@ export class Configuration implements vscode.Disposable {
           if (this.lspConfigurationType === LspConfigurationType.Custom) {
             this.onDidChangeLspConfigurationEmitter.fire();
           }
+        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.enableWatchman`)) {
+          this.onDidChangeLspOptionsEmitter.fire('enableWatchman');
         } else if (affectsConfiguration(`${EXTENSION_PREFIX}.highlightUntypedCode`)) {
           this.onDidChangeLspOptionsEmitter.fire('highlightUntypedCode');
         } else if (affectsConfiguration(`${EXTENSION_PREFIX}.highlightUntypedCodeDiagnosticSeverity`)) {
@@ -52,6 +55,13 @@ export class Configuration implements vscode.Disposable {
   public getValue<T>(section: string, defaultValue: T): T;
   public getValue<T>(section: string, defaultValue?: T): T | undefined {
     return this.configuration.get(section, defaultValue);
+  }
+
+  /**
+   * Enable `watchman` mode.
+   */
+  public get enableWatchman(): EnableWatchmanType {
+    return this.getValue('enableWatchman', EnableWatchmanType.Auto);
   }
 
   /**

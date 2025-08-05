@@ -1,5 +1,8 @@
 # Version history
 
+## 0.2.17
+- Add `enableWatchman` setting to control forced or automatic use of `watchman`.
+
 ## 0.2.16
 - Quickfix action to fix all instances of a given error code across all files.
 

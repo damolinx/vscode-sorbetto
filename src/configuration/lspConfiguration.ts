@@ -1,4 +1,5 @@
 import { Configuration } from './configuration';
+import { enableWatchmanSupport } from './enableWatchmanType';
 import { LspConfigurationType } from './lspConfigurationType';
 
 export interface LspConfiguration {
@@ -8,22 +9,35 @@ export interface LspConfiguration {
   type: LspConfigurationType;
 }
 
-export function buildLspConfiguration(config: Configuration): LspConfiguration | undefined {
-  const { lspConfigurationType: type } = config;
-  switch (type) {
+export async function buildLspConfiguration(config: Configuration): Promise<LspConfiguration | undefined> {
+  let lspConfig: LspConfiguration | undefined;
+
+  switch (config.lspConfigurationType) {
     case LspConfigurationType.Beta:
-      return parse(config.sorbetLspBaseConfiguration, '--enable-all-beta-lsp-features');
+      lspConfig = parse(config.sorbetLspBaseConfiguration, '--enable-all-beta-lsp-features');
+      break;
     case LspConfigurationType.Custom:
-      return parse(config.sorbetLspCustomConfiguration);
+      lspConfig = parse(config.sorbetLspCustomConfiguration);
+      break;
     case LspConfigurationType.Experimental:
-      return parse(config.sorbetLspBaseConfiguration, '--enable-all-experimental-lsp-features');
+      lspConfig = parse(config.sorbetLspBaseConfiguration, '--enable-all-experimental-lsp-features');
+      break;
     case LspConfigurationType.Stable:
-      return parse(config.sorbetLspBaseConfiguration);
+      lspConfig = parse(config.sorbetLspBaseConfiguration);
+      break;
     case LspConfigurationType.Disabled:
-      return undefined;
+      lspConfig = undefined;
+      break;
     default:
-      throw new Error(`Unknown configuration type: ${type}`);
+      throw new Error(`Unknown configuration type: ${config.lspConfigurationType}`);
   }
+
+  if (lspConfig) {
+    await enableWatchmanSupport(lspConfig, config);
+  }
+
+  return lspConfig;
+
 
   function parse(cmdLine: string[], ...additionalArgs: string[]): LspConfiguration {
     const [cmd, ...args] = cmdLine;

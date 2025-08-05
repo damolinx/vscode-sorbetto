@@ -20,7 +20,7 @@ export class SorbetMiddleware implements vslc.Middleware {
       action.command = {
         title: action.title,
         command: AUTOCORRECT_ALL_ID,
-        arguments: [code, document.uri]
+        arguments: [code, document.uri],
       };
       actions.push(action);
     }

@@ -125,7 +125,7 @@ export class SorbetClientManager implements vscode.Disposable {
       throw new Error('Missing target workspace folder');
     }
 
-    const configuration = buildLspConfiguration(this.context.configuration);
+    const configuration = await buildLspConfiguration(this.context.configuration);
     if (!configuration) {
       throw new Error('Missing target configuration');
     }
