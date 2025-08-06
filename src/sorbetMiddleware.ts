@@ -16,7 +16,7 @@ export class SorbetMiddleware implements vslc.Middleware {
     }
 
     for (const code of getUniqueCode()) {
-      const action = new vscode.CodeAction(`Fix error ${code} in all files`, vscode.CodeActionKind.QuickFix);
+      const action = new vscode.CodeAction(`Apply Sorbet fixes for error ${code} to all files`, vscode.CodeActionKind.QuickFix);
       action.command = {
         title: action.title,
         command: AUTOCORRECT_ALL_ID,

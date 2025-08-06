@@ -1,5 +1,10 @@
 # Version history
 
+## 0.2.18
+- Replace `sorbetto.sorbetLspBaseConfiguration` setting with `sorbetto.sorbetTypecheckCommand` for improved flexibility. `sorbetto.sorbetLspCustomConfiguration` remains purely for LSP configuration.
+- Update name of new quickfix action to `Apply Sorbet fixes for error «code» to all files`.
+- Faster check for Sorbet workspace.
+
 ## 0.2.17
 - Add `enableWatchman` setting to control forced or automatic use of `watchman`.
 - Fix: Multiple Sorbet clients active after restart.

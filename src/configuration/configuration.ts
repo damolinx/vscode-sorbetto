@@ -5,8 +5,6 @@ import { LspConfigurationType } from './lspConfigurationType';
 import { EXTENSION_PREFIX } from '../constants';
 import { HighlightType } from '../lsp/highlightType';
 
-export const DEFAULT_SORBET_TYPECHECK: readonly string[] = ['bundle', 'exec', 'srb', 'typecheck'];
-
 export class Configuration implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private readonly onDidChangeLspConfigurationEmitter: vscode.EventEmitter<void>;
@@ -19,7 +17,7 @@ export class Configuration implements vscode.Disposable {
       vscode.workspace.onDidChangeConfiguration(({ affectsConfiguration }) => {
         if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetLspConfiguration`)) {
           this.onDidChangeLspConfigurationEmitter.fire();
-        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetLspBaseConfiguration`)) {
+        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetTypecheckCommand`)) {
           if (![LspConfigurationType.Custom, LspConfigurationType.Disabled].includes(this.lspConfigurationType)) {
             this.onDidChangeLspConfigurationEmitter.fire();
           }
@@ -124,13 +122,13 @@ export class Configuration implements vscode.Disposable {
     return this.onDidChangeLspOptionsEmitter.event;
   }
 
-  public get sorbetLspBaseConfiguration(): string[] {
-    return this.getValue('sorbetLspBaseConfiguration',
-      [...DEFAULT_SORBET_TYPECHECK, '--lsp']);
+  public get sorbetLspCustomConfiguration(): string[] {
+    return this.getValue('sorbetLspCustomConfiguration', []);
   }
 
-  public get sorbetLspCustomConfiguration(): string[] {
-    return this.getValue('sorbetLspCustomConfiguration',
-      this.sorbetLspBaseConfiguration);
+  public get sorbetTypecheckCommand(): string[] {
+    return this.getValue('sorbetTypecheckCommand',
+      ['bundle', 'exec', 'srb', 'typecheck'],
+    );
   }
 }

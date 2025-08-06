@@ -72,16 +72,16 @@
         "sorbetto.enableWatchman": {
           "type": "string",
           "default": "auto",
-          "markdownDescription": "Use `watchman` to improve file watching performance (see [documentaion](https://sorbet.org/docs/lsp#watchman)).",
+          "markdownDescription": "Use `watchman` to improve file watching performance. Check [documentaion](https://sorbet.org/docs/lsp#watchman)).",
           "enum": [
             "auto",
             "enabled",
             "disabled"
           ],
           "markdownEnumDescriptions": [
-            "Enable `watchman` when available",
-            "Always enable `watchman` (Sorbet will fail to start if not available)",
-            "Disable `watchman` entirely"
+            "Use `watchman` if available",
+            "Always use `watchman`. Sorbet will fail to start if it is not available",
+            "Disable `watchman`"
           ]
         },
         "sorbetto.highlightUntypedCode": {
@@ -142,37 +142,29 @@
             "Use configuration defined in the [`sorbetLspCustomConfiguration`](#sorbetto.sorbetLspConfiguration) setting"
           ]
         },
-         "sorbetto.sorbetLspBaseConfiguration": {
-          "type": "array",
-          "default": [
-            "bundle",
-            "exec",
-            "srb",
-            "typecheck",
-            "--lsp"
-          ],
-          "items": {
-            "type": "string",
-            "minLength": 1
-          },
-          "markdownDescription": "Specifies the base LSP configuration. Used when [`sorbetto.sorbetLspConfiguration`](#sorbetto.sorbetLspConfiguration) is not `custom`.",
-          "minItems": 1
-        },
         "sorbetto.sorbetLspCustomConfiguration": {
           "type": "array",
+          "default": [],
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "markdownDescription": "Specifies a custom LSP Server launch configuration. Active when [`sorbetto.sorbetLspConfiguration`](#sorbetto.sorbetLspConfiguration) is `custom`; ignores [`sorbetto.sorbetTypecheckCommand`](#sorbetto.sorbetTypecheckCommand) value."
+        },
+        "sorbetto.sorbetTypecheckCommand": {
+          "type": "array",
+          "markdownDescription": "Command used to invoke `srb typecheck`.",
           "default": [
             "bundle",
             "exec",
             "srb",
-            "typecheck",
-            "--lsp"
+            "typecheck"
           ],
           "items": {
             "type": "string",
             "minLength": 1
           },
-          "markdownDescription": "Specifies a custom LSP configuration. Only active when [`sorbetto.sorbetLspConfiguration`](#sorbetto.sorbetLspConfiguration) is `custom`.",
-          "minItems": 1
+          "minLength": 1
         },
         "sorbetto.typedFalseCompletionNudges": {
           "type": "boolean",

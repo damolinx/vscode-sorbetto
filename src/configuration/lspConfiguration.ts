@@ -14,16 +14,16 @@ export async function buildLspConfiguration(config: Configuration): Promise<LspC
 
   switch (config.lspConfigurationType) {
     case LspConfigurationType.Beta:
-      lspConfig = parse(config.sorbetLspBaseConfiguration, '--enable-all-beta-lsp-features');
+      lspConfig = parse(config.sorbetTypecheckCommand, '--lsp', '--enable-all-beta-lsp-features');
       break;
     case LspConfigurationType.Custom:
       lspConfig = parse(config.sorbetLspCustomConfiguration);
       break;
     case LspConfigurationType.Experimental:
-      lspConfig = parse(config.sorbetLspBaseConfiguration, '--enable-all-experimental-lsp-features');
+      lspConfig = parse(config.sorbetTypecheckCommand, '--lsp', '--enable-all-experimental-lsp-features');
       break;
     case LspConfigurationType.Stable:
-      lspConfig = parse(config.sorbetLspBaseConfiguration);
+      lspConfig = parse(config.sorbetTypecheckCommand, '--lsp');
       break;
     case LspConfigurationType.Disabled:
       lspConfig = undefined;

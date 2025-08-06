@@ -35,7 +35,7 @@ export async function verifyEnvironment(_context: SorbetExtensionContext) {
         result = true;
         break;
       case CONFIGURE_OPTION:
-        commands.executeCommand('workbench.action.openWorkspaceSettings', 'sorbetto.sorbetLsp');
+        commands.executeCommand('workbench.action.openWorkspaceSettings', 'sorbetto.sorbet');
         break;
       case DISABLE_OPTION:
         commands.executeCommand('workbench.action.openWorkspaceSettings', 'sorbetto.verifyDependencies');
