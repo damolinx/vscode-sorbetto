@@ -5,7 +5,7 @@ import { LspConfigurationType } from './lspConfigurationType';
 import { EXTENSION_PREFIX } from '../constants';
 import { HighlightType } from '../lsp/highlightType';
 
-export const DEFAULT_SORBET_TYPECHECK: ReadonlyArray<string> = ['bundle', 'exec', 'srb', 'typecheck'];
+export const DEFAULT_SORBET_TYPECHECK: readonly string[] = ['bundle', 'exec', 'srb', 'typecheck'];
 
 export class Configuration implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
