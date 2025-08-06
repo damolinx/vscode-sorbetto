@@ -123,12 +123,6 @@
           ],
           "uniqueItems": true
         },
-        "sorbetto.sorbetToolCmd": {
-          "type": "string",
-          "markdownDescription": "Command used to invoked `srb`. Prefer [`sorbetLspCustomConfiguration`](#sorbetto.sorbetLspConfiguration) for LSP Server.",
-          "default": "bundle exec srb",
-          "minLength": 3
-        },
         "sorbetto.sorbetLspConfiguration": {
           "type": "string",
           "default": "stable",

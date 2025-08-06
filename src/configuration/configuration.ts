@@ -5,6 +5,8 @@ import { LspConfigurationType } from './lspConfigurationType';
 import { EXTENSION_PREFIX } from '../constants';
 import { HighlightType } from '../lsp/highlightType';
 
+export const DEFAULT_SORBET_TYPECHECK: ReadonlyArray<string> = ['bundle', 'exec', 'srb', 'typecheck'];
+
 export class Configuration implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private readonly onDidChangeLspConfigurationEmitter: vscode.EventEmitter<void>;
@@ -124,7 +126,7 @@ export class Configuration implements vscode.Disposable {
 
   public get sorbetLspBaseConfiguration(): string[] {
     return this.getValue('sorbetLspBaseConfiguration',
-      ['bundle', 'exec', 'srb', 'typecheck', '--lsp']);
+      [...DEFAULT_SORBET_TYPECHECK, '--lsp']);
   }
 
   public get sorbetLspCustomConfiguration(): string[] {
