@@ -10,7 +10,7 @@ export async function executeCommandsInTerminal(options: { commands: string[], n
     terminalOptions.shellArgs = ['/K', `${options.commands.join('&&')} && pause`];
   } else {
     terminalOptions.shellPath = '/bin/bash';
-    terminalOptions.shellArgs = ['-c', `${options.commands.join('&&')}; read -p "Press ENTER to continue"`];
+    terminalOptions.shellArgs = ['-c', `${options.commands.join('&&')}; read -n1 -rsp "Press any key to continue ..."`];
   }
 
   const terminal = window.createTerminal(terminalOptions);
