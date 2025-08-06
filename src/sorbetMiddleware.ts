@@ -46,7 +46,7 @@ export class SorbetMiddleware implements vslc.Middleware {
 
   public resolveCodeAction(item: vscode.CodeAction, token: vscode.CancellationToken, next: vslc.ResolveCodeActionSignature): vscode.ProviderResult<vscode.CodeAction> {
     const commandId = item.command?.command;
-    if (commandId && [AUTOCORRECT_ALL_ID].some(prefix => commandId === prefix)) {
+    if (commandId && [AUTOCORRECT_ALL_ID].some((prefix) => commandId === prefix)) {
       return item;
     }
 
