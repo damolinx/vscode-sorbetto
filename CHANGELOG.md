@@ -1,8 +1,11 @@
 # Version history
 
+## 0.2.18
+- Add `sorbetto.sorbetToolCmd` to allow configuring how `srb` is invoked by tools.
+
 ## 0.2.17
 - Add `enableWatchman` setting to control forced or automatic use of `watchman`.
-- Fix: Multiple Sorbet clioents active after restart.
+- Fix: Multiple Sorbet clients active after restart.
 
 ## 0.2.16
 - Quickfix action to fix all instances of a given error code across all files.

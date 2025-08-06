@@ -46,7 +46,7 @@ export async function activate(extensionContext: ExtensionContext) {
   const rc = commands.registerCommand;
   extensionContext.subscriptions.push(
     rc(cmdIds.AUTOCORRECT_ALL_ID, (code: string | number, contextUri: Uri) =>
-      autocorrectAll(code, contextUri)),
+      autocorrectAll(context, code, contextUri)),
     rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | Uri) =>
       bundleInstall(context, gemfile)),
     rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) =>
