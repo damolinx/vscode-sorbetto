@@ -13,11 +13,7 @@ export const enum EnableWatchmanType {
 export async function enableWatchmanSupport(lspConfig: LspConfiguration, config: Configuration) {
   switch (config.enableWatchman) {
     case EnableWatchmanType.Auto:
-      if (await isAvailable('watchman')) {
-        enable();
-      } else {
-        disable();
-      }
+      await isAvailable('watchman') ? enable() : disable();
       break;
     case EnableWatchmanType.Enabled:
       enable();
