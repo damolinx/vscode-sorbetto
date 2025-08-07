@@ -71,12 +71,12 @@
       "properties": {
         "sorbetto.enableWatchman": {
           "type": "string",
-          "default": "auto",
+          "default": "Auto",
           "markdownDescription": "Use `watchman` to improve file watching performance. Check [documentation](https://sorbet.org/docs/lsp#watchman).",
           "enum": [
-            "auto",
-            "enabled",
-            "disabled"
+            "Auto",
+            "Enabled",
+            "Disabled"
           ],
           "markdownEnumDescriptions": [
             "Use `watchman` if available",

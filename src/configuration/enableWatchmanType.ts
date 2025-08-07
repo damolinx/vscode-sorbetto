@@ -5,9 +5,9 @@ import { isAvailable } from '../common/processUtils';
 export const DISABLE_WATCHMAN_OPT = '--disable-watchman';
 
 export const enum EnableWatchmanType {
-  Auto = 'auto',
-  Enabled = 'enabled',
-  Disabled = 'disabled',
+  Auto = 'Auto',
+  Enabled = 'Enabled',
+  Disabled = 'Disabled',
 }
 
 export async function enableWatchmanSupport(lspConfig: LspConfiguration, config: Configuration) {
