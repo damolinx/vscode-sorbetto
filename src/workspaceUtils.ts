@@ -22,8 +22,8 @@ export async function getSorbetWorkspaceFolders(): Promise<vscode.WorkspaceFolde
 }
 
 export async function isSorbetWorkspace(workspaceFolder: vscode.WorkspaceFolder): Promise<boolean> {
-  const result = await vscode.workspace.fs.stat(
-    vscode.Uri.joinPath(workspaceFolder.uri, 'sorbet/config'))
+  const result = await vscode.workspace.fs
+    .stat(vscode.Uri.joinPath(workspaceFolder.uri, 'sorbet/'))
     .then(() => true, () => false);
   return result;
 }
