@@ -34,7 +34,7 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
     workspaceFolder: vscode.WorkspaceFolder,
     configuration: LspConfiguration,
   ) {
-    this._status = ServerStatus.INITIALIZING;
+    this._status = ServerStatus.DISABLED;
     this.configuration = configuration;
     this.context = context;
     this.lspClient = instrumentLanguageClient(

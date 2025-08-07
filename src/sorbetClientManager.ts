@@ -143,7 +143,6 @@ export class SorbetClientManager implements vscode.Disposable {
 
         this.context.log.debug('Start attempt —', 1 + (MAX_RETRIES - retryCount), 'of', MAX_RETRIES);
         const client = new SorbetClient(this.context, workspaceFolder, configuration);
-        this.sorbetClient = client;
 
         try {
           const { process: { exitCode } } = await client.start();
@@ -159,6 +158,7 @@ export class SorbetClientManager implements vscode.Disposable {
             client.status = ServerStatus.ERROR;
             client.dispose();
           } else {
+            this.sorbetClient = client;
             this.startFileWatchers();
             retry = false;
           }
