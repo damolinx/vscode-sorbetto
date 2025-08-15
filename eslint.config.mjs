@@ -6,6 +6,7 @@
 // @ts-check
 import js from '@eslint/js';
 import eslintImport from 'eslint-plugin-import';
+import eslintPrettier from 'eslint-plugin-prettier';
 import tseslint from 'typescript-eslint';
 import stylistic from '@stylistic/eslint-plugin';
 
@@ -23,7 +24,7 @@ export default tseslint.config(
     plugins: {
       '@stylistic': stylistic,
       '@eslint/import': eslintImport,
-
+      '@eslint/prettier': eslintPrettier,
     },
     rules: {
       'arrow-parens': ['error', 'always'],
@@ -50,10 +51,16 @@ export default tseslint.config(
           pathGroupsExcludedImportTypes: ['builtin'],
         },
       ],
+      '@eslint/prettier/prettier': [
+        'error', 
+        {
+          'semi': true,
+          'singleQuote': true,
+          'printWidth': 100,
+          'tabWidth': 2,
+        }
+      ],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
-      '@stylistic/indent': ['error', 2],
-      '@stylistic/quotes': ['error', 'single'],
-      '@stylistic/semi': ['error', 'always'],
       '@typescript-eslint/naming-convention': [
         'warn',
         {
