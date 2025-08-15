@@ -228,6 +228,7 @@
     "@vscode/vsce": "^3.5.0",
     "esbuild": "^0.25.0",
     "eslint": "^9.30.0",
+    "eslint-plugin-import": "2.32.0",
     "glob": "^11.0.0",
     "mocha": "^11.7.0",
     "prettier": "^3.6.0",
