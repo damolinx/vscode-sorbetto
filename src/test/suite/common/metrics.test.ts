@@ -22,11 +22,7 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     const incrementStub = sinon.stub(client, 'increment');
     testRestorables.push(incrementStub);
 
-    await client.increment(
-      expectedMetricName,
-      expectedCount,
-      expectedTags,
-    );
+    await client.increment(expectedMetricName, expectedCount, expectedTags);
 
     sinon.assert.calledOnce(incrementStub);
     sinon.assert.calledWithMatch(
@@ -46,18 +42,9 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     const timingStub = sinon.stub(client, 'timing');
     testRestorables.push(timingStub);
 
-    await client.timing(
-      expectedMetricName,
-      expectedCount,
-      expectedTags,
-    );
+    await client.timing(expectedMetricName, expectedCount, expectedTags);
 
     sinon.assert.calledOnce(timingStub);
-    sinon.assert.calledWithMatch(
-      timingStub,
-      expectedMetricName,
-      expectedCount,
-      expectedTags,
-    );
+    sinon.assert.calledWithMatch(timingStub, expectedMetricName, expectedCount, expectedTags);
   });
 });

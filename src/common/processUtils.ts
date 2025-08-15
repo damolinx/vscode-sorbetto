@@ -20,27 +20,29 @@ export interface ProcessWithExitPromise {
 export function spawnWithExitPromise(
   command: string,
   args?: readonly string[],
-  options?: SpawnOptionsWithoutStdio): ProcessWithExitPromise {
+  options?: SpawnOptionsWithoutStdio,
+): ProcessWithExitPromise {
   const childProcess = spawn(command, args, options);
   const exitPromise = new Promise<ErrorInfo | undefined>((resolve) => {
     childProcess
-      .on('error',
-        (err?: NodeJS.ErrnoException) => {
-          resolve({
-            code: err?.code,
-            errno: err?.errno,
-            message: err?.message,
-            pid: childProcess.pid,
-          });
-        })
+      .on('error', (err?: NodeJS.ErrnoException) => {
+        resolve({
+          code: err?.code,
+          errno: err?.errno,
+          message: err?.message,
+          pid: childProcess.pid,
+        });
+      })
       .on('exit', (code: number | null, signal: string | null) => {
-        resolve(code === 0
-          ? undefined
-          : {
-            errno: code ?? undefined,
-            message: signal ?? undefined,
-            pid: childProcess.pid,
-          });
+        resolve(
+          code === 0
+            ? undefined
+            : {
+                errno: code ?? undefined,
+                message: signal ?? undefined,
+                pid: childProcess.pid,
+              },
+        );
       });
   });
   return { process: childProcess, exit: exitPromise };

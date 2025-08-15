@@ -1,8 +1,4 @@
-import {
-  LanguageClientOptions,
-  ServerOptions,
-  TransportKind,
-} from 'vscode-languageclient/node';
+import { LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
 import * as assert from 'assert';
 import { instrumentLanguageClient, Metrics, Tags } from '../../../common/metrics';
 import { SorbetLanguageClient } from '../../../lsp/languageClient';
@@ -33,12 +29,11 @@ class RecordingMetrics implements Metrics {
   }
 
   timing(metric: string, value: number | Date, tags: Tags = {}): void {
-    const rawValue =
-      typeof value === 'number' ? value : Date.now() - value.valueOf();
+    const rawValue = typeof value === 'number' ? value : Date.now() - value.valueOf();
     this.metrics.push([MetricType.Timing, metric, rawValue, tags]);
   }
 
-  flush(): void { }
+  flush(): void {}
 }
 
 // Uninitialized client. Call start and await on it before use.
@@ -87,10 +82,7 @@ suite('LanguageClient', () => {
     });
 
     test('Shims language clients and records latency metrics', async () => {
-      const client = instrumentLanguageClient(
-        createLanguageClient(),
-        metricsEmitter,
-      );
+      const client = instrumentLanguageClient(createLanguageClient(), metricsEmitter);
       await client.start();
 
       {
@@ -131,9 +123,7 @@ suite('LanguageClient', () => {
         assert.fail('Request should have failed.');
       } catch (e) {
         assert(
-          ((e as any).message as string).indexOf(
-            TestLanguageServerSpecialURIs.FAILURE,
-          ) !== -1,
+          ((e as any).message as string).indexOf(TestLanguageServerSpecialURIs.FAILURE) !== -1,
         );
         assertTimingMetric(metricsEmitter, 'false');
       }

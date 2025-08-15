@@ -9,7 +9,9 @@ export interface LspConfiguration {
   type: LspConfigurationType;
 }
 
-export async function buildLspConfiguration(config: Configuration): Promise<LspConfiguration | undefined> {
+export async function buildLspConfiguration(
+  config: Configuration,
+): Promise<LspConfiguration | undefined> {
   let lspConfig: LspConfiguration | undefined;
 
   switch (config.lspConfigurationType) {
@@ -20,7 +22,11 @@ export async function buildLspConfiguration(config: Configuration): Promise<LspC
       lspConfig = parse(config.sorbetLspCustomConfiguration);
       break;
     case LspConfigurationType.Experimental:
-      lspConfig = parse(config.sorbetTypecheckCommand, '--lsp', '--enable-all-experimental-lsp-features');
+      lspConfig = parse(
+        config.sorbetTypecheckCommand,
+        '--lsp',
+        '--enable-all-experimental-lsp-features',
+      );
       break;
     case LspConfigurationType.Stable:
       lspConfig = parse(config.sorbetTypecheckCommand, '--lsp');
@@ -37,7 +43,6 @@ export async function buildLspConfiguration(config: Configuration): Promise<LspC
   }
 
   return lspConfig;
-
 
   function parse(cmdLine: string[], ...additionalArgs: string[]): LspConfiguration {
     const [cmd, ...args] = cmdLine;

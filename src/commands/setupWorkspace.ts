@@ -2,27 +2,26 @@ import { Position, Uri, window, workspace, WorkspaceEdit } from 'vscode';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { executeCommandsInTerminal } from './utils';
 
-const GEMFILE_HEADER: readonly string[] = ['source \'https://rubygems.org\'', ''];
+const GEMFILE_HEADER: readonly string[] = ["source 'https://rubygems.org'", ''];
 
 const GEMFILE_DEPS: Readonly<Record<string, string>> = {
-  'sorbet': 'gem \'sorbet\', :group => :development',
-  'sorbet-runtime': 'gem \'sorbet-runtime\'',
-  'tapioca': 'gem \'tapioca\', require: false, :group => :development',
+  sorbet: "gem 'sorbet', :group => :development",
+  'sorbet-runtime': "gem 'sorbet-runtime'",
+  tapioca: "gem 'tapioca', require: false, :group => :development",
 };
 
 export async function setupWorkspace(context: SorbetExtensionContext, pathOrUri?: string | Uri) {
   const uri = pathOrUri
-    ? (pathOrUri instanceof Uri ? pathOrUri : Uri.parse(pathOrUri))
+    ? pathOrUri instanceof Uri
+      ? pathOrUri
+      : Uri.parse(pathOrUri)
     : await getTargetWorkspaceUri();
   if (!uri) {
     return; // No target workspace
   }
 
   const edit = new WorkspaceEdit();
-  const changes = await Promise.all([
-    verifyGemfile(uri, edit),
-    verifySorbetConfig(uri, edit),
-  ]);
+  const changes = await Promise.all([verifyGemfile(uri, edit), verifySorbetConfig(uri, edit)]);
 
   if (changes.some((changed) => changed)) {
     // When files are only being created (not edited), `applyEdit` returns `false`
@@ -34,7 +33,11 @@ export async function setupWorkspace(context: SorbetExtensionContext, pathOrUri?
   }
 
   await executeCommandsInTerminal({
-    commands: ['bundle config set --local path \'vendor/bundle\'', 'bundle install', 'bundle exec tapioca init'],
+    commands: [
+      "bundle config set --local path 'vendor/bundle'",
+      'bundle install',
+      'bundle exec tapioca init',
+    ],
     cwd: uri,
     name: 'bundle install',
   });
@@ -44,7 +47,12 @@ async function verifyGemfile(workspaceUri: Uri, edit: WorkspaceEdit): Promise<bo
   let changed = false;
   const gemFile = Uri.joinPath(workspaceUri, 'Gemfile');
 
-  if (!await workspace.fs.stat(gemFile).then(() => true, () => false)) {
+  if (
+    !(await workspace.fs.stat(gemFile).then(
+      () => true,
+      () => false,
+    ))
+  ) {
     const contents = GEMFILE_HEADER.concat(Object.values(GEMFILE_DEPS)).join('\n');
     edit.createFile(gemFile, { contents: Buffer.from(contents) });
     changed = true;
@@ -74,7 +82,12 @@ async function verifySorbetConfig(workspaceUri: Uri, edit: WorkspaceEdit): Promi
   let changed = false;
   const configFile = Uri.joinPath(workspaceUri, 'sorbet', 'config');
 
-  if (!await workspace.fs.stat(configFile).then(() => true, () => false)) {
+  if (
+    !(await workspace.fs.stat(configFile).then(
+      () => true,
+      () => false,
+    ))
+  ) {
     edit.createFile(configFile, { contents: Buffer.from('--dir=.\n--ignore=vendor/') });
     changed = true;
   }
@@ -90,8 +103,10 @@ async function getTargetWorkspaceUri(): Promise<Uri | undefined> {
     case 1:
       return workspaceFolders[0].uri;
     default:
-      return window.showWorkspaceFolderPick({
-        placeHolder: 'Select a workspace folder',
-      }).then((value) => value?.uri);
+      return window
+        .showWorkspaceFolderPick({
+          placeHolder: 'Select a workspace folder',
+        })
+        .then((value) => value?.uri);
   }
 }

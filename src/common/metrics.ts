@@ -56,31 +56,32 @@ export class LogMetrics implements Metrics {
       if (tags) {
         this.log.trace('Timing', metric, time, tags);
       } else {
-
         this.log.trace('Timing', metric, time);
       }
     }
   }
 
-  flush(): void { }
+  flush(): void {}
 }
 
 export class NoopMetrics implements Metrics {
-  increment(_metric: string, _count?: number, _tags?: Tags): void { }
+  increment(_metric: string, _count?: number, _tags?: Tags): void {}
 
-  gauge(_metric: string, _value: number, _tags?: Tags): void { }
+  gauge(_metric: string, _value: number, _tags?: Tags): void {}
 
-  timing(_metric: string, _value: number | Date, _tags?: Tags): void { }
+  timing(_metric: string, _value: number | Date, _tags?: Tags): void {}
 
-  flush(): void { }
+  flush(): void {}
 }
 
 /**
  * Shims the language client object so that all requests sent get timed.
  * @returns The instrumented language client.
  */
-export function instrumentLanguageClient(client: SorbetLanguageClient, metrics: Metrics)
-  : SorbetLanguageClient {
+export function instrumentLanguageClient(
+  client: SorbetLanguageClient,
+  metrics: Metrics,
+): SorbetLanguageClient {
   const originalSendRequest = client.sendRequest;
   client.sendRequest = async (methodOrType: string | AbstractMessageSignature, ...args: any[]) => {
     const metric = `latency.${getRequestName(methodOrType)}_ms`;
@@ -102,8 +103,7 @@ export function instrumentLanguageClient(client: SorbetLanguageClient, metrics: 
   return client;
 
   function getRequestName(methodOrType: string | AbstractMessageSignature): string {
-    const requestName = typeof methodOrType === 'string'
-      ? methodOrType : methodOrType.method;
+    const requestName = typeof methodOrType === 'string' ? methodOrType : methodOrType.method;
     return requestName.replace(/[/$]/g, '_');
   }
 }

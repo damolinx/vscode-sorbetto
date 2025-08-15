@@ -1,6 +1,11 @@
 import { TerminalOptions, Uri, window } from 'vscode';
 
-export async function executeCommandsInTerminal(options: { commands: string[], name?: string, cwd?: string | Uri, preserveFocus?: boolean }) {
+export async function executeCommandsInTerminal(options: {
+  commands: string[];
+  name?: string;
+  cwd?: string | Uri;
+  preserveFocus?: boolean;
+}) {
   const cmd = options.commands.join('&&').trim();
   const terminalOptions: TerminalOptions = {
     cwd: options.cwd,

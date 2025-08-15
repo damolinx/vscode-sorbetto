@@ -26,16 +26,39 @@ export class TypedOptionsCompletionProvider implements vscode.CompletionItemProv
     }
 
     return new vscode.CompletionList(
-      ([
-        ['ignore', new vscode.MarkdownString('Sorbet completely ignores file.')],
-        ['false', new vscode.MarkdownString('Sorbet only reports errors related to syntax, constant resolution and `sig`s.')],
-        ['true', new vscode.MarkdownString('Sorbet reports type error in addition to `false`-level rules.')],
-        ['strict', new vscode.MarkdownString('Sorbet requires all methods to have `sig`s in addition to `true`-level rules.')],
-        ['strong', new vscode.MarkdownString('Sorbet no longer allows `T.untyped` in addition to `strict`-level rules.')],
-      ] as [string, vscode.MarkdownString][]).map(([name, documentation]) => {
+      (
+        [
+          ['ignore', new vscode.MarkdownString('Sorbet completely ignores file.')],
+          [
+            'false',
+            new vscode.MarkdownString(
+              'Sorbet only reports errors related to syntax, constant resolution and `sig`s.',
+            ),
+          ],
+          [
+            'true',
+            new vscode.MarkdownString(
+              'Sorbet reports type error in addition to `false`-level rules.',
+            ),
+          ],
+          [
+            'strict',
+            new vscode.MarkdownString(
+              'Sorbet requires all methods to have `sig`s in addition to `true`-level rules.',
+            ),
+          ],
+          [
+            'strong',
+            new vscode.MarkdownString(
+              'Sorbet no longer allows `T.untyped` in addition to `strict`-level rules.',
+            ),
+          ],
+        ] as [string, vscode.MarkdownString][]
+      ).map(([name, documentation]) => {
         const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Snippet);
         item.documentation = documentation;
         return item;
-      }));
+      }),
+    );
   }
 }

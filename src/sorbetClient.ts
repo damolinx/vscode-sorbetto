@@ -7,7 +7,10 @@ import { LspConfiguration } from './configuration/lspConfiguration';
 import { InitializationOptions } from './lsp/initializationOptions';
 import { createClient, SorbetLanguageClient } from './lsp/languageClient';
 import { READ_FILE_REQUEST_METHOD } from './lsp/readFileRequest';
-import { SHOW_OPERATION_NOTIFICATION_METHOD, SorbetShowOperationParams } from './lsp/showOperationNotification';
+import {
+  SHOW_OPERATION_NOTIFICATION_METHOD,
+  SorbetShowOperationParams,
+} from './lsp/showOperationNotification';
 import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
 import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from './lsp/workspaceDidChangeConfigurationNotification';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
@@ -43,7 +46,8 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
         workspaceFolder,
         () => this.startClient(),
         this,
-        new SorbetMiddleware()),
+        new SorbetMiddleware(),
+      ),
       this.context.metrics,
     );
     this.onStatusChangedEmitter = new vscode.EventEmitter();
@@ -79,25 +83,29 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
    */
   public inScope(uri?: vscode.Uri): boolean {
     const targetUri = uri ?? vscode.window.activeTextEditor?.document.uri;
-    return !!targetUri
-      && vscode.workspace.getWorkspaceFolder(targetUri)?.name === this.workspaceFolder.name;
+    return (
+      !!targetUri &&
+      vscode.workspace.getWorkspaceFolder(targetUri)?.name === this.workspaceFolder.name
+    );
   }
 
   /**
    * Register a handler for 'workspace/didChangeConfiguration' notifications.
    * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification
    */
-  public onDidChangeConfigurationNotification(handler: vslc.NotificationHandler<InitializationOptions>)
-    : vscode.Disposable {
+  public onDidChangeConfigurationNotification(
+    handler: vslc.NotificationHandler<InitializationOptions>,
+  ): vscode.Disposable {
     return this.lspClient.onNotification(DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, handler);
   }
 
   /**
-  * Register a handler for 'sorbet/showOperation' notifications.
-  * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification
-  */
-  public onShowOperationNotification(handler: vslc.NotificationHandler<SorbetShowOperationParams>)
-    : vscode.Disposable {
+   * Register a handler for 'sorbet/showOperation' notifications.
+   * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification
+   */
+  public onShowOperationNotification(
+    handler: vslc.NotificationHandler<SorbetShowOperationParams>,
+  ): vscode.Disposable {
     return this.lspClient.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, handler);
   }
 
@@ -112,10 +120,15 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
    * Send a `sorbet/readFile` request to the language server.
    * See https://sorbet.org/docs/lsp#sorbetreadfile-request.
    */
-  public async sendReadFileRequest(param: vslc.TextDocumentIdentifier, token?: vscode.CancellationToken)
-    : Promise<vslc.TextDocumentItem | undefined> {
+  public async sendReadFileRequest(
+    param: vslc.TextDocumentIdentifier,
+    token?: vscode.CancellationToken,
+  ): Promise<vslc.TextDocumentItem | undefined> {
     const content = await this.lspClient.sendRequest<vslc.TextDocumentItem>(
-      READ_FILE_REQUEST_METHOD, param, token);
+      READ_FILE_REQUEST_METHOD,
+      param,
+      token,
+    );
     return content ?? undefined;
   }
 
@@ -123,10 +136,15 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
    * Send a `sorbet/showSymbol` request to the language server.
    * See https://sorbet.org/docs/lsp#sorbetshowsymbol-request.
    */
-  public async sendShowSymbolRequest(param: vslc.TextDocumentPositionParams, token?: vscode.CancellationToken)
-    : Promise<vslc.SymbolInformation | undefined> {
+  public async sendShowSymbolRequest(
+    param: vslc.TextDocumentPositionParams,
+    token?: vscode.CancellationToken,
+  ): Promise<vslc.SymbolInformation | undefined> {
     const symbolInfo = await this.lspClient.sendRequest<vslc.SymbolInformation>(
-      SHOW_SYMBOL_REQUEST_METHOD, param, token);
+      SHOW_SYMBOL_REQUEST_METHOD,
+      param,
+      token,
+    );
     return symbolInfo ?? undefined;
   }
 
@@ -134,20 +152,18 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
    * Send a `workspace/didChangeConfiguration` notification to the language server.
    * See https://sorbet.org/docs/lsp#workspacedidchangeconfiguration-notification.
    */
-  public sendDidChangeConfigurationNotification(param: InitializationOptions)
-    : Promise<void> {
-    return this.lspClient.sendNotification(
-      DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, { settings: param });
+  public sendDidChangeConfigurationNotification(param: InitializationOptions): Promise<void> {
+    return this.lspClient.sendNotification(DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, {
+      settings: param,
+    });
   }
 
   /**
    * Send a `sorbet/showOperation` notification to the language server.
    * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification.
    */
-  public sendShowOperationNotification(param: any)
-    : Promise<void> {
-    return this.lspClient.sendNotification(
-      SHOW_OPERATION_NOTIFICATION_METHOD, param);
+  public sendShowOperationNotification(param: any): Promise<void> {
+    return this.lspClient.sendNotification(SHOW_OPERATION_NOTIFICATION_METHOD, param);
   }
 
   public get status(): ServerStatus {
@@ -182,30 +198,34 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
     this.context.log.info('Start Sorbet LSP', this.workspaceFolder.uri.toString());
     this.context.log.info('>', this.configuration.cmd, ...this.configuration.args);
 
-    this.lspProcess = spawnWithExitPromise(
-      this.configuration.cmd,
-      this.configuration.args,
-      {
-        cwd: this.workspaceFolder.uri.fsPath,
-        env: { ...process.env, ...this.configuration.env },
-      });
+    this.lspProcess = spawnWithExitPromise(this.configuration.cmd, this.configuration.args, {
+      cwd: this.workspaceFolder.uri.fsPath,
+      env: { ...process.env, ...this.configuration.env },
+    });
 
     const { process: lspProcess } = this.lspProcess;
     if (lspProcess.pid !== undefined) {
       this.context.log.info('> pid', lspProcess.pid);
     }
 
-    this.lspProcess.exit = this.lspProcess.exit.then(
-      (errorInfo) => {
-        if (errorInfo) {
-          this.context.log.debug('Sorbet LSP process failed.', errorInfo?.pid ?? '«no pid»', errorInfo);
-          this.status = ServerStatus.ERROR;
-        } else {
-          this.context.log.debug('Sorbet LSP process exited.', lspProcess.pid ?? '«no pid»', lspProcess.exitCode);
-          this.status = ServerStatus.DISABLED;
-        }
-        return errorInfo;
-      });
+    this.lspProcess.exit = this.lspProcess.exit.then((errorInfo) => {
+      if (errorInfo) {
+        this.context.log.debug(
+          'Sorbet LSP process failed.',
+          errorInfo?.pid ?? '«no pid»',
+          errorInfo,
+        );
+        this.status = ServerStatus.ERROR;
+      } else {
+        this.context.log.debug(
+          'Sorbet LSP process exited.',
+          lspProcess.pid ?? '«no pid»',
+          lspProcess.exitCode,
+        );
+        this.status = ServerStatus.DISABLED;
+      }
+      return errorInfo;
+    });
 
     return this.lspProcess.process;
   }

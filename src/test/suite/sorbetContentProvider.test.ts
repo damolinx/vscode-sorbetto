@@ -29,17 +29,14 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     const context = {
       log: createLogStub(),
       clientManager: {
-        sorbetClient: ({
+        sorbetClient: {
           sendReadFileRequest: sendRequestSpy,
-        } as unknown) as unknown,
+        } as unknown,
       } as SorbetClientManager,
     } as SorbetExtensionContext;
 
     const provider = new SorbetContentProvider(context);
-    assert.strictEqual(
-      await provider.provideTextDocumentContent(fileUri),
-      expectedContents,
-    );
+    assert.strictEqual(await provider.provideTextDocumentContent(fileUri), expectedContents);
 
     sinon.assert.calledOnceWithMatch(sendRequestSpy, {
       uri: fileUri.toString(),

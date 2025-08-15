@@ -38,10 +38,14 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     const { configuration, statusProvider } = this.context;
 
     this.configItem = vscode.languages.createLanguageStatusItem(
-      'ruby-sorbet-config', SORBET_DOCUMENT_SELECTOR);
+      'ruby-sorbet-config',
+      SORBET_DOCUMENT_SELECTOR,
+    );
     this.setConfig();
     this.statusItem = vscode.languages.createLanguageStatusItem(
-      'ruby-sorbet-status', SORBET_DOCUMENT_SELECTOR);
+      'ruby-sorbet-status',
+      SORBET_DOCUMENT_SELECTOR,
+    );
     this.setStatus({ status: 'Disabled', command: StartCommand });
 
     const withClientHandler = ({ client }: SorbetClientEvent) => {
@@ -124,9 +128,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     }
   }
 
-  private setConfig(options?: {
-    configType?: LspConfigurationType
-  }): void {
+  private setConfig(options?: { configType?: LspConfigurationType }): void {
     const config = options?.configType ?? this.context.configuration.lspConfigurationType;
     const titleCasedConfig = config.charAt(0).toUpperCase() + config.slice(1);
     this.configItem.command = OpenConfigurationSettings;
@@ -135,11 +137,11 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   }
 
   private setStatus(options?: {
-    busy?: boolean,
-    command?: vscode.Command,
-    detail?: string,
-    severity?: vscode.LanguageStatusSeverity,
-    status?: string
+    busy?: boolean;
+    command?: vscode.Command;
+    detail?: string;
+    severity?: vscode.LanguageStatusSeverity;
+    status?: string;
   }): void {
     this.statusItem.busy = options?.busy ?? false;
     this.statusItem.command = options?.command ?? ShowOutputCommand;

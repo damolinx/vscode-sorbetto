@@ -24,11 +24,11 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     const editor = createMockEditor(expectedUri);
 
     const writeTextSpy = sinon.spy();
-    const envClipboardStub = sinon.stub(vscode, 'env').value(({
+    const envClipboardStub = sinon.stub(vscode, 'env').value({
       clipboard: {
         writeText: writeTextSpy,
       } as any,
-    } as any));
+    } as any);
     testRestorables.push(envClipboardStub);
 
     const context = {
@@ -45,11 +45,11 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     const editor = createMockEditor(expectedUri);
 
     const writeTextSpy = sinon.spy();
-    const envClipboardStub = sinon.stub(vscode, 'env').value(({
+    const envClipboardStub = sinon.stub(vscode, 'env').value({
       clipboard: {
         writeText: writeTextSpy,
       } as any,
-    } as any));
+    } as any);
     testRestorables.push(envClipboardStub);
 
     const context = {
@@ -70,11 +70,11 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     const editor = createMockEditor(expectedUri);
 
     const writeTextSpy = sinon.spy();
-    const envClipboardStub = sinon.stub(vscode, 'env').value(({
+    const envClipboardStub = sinon.stub(vscode, 'env').value({
       clipboard: {
         writeText: writeTextSpy,
       } as any,
-    } as any));
+    } as any);
     testRestorables.push(envClipboardStub);
     const context = {
       log: createLogStub(vscode.LogLevel.Info),
@@ -102,18 +102,17 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     const editor = createMockEditor(expectedUri);
 
     const writeTextSpy = sinon.spy();
-    const envClipboardStub = sinon.stub(vscode, 'env').value(({
+    const envClipboardStub = sinon.stub(vscode, 'env').value({
       clipboard: {
         writeText: writeTextSpy,
       } as any,
-    } as any));
+    } as any);
     testRestorables.push(envClipboardStub);
 
-    const sendRequestSpy = sinon.spy(
-      (_param: vsclc.TextDocumentPositionParams) =>
-        Promise.resolve({
-          name: expectedSymbolName,
-        } as vsclc.SymbolInformation),
+    const sendRequestSpy = sinon.spy((_param: vsclc.TextDocumentPositionParams) =>
+      Promise.resolve({
+        name: expectedSymbolName,
+      } as vsclc.SymbolInformation),
     );
 
     const context = {

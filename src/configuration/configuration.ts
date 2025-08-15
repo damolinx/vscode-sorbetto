@@ -12,13 +12,17 @@ export class Configuration implements vscode.Disposable {
 
   constructor() {
     this.disposables = [
-      this.onDidChangeLspConfigurationEmitter = new vscode.EventEmitter(),
-      this.onDidChangeLspOptionsEmitter = new vscode.EventEmitter(),
+      (this.onDidChangeLspConfigurationEmitter = new vscode.EventEmitter()),
+      (this.onDidChangeLspOptionsEmitter = new vscode.EventEmitter()),
       vscode.workspace.onDidChangeConfiguration(({ affectsConfiguration }) => {
         if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetLspConfiguration`)) {
           this.onDidChangeLspConfigurationEmitter.fire();
         } else if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetTypecheckCommand`)) {
-          if (![LspConfigurationType.Custom, LspConfigurationType.Disabled].includes(this.lspConfigurationType)) {
+          if (
+            ![LspConfigurationType.Custom, LspConfigurationType.Disabled].includes(
+              this.lspConfigurationType,
+            )
+          ) {
             this.onDidChangeLspConfigurationEmitter.fire();
           }
         } else if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetLspCustomConfiguration`)) {
@@ -29,7 +33,9 @@ export class Configuration implements vscode.Disposable {
           this.onDidChangeLspOptionsEmitter.fire('enableWatchman');
         } else if (affectsConfiguration(`${EXTENSION_PREFIX}.highlightUntypedCode`)) {
           this.onDidChangeLspOptionsEmitter.fire('highlightUntypedCode');
-        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.highlightUntypedCodeDiagnosticSeverity`)) {
+        } else if (
+          affectsConfiguration(`${EXTENSION_PREFIX}.highlightUntypedCodeDiagnosticSeverity`)
+        ) {
           this.onDidChangeLspOptionsEmitter.fire('highlightUntypedCodeDiagnosticSeverity');
         } else if (affectsConfiguration(`${EXTENSION_PREFIX}.restartFilePatterns`)) {
           this.onDidChangeLspOptionsEmitter.fire('restartFilePatterns');
@@ -83,7 +89,9 @@ export class Configuration implements vscode.Disposable {
    */
   public get highlightUntypedCodeDiagnosticSeverity(): vscode.DiagnosticSeverity | undefined {
     const strValue = this.getValue<string>('highlightUntypedCodeDiagnosticSeverity');
-    return strValue !== undefined ? vscode.DiagnosticSeverity[strValue as keyof typeof vscode.DiagnosticSeverity] : undefined;
+    return strValue !== undefined
+      ? vscode.DiagnosticSeverity[strValue as keyof typeof vscode.DiagnosticSeverity]
+      : undefined;
   }
 
   /**
@@ -127,8 +135,6 @@ export class Configuration implements vscode.Disposable {
   }
 
   public get sorbetTypecheckCommand(): string[] {
-    return this.getValue('sorbetTypecheckCommand',
-      ['bundle', 'exec', 'srb', 'typecheck'],
-    );
+    return this.getValue('sorbetTypecheckCommand', ['bundle', 'exec', 'srb', 'typecheck']);
   }
 }

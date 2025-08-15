@@ -38,7 +38,10 @@ export async function verifyEnvironment(_context: SorbetExtensionContext) {
         commands.executeCommand('workbench.action.openWorkspaceSettings', 'sorbetto.sorbet');
         break;
       case DISABLE_OPTION:
-        commands.executeCommand('workbench.action.openWorkspaceSettings', 'sorbetto.verifyDependencies');
+        commands.executeCommand(
+          'workbench.action.openWorkspaceSettings',
+          'sorbetto.verifyDependencies',
+        );
         break;
       case DOC_OPTION:
         env.openExternal(Uri.parse('https://sorbet.org/docs/adopting'));

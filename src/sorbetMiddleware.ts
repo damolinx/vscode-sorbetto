@@ -3,20 +3,23 @@ import * as vslc from 'vscode-languageclient';
 import { AUTOCORRECT_ALL_ID } from './commands/commandIds';
 
 export class SorbetMiddleware implements vslc.Middleware {
-
   public async provideCodeActions(
     document: vscode.TextDocument,
     range: vscode.Range,
     context: vscode.CodeActionContext,
     token: vscode.CancellationToken,
-    next: vslc.ProvideCodeActionsSignature): Promise<(vscode.Command | vscode.CodeAction)[] | undefined | null> {
+    next: vslc.ProvideCodeActionsSignature,
+  ): Promise<(vscode.Command | vscode.CodeAction)[] | undefined | null> {
     const actions = await next(document, range, context, token);
     if (!actions?.length) {
       return actions;
     }
 
     for (const code of getUniqueCode()) {
-      const action = new vscode.CodeAction(`Apply Sorbet fixes for error ${code} to all files`, vscode.CodeActionKind.QuickFix);
+      const action = new vscode.CodeAction(
+        `Apply Sorbet fixes for error ${code} to all files`,
+        vscode.CodeActionKind.QuickFix,
+      );
       action.command = {
         title: action.title,
         command: AUTOCORRECT_ALL_ID,
@@ -44,7 +47,11 @@ export class SorbetMiddleware implements vslc.Middleware {
     }
   }
 
-  public resolveCodeAction(item: vscode.CodeAction, token: vscode.CancellationToken, next: vslc.ResolveCodeActionSignature): vscode.ProviderResult<vscode.CodeAction> {
+  public resolveCodeAction(
+    item: vscode.CodeAction,
+    token: vscode.CancellationToken,
+    next: vslc.ResolveCodeActionSignature,
+  ): vscode.ProviderResult<vscode.CodeAction> {
     const commandId = item.command?.command;
     if (commandId && [AUTOCORRECT_ALL_ID].some((prefix) => commandId === prefix)) {
       return item;

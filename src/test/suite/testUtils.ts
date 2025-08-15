@@ -7,11 +7,11 @@ import { Log } from '../../common/log';
  */
 export function createLogStub(level = LogLevel.Error): Log {
   return {
-    debug: () => { },
-    error: () => { },
-    info: () => { },
-    trace: () => { },
-    warn: () => { },
+    debug: () => {},
+    error: () => {},
+    info: () => {},
+    trace: () => {},
+    warn: () => {},
     logLevel: level,
   };
 }

@@ -36,7 +36,8 @@ export function createClient(
       revealOutputChannelOn: vslc.RevealOutputChannelOn.Never,
       workspaceFolder,
     },
-    context.log);
+    context.log,
+  );
 
   return client;
 
@@ -47,8 +48,7 @@ export function createClient(
     };
   }
 
-  function createInitializationOptions()
-    : InitializationOptions {
+  function createInitializationOptions(): InitializationOptions {
     const { configuration } = context;
     return {
       enableTypedFalseCompletionNudges: configuration.nudgeTypedFalseCompletion,
@@ -60,19 +60,23 @@ export function createClient(
   }
 }
 
-export class SorbetLanguageClient extends LanguageClient implements
-  ReadFileRequest,
-  ShowOperationNotification,
-  ShowSymbolRequest,
-  WorkspaceDidChangeConfigurationNotification {
-
+export class SorbetLanguageClient
+  extends LanguageClient
+  implements
+    ReadFileRequest,
+    ShowOperationNotification,
+    ShowSymbolRequest,
+    WorkspaceDidChangeConfigurationNotification
+{
   private readonly log: Log;
 
   constructor(
     id: string,
     name: string,
     serverOptions: ServerOptions,
-    clientOptions: vslc.LanguageClientOptions, log: Log) {
+    clientOptions: vslc.LanguageClientOptions,
+    log: Log,
+  ) {
     super(id, name, serverOptions, clientOptions);
     this.log = log;
   }

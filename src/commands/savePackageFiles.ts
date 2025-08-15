@@ -10,11 +10,9 @@ export const PACKAGE_FILENAME = '__package.rb';
  * @param context Sorbet extension context.
  * @return `true` if all the files were successfully saved.
  */
-export async function savePackageFiles(
-  context: SorbetExtensionContext,
-): Promise<boolean> {
-  const pkgDocs = workspace.textDocuments.filter((document) =>
-    document.isDirty && basename(document.fileName) === PACKAGE_FILENAME,
+export async function savePackageFiles(context: SorbetExtensionContext): Promise<boolean> {
+  const pkgDocs = workspace.textDocuments.filter(
+    (document) => document.isDirty && basename(document.fileName) === PACKAGE_FILENAME,
   );
 
   switch (pkgDocs.length) {
@@ -26,6 +24,8 @@ export async function savePackageFiles(
       return await pkgDocs[0].save();
     default:
       context.log.trace('SavePackageFiles: Saving package files', pkgDocs.length);
-      return (await Promise.all(pkgDocs.map((document) => document.save()))).every((saved) => saved);
+      return (await Promise.all(pkgDocs.map((document) => document.save()))).every(
+        (saved) => saved,
+      );
   }
 }

@@ -6,11 +6,11 @@ import { ServerStatus } from './types';
 
 export interface SorbetClientEvent {
   readonly client: SorbetClient;
-};
+}
 
 export interface ShowOperationEvent extends SorbetClientEvent {
   readonly operationParams: SorbetShowOperationParams;
-};
+}
 
 export class SorbetStatusProvider implements vscode.Disposable {
   private readonly clientEventDisposables: vscode.Disposable[];
@@ -34,7 +34,9 @@ export class SorbetStatusProvider implements vscode.Disposable {
         this.disposeClientEventDisposables();
         if (client) {
           this.clientEventDisposables.push(
-            client.onShowOperationNotification((params) => this.fireOnShowOperation(client, params)),
+            client.onShowOperationNotification((params) =>
+              this.fireOnShowOperation(client, params),
+            ),
             client.onStatusChanged((_status) => this.fireOnStatusChanged(client)),
           );
         }
@@ -57,7 +59,10 @@ export class SorbetStatusProvider implements vscode.Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified. Spurious events are filtered out.
    */
-  private fireOnShowOperation(client: SorbetClient, operationParams: SorbetShowOperationParams): void {
+  private fireOnShowOperation(
+    client: SorbetClient,
+    operationParams: SorbetShowOperationParams,
+  ): void {
     let changed = false;
     if (operationParams.status === 'end') {
       const filteredOps = this.operationStack.filter(

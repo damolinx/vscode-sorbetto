@@ -1,6 +1,6 @@
 export type LspConfigurationOptions =
-  'enableWatchman' |
-  'highlightUntypedCode' |
-  'highlightUntypedCodeDiagnosticSeverity' |
-  'restartFilePatterns' |
-  'typedFalseCompletionNudges';
+  | 'enableWatchman'
+  | 'highlightUntypedCode'
+  | 'highlightUntypedCodeDiagnosticSeverity'
+  | 'restartFilePatterns'
+  | 'typedFalseCompletionNudges';

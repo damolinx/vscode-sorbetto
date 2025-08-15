@@ -9,6 +9,6 @@ export interface ReadFileRequest {
   sendRequest(
     method: typeof READ_FILE_REQUEST_METHOD,
     param: TextDocumentIdentifier,
-    token?: CancellationToken
-  ): Promise<TextDocumentItem>
+    token?: CancellationToken,
+  ): Promise<TextDocumentItem>;
 }

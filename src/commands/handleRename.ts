@@ -7,14 +7,23 @@ import { SorbetExtensionContext } from '../sorbetExtensionContext';
  */
 const REQUIRE_RELATIVE_REGEX = /(?<before>require_relative\s+(['"]))(?<path>.+)\2/g;
 
-interface FileRename { readonly oldUri: Uri; readonly newUri: Uri }
-interface RequireMatch { readonly range: Range; readonly path: string; }
+interface FileRename {
+  readonly oldUri: Uri;
+  readonly newUri: Uri;
+}
+interface RequireMatch {
+  readonly range: Range;
+  readonly path: string;
+}
 
 /**
  * Update `require_relative` statements after a file rename.  Currently, only
  * files being renamed are updated, not files referencing them.
  */
-export async function handleRename(_context: SorbetExtensionContext, renames: readonly FileRename[]) {
+export async function handleRename(
+  _context: SorbetExtensionContext,
+  renames: readonly FileRename[],
+) {
   const renameMap = new Map(
     renames
       .filter((entry) => extname(entry.newUri.fsPath) === '.rb')
@@ -69,7 +78,6 @@ async function updateRequires(
   matches: RequireMatch[],
   renameMap: Map<string, FileRename>,
 ): Promise<boolean> {
-
   const oldDirUri = Uri.file(dirname(oldUri.fsPath));
   const newDirUri = Uri.file(dirname(newUri.fsPath));
 
@@ -105,6 +113,9 @@ async function updateRequires(
     const requireUriWithRb = requireUri.path.endsWith('.rb')
       ? requireUri
       : requireUri.with({ path: requireUri.path + '.rb' });
-    return workspace.fs.stat(requireUriWithRb).then(() => true, () => false);
+    return workspace.fs.stat(requireUriWithRb).then(
+      () => true,
+      () => false,
+    );
   }
 }

@@ -4,9 +4,14 @@ import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { RestartReason, ServerStatus } from '../types';
 import { anySorbetWorkspace } from '../workspaceUtils';
 
-export async function restartSorbet(context: SorbetExtensionContext, reason: RestartReason = RestartReason.COMMAND) {
-  if (context.statusProvider.serverStatus === ServerStatus.DISABLED
-    && context.configuration.lspConfigurationType === LspConfigurationType.Disabled) {
+export async function restartSorbet(
+  context: SorbetExtensionContext,
+  reason: RestartReason = RestartReason.COMMAND,
+) {
+  if (
+    context.statusProvider.serverStatus === ServerStatus.DISABLED &&
+    context.configuration.lspConfigurationType === LspConfigurationType.Disabled
+  ) {
     await showDisabledConfigurationNotification();
     return;
   } else if (!workspace.workspaceFolders?.length) {
@@ -24,11 +29,13 @@ async function showDisabledConfigurationNotification() {
   const updateConfigItem: MessageItem = { title: 'Configure' };
   const selection = await window.showWarningMessage(
     'Sorbet is disabled by configuration.',
-    updateConfigItem);
+    updateConfigItem,
+  );
   if (selection === updateConfigItem) {
     await commands.executeCommand(
       'workbench.action.openWorkspaceSettings',
-      'sorbetto.sorbetLspConfiguration');
+      'sorbetto.sorbetLspConfiguration',
+    );
   }
 }
 
@@ -36,13 +43,13 @@ async function showMissingSorbetWorkspaceNotification() {
   const setupWorkspaceItem: MessageItem = { title: 'Setup' };
   const selection = await window.showWarningMessage(
     'Workspace is not setup to run Sorbet.',
-    setupWorkspaceItem);
+    setupWorkspaceItem,
+  );
   if (selection === setupWorkspaceItem) {
     await commands.executeCommand('sorbetto.setup.workspace');
   }
 }
 
 async function showNoWorkspaceNotification() {
-  await window.showWarningMessage(
-    'No workspace is open, Sorbet cannot be started');
+  await window.showWarningMessage('No workspace is open, Sorbet cannot be started');
 }

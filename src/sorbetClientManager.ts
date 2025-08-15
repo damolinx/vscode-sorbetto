@@ -21,9 +21,11 @@ export class SorbetClientManager implements vscode.Disposable {
   constructor(context: SorbetExtensionContext) {
     this.context = context;
     this.disposables = [
-      this.onClientChangedEmitter = new vscode.EventEmitter(),
+      (this.onClientChangedEmitter = new vscode.EventEmitter()),
       this.context.configuration.onDidChangeLspConfig(() => this.handleLspConfigurationChanged()),
-      this.context.configuration.onDidChangeLspOptions((option) => this.handleLspOptionChanged(option)),
+      this.context.configuration.onDidChangeLspOptions((option) =>
+        this.handleLspOptionChanged(option),
+      ),
       { dispose: () => this.sorbetClient?.dispose() },
       { dispose: () => this.disposeFileWatchers() },
     ];
@@ -52,8 +54,9 @@ export class SorbetClientManager implements vscode.Disposable {
   private async handleLspOptionChanged(option: string): Promise<void> {
     switch (option) {
       case 'highlightUntypedCode':
-        await this.sorbetClient?.sendDidChangeConfigurationNotification(
-          { highlightUntyped: this.context.configuration.highlightUntypedCode });
+        await this.sorbetClient?.sendDidChangeConfigurationNotification({
+          highlightUntyped: this.context.configuration.highlightUntypedCode,
+        });
         break;
       case 'restartFilePatterns':
         this.startFileWatchers(true);
@@ -65,8 +68,8 @@ export class SorbetClientManager implements vscode.Disposable {
   }
 
   /**
-  * Event raised on a {@link sorbetClient} change.
-  */
+   * Event raised on a {@link sorbetClient} change.
+   */
   public get onClientChanged(): vscode.Event<SorbetClient | undefined> {
     return this.onClientChangedEmitter.event;
   }
@@ -94,14 +97,13 @@ export class SorbetClientManager implements vscode.Disposable {
     }
     this.disposeFileWatchers();
     const onChangeListener = () => this.restartSorbet(RestartReason.TRIGGER_FILES);
-    this.restartWatchers = this.context.configuration.restartFilePatterns
-      .map((pattern) => {
-        const watcher = vscode.workspace.createFileSystemWatcher(pattern);
-        watcher.onDidChange(onChangeListener);
-        watcher.onDidCreate(onChangeListener);
-        watcher.onDidDelete(onChangeListener);
-        return watcher;
-      });
+    this.restartWatchers = this.context.configuration.restartFilePatterns.map((pattern) => {
+      const watcher = vscode.workspace.createFileSystemWatcher(pattern);
+      watcher.onDidChange(onChangeListener);
+      watcher.onDidCreate(onChangeListener);
+      watcher.onDidDelete(onChangeListener);
+      return watcher;
+    });
     this.context.log.trace('Created restart FS watchers', this.restartWatchers!.length);
   }
 
@@ -141,18 +143,30 @@ export class SorbetClientManager implements vscode.Disposable {
         }
         retryAttemptTimestamp = Date.now();
 
-        this.context.log.debug('Start attempt —', 1 + (MAX_RETRIES - retryCount), 'of', MAX_RETRIES);
+        this.context.log.debug(
+          'Start attempt —',
+          1 + (MAX_RETRIES - retryCount),
+          'of',
+          MAX_RETRIES,
+        );
         const client = new SorbetClient(this.context, workspaceFolder, configuration);
 
         try {
-          const { process: { exitCode } } = await client.start();
+          const {
+            process: { exitCode },
+          } = await client.start();
           if (typeof exitCode === 'number') {
             if (exitCode === LEGACY_RETRY_EXITCODE) {
-              this.context.log.warn('Sorbet LSP exited after startup with known retry exit code:', exitCode);
+              this.context.log.warn(
+                'Sorbet LSP exited after startup with known retry exit code:',
+                exitCode,
+              );
               retry = true;
             } else {
-              this.context.log.error('Sorbet LSP exited after startup. Check configuration:',
-                this.context.configuration.lspConfigurationType);
+              this.context.log.error(
+                'Sorbet LSP exited after startup. Check configuration:',
+                this.context.configuration.lspConfigurationType,
+              );
               retry = false;
             }
             client.status = ServerStatus.ERROR;
@@ -165,7 +179,10 @@ export class SorbetClientManager implements vscode.Disposable {
         } catch {
           const errorInfo = await client.lspProcess?.exit;
           if (errorInfo && isUnrecoverable(errorInfo)) {
-            this.context.log.error('Sorbet LSP failed to start with unrecoverable error.', errorInfo.code || errorInfo.errno);
+            this.context.log.error(
+              'Sorbet LSP failed to start with unrecoverable error.',
+              errorInfo.code || errorInfo.errno,
+            );
             retry = false;
           } else {
             retry = true;
@@ -176,9 +193,11 @@ export class SorbetClientManager implements vscode.Disposable {
     });
 
     function isUnrecoverable(errorInfo: ErrorInfo): boolean {
-      return errorInfo && (
-        (errorInfo.code !== undefined && ['EACCES', 'ENOENT'].includes(errorInfo.code))
-        || errorInfo.errno === E_COMMAND_NOT_FOUND);
+      return (
+        errorInfo &&
+        ((errorInfo.code !== undefined && ['EACCES', 'ENOENT'].includes(errorInfo.code)) ||
+          errorInfo.errno === E_COMMAND_NOT_FOUND)
+      );
     }
 
     async function throttle(previous: number, log: Log): Promise<void> {
@@ -192,8 +211,11 @@ export class SorbetClientManager implements vscode.Disposable {
     async function withLock(context: any, task: () => Promise<void>): Promise<void> {
       if (!context['__startLock']) {
         context['__startLock'] = true;
-        try { await task(); }
-        finally { delete context['__startLock']; }
+        try {
+          await task();
+        } finally {
+          delete context['__startLock'];
+        }
       }
     }
   }

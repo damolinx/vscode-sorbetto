@@ -26,7 +26,9 @@ export async function activate(extensionContext: ExtensionContext) {
   const context = new SorbetExtensionContext(extensionContext);
   extensionContext.subscriptions.push(
     context,
-    context.statusProvider.onStatusChanged(({ client: { status } }) => setSorbetStatusContext(status)),
+    context.statusProvider.onStatusChanged(({ client: { status } }) =>
+      setSorbetStatusContext(status),
+    ),
   );
 
   // Register Language Status Item
@@ -46,37 +48,37 @@ export async function activate(extensionContext: ExtensionContext) {
   const rc = commands.registerCommand;
   extensionContext.subscriptions.push(
     rc(cmdIds.AUTOCORRECT_ALL_ID, (code: string | number, contextUri: Uri) =>
-      autocorrectAll(context, code, contextUri)),
-    rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | Uri) =>
-      bundleInstall(context, gemfile)),
-    rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) =>
-      setupWorkspace(context, pathOrUri)),
+      autocorrectAll(context, code, contextUri),
+    ),
+    rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | Uri) => bundleInstall(context, gemfile)),
+    rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) => setupWorkspace(context, pathOrUri)),
     rc(cmdIds.SHOW_OUTPUT_ID, (preserveFocus?: boolean) =>
-      context.logOutputChannel.show(preserveFocus ?? true)),
+      context.logOutputChannel.show(preserveFocus ?? true),
+    ),
     rc(cmdIds.SORBET_RESTART_ID, (reason = RestartReason.COMMAND) =>
-      restartSorbet(context, reason)),
-    rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_ID, () =>
-      savePackageFiles(context)),
+      restartSorbet(context, reason),
+    ),
+    rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_ID, () => savePackageFiles(context)),
   );
 
   // Register text editor commands
   const rtc = commands.registerTextEditorCommand;
   extensionContext.subscriptions.push(
-    rtc(cmdIds.COPY_SYMBOL_ID, (textEditor) =>
-      copySymbolToClipboard(context, textEditor)),
+    rtc(cmdIds.COPY_SYMBOL_ID, (textEditor) => copySymbolToClipboard(context, textEditor)),
   );
 
   // Register configurable features
   if (context.configuration.getValue('updateRequireRelative', true)) {
     extensionContext.subscriptions.push(
-      workspace.onDidRenameFiles(({ files }) => handleRename(context, files)));
+      workspace.onDidRenameFiles(({ files }) => handleRename(context, files)),
+    );
   }
 
   // Initialize: start in disabled state until client reports status.
   setSorbetStatusContext(ServerStatus.DISABLED);
 
   // If enabled, start the extension.
-  if (!context.configuration.isDisabled && await anySorbetWorkspace()) {
+  if (!context.configuration.isDisabled && (await anySorbetWorkspace())) {
     await context.clientManager.startSorbet();
   }
 

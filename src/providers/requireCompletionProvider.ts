@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { existsSync } from 'fs';
 import { basename, dirname, extname, posix, resolve, sep } from 'path';
 
-export const TRIGGER_CHARACTERS: readonly string[] = ['"', '\'', '/'];
+export const TRIGGER_CHARACTERS: readonly string[] = ['"', "'", '/'];
 
 export function registerRequireCompletionProvider(): vscode.Disposable {
   return vscode.languages.registerCompletionItemProvider(
@@ -24,7 +24,9 @@ export class RequireCompletionProvider implements vscode.CompletionItemProvider 
   ): Promise<vscode.CompletionItem[] | undefined> {
     const line = document.lineAt(position).text.substring(0, position.character + 1);
 
-    const groups = line.match(/^\s*require_relative\s*(?<startQuote>['"])(?<path>[^"']*)(?<endQuote>\1?)(?!\s|;|$)/)?.groups;
+    const groups = line.match(
+      /^\s*require_relative\s*(?<startQuote>['"])(?<path>[^"']*)(?<endQuote>\1?)(?!\s|;|$)/,
+    )?.groups;
     if (!groups) {
       return;
     }
@@ -50,7 +52,10 @@ export class RequireCompletionProvider implements vscode.CompletionItemProvider 
       return item;
     });
 
-    function determineHintPath(baseDir: string, initialHint: string): { path: string; filter?: string; } | undefined {
+    function determineHintPath(
+      baseDir: string,
+      initialHint: string,
+    ): { path: string; filter?: string } | undefined {
       let testPath = resolve(baseDir, initialHint);
       if (existsSync(testPath)) {
         return { path: initialHint };
@@ -65,7 +70,10 @@ export class RequireCompletionProvider implements vscode.CompletionItemProvider 
       return undefined;
     }
 
-    async function getPaths(baseDir: string, hintPath: string): Promise<[string, vscode.CompletionItemKind][]> {
+    async function getPaths(
+      baseDir: string,
+      hintPath: string,
+    ): Promise<[string, vscode.CompletionItemKind][]> {
       const resolvedHintPath = resolve(baseDir, normalizeToRequire(hintPath));
       const entries = await vscode.workspace.fs.readDirectory(vscode.Uri.file(resolvedHintPath));
       if (!hintPath) {
@@ -84,7 +92,7 @@ export class RequireCompletionProvider implements vscode.CompletionItemProvider 
         .filter((e) => e !== undefined);
 
       function normalizeToRequire(path: string): string {
-        return (sep !== '/') ? path.replaceAll(sep, '/') : path;
+        return sep !== '/' ? path.replaceAll(sep, '/') : path;
       }
     }
   }
