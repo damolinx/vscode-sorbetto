@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
+import { EXTENSION_PREFIX } from '../constants';
+import { HighlightType } from '../lsp/highlightType';
 import { EnableWatchmanType } from './enableWatchmanType';
 import { LspConfigurationOptions } from './lspConfigurationOptions';
 import { LspConfigurationType } from './lspConfigurationType';
-import { EXTENSION_PREFIX } from '../constants';
-import { HighlightType } from '../lsp/highlightType';
 
 export class Configuration implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];

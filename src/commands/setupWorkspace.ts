@@ -1,6 +1,6 @@
 import { Position, Uri, window, workspace, WorkspaceEdit } from 'vscode';
-import { executeCommandsInTerminal } from './utils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { executeCommandsInTerminal } from './utils';
 
 const GEMFILE_HEADER: readonly string[] = ['source \'https://rubygems.org\'', ''];
 

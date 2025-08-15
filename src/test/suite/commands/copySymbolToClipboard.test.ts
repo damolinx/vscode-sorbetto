@@ -2,12 +2,11 @@ import * as vscode from 'vscode';
 import * as vsclc from 'vscode-languageclient/node';
 import * as path from 'path';
 import * as sinon from 'sinon';
-
-import { createLogStub } from '../testUtils';
 import { copySymbolToClipboard } from '../../../commands/copySymbolToClipboard';
 import { SorbetClientManager } from '../../../sorbetClientManager';
 import { SorbetExtensionContext } from '../../../sorbetExtensionContext';
 import { ServerStatus } from '../../../types';
+import { createLogStub } from '../testUtils';
 
 suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
   let testRestorables: { restore: () => void }[];

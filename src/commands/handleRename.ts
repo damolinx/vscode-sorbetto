@@ -67,8 +67,8 @@ async function updateRequires(
   oldUri: Uri,
   newUri: Uri,
   matches: RequireMatch[],
-  renameMap: Map<string, FileRename>):
-  Promise<boolean> {
+  renameMap: Map<string, FileRename>,
+): Promise<boolean> {
 
   const oldDirUri = Uri.file(dirname(oldUri.fsPath));
   const newDirUri = Uri.file(dirname(newUri.fsPath));

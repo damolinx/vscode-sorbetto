@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { basename, dirname, extname, posix, resolve, sep } from 'path';
 import { existsSync } from 'fs';
+import { basename, dirname, extname, posix, resolve, sep } from 'path';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['"', '\'', '/'];
 

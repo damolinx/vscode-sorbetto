@@ -2,10 +2,9 @@ import * as vscode from 'vscode';
 import * as assert from 'assert';
 import * as path from 'path';
 import * as sinon from 'sinon';
-
 import { SorbetContentProvider } from '../../providers/sorbetContentProvider';
-import { SorbetExtensionContext } from '../../sorbetExtensionContext';
 import { SorbetClientManager } from '../../sorbetClientManager';
+import { SorbetExtensionContext } from '../../sorbetExtensionContext';
 import { SorbetStatusProvider } from '../../sorbetStatusProvider';
 import { createLogStub } from './testUtils';
 

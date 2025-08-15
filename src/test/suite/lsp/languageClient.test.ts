@@ -4,9 +4,9 @@ import {
   TransportKind,
 } from 'vscode-languageclient/node';
 import * as assert from 'assert';
-import { TestLanguageServerSpecialURIs } from '../testLanguageServerSpecialURIs';
 import { instrumentLanguageClient, Metrics, Tags } from '../../../common/metrics';
 import { SorbetLanguageClient } from '../../../lsp/languageClient';
+import { TestLanguageServerSpecialURIs } from '../testLanguageServerSpecialURIs';
 import { createLogStub } from '../testUtils';
 
 const enum MetricType {

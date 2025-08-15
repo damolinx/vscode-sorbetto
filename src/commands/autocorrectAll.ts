@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { executeCommandsInTerminal } from './utils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { executeCommandsInTerminal } from './utils';
 
 export async function autocorrectAll({ configuration }: SorbetExtensionContext, code: string | number, contextUri: vscode.Uri) {
   const sorbetCommand = configuration.sorbetTypecheckCommand.join(' ').trim();

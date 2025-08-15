@@ -1,7 +1,7 @@
 import { Disposable, EventEmitter } from 'vscode';
+import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { ExtensionApi } from './extensionApi';
 import { mapStatus, SorbetStatus } from './status';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
 /**
  * {@link ExtensionApi Extension API } provider.

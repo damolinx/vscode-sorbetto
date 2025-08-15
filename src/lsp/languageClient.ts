@@ -1,15 +1,15 @@
 import * as vscode from 'vscode';
-import * as vslc from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
+import * as vslc from 'vscode-languageclient';
+import { Log } from '../common/log';
+import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { SORBET_DOCUMENT_SELECTOR } from './constants';
 import { InitializationOptions } from './initializationOptions';
 import { SorbetInitializeResult } from './initializeResult';
 import { ReadFileRequest } from './readFileRequest';
 import { ShowOperationNotification } from './showOperationNotification';
 import { ShowSymbolRequest } from './showSymbolRequest';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { WorkspaceDidChangeConfigurationNotification } from './workspaceDidChangeConfigurationNotification';
-import { Log } from '../common/log';
 
 /**
  * Create a {@link LanguageClient client} for Sorbet.

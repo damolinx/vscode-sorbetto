@@ -15,11 +15,11 @@ export class GemfileCodeLensProvider implements vscode.CodeLensProvider {
   provideCodeLenses(document: vscode.TextDocument, _token: vscode.CancellationToken): vscode.CodeLens[] {
     const bundleInstallCodeLens = new vscode.CodeLens(
       new vscode.Range(0, 0, 0, 0), {
-      arguments: [document.uri],
-      command: BUNDLE_INSTALL_ID,
-      title: 'Install',
-      tooltip: 'Run \'bundle install\'',
-    });
+        arguments: [document.uri],
+        command: BUNDLE_INSTALL_ID,
+        title: 'Install',
+        tooltip: 'Run \'bundle install\'',
+      });
     return [bundleInstallCodeLens];
   }
 }

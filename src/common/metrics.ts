@@ -1,7 +1,7 @@
 import { LogLevel } from 'vscode';
 import { AbstractMessageSignature } from 'vscode-jsonrpc/lib/common/messages';
-import { Log } from './log';
 import { SorbetLanguageClient } from '../lsp/languageClient';
+import { Log } from './log';
 
 export type Tags = Record<string, string>;
 

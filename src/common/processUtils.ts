@@ -1,5 +1,5 @@
-import { constants } from 'os';
 import { ChildProcess, exec, spawn, SpawnOptionsWithoutStdio } from 'child_process';
+import { constants } from 'os';
 
 export const E_COMMAND_NOT_FOUND = 127;
 export const E_SIGKILL = 128 + constants.signals.SIGKILL;
@@ -23,15 +23,17 @@ export function spawnWithExitPromise(
   options?: SpawnOptionsWithoutStdio): ProcessWithExitPromise {
   const childProcess = spawn(command, args, options);
   const exitPromise = new Promise<ErrorInfo | undefined>((resolve) => {
-    childProcess.on('error',
-      (err?: NodeJS.ErrnoException) => {
-        resolve({
-          code: err?.code,
-          errno: err?.errno,
-          message: err?.message,
-          pid: childProcess.pid,
-        });
-      }).on('exit', (code: number | null, signal: string | null) => {
+    childProcess
+      .on('error',
+        (err?: NodeJS.ErrnoException) => {
+          resolve({
+            code: err?.code,
+            errno: err?.errno,
+            message: err?.message,
+            pid: childProcess.pid,
+          });
+        })
+      .on('exit', (code: number | null, signal: string | null) => {
         resolve(code === 0
           ? undefined
           : {
