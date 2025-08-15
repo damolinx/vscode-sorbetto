@@ -209,6 +209,7 @@
     "pretest": "npm run compile",
     "test": "node ./out/test/runTest.js",
     "package": "npm run compile:check-types && node esbuild.mjs --production",
+    "vsce-package": "vsce package",
     "vscode:prepublish": "npm run package"
   },
   "dependencies": {
