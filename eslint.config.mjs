@@ -61,6 +61,10 @@ export default tseslint.config(
         }
       ],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
+      "@stylistic/quotes": ["error", "single", {
+        "avoidEscape": true,
+        "allowTemplateLiterals": "never"
+      }],
       '@typescript-eslint/naming-convention': [
         'warn',
         {
