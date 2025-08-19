@@ -11,7 +11,7 @@ export class SorbetMiddleware implements vslc.Middleware {
     next: vslc.ProvideCodeActionsSignature,
   ): Promise<(vscode.Command | vscode.CodeAction)[] | undefined | null> {
     const actions = await next(document, range, context, token);
-    if (!actions?.length) {
+    if (!actions?.filter((a) => 'kind' in a && a.kind === vscode.CodeActionKind.QuickFix).length) {
       return actions;
     }
 
