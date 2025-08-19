@@ -2,6 +2,7 @@
 
 ## 0.2.20
 - Fix: Commands do not get enabled/disabled on client transitions.
+- Fix: Do not offer `Apply Sorbet fixes for error «code» to all files` when Sorbet does not offer a fix.
 
 ## 0.2.19
 - General improvements.
