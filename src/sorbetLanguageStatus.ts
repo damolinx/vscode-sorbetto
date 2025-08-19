@@ -4,7 +4,6 @@ import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/constants';
 import { SorbetClient } from './sorbetClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
-import { SorbetClientEvent } from './sorbetStatusProvider';
 import { ServerStatus } from './types';
 
 const OpenConfigurationSettings: vscode.Command = {
@@ -48,23 +47,18 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     );
     this.setStatus({ status: 'Disabled', command: StartCommand });
 
-    const withClientHandler = ({ client }: SorbetClientEvent) => {
-      if (client.inScope()) {
-        this.render(client);
-      }
-    };
     const withoutClientHandler = () => {
       const client = this.context.clientManager.sorbetClient;
       if (client) {
-        withClientHandler({ client });
+        this.render(client);
       }
     };
 
     this.disposables = [
       vscode.window.onDidChangeActiveTextEditor(withoutClientHandler),
       configuration.onDidChangeLspConfig(withoutClientHandler),
-      statusProvider.onShowOperation(withClientHandler),
-      statusProvider.onStatusChanged(withClientHandler),
+      statusProvider.onShowOperation(({ client }) => client.inScope() && this.render(client)),
+      statusProvider.onStatusChanged(({ client }) => client?.inScope() && this.render(client)),
       this.configItem,
       this.statusItem,
     ];

@@ -4,11 +4,13 @@ import { SorbetClient } from './sorbetClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { ServerStatus } from './types';
 
-export interface SorbetClientEvent {
-  readonly client: SorbetClient;
+export interface StatusChangedEvent {
+  readonly client?: SorbetClient;
+  readonly status: ServerStatus;
 }
 
-export interface ShowOperationEvent extends SorbetClientEvent {
+export interface ShowOperationEvent {
+  readonly client: SorbetClient;
   readonly operationParams: SorbetShowOperationParams;
 }
 
@@ -18,7 +20,7 @@ export class SorbetStatusProvider implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private operationStack: SorbetShowOperationParams[];
   private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
-  private readonly onStatusChangedEmitter: vscode.EventEmitter<SorbetClientEvent>;
+  private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
 
   constructor(context: SorbetExtensionContext) {
     this.context = context;
@@ -40,6 +42,7 @@ export class SorbetStatusProvider implements vscode.Disposable {
             client.onStatusChanged((_status) => this.fireOnStatusChanged(client)),
           );
         }
+        this.fireOnStatusChanged(client);
       }),
       { dispose: () => this.disposeClientEventDisposables() },
     ];
@@ -87,11 +90,11 @@ export class SorbetStatusProvider implements vscode.Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified.
    */
-  private fireOnStatusChanged(client: SorbetClient): void {
+  private fireOnStatusChanged(client?: SorbetClient): void {
     if (!client || client.status === ServerStatus.DISABLED) {
       this.operationStack = [];
     }
-    this.onStatusChangedEmitter.fire({ client });
+    this.onStatusChangedEmitter.fire({ client, status: client?.status ?? ServerStatus.DISABLED });
   }
 
   /**
@@ -111,7 +114,7 @@ export class SorbetStatusProvider implements vscode.Disposable {
   /**
    * Event raised on {@link ServerStatus status} changes.
    */
-  public get onStatusChanged(): vscode.Event<SorbetClientEvent> {
+  public get onStatusChanged(): vscode.Event<StatusChangedEvent> {
     return this.onStatusChangedEmitter.event;
   }
 

@@ -1,5 +1,8 @@
 # Version history
 
+## 0.2.20
+- Fix: Commands do not get enabled/disabled on client transitions.
+
 ## 0.2.19
 - General improvements.
 
