@@ -5,7 +5,7 @@
   "author": "damolinx",
   "publisher": "damolinx",
   "license": "Apache-2.0",
-  "version": "0.2.20",
+  "version": "0.2.21",
   "icon": "icon.png",
   "repository": {
     "type": "git",
@@ -57,7 +57,7 @@
         "command": "sorbetto.restart",
         "title": "Restart Sorbet",
         "category": "Sorbetto",
-        "enablement": "workbenchState != empty && sorbetto:sorbetStatus != disabled"
+        "enablement": "workbenchState != empty"
       },
       {
         "command": "sorbetto.setup.workspace",
