@@ -8,8 +8,12 @@ import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { RestartReason, ServerStatus } from './types';
 
 const LEGACY_RETRY_EXITCODE = 11;
-const MAX_RETRIES = 15;
-const MIN_TIME_BETWEEN_RETRIES_MS = 10000;
+const MAX_RETRIES = 38; // About 15min, base 10s and cap 60s
+const THROTTLE_CONFIG = {
+  baseDelayMs: 10000,
+  attemptsPerTier: 12,
+  maxDelayMs: 60000,
+} as const;
 
 export class SorbetClientManager implements vscode.Disposable {
   private _sorbetClient?: SorbetClient;
@@ -135,20 +139,16 @@ export class SorbetClientManager implements vscode.Disposable {
     await withLock(this, async () => {
       let retryAttemptTimestamp = 0;
       let retry = false;
-      let retryCount = MAX_RETRIES;
+      const retryAttempt = 0;
 
       do {
-        if (retryAttemptTimestamp) {
-          await throttle(retryAttemptTimestamp, this.context.log);
-        }
-        retryAttemptTimestamp = Date.now();
-
-        this.context.log.debug(
-          'Start attempt —',
-          1 + (MAX_RETRIES - retryCount),
-          'of',
-          MAX_RETRIES,
+        retryAttemptTimestamp = await throttle(
+          retryAttempt,
+          retryAttemptTimestamp,
+          this.context.log,
         );
+
+        this.context.log.debug('Start attempt —', 1 + retryAttempt, 'of', MAX_RETRIES);
         const client = new SorbetClient(this.context, workspaceFolder, configuration);
 
         try {
@@ -189,7 +189,7 @@ export class SorbetClientManager implements vscode.Disposable {
           }
           client.dispose();
         }
-      } while (retry && --retryCount);
+      } while (retry && retryAttempt < MAX_RETRIES);
     });
 
     function isUnrecoverable(errorInfo: ErrorInfo): boolean {
@@ -200,12 +200,25 @@ export class SorbetClientManager implements vscode.Disposable {
       );
     }
 
-    async function throttle(previous: number, log: Log): Promise<void> {
-      const sleepMS = MIN_TIME_BETWEEN_RETRIES_MS - (Date.now() - previous);
-      if (sleepMS > 0) {
-        log.debug('Start throttled —', sleepMS, 'ms');
-        await new Promise((res) => setTimeout(res, sleepMS));
+    async function throttle(
+      attempt: number,
+      previous: number,
+      log: Log,
+      opts = THROTTLE_CONFIG,
+    ): Promise<number> {
+      if (attempt > 0) {
+        const delay = Math.min(
+          opts.maxDelayMs,
+          opts.baseDelayMs * Math.pow(2, Math.floor(attempt / opts.attemptsPerTier)),
+        );
+        const sleepMS = delay - (Date.now() - previous);
+        if (sleepMS > 0) {
+          log.debug('Start throttled —', sleepMS, 'ms');
+          await new Promise((res) => setTimeout(res, sleepMS));
+        }
       }
+
+      return Date.now();
     }
 
     async function withLock(context: any, task: () => Promise<void>): Promise<void> {
