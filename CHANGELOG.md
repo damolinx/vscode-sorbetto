@@ -1,5 +1,8 @@
 # Version history
 
+## 0.2.22
+- Restart loop increased to 15min, but spaced out exponentially. 
+
 ## 0.2.21
 - Fix: `Sorbetto: Restart` is not available in all expected cases.
 

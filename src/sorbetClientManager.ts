@@ -137,17 +137,12 @@ export class SorbetClientManager implements vscode.Disposable {
     }
 
     await withLock(this, async () => {
-      let retryAttemptTimestamp = 0;
+      let retryTimestamp = 0;
       let retry = false;
       const retryAttempt = 0;
 
       do {
-        retryAttemptTimestamp = await throttle(
-          retryAttempt,
-          retryAttemptTimestamp,
-          this.context.log,
-        );
-
+        retryTimestamp = await throttle(retryAttempt, retryTimestamp, this.context.log);
         this.context.log.debug('Start attempt —', 1 + retryAttempt, 'of', MAX_RETRIES);
         const client = new SorbetClient(this.context, workspaceFolder, configuration);
 
