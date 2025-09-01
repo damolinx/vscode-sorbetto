@@ -1,7 +1,14 @@
 # Version history
 
+## 0.2.22
+- Restart loop increased to 15min, but spaced out exponentially. 
+
+## 0.2.21
+- Fix: `Sorbetto: Restart` is not available in all expected cases.
+
 ## 0.2.20
 - Fix: Commands do not get enabled/disabled on client transitions.
+- Fix: Do not offer `Apply Sorbet fixes for error «code» to all files` when Sorbet does not offer a fix.
 
 ## 0.2.19
 - General improvements.
