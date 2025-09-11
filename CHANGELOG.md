@@ -1,29 +1,32 @@
 # Version history
 
+## 0.2.23
+- Add `sorbetto.alwaysShowStatusItems` setting to show the language status items for all editors, not just Ruby. 
+
 ## 0.2.22
-- Restart loop increased to 15min, but spaced out exponentially. 
+- Restart loop increased to 15min, with exponential backoff. 
 
 ## 0.2.21
-- Fix: `Sorbetto: Restart` is not available in all expected cases.
+- Fix: **Sorbetto: Restart** is not available in all expected cases.
 
 ## 0.2.20
 - Fix: Commands do not get enabled/disabled on client transitions.
-- Fix: Do not offer `Apply Sorbet fixes for error «code» to all files` when Sorbet does not offer a fix.
+- Fix: Do not offer **Apply Sorbet fixes for error «code» to all files** when Sorbet does not offer a fix.
 
 ## 0.2.19
 - General improvements.
 
 ## 0.2.18
-- Replace `sorbetto.sorbetLspBaseConfiguration` setting with `sorbetto.sorbetTypecheckCommand` for improved flexibility. `sorbetto.sorbetLspCustomConfiguration` remains purely for LSP configuration.
-- Update name of new quickfix action to `Apply Sorbet fixes for error «code» to all files`.
+- Replace `sorbetto.sorbetLspBaseConfiguration` with `sorbetto.sorbetTypecheckCommand` setting for improved flexibility. `sorbetto.sorbetLspCustomConfiguration` remains purely for LSP configuration.
+- Update name of new quickfix action to **Apply Sorbet fixes for error «code» to all files**.
 - Faster check for Sorbet workspace.
 
 ## 0.2.17
-- Add `enableWatchman` setting to control forced or automatic use of `watchman`.
+- Add `sorbetto.enableWatchman` setting to control forced or automatic use of `watchman`.
 - Fix: Multiple Sorbet clients active after restart.
 
 ## 0.2.16
-- Quickfix action to fix all instances of a given error code across all files.
+- Quick-fix action to fix all instances of a given error code across all files.
 
 ## 0.2.15
 - Improve completion provider behavior for `Gemfile` files.
@@ -33,7 +36,7 @@
 - Support controlling untyped-code highlight severity.
 
 ## 0.2.13
-- Improve `Copy Symbol to Clipboard`:
+- Improve **Copy Symbol to Clipboard**:
   - Enable even when there is a selection.
   - Hide when there is no workspace open.
 
@@ -43,12 +46,12 @@
 ## 0.2.11
 - Upgrade minimum VS Code version to 1.99.
 - Updates for future support of multi-root workspaces:
-  - Language Status iotem tracks now current active text editor.
+  - Language Status item tracks now current active text editor.
   - Remove verification of dependencies on extension activation.
-  - Remove `sorbetto.verifyDependencies` setting is removed.
+  - Remove `sorbetto.verifyDependencies` setting.
 
 ## 0.2.10
-- Use `ruby` icon on status language entries.
+- Use `$(ruby)` icon on status language entries.
 - Update Sorbet LSP start logic:
   - Limit restart attempts to 15 (before it was unlimited).
   - Set time between restarts to 10s (before it was 7s).
@@ -113,20 +116,20 @@
 ## 0.1.8
 - Update snippets.
 - Add icon.
-- Add `Install` CodeLens to `Gemfile`.
-- Change `Verify Workspace` to `Setup Workspace` which follows https://sorbet.org/docs/adopting.
+- Add **Install** CodeLens to `Gemfile`.
+- Change **Verify Workspace** to **Setup Workspace** which follows https://sorbet.org/docs/adopting.
 
 ## 0.1.7
 - Provide `sorbetto:sorbetStatus` context value.
-- `Copy Symbol to Clipboard` UX improvements:
+- **Copy Symbol to Clipboard** UX improvements:
   - Progress UI only shown if operation takes longer than 2s.
   - Disabled whenever Sorbet is in `error` or `disabled` state.
 - Internal clean-up.
 
 ## 0.1.6
 - Update `Ruby` language item entries.
-- Remove `Sorbetto: Configure` command.
-- Remove `Sorbetto: Show Output` command.
+- Remove **Sorbetto: Configure** command.
+- Remove **Sorbetto: Show Output** command.
 - Fix: Missing `sorbet.savePackageFiles` command used by Sorbet.
 
 ## 0.1.5
@@ -144,14 +147,14 @@
 
 ## 0.1.1
 - Move `Sorbet` status bar item to be part of the `Ruby` language item for more standard behavior.
-- Remove unnecessary files fom .vsix.
+- Remove unnecessary files from .vsix.
 
 ## 0.1.0
 - Verification features:
   - Verify required `srb`, `bundle` during extension startup (can be disabled via config).
   - `Verify Workspace` command allows to setup a workspace with necessary files to get Sorbet running.
 - Configuration design is changed from that used by official extension:
-  - `Memento`-based setting overrides haare removed, preferring standard VS Code settings behavior.
+  - `Memento`-based setting overrides are removed, preferring standard VS Code settings behavior.
   - Changing configuration via the `Settings` UI now automatically restarts the Sorbet Language Server when necessary. As a result, all `Toggle` commands are removed to simplify UX.
 
 - Initial version, forked from official 0.3.41.

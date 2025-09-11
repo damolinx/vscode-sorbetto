@@ -69,6 +69,11 @@
     "configuration": {
       "title": "Sorbetto",
       "properties": {
+        "sorbetto.alwaysShowStatusItems": {
+          "type": "boolean",
+          "default": false,
+          "description": "Keep Sorbet language status items visible whenever an editor is open, not only when the active editor is Ruby. Note: VS Code hides all status items when no editor is open."
+        },
         "sorbetto.enableWatchman": {
           "type": "string",
           "default": "Auto",

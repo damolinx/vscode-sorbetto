@@ -25,6 +25,8 @@ const ShowOutputCommand: vscode.Command = {
   tooltip: 'Show Sorbet Output',
 };
 
+const ALWAYS_SHOW_CONFIG_KEY = 'sorbetto.alwaysShowStatusItems';
+
 export class SorbetLanguageStatus implements vscode.Disposable {
   private readonly context: SorbetExtensionContext;
   private readonly disposables: vscode.Disposable[];
@@ -36,15 +38,10 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     this.context = context;
     const { configuration, statusProvider } = this.context;
 
-    this.configItem = vscode.languages.createLanguageStatusItem(
-      'ruby-sorbet-config',
-      SORBET_DOCUMENT_SELECTOR,
-    );
+    const selector = getSelector();
+    this.configItem = vscode.languages.createLanguageStatusItem('ruby-sorbet-config', selector);
     this.setConfig();
-    this.statusItem = vscode.languages.createLanguageStatusItem(
-      'ruby-sorbet-status',
-      SORBET_DOCUMENT_SELECTOR,
-    );
+    this.statusItem = vscode.languages.createLanguageStatusItem('ruby-sorbet-status', selector);
     this.setStatus({ status: 'Disabled', command: StartCommand });
 
     const inScopeRenderHandler = ({ client }: { client?: SorbetClient }) =>
@@ -58,9 +55,23 @@ export class SorbetLanguageStatus implements vscode.Disposable {
       configuration.onDidChangeLspConfig(withoutClientHandler),
       statusProvider.onShowOperation(inScopeRenderHandler),
       statusProvider.onStatusChanged(inScopeRenderHandler),
+      vscode.workspace.onDidChangeConfiguration((e) => {
+        if (e.affectsConfiguration(ALWAYS_SHOW_CONFIG_KEY)) {
+          const selector = getSelector();
+          this.configItem.selector = selector;
+          this.statusItem.selector = selector;
+        }
+      }),
       this.configItem,
       this.statusItem,
     ];
+
+    function getSelector(): vscode.DocumentSelector {
+      const alwaysShowStatus = vscode.workspace
+        .getConfiguration()
+        .get(ALWAYS_SHOW_CONFIG_KEY, false);
+      return alwaysShowStatus ? '*' : SORBET_DOCUMENT_SELECTOR;
+    }
   }
 
   dispose(): void {
