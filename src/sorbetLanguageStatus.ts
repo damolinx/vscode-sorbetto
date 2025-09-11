@@ -47,18 +47,17 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     );
     this.setStatus({ status: 'Disabled', command: StartCommand });
 
-    const withoutClientHandler = () => {
-      const client = this.context.clientManager.sorbetClient;
-      if (client) {
-        this.render(client);
-      }
-    };
+    const inScopeRenderHandler = ({ client }: { client?: SorbetClient }) =>
+      client?.inScope() && this.render(client);
+    const withoutClientHandler = () =>
+      this.context.clientManager.sorbetClient &&
+      this.render(this.context.clientManager.sorbetClient);
 
     this.disposables = [
       vscode.window.onDidChangeActiveTextEditor(withoutClientHandler),
       configuration.onDidChangeLspConfig(withoutClientHandler),
-      statusProvider.onShowOperation(({ client }) => client.inScope() && this.render(client)),
-      statusProvider.onStatusChanged(({ client }) => client?.inScope() && this.render(client)),
+      statusProvider.onShowOperation(inScopeRenderHandler),
+      statusProvider.onStatusChanged(inScopeRenderHandler),
       this.configItem,
       this.statusItem,
     ];
