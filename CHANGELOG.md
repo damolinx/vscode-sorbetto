@@ -1,9 +1,7 @@
 # Version history
 
-## 0.2.23
-- Add `sorbetto.alwaysShowStatusItems` setting to show the language status items for all editors, not just Ruby. 
-
 ## 0.2.22
+- Add `sorbetto.alwaysShowStatusItems` setting to show the language status items for all editors, not just Ruby.
 - Restart loop increased to 15min, with exponential backoff. 
 
 ## 0.2.21
