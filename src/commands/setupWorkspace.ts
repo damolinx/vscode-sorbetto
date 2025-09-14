@@ -8,7 +8,7 @@ const GEMFILE_HEADER: readonly string[] = ["source 'https://rubygems.org'", ''];
 const GEMFILE_DEPS: Readonly<Record<string, string>> = {
   sorbet: "gem 'sorbet', :group => :development",
   'sorbet-runtime': "gem 'sorbet-runtime'",
-  tapioca: "gem 'tapioca', require: false, :group => :development",
+  tapioca: "gem 'tapioca', require: false, :group => [:development, :test]",
 };
 
 export async function setupWorkspace(
