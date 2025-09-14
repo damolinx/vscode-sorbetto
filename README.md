@@ -5,15 +5,15 @@ Sorbetto is a Visual Studio Code extension that provides Ruby language support u
 - Supports [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for Ruby.
 - Provides code snippets for common Sorbet constructs to make them easier to use.
 - `require_relative` is automatically updated on file move and receives path autocomplete during development.
-- `GemFile` receives `gem` autocomplete and custom actions.
+- `Gemfile` receives `gem` autocomplete and custom actions.
 - Performs automatic dependency checks (e.g., `bundle`, `srb`) and streamlines workspace setup, ensuring a smoother startup experience.
 - `# typed` -sigil completion provider.
-- Improved quickfix actions, e.g. fix all instances of a given error code across all files ([documentation](https://sorbet.org/docs/cli#limiting-autocorrect-suggestions)).
+- Improved quickfix actions, e.g., fix all instances of a given error code across all files ([documentation](https://sorbet.org/docs/cli#limiting-autocorrect-suggestions)).
 
 ## Maintainability Updates
 - Minimum VS Code version updated to 1.99, allowing use of more recent extensibility APIs.
 - Language Client library updated to version 9.0.
-- Shipped dependencies limited to Language Client library, reducing complexity and risk.
+- Shipped dependencies limited to the Language Client library, reducing complexity and risk.
 - Migrating to `esbuild` enables minification and bundling, resulting in a significantly smaller runtime code footprint.
 
 # Sorbet Language Status Item
@@ -28,14 +28,14 @@ The following entries are available on the language status item:
 - **Sorbet Status**: displays the current status of the Sorbet LSP, including a busy indicator. The **Output** action brings the **Sorbetto** Output pane into view for checking log entries.
 
 # Sorbet Snippets
-Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefinedsnippets) for standard Sorbet constructs. You can access them via the **Snippet: Fill File with Snippet** command on any open editor, as well as the **Snippet: Insert Snippet** on any `ruby`-language editor. Additionally, each snippet has an associated trigger word that is recognized by IntelliSense while typing. For example, typing `abstract` will display the snippets for an abstract class, module, or method, allowing for quick and intuitive code insertion. Use the **Snippet: Insert Snippet** from a `ruby` editor to browse a list of all available snippets in your installed version of the extension.
+Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefinedsnippets) for standard Sorbet constructs. You can access them via the **Snippet: Fill File with Snippet** command on any open editor, as well as the **Snippet: Insert Snippet** command on any `ruby`-language editor. Additionally, each snippet has an associated trigger word that is recognized by IntelliSense while typing. For example, typing `abstract` will display the snippets for an abstract class, module, or method, allowing for quick and intuitive code insertion. Use the **Snippet: Insert Snippet** command from a `ruby` editor to browse a list of all available snippets in your installed version of the extension.
 
 <p align=center>
   <img width=600 src="https://github.com/user-attachments/assets/d03241d1-7f83-4485-a59c-be38264e18c0" alt="Sorbet snippets provided by Sorbetto" />
 </p>
 
 # Workspace Setup
-The **Setup Workspace** command automates all steps from [Adopting Sorbet](https://sorbet.org/docs/adopting) into a convenient place. When setting up `bundler`, it will force local installation of gems via `bundle config set --local path 'vendor/bundle'`. Don't use this command if you prefer globally installed gems, and follow the linked documentation to set up your workspace.
+The **Setup Workspace** command automates all steps from [Adopting Sorbet](https://sorbet.org/docs/adopting) in one convenient place. When setting up `bundler`, this command will force local installation of gems via `bundle config set --local path 'vendor/bundle'`. Don't use this command if you prefer globally installed gems; instead, follow the linked documentation to set up your workspace.
 
 # Extension Logs
 Sorbetto uses a single output channel to log its exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
