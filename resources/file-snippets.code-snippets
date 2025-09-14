@@ -1,6 +1,6 @@
 {
-  "Abstract": {
-    "description": "Sorbet abstract class or module",
+  "abstract class or module": {
+    "description": "Sorbet Abstract Class or Module",
     "isFileTemplate": true,
     "body": [
       "# typed: strict",
@@ -21,8 +21,24 @@
       "end"
     ]
   },
-  "Enum": {
-    "description": "Sorbet enum",
+    "class or module": {
+    "description": "Ruby Class or Module",
+    "isFileTemplate": true,
+    "body": [
+      "# typed: strict",
+      "",
+      "require 'sorbet-runtime'",
+      "",
+      "${1|class,module|} ${2:Name}",
+      "  extend T::Sig",
+      "",
+      "  $0",
+      "",
+      "end"
+    ]
+  },
+  "enum": {
+    "description": "Sorbet Enum",
     "isFileTemplate": true,
     "body": [
       "# typed: strict",
@@ -36,8 +52,8 @@
       "end"
     ]
   },
-  "Generic": {
-    "description": "Sorbet generic class or module",
+  "generic class or module": {
+    "description": "Sorbet Generic Class or Module",
     "isFileTemplate": true,
     "body": [
       "# typed: strict",
@@ -62,8 +78,8 @@
       "end"
     ]
   },
-  "Interface": {
-    "description": "Sorbet interface",
+  "interface": {
+    "description": "Sorbet Interface",
     "isFileTemplate": true,
     "body": [
       "# typed: strict",
@@ -84,8 +100,8 @@
       "end"
     ]
   },
-  "Package": {
-    "description": "Sorbet package (requires `--stripe-packages` LSP option)",
+  "package": {
+    "description": "Sorbet Package (requires '--stripe-packages' LSP option)",
     "isFileTemplate": true,
     "body": [
       "# typed: strict",
@@ -97,8 +113,8 @@
       "end"
     ]
   },
-  "Struct": {
-    "description": "Sorbet struct",
+  "struct": {
+    "description": "Sorbet Struct",
     "isFileTemplate": true,
     "body": [
       "# typed: strict",
