@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.2.23
+- Add dependency verification logic when running the **Setup Workspace** command.
 - Fix: Retry attempt count nbot updated.
 
 ## 0.2.22

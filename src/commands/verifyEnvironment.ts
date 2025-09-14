@@ -1,55 +1,27 @@
-import { commands, env, Uri, window } from 'vscode';
+import * as vscode from 'vscode';
 import { isAvailable } from '../common/processUtils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
-export async function verifyEnvironment(_context: SorbetExtensionContext) {
+export async function verifyEnvironment(_context: SorbetExtensionContext): Promise<boolean> {
   const commandsToCheck = ['srb', 'bundle'];
-  const missingCommands: string[] = [];
+  const results = await Promise.all(commandsToCheck.map((cmd) => isAvailable(cmd)));
+  const missingCommands = commandsToCheck.filter((_, i) => !results[i]);
+  if (missingCommands.length === 0) {
+    return true;
+  }
 
-  for (const command of commandsToCheck) {
-    const exists = await isAvailable(command);
-    if (exists) {
+  const DOC_OPTION = 'Documentation';
+  const option = await vscode.window.showErrorMessage(
+    `The following expected dependencies are missing: ${missingCommands.join(', ')}. Install them manually (refer to the documentation for instructions). Restart VS Code if your environment does not detect them after installation.`,
+    DOC_OPTION,
+  );
+
+  // Don't await
+  switch (option) {
+    case DOC_OPTION:
+      vscode.env.openExternal(vscode.Uri.parse('https://sorbet.org/docs/adopting'));
       break;
-    } else {
-      missingCommands.push(command);
-    }
   }
 
-  if (missingCommands.length) {
-    let result = false;
-    const START_OPTION = 'Start Sorbet';
-    const CONFIGURE_OPTION = 'Configure';
-    const DISABLE_OPTION = 'Disable Verification';
-    const DOC_OPTION = 'Documentation';
-    const option = await window.showErrorMessage(
-      `Following dependencies are missing: ${missingCommands.join(', ')}. Sorbet will not be started automatically.`,
-      START_OPTION,
-      CONFIGURE_OPTION,
-      DISABLE_OPTION,
-      DOC_OPTION,
-    );
-
-    // Don't await
-    switch (option) {
-      case START_OPTION:
-        result = true;
-        break;
-      case CONFIGURE_OPTION:
-        commands.executeCommand('workbench.action.openWorkspaceSettings', 'sorbetto.sorbet');
-        break;
-      case DISABLE_OPTION:
-        commands.executeCommand(
-          'workbench.action.openWorkspaceSettings',
-          'sorbetto.verifyDependencies',
-        );
-        break;
-      case DOC_OPTION:
-        env.openExternal(Uri.parse('https://sorbet.org/docs/adopting'));
-        break;
-    }
-
-    return result;
-  }
-
-  return true;
+  return false;
 }

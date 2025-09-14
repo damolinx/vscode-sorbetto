@@ -180,7 +180,10 @@ export class SorbetClientManager implements vscode.Disposable {
             );
             retry = false;
           } else {
-            this.context.log.error('Sorbet LSP failed to start but will retry.', (errorInfo && (errorInfo.code || errorInfo.errno)) || err);
+            this.context.log.error(
+              'Sorbet LSP failed to start but will retry.',
+              (errorInfo && (errorInfo.code || errorInfo.errno)) || err,
+            );
             retry = true;
           }
           client.dispose();

@@ -63,10 +63,11 @@ export function createClient(
 export class SorbetLanguageClient
   extends LanguageClient
   implements
-  ReadFileRequest,
-  ShowOperationNotification,
-  ShowSymbolRequest,
-  WorkspaceDidChangeConfigurationNotification {
+    ReadFileRequest,
+    ShowOperationNotification,
+    ShowSymbolRequest,
+    WorkspaceDidChangeConfigurationNotification
+{
   private readonly log: Log;
 
   constructor(

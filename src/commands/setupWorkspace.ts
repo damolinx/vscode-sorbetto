@@ -1,6 +1,7 @@
-import { Position, Uri, window, workspace, WorkspaceEdit } from 'vscode';
+import * as vscode from 'vscode';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { executeCommandsInTerminal } from './utils';
+import { verifyEnvironment } from './verifyEnvironment';
 
 const GEMFILE_HEADER: readonly string[] = ["source 'https://rubygems.org'", ''];
 
@@ -10,45 +11,55 @@ const GEMFILE_DEPS: Readonly<Record<string, string>> = {
   tapioca: "gem 'tapioca', require: false, :group => :development",
 };
 
-export async function setupWorkspace(context: SorbetExtensionContext, pathOrUri?: string | Uri) {
+export async function setupWorkspace(
+  context: SorbetExtensionContext,
+  pathOrUri?: string | vscode.Uri,
+) {
   const uri = pathOrUri
-    ? pathOrUri instanceof Uri
+    ? pathOrUri instanceof vscode.Uri
       ? pathOrUri
-      : Uri.parse(pathOrUri)
+      : vscode.Uri.parse(pathOrUri)
     : await getTargetWorkspaceUri();
   if (!uri) {
     return; // No target workspace
   }
 
-  const edit = new WorkspaceEdit();
+  const edit = new vscode.WorkspaceEdit();
   const changes = await Promise.all([verifyGemfile(uri, edit), verifySorbetConfig(uri, edit)]);
 
   if (changes.some((changed) => changed)) {
     // When files are only being created (not edited), `applyEdit` returns `false`
     // even on success so return value is useless to detect failures.
-    await workspace.applyEdit(edit);
+    await vscode.workspace.applyEdit(edit);
     context.log.info('Workspace verification: Added Gemfile and Sorbet config.');
   } else {
     context.log.info('Workspace verification: No files were added.');
   }
 
-  await executeCommandsInTerminal({
-    commands: [
-      "bundle config set --local path 'vendor/bundle'",
-      'bundle install',
-      'bundle exec tapioca init',
-    ],
-    cwd: uri,
-    name: 'bundle install',
-  });
+  if (await verifyEnvironment(context)) {
+    await executeCommandsInTerminal({
+      commands: [
+        "bundle config set --local path 'vendor/bundle'",
+        'bundle install',
+        'bundle exec tapioca init',
+      ],
+      cwd: uri.fsPath,
+      name: 'bundle install',
+    });
+  } else {
+    context.log.info('Skipping `bundle install` due to missing dependencies.');
+  }
 }
 
-async function verifyGemfile(workspaceUri: Uri, edit: WorkspaceEdit): Promise<boolean> {
+async function verifyGemfile(
+  workspaceUri: vscode.Uri,
+  edit: vscode.WorkspaceEdit,
+): Promise<boolean> {
   let changed = false;
-  const gemFile = Uri.joinPath(workspaceUri, 'Gemfile');
+  const gemFile = vscode.Uri.joinPath(workspaceUri, 'Gemfile');
 
   if (
-    !(await workspace.fs.stat(gemFile).then(
+    !(await vscode.workspace.fs.stat(gemFile).then(
       () => true,
       () => false,
     ))
@@ -59,15 +70,21 @@ async function verifyGemfile(workspaceUri: Uri, edit: WorkspaceEdit): Promise<bo
   } else {
     const requiredGems = await getRequiredGems(gemFile);
     if (requiredGems.length) {
-      edit.insert(gemFile, new Position(Number.MAX_VALUE, 0), `\n${requiredGems.join('\n')}`);
+      edit.insert(
+        gemFile,
+        new vscode.Position(Number.MAX_VALUE, 0),
+        `\n${requiredGems.join('\n')}`,
+      );
       changed = true;
     }
   }
 
   return changed;
 
-  async function getRequiredGems(gemfile: Uri): Promise<string[]> {
-    const contents = await workspace.fs.readFile(gemfile).then((buffer) => buffer.toString());
+  async function getRequiredGems(gemfile: vscode.Uri): Promise<string[]> {
+    const contents = await vscode.workspace.fs
+      .readFile(gemfile)
+      .then((buffer) => buffer.toString());
     const requiredStmts: string[] = [];
     for (const [name, stmt] of Object.entries(GEMFILE_DEPS)) {
       if (!new RegExp(`gem\\s+(['"])${name}\\1`).test(contents)) {
@@ -78,12 +95,15 @@ async function verifyGemfile(workspaceUri: Uri, edit: WorkspaceEdit): Promise<bo
   }
 }
 
-async function verifySorbetConfig(workspaceUri: Uri, edit: WorkspaceEdit): Promise<boolean> {
+async function verifySorbetConfig(
+  workspaceUri: vscode.Uri,
+  edit: vscode.WorkspaceEdit,
+): Promise<boolean> {
   let changed = false;
-  const configFile = Uri.joinPath(workspaceUri, 'sorbet', 'config');
+  const configFile = vscode.Uri.joinPath(workspaceUri, 'sorbet', 'config');
 
   if (
-    !(await workspace.fs.stat(configFile).then(
+    !(await vscode.workspace.fs.stat(configFile).then(
       () => true,
       () => false,
     ))
@@ -94,8 +114,8 @@ async function verifySorbetConfig(workspaceUri: Uri, edit: WorkspaceEdit): Promi
   return changed;
 }
 
-async function getTargetWorkspaceUri(): Promise<Uri | undefined> {
-  const workspaceFolders = workspace.workspaceFolders;
+async function getTargetWorkspaceUri(): Promise<vscode.Uri | undefined> {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
   switch (workspaceFolders?.length) {
     case 0:
     case undefined:
@@ -103,7 +123,7 @@ async function getTargetWorkspaceUri(): Promise<Uri | undefined> {
     case 1:
       return workspaceFolders[0].uri;
     default:
-      return window
+      return vscode.window
         .showWorkspaceFolderPick({
           placeHolder: 'Select a workspace folder',
         })
