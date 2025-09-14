@@ -7,6 +7,7 @@ import * as cmdIds from './commands/commandIds';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { handleRename } from './commands/handleRename';
 import { restartSorbet } from './commands/restartSorbet';
+import { runRubyFile } from './commands/runRubyFile';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { setupWorkspace } from './commands/setupWorkspace';
 import { registerGemfileCodeLensProvider } from './providers/gemfileCodeLensProvider';
@@ -49,6 +50,7 @@ export async function activate(extensionContext: ExtensionContext) {
       autocorrectAll(context, code, contextUri),
     ),
     rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | Uri) => bundleInstall(context, gemfile)),
+    rc(cmdIds.RUN_RUBY_FILE_ID, (pathOrUri?: string | Uri) => runRubyFile(context, pathOrUri)),
     rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) => setupWorkspace(context, pathOrUri)),
     rc(cmdIds.SHOW_OUTPUT_ID, (preserveFocus?: boolean) =>
       context.logOutputChannel.show(preserveFocus ?? true),

@@ -60,6 +60,13 @@
         "enablement": "workbenchState != empty"
       },
       {
+        "command": "sorbetto.runRubyFile",
+        "title": "Run Ruby File",
+        "category": "Sorbetto",
+        "icon": "$(run)",
+        "enablement": "workbenchState != empty && editorIsOpen && (resourceScheme == file || resourceScheme == vscode-remote) && resourceExtname == .rb"
+      },
+      {
         "command": "sorbetto.setup.workspace",
         "title": "Setup Workspace",
         "category": "Sorbetto",
