@@ -139,7 +139,7 @@ export class SorbetClientManager implements vscode.Disposable {
     await withLock(this, async () => {
       let retryTimestamp = 0;
       let retry = false;
-      const retryAttempt = 0;
+      let retryAttempt = 0;
 
       do {
         retryTimestamp = await throttle(retryAttempt, retryTimestamp, this.context.log);
@@ -171,7 +171,7 @@ export class SorbetClientManager implements vscode.Disposable {
             this.startFileWatchers();
             retry = false;
           }
-        } catch {
+        } catch (err) {
           const errorInfo = await client.lspProcess?.exit;
           if (errorInfo && isUnrecoverable(errorInfo)) {
             this.context.log.error(
@@ -180,11 +180,12 @@ export class SorbetClientManager implements vscode.Disposable {
             );
             retry = false;
           } else {
+            this.context.log.error('Sorbet LSP failed to start but will retry.', (errorInfo && (errorInfo.code || errorInfo.errno)) || err);
             retry = true;
           }
           client.dispose();
         }
-      } while (retry && retryAttempt < MAX_RETRIES);
+      } while (retry && ++retryAttempt < MAX_RETRIES);
     });
 
     function isUnrecoverable(errorInfo: ErrorInfo): boolean {

@@ -2,23 +2,14 @@ import * as vscode from 'vscode';
 
 export async function anySorbetWorkspace(): Promise<boolean> {
   const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
-  for (const workspaceFolder of workspaceFolders) {
-    if (await isSorbetWorkspace(workspaceFolder)) {
-      return true;
-    }
-  }
-  return false;
+  const results = await Promise.all(workspaceFolders.map(isSorbetWorkspace));
+  return results.some(Boolean);
 }
 
 export async function getSorbetWorkspaceFolders(): Promise<vscode.WorkspaceFolder[]> {
   const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
-  const sorbetWorkspaceFolders = [];
-  for (const workspaceFolder of workspaceFolders) {
-    if (await isSorbetWorkspace(workspaceFolder)) {
-      sorbetWorkspaceFolders.push(workspaceFolder);
-    }
-  }
-  return sorbetWorkspaceFolders;
+  const results = await Promise.all(workspaceFolders.map(isSorbetWorkspace));
+  return workspaceFolders.filter((_, i) => results[i]);
 }
 
 export async function isSorbetWorkspace(workspaceFolder: vscode.WorkspaceFolder): Promise<boolean> {

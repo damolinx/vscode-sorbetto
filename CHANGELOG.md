@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.23
+- Fix: Retry attempt count nbot updated.
+
 ## 0.2.22
 - Add `sorbetto.alwaysShowStatusItems` setting to show the language status items for all editors, not just Ruby.
 - Restart loop increased to 15 minutes, with exponential backoff.

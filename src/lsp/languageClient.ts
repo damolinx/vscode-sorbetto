@@ -30,7 +30,7 @@ export function createClient(
       errorHandler,
       initializationFailedHandler: createInitializationFailedHandler(),
       initializationOptions: createInitializationOptions(),
-      middleware: middleware,
+      middleware,
       outputChannel: context.logOutputChannel,
       progressOnInitialization: true,
       revealOutputChannelOn: vslc.RevealOutputChannelOn.Never,
@@ -63,11 +63,10 @@ export function createClient(
 export class SorbetLanguageClient
   extends LanguageClient
   implements
-    ReadFileRequest,
-    ShowOperationNotification,
-    ShowSymbolRequest,
-    WorkspaceDidChangeConfigurationNotification
-{
+  ReadFileRequest,
+  ShowOperationNotification,
+  ShowSymbolRequest,
+  WorkspaceDidChangeConfigurationNotification {
   private readonly log: Log;
 
   constructor(

@@ -134,7 +134,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
 
   private setConfig(options?: { configType?: LspConfigurationType }): void {
     const config = options?.configType ?? this.context.configuration.lspConfigurationType;
-    const titleCasedConfig = config.charAt(0).toUpperCase() + config.slice(1);
+    const titleCasedConfig = config ? config.charAt(0).toUpperCase() + config.slice(1) : '';
     this.configItem.command = OpenConfigurationSettings;
     this.configItem.detail = 'Sorbet Configuration';
     this.configItem.text = `$(ruby) ${titleCasedConfig}`;
