@@ -9,13 +9,15 @@ export class Configuration implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private readonly onDidChangeLspConfigurationEmitter: vscode.EventEmitter<void>;
   private readonly onDidChangeLspOptionsEmitter: vscode.EventEmitter<LspConfigurationOptions>;
+  private readonly scope?: vscode.WorkspaceFolder;
 
-  constructor() {
+  constructor(scope?: vscode.WorkspaceFolder) {
+    this.scope = scope;
     this.disposables = [
       (this.onDidChangeLspConfigurationEmitter = new vscode.EventEmitter()),
       (this.onDidChangeLspOptionsEmitter = new vscode.EventEmitter()),
       vscode.workspace.onDidChangeConfiguration(({ affectsConfiguration }) => {
-        if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetLspConfiguration`)) {
+        if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetLspConfiguration`, this.scope)) {
           this.onDidChangeLspConfigurationEmitter.fire();
         } else if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetTypecheckCommand`)) {
           if (
@@ -51,7 +53,7 @@ export class Configuration implements vscode.Disposable {
   }
 
   private get configuration(): vscode.WorkspaceConfiguration {
-    return vscode.workspace.getConfiguration(EXTENSION_PREFIX);
+    return vscode.workspace.getConfiguration(EXTENSION_PREFIX, this.scope);
   }
 
   /**
