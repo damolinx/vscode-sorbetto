@@ -91,7 +91,7 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
 
   /**
    * Register a handler for 'workspace/didChangeConfiguration' notifications.
-   * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification
+   * See https://sorbet.org/docs/lsp#workspacedidchangeconfiguration-notification
    */
   public onDidChangeConfigurationNotification(
     handler: vslc.NotificationHandler<InitializationOptions>,
