@@ -1,25 +1,4 @@
 {
-  "Abstract": {
-    "description": "Sorbet abstract class or module",
-    "isFileTemplate": true,
-    "prefix": ["abstract_class_or_module"],
-    "body": [
-      "# typed: strict",
-      "",
-      "${1|class,module|} ${2:AbstractName}",
-      "  extend T::Sig",
-      "  extend T::Helpers",
-      "",
-      "  abstract!",
-      "",
-      "  sig { abstract.void }",
-      "  def ${3:method_name}",
-      "    $0",
-      "  end",
-      "",
-      "end"
-    ]
-  },
   "Abstract Method": {
     "description": "Sorbet abstract method",
     "prefix": ["abstract_method"],
@@ -30,20 +9,6 @@
       "end",
     ]
   },
-  "Enum": {
-    "description": "Sorbet enum",
-    "isFileTemplate": true,
-    "prefix": ["enum"],
-    "body": [
-      "# typed: strict",
-      "",
-      "class ${1:EnumName} < T::Enum",
-      "  enums do",
-      "    ${2:Value1} = new$0",
-      "  end",
-      "end"
-    ]
-  },
   "Final Method": {
     "description": "Sorbet final method",
     "prefix": ["final_method"],
@@ -52,31 +17,6 @@
       "def ${1:method_name}",
       "  $0",
       "end",
-    ]
-  },
-  "Generic": {
-    "description": "Sorbet generic class or module",
-    "isFileTemplate": true,
-    "prefix": ["generic_class_or_module"],
-    "body": [
-      "# typed: strict",
-      "",
-      "${1|class,module|} ${2:GenericName}",
-      "  extend T::Sig",
-      "  extend T::Generic",
-      "",
-      "  ${3:Elem} = type_member",
-      "",
-      "  sig { params(${4:elem}: T.type_parameter(:$3)).void }",
-      "  def initialize($4)",
-      "    @$4 = $4",
-      "    $0",
-      "  end",
-      "",
-      "  sig { returns($3) }",
-      "  def $4 = @$4",
-      "",
-      "end"
     ]
   },
   "Generic Method": {
@@ -91,27 +31,6 @@
       "def ${1:method_name}($3)",
       "  $0",
       "end",
-    ]
-  },
-  "Interface": {
-    "description": "Sorbet interface",
-    "isFileTemplate": true,
-    "prefix": ["interface_module"],
-    "body": [
-      "# typed: strict",
-      "",
-      "module ${1:InterfaceName}",
-      "  extend T::Sig",
-      "  extend T::Helpers",
-      "",
-      "  interface!",
-      "",
-      "  sig { abstract.void }",
-      "  def ${2:method_name}",
-      "    $0",
-      "  end",
-      "",
-      "end"
     ]
   },
   "Overridable Method": {
@@ -133,31 +52,6 @@
       "  super",
       "  $0",
       "end",
-    ]
-  },
-  "Package": {
-    "description": "Sorbet package (requires `--stripe-packages` LSP option)",
-    "isFileTemplate": true,
-    "prefix": ["package"],
-    "body": [
-      "# typed: strict",
-      "",
-      "class ${1:PackageName} < PackageSpec",
-      "  $0",
-      "end"
-    ]
-  },
-  "Struct": {
-    "description": "Sorbet struct",
-    "isFileTemplate": true,
-    "prefix": ["struct_class"],
-    "body": [
-      "# typed: strict",
-      "",
-      "class ${1:StructName} < T::Struct",
-      "  ${2|prop,const|} :${3:name}, String",
-      "  $0",
-      "end"
     ]
   },
 }

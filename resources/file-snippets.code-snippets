@@ -1,0 +1,114 @@
+{
+  "Abstract": {
+    "description": "Sorbet abstract class or module",
+    "isFileTemplate": true,
+    "body": [
+      "# typed: strict",
+      "",
+      "require 'sorbet-runtime'",
+      "",
+      "${1|class,module|} ${2:AbstractName}",
+      "  extend T::Sig",
+      "  extend T::Helpers",
+      "",
+      "  abstract!",
+      "",
+      "  sig { abstract.void }",
+      "  def ${3:method_name}",
+      "    $0",
+      "  end",
+      "",
+      "end"
+    ]
+  },
+  "Enum": {
+    "description": "Sorbet enum",
+    "isFileTemplate": true,
+    "body": [
+      "# typed: strict",
+      "",
+      "require 'sorbet-runtime'",
+      "",
+      "class ${1:EnumName} < T::Enum",
+      "  enums do",
+      "    ${2:Value1} = new$0",
+      "  end",
+      "end"
+    ]
+  },
+  "Generic": {
+    "description": "Sorbet generic class or module",
+    "isFileTemplate": true,
+    "body": [
+      "# typed: strict",
+      "",
+      "require 'sorbet-runtime'",
+      "",
+      "${1|class,module|} ${2:GenericName}",
+      "  extend T::Sig",
+      "  extend T::Generic",
+      "",
+      "  ${3:Elem} = type_member",
+      "",
+      "  sig { params(${4:elem}: T.type_parameter(:$3)).void }",
+      "  def initialize($4)",
+      "    @$4 = $4",
+      "    $0",
+      "  end",
+      "",
+      "  sig { returns($3) }",
+      "  def $4 = @$4",
+      "",
+      "end"
+    ]
+  },
+  "Interface": {
+    "description": "Sorbet interface",
+    "isFileTemplate": true,
+    "body": [
+      "# typed: strict",
+      "",
+      "require 'sorbet-runtime'",
+      "",
+      "module ${1:InterfaceName}",
+      "  extend T::Sig",
+      "  extend T::Helpers",
+      "",
+      "  interface!",
+      "",
+      "  sig { abstract.void }",
+      "  def ${2:method_name}",
+      "    $0",
+      "  end",
+      "",
+      "end"
+    ]
+  },
+  "Package": {
+    "description": "Sorbet package (requires `--stripe-packages` LSP option)",
+    "isFileTemplate": true,
+    "body": [
+      "# typed: strict",
+      "",
+      "require 'sorbet-runtime'",
+      "",
+      "class ${1:PackageName} < PackageSpec",
+      "  $0",
+      "end"
+    ]
+  },
+  "Struct": {
+    "description": "Sorbet struct",
+    "isFileTemplate": true,
+    "body": [
+      "# typed: strict",
+      "",
+      "require 'sorbet-runtime'",
+      "",
+      "class ${1:StructName} < T::Struct",
+      "  ${2|prop,const|} :${3:name}, String",
+      "  $0",
+      "end"
+    ]
+  },
+}

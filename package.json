@@ -202,6 +202,10 @@
     "snippets": [
       {
         "language": "ruby",
+        "path": "resources/file-snippets.code-snippets"
+      },
+      {
+        "language": "ruby",
         "path": "resources/snippets.code-snippets"
       }
     ]

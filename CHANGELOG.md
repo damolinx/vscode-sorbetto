@@ -2,7 +2,11 @@
 
 ## 0.2.23
 - Improve dependency verification logic: **Setup Workspace** command, **Install** CodeLens.
-- Fix: Retry attempt count nbot updated.
+- Update snippets:
+  - Split file and fragment snippets so the UI only presents the relevant ones.
+  - Remove fragment snippets that collide with ones provided by Sorbet already (`enum`, `struct`).
+  - Add `require 'sorbet-runtime'` to file snippets for guidance.
+- Fix: Retry attempt count not updated.
 
 ## 0.2.22
 - Add `sorbetto.alwaysShowStatusItems` setting to show the language status items for all editors, not just Ruby.
