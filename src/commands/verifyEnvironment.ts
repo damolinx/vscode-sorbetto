@@ -2,10 +2,15 @@ import * as vscode from 'vscode';
 import { isAvailable } from '../common/processUtils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
-export async function verifyEnvironment(_context: SorbetExtensionContext): Promise<boolean> {
-  const commandsToCheck = ['srb', 'bundle'];
-  const results = await Promise.all(commandsToCheck.map((cmd) => isAvailable(cmd)));
-  const missingCommands = commandsToCheck.filter((_, i) => !results[i]);
+export const DEFAULT_COMMANDS: readonly string[] = ['bundle', 'ruby', 'srb'];
+
+export async function verifyEnvironment(
+  _context: SorbetExtensionContext,
+  ...commandsToCheck: string[]
+): Promise<boolean> {
+  const targetCommands = commandsToCheck.length ? commandsToCheck : DEFAULT_COMMANDS;
+  const results = await Promise.all(targetCommands.map((cmd) => isAvailable(cmd)));
+  const missingCommands = targetCommands.filter((_, i) => !results[i]);
   if (missingCommands.length === 0) {
     return true;
   }

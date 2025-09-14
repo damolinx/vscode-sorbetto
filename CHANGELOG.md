@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.2.23
-- Add dependency verification logic when running the **Setup Workspace** command.
+- Improve dependency verification logic: **Setup Workspace** command, **Install** CodeLens.
 - Fix: Retry attempt count nbot updated.
 
 ## 0.2.22

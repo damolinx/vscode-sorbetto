@@ -2,8 +2,14 @@ import { Uri } from 'vscode';
 import { dirname } from 'path';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { executeCommandsInTerminal } from './utils';
+import { verifyEnvironment } from './verifyEnvironment';
 
-export function bundleInstall(_context: SorbetExtensionContext, gemfile: string | Uri) {
+export async function bundleInstall(context: SorbetExtensionContext, gemfile: string | Uri) {
+  if (!(await verifyEnvironment(context, 'bundle'))) {
+    context.log.info('Skipping `bundle install` due to missing dependencies.');
+    return;
+  }
+
   return executeCommandsInTerminal({
     commands: ["bundle config set --local path 'vendor/bundle'", 'bundle install'],
     cwd: dirname(gemfile instanceof Uri ? gemfile.fsPath : gemfile),
