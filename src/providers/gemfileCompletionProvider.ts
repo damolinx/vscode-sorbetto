@@ -39,7 +39,7 @@ export class GemfileCompletionProvider implements vscode.CompletionItemProvider 
     const gems = await getGems(match.groups.hint || 'a');
     return new vscode.CompletionList(
       gems.map((gem) => {
-        const item = new vscode.CompletionItem(gem, vscode.CompletionItemKind.Reference);
+        const item = new vscode.CompletionItem(gem, vscode.CompletionItemKind.Module);
         item.insertText = gem;
         return item;
       }),
