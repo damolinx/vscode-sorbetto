@@ -16,6 +16,11 @@ export const BUNDLE_INSTALL_ID = `_${EXTENSION_PREFIX}.bundleInstall`;
 export const COPY_SYMBOL_ID = `${EXTENSION_PREFIX}.copySymbolToClipboard`;
 
 /**
+ * Debug a Ruby file.
+ */
+export const DEBUG_RUBY_FILE_ID = `${EXTENSION_PREFIX}.debugRubyFile`;
+
+/**
  * Run a Ruby file.
  */
 export const RUN_RUBY_FILE_ID = `${EXTENSION_PREFIX}.runRubyFile`;

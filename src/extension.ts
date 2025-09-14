@@ -5,6 +5,7 @@ import { autocorrectAll } from './commands/autocorrectAll';
 import { bundleInstall } from './commands/bundleInstall';
 import * as cmdIds from './commands/commandIds';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
+import { debugRubyFile } from './commands/debugRubyFile';
 import { handleRename } from './commands/handleRename';
 import { restartSorbet } from './commands/restartSorbet';
 import { runRubyFile } from './commands/runRubyFile';
@@ -50,6 +51,7 @@ export async function activate(extensionContext: ExtensionContext) {
       autocorrectAll(context, code, contextUri),
     ),
     rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | Uri) => bundleInstall(context, gemfile)),
+    rc(cmdIds.DEBUG_RUBY_FILE_ID, (pathOrUri?: string | Uri) => debugRubyFile(context, pathOrUri)),
     rc(cmdIds.RUN_RUBY_FILE_ID, (pathOrUri?: string | Uri) => runRubyFile(context, pathOrUri)),
     rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) => setupWorkspace(context, pathOrUri)),
     rc(cmdIds.SHOW_OUTPUT_ID, (preserveFocus?: boolean) =>

@@ -53,6 +53,13 @@
         "category": "Sorbetto",
         "enablement": "workbenchState != empty && editorLangId == ruby && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote) && sorbetto:sorbetStatus != disabled && sorbetto:sorbetStatus != error"
       },
+            {
+        "command": "sorbetto.debugRubyFile",
+        "title": "Debug Ruby File",
+        "category": "Sorbetto",
+        "icon": "$(debug)",
+        "enablement": "workbenchState != empty && !inDebugMode && editorIsOpen && (resourceScheme == file || resourceScheme == vscode-remote) && resourceExtname == .rb"
+      },
       {
         "command": "sorbetto.restart",
         "title": "Restart Sorbet",
