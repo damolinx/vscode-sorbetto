@@ -1,8 +1,8 @@
-# Version history
+# Changelog
 
 ## 0.2.22
 - Add `sorbetto.alwaysShowStatusItems` setting to show the language status items for all editors, not just Ruby.
-- Restart loop increased to 15min, with exponential backoff. 
+- Restart loop increased to 15 minutes, with exponential backoff.
 
 ## 0.2.21
 - Fix: **Sorbetto: Restart** is not available in all expected cases.
@@ -16,8 +16,8 @@
 
 ## 0.2.18
 - Replace `sorbetto.sorbetLspBaseConfiguration` with `sorbetto.sorbetTypecheckCommand` setting for improved flexibility. `sorbetto.sorbetLspCustomConfiguration` remains purely for LSP configuration.
-- Update name of new quickfix action to **Apply Sorbet fixes for error «code» to all files**.
-- Faster check for Sorbet workspace.
+- Update the name of the new quickfix action to **Apply Sorbet fixes for error «code» to all files**.
+- Faster Sorbet workspace check.
 
 ## 0.2.17
 - Add `sorbetto.enableWatchman` setting to control forced or automatic use of `watchman`.
@@ -28,7 +28,7 @@
 
 ## 0.2.15
 - Improve completion provider behavior for `Gemfile` files.
-- Fix: highlight severity setting serialized as name, rather than value, when sent to Sorbet.
+- Fix: Highlight severity setting is serialized as a name, rather than a value, when sent to Sorbet.
 
 ## 0.2.14
 - Support controlling untyped-code highlight severity.
@@ -39,20 +39,20 @@
   - Hide when there is no workspace open.
 
 ## 0.2.12
-- Improve handling of no workspace, workspace not setup, and Sorbet-disabled scenarios.
+- Improve handling of no workspace, workspace not set up, and Sorbet-disabled scenarios.
 
 ## 0.2.11
 - Upgrade minimum VS Code version to 1.99.
 - Updates for future support of multi-root workspaces:
-  - Language Status item tracks now current active text editor.
-  - Remove verification of dependencies on extension activation.
+  - Language Status item now tracks the current active text editor.
+  - Remove dependency verification on extension activation.
   - Remove `sorbetto.verifyDependencies` setting.
 
 ## 0.2.10
 - Use `$(ruby)` icon on status language entries.
 - Update Sorbet LSP start logic:
-  - Limit restart attempts to 15 (before it was unlimited).
-  - Set time between restarts to 10s (before it was 7s).
+  - Limit restart attempts to 15 (previously unlimited).
+  - Set time between restarts to 10s (previously 7s).
   - Wire legacy retry exit code 11.
 
 ## 0.2.9
@@ -68,17 +68,17 @@
 
 ## 0.2.6
 - Internal implementation changes.
-- Clean-up `error` log formatting coming from `vscode-LanguageClient`.
-- Fixes tracking of `restartFilePattern`.
-- Metrics are visible when using `trace`-level logging (before they were just dropped).
+- Clean up `error` log formatting coming from `vscode-LanguageClient`.
+- Fix: Tracking of `restartFilePattern`.
+- Metrics are visible when using `trace`-level logging (previously they were just dropped).
 
 ## 0.2.5
-- Fixes to prevent error notifications when logging to Output Pane is expected.
+- Fix: Error notifications when logging to Output Pane.
 - Replace `sorbetto.sorbetLspConfigurationAdditionalArguments` setting with `sorbetto.sorbetLspBaseConfiguration` for improved flexibility.
-- Several changes on configuration handling including fixes.
+- Several changes to configuration handling, including fixes.
 
 ## 0.2.4
-- Rollback anonymous client.
+- Roll back anonymous client.
 
 ## 0.2.3
 - Upgrade minimum VS Code version to 1.96.
@@ -88,7 +88,7 @@
 ## 0.2.2
 - Improve updating of `require_relative` statements on file renames.
 - Handle `Disabled` state better from different actions.
-- Use `workbench.action.openWorkspaceSettings`, instead of `workbench.action.openSettings`, when opening settings.
+- Use `workbench.action.openWorkspaceSettings` instead of `workbench.action.openSettings` when opening settings.
 
 ## 0.2.1
 - Autocomplete in `Gemfile` adds trailing quote if needed.
@@ -101,21 +101,21 @@
 
 ## 0.1.10
 - Improve detection of relevant configuration changes.
-- Wire https://rubygems.org/ as autocomplete provider in `Gemfile`.
+- Add https://rubygems.org/ as an autocomplete provider in `Gemfile`.
 
 ## 0.1.9
 - Add `package` snippet.
 - Add `watchman` to environment verification list.
-- Update LSP configuration -related names so they match `sorbetto.sorbetLsp`:
- - `additionalSorbetLspConfigurationArguments` to `sorbetLspConfigurationAdditionalArguments`.
- - `sorbetCustomLspConfiguration` to `sorbetLspCustomConfiguration`.
+- Update LSP configuration-related names so they match `sorbetto.sorbetLsp`:
+  - `additionalSorbetLspConfigurationArguments` to `sorbetLspConfigurationAdditionalArguments`.
+  - `sorbetCustomLspConfiguration` to `sorbetLspCustomConfiguration`.
 - `# typed` -sigil completion provider.
 
 ## 0.1.8
 - Update snippets.
 - Add icon.
 - Add **Install** CodeLens to `Gemfile`.
-- Change **Verify Workspace** to **Setup Workspace** which follows https://sorbet.org/docs/adopting.
+- Change **Verify Workspace** to **Setup Workspace**, which follows https://sorbet.org/docs/adopting.
 
 ## 0.1.7
 - Provide `sorbetto:sorbetStatus` context value.
@@ -138,21 +138,21 @@
 
 ## 0.1.3
 - Update settings open when configuring activation verification.
-- Update status message when performing an operation.
+- Update the status messages when performing an operation.
 
 ## 0.1.2
 - Provide snippets for several common Sorbet constructs.
 
 ## 0.1.1
 - Move `Sorbet` status bar item to be part of the `Ruby` language item for more standard behavior.
-- Remove unnecessary files from .vsix.
+- Remove unnecessary files from the `.vsix` package.
 
 ## 0.1.0
 - Verification features:
   - Verify required `srb`, `bundle` during extension startup (can be disabled via config).
-  - `Verify Workspace` command allows to setup a workspace with necessary files to get Sorbet running.
-- Configuration design is changed from that used by official extension:
+  - **Verify Workspace** command allows you to set up a workspace with necessary files to get Sorbet running.
+- Configuration design is changed from that used by the official extension:
   - `Memento`-based setting overrides are removed, preferring standard VS Code settings behavior.
-  - Changing configuration via the `Settings` UI now automatically restarts the Sorbet Language Server when necessary. As a result, all `Toggle` commands are removed to simplify UX.
+  - Changing configuration via the **Settings** UI now automatically restarts the Sorbet Language Server when necessary. As a result, **Toggle \*** commands are removed to simplify UX.
 
 - Initial version, forked from official 0.3.41.
