@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.0
+- Support multi-root workspaces.
+
 ## 0.2.24
 - New extension icon.
 - Tweak LSP diagnostic messages to be more compact.

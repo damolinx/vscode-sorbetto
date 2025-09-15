@@ -1,7 +1,7 @@
-import { ServerStatus } from '../types';
+import { LspStatus } from '../types';
 
 /**
- * Status changes reported by extension.
+ * Status reported by extension.
  */
 export const enum SorbetStatus {
   /**
@@ -24,16 +24,16 @@ export const enum SorbetStatus {
   Start = 'start',
 }
 
-export function mapStatus(status: ServerStatus): SorbetStatus | undefined {
+export function mapStatus(status: LspStatus): SorbetStatus | undefined {
   switch (status) {
-    case ServerStatus.DISABLED:
+    case LspStatus.Disabled:
       return SorbetStatus.Disabled;
-    case ServerStatus.ERROR:
+    case LspStatus.Error:
       return SorbetStatus.Error;
-    case ServerStatus.INITIALIZING:
-    case ServerStatus.RESTARTING:
+    case LspStatus.Initializing:
+    case LspStatus.Restarting:
       return SorbetStatus.Start;
-    case ServerStatus.RUNNING:
+    case LspStatus.Running:
       return SorbetStatus.Running;
     default:
       return undefined;

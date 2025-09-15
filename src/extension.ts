@@ -1,5 +1,5 @@
 import { commands, ExtensionContext, Uri, workspace } from 'vscode';
-import { ExtensionApiProvider } from './api/extensionApiProvider';
+import { createExtensionApi } from './api/extensionApiProvider';
 import { mapStatus } from './api/status';
 import { autocorrectAll } from './commands/autocorrectAll';
 import { bundleInstall } from './commands/bundleInstall';
@@ -18,8 +18,7 @@ import { registerSorbetContentProvider } from './providers/sorbetContentProvider
 import { registerTypedOptionsCompletionProvider } from './providers/typedOptionsCompletionProvider';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
-import { ServerStatus, RestartReason } from './types';
-import { anySorbetWorkspace } from './workspaceUtils';
+import { LspStatus } from './types';
 
 /**
  * Extension entrypoint.
@@ -57,9 +56,7 @@ export async function activate(extensionContext: ExtensionContext) {
     rc(cmdIds.SHOW_OUTPUT_ID, (preserveFocus?: boolean) =>
       context.logOutputChannel.show(preserveFocus ?? true),
     ),
-    rc(cmdIds.SORBET_RESTART_ID, (reason = RestartReason.COMMAND) =>
-      restartSorbet(context, reason),
-    ),
+    rc(cmdIds.SORBET_RESTART_ID, (pathOrUri?: string | Uri) => restartSorbet(context, pathOrUri)),
     rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_ID, () => savePackageFiles(context)),
   );
 
@@ -77,19 +74,15 @@ export async function activate(extensionContext: ExtensionContext) {
   }
 
   // Initialize: start in disabled state until client reports status.
-  setSorbetStatusContext(ServerStatus.DISABLED);
+  setSorbetStatusContext(LspStatus.Disabled);
 
-  // If enabled, start the extension.
-  if (!context.configuration.isDisabled && (await anySorbetWorkspace())) {
-    await context.clientManager.startSorbet();
-  }
+  // Initialize client manager with existing workspace folders.
+  workspace.workspaceFolders?.forEach((folder) => context.clientManager.addWorkspace(folder));
 
   // Extension API
-  const api = new ExtensionApiProvider(context);
-  extensionContext.subscriptions.push(api);
-  return api.toApi();
+  return createExtensionApi(context);
 }
 
-export function setSorbetStatusContext(status: ServerStatus) {
+export function setSorbetStatusContext(status: LspStatus) {
   commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(status));
 }
