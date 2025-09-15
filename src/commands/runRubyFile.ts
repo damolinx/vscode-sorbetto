@@ -28,4 +28,6 @@ export async function runRubyFile(
       name: `Run ${basename(targetPath)}`,
     });
   }
+
+  return;
 }
