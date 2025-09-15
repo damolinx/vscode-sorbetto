@@ -15,7 +15,7 @@ import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
 import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from './lsp/workspaceDidChangeConfigurationNotification';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetMiddleware } from './sorbetMiddleware';
-import { ServerStatus } from './types';
+import { LspStatus } from './types';
 
 /**
  * Sorbet LSP server timeout before forcefully killing the process.
@@ -23,21 +23,21 @@ import { ServerStatus } from './types';
 export const SORBET_CLIENT_DISPOSE_TIMEOUT_MS = 5000;
 
 export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
-  private _status: ServerStatus;
+  private _status: LspStatus;
   private readonly configuration: LspConfiguration;
   private readonly context: SorbetExtensionContext;
   private readonly disposables: vscode.Disposable[];
   public readonly lspClient: SorbetLanguageClient;
   public lspProcess?: ProcessWithExitPromise;
-  private readonly onStatusChangedEmitter: vscode.EventEmitter<ServerStatus>;
-  private readonly workspaceFolder: vscode.WorkspaceFolder;
+  private readonly onStatusChangedEmitter: vscode.EventEmitter<LspStatus>;
+  public readonly workspaceFolder: vscode.WorkspaceFolder;
 
   constructor(
     context: SorbetExtensionContext,
     workspaceFolder: vscode.WorkspaceFolder,
     configuration: LspConfiguration,
   ) {
-    this._status = ServerStatus.DISABLED;
+    this._status = LspStatus.Disabled;
     this.configuration = configuration;
     this.context = context;
     this.lspClient = instrumentLanguageClient(
@@ -112,7 +112,7 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
   /**
    * Event fired on {@link status} changes.
    */
-  public get onStatusChanged(): vscode.Event<ServerStatus> {
+  public get onStatusChanged(): vscode.Event<LspStatus> {
     return this.onStatusChangedEmitter.event;
   }
 
@@ -166,11 +166,11 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
     return this.lspClient.sendNotification(SHOW_OPERATION_NOTIFICATION_METHOD, param);
   }
 
-  public get status(): ServerStatus {
+  public get status(): LspStatus {
     return this._status;
   }
 
-  public set status(value: ServerStatus) {
+  public set status(value: LspStatus) {
     if (this._status === value) {
       return;
     }
@@ -181,13 +181,13 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
 
   public async start(): Promise<ProcessWithExitPromise> {
     if (this.lspClient.needsStart()) {
-      this.status = ServerStatus.INITIALIZING;
+      this.status = LspStatus.Initializing;
       await this.lspClient.start();
 
       // In case of error (missing Sorbet process), the client might have already
       // transitioned to Error or Restarting so this should not override that.
-      if (this.status === ServerStatus.INITIALIZING) {
-        this.status = ServerStatus.RUNNING;
+      if (this.status === LspStatus.Initializing) {
+        this.status = LspStatus.Running;
       }
     }
 
@@ -215,14 +215,14 @@ export class SorbetClient implements vscode.Disposable, vslc.ErrorHandler {
           errorInfo?.pid ?? '«no pid»',
           errorInfo,
         );
-        this.status = ServerStatus.ERROR;
+        this.status = LspStatus.Error;
       } else {
         this.context.log.debug(
           'Sorbet LSP process exited.',
           lspProcess.pid ?? '«no pid»',
           lspProcess.exitCode,
         );
-        this.status = ServerStatus.DISABLED;
+        this.status = LspStatus.Disabled;
       }
       return errorInfo;
     });

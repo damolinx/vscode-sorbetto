@@ -1,16 +1,16 @@
 import * as vscode from 'vscode';
+import { Client } from './client';
 import { SorbetShowOperationParams } from './lsp/showOperationNotification';
-import { SorbetClient } from './sorbetClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
-import { ServerStatus } from './types';
+import { LspStatus } from './types';
 
 export interface StatusChangedEvent {
-  readonly client?: SorbetClient;
-  readonly status: ServerStatus;
+  readonly client?: Client;
+  readonly status: LspStatus;
 }
 
 export interface ShowOperationEvent {
-  readonly client: SorbetClient;
+  readonly client: Client;
   readonly operationParams: SorbetShowOperationParams;
 }
 
@@ -32,17 +32,16 @@ export class SorbetStatusProvider implements vscode.Disposable {
     this.disposables = [
       this.onShowOperationEmitter,
       this.onStatusChangedEmitter,
-      this.context.clientManager.onClientChanged((client) => {
-        this.disposeClientEventDisposables();
-        if (client) {
-          this.clientEventDisposables.push(
-            client.onShowOperationNotification((params) =>
-              this.fireOnShowOperation(client, params),
-            ),
-            client.onStatusChanged((_status) => this.fireOnStatusChanged(client)),
-          );
-        }
-        this.fireOnStatusChanged(client);
+      this.context.clientManager.onClientAdded((client) => {
+        this.clientEventDisposables.push(
+          client.onShowOperationNotification(({ params }) =>
+            this.fireOnShowOperation(client, params),
+          ),
+          client.onStatusChanged((_status) => this.fireOnStatusChanged(client)),
+        );
+      }),
+      this.context.clientManager.onClientRemoved((_client) => {
+        // TODO: Unsubscribe from client events
       }),
       { dispose: () => this.disposeClientEventDisposables() },
     ];
@@ -62,10 +61,7 @@ export class SorbetStatusProvider implements vscode.Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified. Spurious events are filtered out.
    */
-  private fireOnShowOperation(
-    client: SorbetClient,
-    operationParams: SorbetShowOperationParams,
-  ): void {
+  private fireOnShowOperation(client: Client, operationParams: SorbetShowOperationParams): void {
     let changed = false;
     if (operationParams.status === 'end') {
       const filteredOps = this.operationStack.filter(
@@ -90,11 +86,11 @@ export class SorbetStatusProvider implements vscode.Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified.
    */
-  private fireOnStatusChanged(client?: SorbetClient): void {
-    if (!client || client.status === ServerStatus.DISABLED) {
+  private fireOnStatusChanged(client?: Client): void {
+    if (!client || client.status === LspStatus.Disabled) {
       this.operationStack = [];
     }
-    this.onStatusChangedEmitter.fire({ client, status: client?.status ?? ServerStatus.DISABLED });
+    this.onStatusChangedEmitter.fire({ client, status: client?.status ?? LspStatus.Disabled });
   }
 
   /**
@@ -112,16 +108,26 @@ export class SorbetStatusProvider implements vscode.Disposable {
   }
 
   /**
-   * Event raised on {@link ServerStatus status} changes.
+   * Event raised on {@link LspStatus status} changes.
    */
   public get onStatusChanged(): vscode.Event<StatusChangedEvent> {
     return this.onStatusChangedEmitter.event;
   }
 
   /**
-   * Return current {@link ServerStatus server status}.
+   * Return current {@link LspStatus server status}.
    */
-  public get serverStatus(): ServerStatus {
-    return this.context.clientManager.sorbetClient?.status || ServerStatus.DISABLED;
+  public getServerStatus(uri: vscode.Uri): LspStatus {
+    return this.context.clientManager.getClient(uri)?.status || LspStatus.Disabled;
+  }
+
+  /**
+   * All active Sorbet server statuses.
+   */
+  public getServerStatuses(): { status: LspStatus; workspace: vscode.Uri }[] {
+    return this.context.clientManager.getClients().map((client) => ({
+      status: client.status,
+      workspace: client.workspaceFolder.uri,
+    }));
   }
 }
