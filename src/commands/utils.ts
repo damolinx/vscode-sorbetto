@@ -22,4 +22,5 @@ export async function executeCommandsInTerminal(options: {
 
   const terminal = window.createTerminal(terminalOptions);
   terminal.show(options.preserveFocus);
+  return terminal;
 }

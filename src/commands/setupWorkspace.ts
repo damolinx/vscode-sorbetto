@@ -37,7 +37,7 @@ export async function setupWorkspace(
   }
 
   if (await verifyEnvironment(context)) {
-    await executeCommandsInTerminal({
+    const terminal = await executeCommandsInTerminal({
       commands: [
         "bundle config set --local path 'vendor/bundle'",
         'bundle install',
@@ -46,6 +46,14 @@ export async function setupWorkspace(
       cwd: uri.fsPath,
       name: 'bundle install',
     });
+    if (terminal) {
+      const disposable = vscode.window.onDidCloseTerminal(async (closedTerminal) => {
+        if (closedTerminal === terminal) {
+          disposable.dispose();
+          await context.clientManager.startSorbet();
+        }
+      });
+    }
   } else {
     context.log.info('Skipping `bundle install` due to missing dependencies.');
   }

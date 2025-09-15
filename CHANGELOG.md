@@ -3,7 +3,7 @@
 ## 0.2.23
 - Improve getting started experience: 
   - Add **Run Ruby File** and **Debug Ruby File** command.
-  - Improve dependency verification logic: **Setup Workspace** command, **Install** CodeLens.
+  - Improve dependency verification: **Setup Workspace** command, **Install** CodeLens.
   - Update snippets:
     - Split file and fragment snippets so the UI only presents the relevant ones.
     - Remove fragment snippets that collide with ones provided by Sorbet already (`enum`, `struct`).
