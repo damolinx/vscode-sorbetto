@@ -18,16 +18,14 @@ export enum RestartReason {
   TRIGGER_FILES = 'trigger_files',
 }
 
-// Note: Sorbet is either running/in the process or running, or in an error state. There's no benign idle/not running state.
-export const enum ServerStatus {
-  // The language client is disabled.
-  DISABLED = 'Disabled',
+export const enum LspStatus {
+  Disabled = 'Disabled',
   // The language client is restarting.
-  RESTARTING = 'Restarting',
+  Restarting = 'Restarting',
   // The language client is initializing.
-  INITIALIZING = 'Initializing',
+  Initializing = 'Initializing',
   // The language client is running, and so is Sorbet.
-  RUNNING = 'Running',
+  Running = 'Running',
   // An error has occurred. The user must dismiss the error.
-  ERROR = 'Error',
+  Error = 'Error',
 }

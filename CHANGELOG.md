@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.0
+- Support multi-root workspaces.
+
 ## 0.2.23
 - Improve getting started experience: 
   - Add **Run Ruby File** and **Debug Ruby File** command.
