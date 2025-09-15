@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { isAvailable } from '../common/processUtils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
-export const SORBET_COMMANDS: readonly string[] = ['bundle', 'ruby', 'srb'];
+export const SORBET_COMMANDS: readonly string[] = ['bundle', 'ruby'];
 
 export async function verifyEnvironment(
   _context: SorbetExtensionContext,
