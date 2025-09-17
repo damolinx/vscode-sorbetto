@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.24
+- New extension icon.
+- Streamline diagnostic messages for improved clarity.
+
 ## 0.2.23
 - Improve getting started experience: 
   - Add **Run Ruby File** and **Debug Ruby File** command.

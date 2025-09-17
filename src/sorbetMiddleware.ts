@@ -3,6 +3,36 @@ import * as vslc from 'vscode-languageclient';
 import { AUTOCORRECT_ALL_ID } from './commands/commandIds';
 
 export class SorbetMiddleware implements vslc.Middleware {
+  public async handleDiagnostics(
+    uri: vscode.Uri,
+    diagnostics: vscode.Diagnostic[],
+    next: vslc.HandleDiagnosticsSignature,
+  ): Promise<void> {
+    diagnostics.forEach((diagnostic) => {
+      if (diagnostic.relatedInformation?.length && diagnostic.relatedInformation.length > 1) {
+        diagnostic.relatedInformation = diagnostic.relatedInformation.reduce((acc, curr) => {
+          const trimmedMessage = curr.message.replace(/\n{2,}/g, '\n').trim();
+          if (!trimmedMessage) {
+            return acc;
+          }
+
+          const last = acc.at(-1);
+          if (
+            !last ||
+            !last.location.range.isEqual(curr.location.range) ||
+            last.location.uri.toString() !== curr.location.uri.toString()
+          ) {
+            acc.push(curr);
+          } else {
+            last.message += ` ${trimmedMessage}`;
+          }
+          return acc;
+        }, [] as vscode.DiagnosticRelatedInformation[]);
+      }
+    });
+    return next(uri, diagnostics);
+  }
+
   public async provideCodeActions(
     document: vscode.TextDocument,
     range: vscode.Range,
