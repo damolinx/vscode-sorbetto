@@ -198,12 +198,17 @@
         }
       },
       {
-        "title": "Other Features",
+        "title": "Experimental Features",
         "properties": {
           "sorbetto.enableRbsSupport": {
             "type": "boolean",
             "default": false,
-            "markdownDescription": "Enable RBS support (experimental). Check [documentation](https://sorbet.org/docs/rbs-support)."
+            "markdownDescription": "Enable RBS support (**experimental**). Check [documentation](https://sorbet.org/docs/rbs-support)."
+          },
+          "sorbetto.enableRequiresAncestor": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Enable `requires_ancestor` support (**experimental**). Check [documentation](https://sorbet.org/docs/requires-ancestor)."
           }
         }
       }

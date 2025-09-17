@@ -42,6 +42,9 @@ export async function buildLspConfiguration(
     if (config.enableRbsSupport) {
       lspConfig.args.push('--enable-experimental-rbs-comments');
     }
+    if (config.enableRequiresAncestor) {
+      lspConfig.args.push('--enable-experimental-requires-ancestor');
+    }
 
     await enableWatchmanSupport(lspConfig, config);
   }

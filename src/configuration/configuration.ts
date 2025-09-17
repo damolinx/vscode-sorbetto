@@ -68,6 +68,13 @@ export class Configuration implements vscode.Disposable {
   }
 
   /**
+   * Enable `requires_ancestor` support.
+   */
+  public get enableRequiresAncestor(): boolean {
+    return this.getValue('enableRequiresAncestor', false);
+  }
+
+  /**
    * Enable `watchman` mode.
    */
   public get enableWatchman(): EnableWatchmanType {
