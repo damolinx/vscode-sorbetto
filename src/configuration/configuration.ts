@@ -2,13 +2,13 @@ import * as vscode from 'vscode';
 import { EXTENSION_PREFIX } from '../constants';
 import { HighlightType } from '../lsp/highlightType';
 import { EnableWatchmanType } from './enableWatchmanType';
-import { LspConfigurationOptions } from './lspConfigurationOptions';
+import { LspConfigurationOption, LspConfigurationOptions } from './lspConfigurationOptions';
 import { LspConfigurationType } from './lspConfigurationType';
 
 export class Configuration implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private readonly onDidChangeLspConfigurationEmitter: vscode.EventEmitter<void>;
-  private readonly onDidChangeLspOptionsEmitter: vscode.EventEmitter<LspConfigurationOptions>;
+  private readonly onDidChangeLspOptionsEmitter: vscode.EventEmitter<LspConfigurationOption>;
   private readonly scope?: vscode.WorkspaceFolder;
 
   constructor(scope?: vscode.WorkspaceFolder) {
@@ -31,18 +31,13 @@ export class Configuration implements vscode.Disposable {
           if (this.lspConfigurationType === LspConfigurationType.Custom) {
             this.onDidChangeLspConfigurationEmitter.fire();
           }
-        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.enableWatchman`)) {
-          this.onDidChangeLspOptionsEmitter.fire('enableWatchman');
-        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.highlightUntypedCode`)) {
-          this.onDidChangeLspOptionsEmitter.fire('highlightUntypedCode');
-        } else if (
-          affectsConfiguration(`${EXTENSION_PREFIX}.highlightUntypedCodeDiagnosticSeverity`)
-        ) {
-          this.onDidChangeLspOptionsEmitter.fire('highlightUntypedCodeDiagnosticSeverity');
-        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.restartFilePatterns`)) {
-          this.onDidChangeLspOptionsEmitter.fire('restartFilePatterns');
-        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.typedFalseCompletionNudges`)) {
-          this.onDidChangeLspOptionsEmitter.fire('typedFalseCompletionNudges');
+        } else {
+          const lspOption = LspConfigurationOptions.find((option) =>
+            affectsConfiguration(`${EXTENSION_PREFIX}.${option}`),
+          );
+          if (lspOption) {
+            this.onDidChangeLspOptionsEmitter.fire(lspOption);
+          }
         }
       }),
     ];
@@ -63,6 +58,13 @@ export class Configuration implements vscode.Disposable {
   public getValue<T>(section: string, defaultValue: T): T;
   public getValue<T>(section: string, defaultValue?: T): T | undefined {
     return this.configuration.get(section, defaultValue);
+  }
+
+  /**
+   * Enable RBS support.
+   */
+  public get enableRbsSupport(): boolean {
+    return this.getValue('enableRbsSupport', false);
   }
 
   /**
@@ -128,7 +130,7 @@ export class Configuration implements vscode.Disposable {
   /**
    * Event that is fired when the LSP options change.
    */
-  public get onDidChangeLspOptions(): vscode.Event<LspConfigurationOptions> {
+  public get onDidChangeLspOptions(): vscode.Event<LspConfigurationOption> {
     return this.onDidChangeLspOptionsEmitter.event;
   }
 

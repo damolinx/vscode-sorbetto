@@ -1,6 +1,10 @@
-export type LspConfigurationOptions =
-  | 'enableWatchman'
-  | 'highlightUntypedCode'
-  | 'highlightUntypedCodeDiagnosticSeverity'
-  | 'restartFilePatterns'
-  | 'typedFalseCompletionNudges';
+export const LspConfigurationOptions = [
+  'enableRbsSupport',
+  'enableWatchman',
+  'highlightUntypedCode',
+  'highlightUntypedCodeDiagnosticSeverity',
+  'restartFilePatterns',
+  'typedFalseCompletionNudges',
+] as const;
+
+export type LspConfigurationOption = (typeof LspConfigurationOptions)[number];
