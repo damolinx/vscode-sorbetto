@@ -3,6 +3,7 @@
 ## 0.2.24
 - New extension icon.
 - Streamline diagnostic messages for improved clarity.
+- Add **Enable Rbs Support** setting.
 
 ## 0.2.23
 - Improve getting started experience: 
