@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.2.25
+- `Beta` and `Experimental` configurations are now settings.
+- Updated README.
 - Fix: Empty `Custom` configuration leads to silent failure / meaningless log entry.
 
 ## 0.2.24
