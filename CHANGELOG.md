@@ -2,8 +2,8 @@
 
 ## 0.2.24
 - New extension icon.
-- Streamline diagnostic messages for improved clarity.
-- Add **Enable Rbs Support**, **Enable Requires Ancestor** setting.
+- Tweak LSP diagnostic messages to be more compact.
+- Add **Enable Rbs Support**, **Enable Requires Ancestor** settings.
 
 ## 0.2.23
 - Improve getting started experience: 
