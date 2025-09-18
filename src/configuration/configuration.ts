@@ -61,6 +61,20 @@ export class Configuration implements vscode.Disposable {
   }
 
   /**
+   * Enable all beta features.
+   */
+  public get enableAllBetaFeatures(): boolean {
+    return this.getValue('enableAllBetaFeatures', false);
+  }
+
+  /**
+   * Enable all experimental features.
+   */
+  public get enableAllExperimentalFeatures(): boolean {
+    return this.getValue('enableAllExperimentalFeatures', false);
+  }
+
+  /**
    * Enable RBS support.
    */
   public get enableRbsSupport(): boolean {

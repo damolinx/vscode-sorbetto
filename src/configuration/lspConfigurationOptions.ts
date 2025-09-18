@@ -1,4 +1,6 @@
 export const LspConfigurationOptions = [
+  'enableAllBetaFeatures',
+  'enableAllExperimentalFeatures',
   'enableRbsSupport',
   'enableRequiresAncestor',
   'enableWatchman',

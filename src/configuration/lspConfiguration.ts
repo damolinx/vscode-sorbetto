@@ -15,18 +15,8 @@ export async function buildLspConfiguration(
   let lspConfig: LspConfiguration | undefined;
 
   switch (config.lspConfigurationType) {
-    case LspConfigurationType.Beta:
-      lspConfig = parse(config.sorbetTypecheckCommand, '--lsp', '--enable-all-beta-lsp-features');
-      break;
     case LspConfigurationType.Custom:
       lspConfig = parse(config.sorbetLspCustomConfiguration);
-      break;
-    case LspConfigurationType.Experimental:
-      lspConfig = parse(
-        config.sorbetTypecheckCommand,
-        '--lsp',
-        '--enable-all-experimental-lsp-features',
-      );
       break;
     case LspConfigurationType.Stable:
       lspConfig = parse(config.sorbetTypecheckCommand, '--lsp');
@@ -39,11 +29,19 @@ export async function buildLspConfiguration(
   }
 
   if (lspConfig) {
-    if (config.enableRbsSupport) {
-      lspConfig.args.push('--enable-experimental-rbs-comments');
+    if (config.enableAllBetaFeatures) {
+      lspConfig.args.push('--enable-all-beta-lsp-features');
     }
-    if (config.enableRequiresAncestor) {
-      lspConfig.args.push('--enable-experimental-requires-ancestor');
+
+    if (config.enableAllExperimentalFeatures) {
+      lspConfig.args.push('--enable-all-experimental-lsp-features');
+    } else {
+      if (config.enableRbsSupport) {
+        lspConfig.args.push('--enable-experimental-rbs-comments');
+      }
+      if (config.enableRequiresAncestor) {
+        lspConfig.args.push('--enable-experimental-requires-ancestor');
+      }
     }
 
     await enableWatchmanSupport(lspConfig, config);

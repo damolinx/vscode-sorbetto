@@ -81,7 +81,7 @@
       }
     ],
     "configuration": [{
-        "title": "Sorbetto",
+        "title": "Sorbetto for VS Code",
         "properties": {
           "sorbetto.alwaysShowStatusItems": {
             "type": "boolean",
@@ -149,15 +149,11 @@
             "enum": [
               "disabled",
               "stable",
-              "beta",
-              "experimental",
               "custom"
             ],
             "markdownEnumDescriptions": [
               "Disable Sorbet language server",
               "Enable Sorbet language server",
-              "Enable Sorbet language server with all **beta** features enabled",
-              "Enable Sorbet language server with all **experimental** features enabled (unstable)",
               "Use configuration defined in the [`sorbetLspCustomConfiguration`](#sorbetto.sorbetLspConfiguration) setting"
             ]
           },
@@ -168,7 +164,7 @@
               "type": "string",
               "minLength": 1
             },
-            "markdownDescription": "Specifies a custom LSP Server launch configuration. Active when [`sorbetto.sorbetLspConfiguration`](#sorbetto.sorbetLspConfiguration) is `custom`; ignores [`sorbetto.sorbetTypecheckCommand`](#sorbetto.sorbetTypecheckCommand) value."
+            "markdownDescription": "Specifies a custom LSP Server launch configuration. Used when [`sorbetLspConfiguration`](#sorbetto.sorbetLspConfiguration) is `custom`; ignores [`sorbetto.sorbetTypecheckCommand`](#sorbetto.sorbetTypecheckCommand) value."
           },
           "sorbetto.sorbetTypecheckCommand": {
             "type": "array",
@@ -198,17 +194,27 @@
         }
       },
       {
-        "title": "Experimental Features",
+        "title": "Beta & Experimental",
         "properties": {
+          "sorbetto.enableAllBetaFeatures": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Enable all **beta** features. These features are considered ready for open beta."
+          },
+          "sorbetto.enableAllExperimentalFeatures": {  
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Enable all **experimental** features. These features might be unstable and lead to crashes."
+          },
           "sorbetto.enableRbsSupport": {
             "type": "boolean",
             "default": false,
-            "markdownDescription": "Enable RBS support (**experimental**). Check [documentation](https://sorbet.org/docs/rbs-support)."
+            "markdownDescription": "Enable **experimental** RBS support. Implicitly enabled by [`enableAllExperimentalFeatures`](#sorbetto.enableAllExperimentalFeatures). Check [documentation](https://sorbet.org/docs/rbs-support)"
           },
           "sorbetto.enableRequiresAncestor": {
             "type": "boolean",
             "default": false,
-            "markdownDescription": "Enable `requires_ancestor` support (**experimental**). Check [documentation](https://sorbet.org/docs/requires-ancestor)."
+            "markdownDescription": "Enable **experimental** `requires_ancestor` support. Implicitly enabled by [`enableAllExperimentalFeatures`](#sorbetto.enableAllExperimentalFeatures). Check [documentation](https://sorbet.org/docs/requires-ancestor)."
           }
         }
       }
