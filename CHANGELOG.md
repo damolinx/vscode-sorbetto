@@ -4,6 +4,7 @@
 - New extension icon.
 - Tweak LSP diagnostic messages to be more compact.
 - Add **Enable Rbs Support**, **Enable Requires Ancestor** settings.
+- Fix: Empty `Custom` configuration leads to silent failure / meaningless log entry.
 
 ## 0.2.23
 - Improve getting started experience: 
