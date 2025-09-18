@@ -30,8 +30,10 @@ const ALWAYS_SHOW_CONFIG_KEY = 'sorbetto.alwaysShowStatusItems';
 
 export class SorbetLanguageStatus implements vscode.Disposable {
   private readonly context: SorbetExtensionContext;
-  private currentClient?: Client;
-  private currentClientDisposable?: vscode.Disposable;
+  private currentClient?: {
+    client: Client;
+    disposables: vscode.Disposable[];
+  };
   private readonly disposables: vscode.Disposable[];
 
   private readonly configItem: vscode.LanguageStatusItem;
@@ -39,11 +41,10 @@ export class SorbetLanguageStatus implements vscode.Disposable {
 
   constructor(context: SorbetExtensionContext) {
     this.context = context;
-    const { configuration, statusProvider } = this.context;
 
     const selector = this.getSelector();
     this.configItem = vscode.languages.createLanguageStatusItem('ruby-sorbet-config', selector);
-    this.setConfig({});
+    this.setConfig({ configType: LspConfigurationType.Disabled });
     this.statusItem = vscode.languages.createLanguageStatusItem('ruby-sorbet-status', selector);
     this.setStatus({ status: 'Disabled', command: StartCommand });
 
@@ -51,9 +52,12 @@ export class SorbetLanguageStatus implements vscode.Disposable {
       vscode.window.onDidChangeActiveTextEditor(
         debounce((editor) => this.handleEditorOrStatusChange(undefined, editor)),
       ),
-      configuration.onDidChangeLspConfig(() => this.handleEditorOrStatusChange()),
-      statusProvider.onShowOperation(({ client }) => this.handleEditorOrStatusChange(client)),
-      statusProvider.onStatusChanged(({ client }) => this.handleEditorOrStatusChange(client)),
+      this.context.statusProvider.onShowOperation(({ client }) =>
+        this.handleEditorOrStatusChange(client),
+      ),
+      this.context.statusProvider.onStatusChanged(({ client }) =>
+        this.handleEditorOrStatusChange(client),
+      ),
       vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration(ALWAYS_SHOW_CONFIG_KEY)) {
           const selector = this.getSelector();
@@ -72,8 +76,10 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   }
 
   private disposeCurrentClient() {
-    this.currentClientDisposable?.dispose();
-    this.currentClient = undefined;
+    if (this.currentClient) {
+      vscode.Disposable.from(...this.currentClient.disposables).dispose();
+      this.currentClient = undefined;
+    }
   }
 
   private getSelector(): vscode.DocumentSelector {
@@ -90,12 +96,12 @@ export class SorbetLanguageStatus implements vscode.Disposable {
         : undefined;
 
     if (targetClient) {
-      if (this.currentClient !== targetClient) {
+      if (this.currentClient?.client !== targetClient) {
         this.disposeCurrentClient();
-        this.currentClient = targetClient;
-        this.currentClientDisposable = this.currentClient.onStatusChanged(({ client }) =>
-          this.render(client),
-        );
+        this.currentClient = {
+          client: targetClient,
+          disposables: [targetClient.onStatusChanged(({ client }) => this.render(client))],
+        };
       }
       this.render(targetClient);
     } else {
@@ -104,7 +110,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   }
 
   private render(client: Client) {
-    const { lspConfigurationType } = this.context.configuration;
+    const { lspConfigurationType } = client.configuration;
     const { operations } = this.context.statusProvider;
     this.setConfig({ configType: lspConfigurationType });
 
@@ -158,8 +164,9 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   }
 
   private setConfig(options: { configType?: LspConfigurationType }): void {
-    const config = options.configType ?? this.context.configuration.lspConfigurationType;
-    const titleCasedConfig = config ? config.charAt(0).toUpperCase() + config.slice(1) : '';
+    const titleCasedConfig = options.configType
+      ? options.configType.charAt(0).toUpperCase() + options.configType.slice(1)
+      : '';
     this.configItem.command = OpenConfigurationSettings;
     this.configItem.detail = 'Sorbet Configuration';
     this.configItem.text = `$(ruby) ${titleCasedConfig}`;

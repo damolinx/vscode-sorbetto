@@ -151,6 +151,11 @@
               "stable",
               "custom"
             ],
+            "enumItemLabels": [
+              "Disabled",
+              "Stable",
+              "Custom"
+            ],
             "markdownEnumDescriptions": [
               "Disable Sorbet language server",
               "Enable Sorbet language server",

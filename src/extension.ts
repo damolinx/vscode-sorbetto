@@ -47,7 +47,7 @@ export async function activate(extensionContext: ExtensionContext) {
   const rc = commands.registerCommand;
   extensionContext.subscriptions.push(
     rc(cmdIds.AUTOCORRECT_ALL_ID, (code: string | number, contextUri: Uri) =>
-      autocorrectAll(context, code, contextUri),
+      autocorrectAll(context, contextUri, code),
     ),
     rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | Uri) => bundleInstall(context, gemfile)),
     rc(cmdIds.DEBUG_RUBY_FILE_ID, (pathOrUri?: string | Uri) => debugRubyFile(context, pathOrUri)),

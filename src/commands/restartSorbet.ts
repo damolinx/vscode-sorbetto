@@ -8,6 +8,7 @@ export async function restartSorbet(
   context: SorbetExtensionContext,
   pathOrUri?: string | vscode.Uri,
 ) {
+  //TODO: With settings - bad
   const uri = pathOrUri
     ? pathOrUri instanceof vscode.Uri
       ? pathOrUri
@@ -19,7 +20,7 @@ export async function restartSorbet(
 
   const client = context.clientManager.getClient(uri);
   if (!client) {
-    context.log.info('No Sorbet client for the selected workspace.', uri);
+    context.log.info('No Sorbet client for the selected workspace.', uri.toString());
     return;
   }
 

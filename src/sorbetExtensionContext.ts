@@ -20,7 +20,7 @@ export class SorbetExtensionContext implements vscode.Disposable {
     this.logOutputChannel = vscode.window.createOutputChannel('Sorbetto', { log: true });
 
     this.clientManager = new ClientManager(this);
-    this.metrics = new LogMetrics(this.log);
+    this.metrics = new LogMetrics(this.logOutputChannel);
     this.statusProvider = new SorbetStatusProvider(this);
 
     this.disposables = [

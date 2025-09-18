@@ -69,6 +69,7 @@ export class ClientManager implements vscode.Disposable {
     const clientId = createClientId(workspaceFolder);
     return this.clients.get(clientId);
   }
+
   public getClients(): Client[] {
     return [...this.clients.values()];
   }

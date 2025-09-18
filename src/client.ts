@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient/node';
 import { Log } from './common/log';
 import { E_COMMAND_NOT_FOUND, ErrorInfo } from './common/processUtils';
-import { Configuration } from './configuration/configuration';
+import { ClientConfiguration } from './configuration/clientConfiguration';
 import { buildLspConfiguration } from './configuration/lspConfiguration';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { InitializeProcessResult, LanguageClientInitializer } from './languageClientInitializer';
@@ -15,6 +15,8 @@ import {
 import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { LspStatus } from './types';
+import { InitializationOptions } from './lsp/initializationOptions';
+import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from './lsp/workspaceDidChangeConfigurationNotification';
 
 export type ClientId = string & { __clientIdBrand: never };
 export function createClientId(workspaceFolder: vscode.WorkspaceFolder): ClientId {
@@ -38,7 +40,7 @@ export class Client implements vscode.Disposable {
   private _clientDisposable?: vscode.Disposable;
   private _status: LspStatus;
 
-  private readonly configuration: Configuration;
+  public readonly configuration: ClientConfiguration;
   private readonly context: SorbetExtensionContext;
   private readonly disposables: vscode.Disposable[];
   private readonly onShowOperationEmitter: vscode.EventEmitter<{
@@ -54,13 +56,17 @@ export class Client implements vscode.Disposable {
 
   constructor(context: SorbetExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
     this._status = LspStatus.Disabled;
-    this.configuration = new Configuration(workspaceFolder);
+    this.configuration = new ClientConfiguration(workspaceFolder);
     this.context = context;
     this.onShowOperationEmitter = new vscode.EventEmitter();
     this.onStatusChangedEmitter = new vscode.EventEmitter();
     this.workspaceFolder = workspaceFolder;
     this.disposables = [
       this.configuration,
+      this.configuration.onDidChangeLspConfig(() => this.handleLspConfigurationChanged()),
+      this.configuration.onDidChangeLspOptions((option) =>
+        this.handleLspOptionChanged(option),
+      ),
       this.onShowOperationEmitter,
       this.onStatusChangedEmitter,
       {
@@ -85,8 +91,8 @@ export class Client implements vscode.Disposable {
     }
   }
 
-  private createRestartWatchers(): void {
-    if (this.restartWatchers) {
+  private startRestartWatchers(restart?: true): void {
+    if (this.restartWatchers && !restart) {
       this.context.log.debug(
         'Ignored restart-watcher creation request, already exists',
         this.restartWatchers.length,
@@ -104,6 +110,30 @@ export class Client implements vscode.Disposable {
       return watcher;
     });
     this.context.log.trace('Created restart FS watchers', this.restartWatchers.length);
+  }
+
+  private async handleLspConfigurationChanged(): Promise<void> {
+    if (this.configuration.lspConfigurationType !== LspConfigurationType.Disabled) {
+      await this.restart();
+    } else {
+      await this.stop();
+    }
+  }
+
+  private async handleLspOptionChanged(option: string): Promise<void> {
+    switch (option) {
+      case 'highlightUntypedCode':
+        await this.sendDidChangeConfigurationNotification({
+          highlightUntyped: this.configuration.highlightUntypedCode,
+        });
+        break;
+      case 'restartFilePatterns':
+        this.startRestartWatchers(true);
+        break;
+      default:
+        await this.restart();
+        break;
+    }
   }
 
   public isEnabledByConfiguration(): boolean {
@@ -232,7 +262,7 @@ export class Client implements vscode.Disposable {
           } else {
             this.lspClient = initializer.lspClient;
             this.status = LspStatus.Running;
-            this.createRestartWatchers();
+            this.startRestartWatchers();
             this.context.metrics.increment('start', 1);
             retry = false;
           }
@@ -324,6 +354,16 @@ export class Client implements vscode.Disposable {
         throw reason;
       },
     );
+  }
+
+  /**
+   * Send a `workspace/didChangeConfiguration` notification to the language server.
+   * See https://sorbet.org/docs/lsp#workspacedidchangeconfiguration-notification.
+   */
+  public async sendDidChangeConfigurationNotification(param: InitializationOptions): Promise<void> {
+    await this.lspClient?.sendNotification(DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, {
+      settings: param,
+    });
   }
 
   /**

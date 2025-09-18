@@ -1,5 +1,5 @@
 import { isAvailable } from '../common/processUtils';
-import { Configuration } from './configuration';
+import { ClientConfiguration } from './clientConfiguration';
 import { LspConfiguration } from './lspConfiguration';
 
 export const DISABLE_WATCHMAN_OPT = '--disable-watchman';
@@ -10,7 +10,10 @@ export const enum EnableWatchmanType {
   Disabled = 'Disabled',
 }
 
-export async function enableWatchmanSupport(lspConfig: LspConfiguration, config: Configuration) {
+export async function enableWatchmanSupport(
+  lspConfig: LspConfiguration,
+  config: ClientConfiguration,
+) {
   switch (config.enableWatchman) {
     case EnableWatchmanType.Auto:
       if (await isAvailable('watchman')) {

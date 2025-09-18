@@ -50,7 +50,7 @@ export async function setupWorkspace(
       const disposable = vscode.window.onDidCloseTerminal(async (closedTerminal) => {
         if (closedTerminal === terminal) {
           disposable.dispose();
-          await context.clientManager.startSorbet();
+          await context.clientManager.getClient(uri)?.start();
         }
       });
     }

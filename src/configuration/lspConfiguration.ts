@@ -1,4 +1,4 @@
-import { Configuration } from './configuration';
+import { ClientConfiguration } from './clientConfiguration';
 import { enableWatchmanSupport } from './enableWatchmanType';
 import { LspConfigurationType } from './lspConfigurationType';
 
@@ -10,16 +10,16 @@ export interface LspConfiguration {
 }
 
 export async function buildLspConfiguration(
-  config: Configuration,
+  config: ClientConfiguration,
 ): Promise<LspConfiguration | undefined> {
   let lspConfig: LspConfiguration | undefined;
 
   switch (config.lspConfigurationType) {
     case LspConfigurationType.Custom:
-      lspConfig = parse(config.sorbetLspCustomConfiguration);
+      lspConfig = parse(config.lspConfigurationType, config.sorbetLspCustomConfiguration);
       break;
     case LspConfigurationType.Stable:
-      lspConfig = parse(config.sorbetTypecheckCommand, '--lsp');
+      lspConfig = parse(config.lspConfigurationType, config.sorbetTypecheckCommand, '--lsp');
       break;
     case LspConfigurationType.Disabled:
       lspConfig = undefined;
@@ -49,10 +49,13 @@ export async function buildLspConfiguration(
 
   return lspConfig;
 
-  function parse(cmdLine: string[], ...additionalArgs: string[]): LspConfiguration {
+  function parse(type: LspConfigurationType, cmdLine: string[], ...additionalArgs: string[]): LspConfiguration {
     const [cmd, ...args] = cmdLine;
     if (additionalArgs.length) {
       args.push(...additionalArgs);
+    }
+    if (cmd === undefined) {
+      throw new Error(`Missing LSP command for '${type}' configuration.`);
     }
     return { cmd, args, type: config.lspConfigurationType };
   }
