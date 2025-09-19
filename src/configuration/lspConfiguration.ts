@@ -49,7 +49,11 @@ export async function buildLspConfiguration(
 
   return lspConfig;
 
-  function parse(type: LspConfigurationType, cmdLine: string[], ...additionalArgs: string[]): LspConfiguration {
+  function parse(
+    type: LspConfigurationType,
+    cmdLine: string[],
+    ...additionalArgs: string[]
+  ): LspConfiguration {
     const [cmd, ...args] = cmdLine;
     if (additionalArgs.length) {
       args.push(...additionalArgs);

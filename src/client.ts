@@ -6,6 +6,7 @@ import { ClientConfiguration } from './configuration/clientConfiguration';
 import { buildLspConfiguration } from './configuration/lspConfiguration';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { InitializeProcessResult, LanguageClientInitializer } from './languageClientInitializer';
+import { InitializationOptions } from './lsp/initializationOptions';
 import { SorbetLanguageClient } from './lsp/languageClient';
 import { READ_FILE_REQUEST_METHOD } from './lsp/readFileRequest';
 import {
@@ -13,10 +14,9 @@ import {
   SHOW_OPERATION_NOTIFICATION_METHOD,
 } from './lsp/showOperationNotification';
 import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
+import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from './lsp/workspaceDidChangeConfigurationNotification';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { LspStatus } from './types';
-import { InitializationOptions } from './lsp/initializationOptions';
-import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from './lsp/workspaceDidChangeConfigurationNotification';
 
 export type ClientId = string & { __clientIdBrand: never };
 export function createClientId(workspaceFolder: vscode.WorkspaceFolder): ClientId {
@@ -64,9 +64,7 @@ export class Client implements vscode.Disposable {
     this.disposables = [
       this.configuration,
       this.configuration.onDidChangeLspConfig(() => this.handleLspConfigurationChanged()),
-      this.configuration.onDidChangeLspOptions((option) =>
-        this.handleLspOptionChanged(option),
-      ),
+      this.configuration.onDidChangeLspOptions((option) => this.handleLspOptionChanged(option)),
       this.onShowOperationEmitter,
       this.onStatusChangedEmitter,
       {
