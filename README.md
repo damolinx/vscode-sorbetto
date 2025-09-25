@@ -1,23 +1,25 @@
 # Sorbetto for VS Code
 
-Sorbetto is a Visual Studio Code extension that provides Ruby language support using [Sorbet](https://github.com/sorbet/sorbet), a static type checker for Ruby. It started as a fork of the official [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension to explore code maintainability and user experience (UX) improvements. By now, however, most internals have been rewritten and behaviors have diverged enough to make this extension its own project.
+Sorbetto is an extension that provides language-features for Ruby using [Sorbet](https://github.com/sorbet/sorbet). It was started as a fork of the official [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension to explore code maintainability and user experience (UX) improvements but by now most internals have been rewritten and behaviors have started to diverge. Some of the learnings might be ported back but extension in general will follow its own path.
 
 ## Features
 
 - Use the [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) to report status.
-- Configuration model is redesigned.
-- Getting started with Ruby experiences become a main concern:
-  - Setting up a workspace for Sorbet development or running individual files can be done via a single command.
-  - Additional code snippets are accessible to create Sorbet artifacts.
-  - `Gemfile` receives `gem` autocomplete and custom actions like `Install`.
-  - `require_relative` statements are automatically updated and support autocomplete.
-  - `# typed` sigil completion provider.
+- New configuration model.
+- Getting started experience:
+  - Setting up a basic workspace can be done via the **Setup Workspace** command.
+  - `Gemfile` gains an **Install** action.
+  - Code snippets are accessible to create Sorbet artifacts.
+- Autocomplete experience is enabled in several places:
+  - `require_relative` statements.
+  - `gem` entries in `Gemfile` files.
+  - `# typed` sigils.
 - Improved quickfix actions, e.g., fix all instances of a given error code across all files ([documentation](https://sorbet.org/docs/cli#limiting-autocorrect-suggestions)).
 
 ### Maintainability Updates
 - Minimum VS Code version updated to 1.99, allowing use of more recent extensibility APIs.
 - Language Client library updated to version 9.0.
-- Migration to `esbuild` enables minification and bundling, resulting in a significantly smaller code footprint.
+- Migration to `esbuild` enables minification and bundling, resulting in a significantly smaller extension code.
 
 ## Sorbet Language Status Item
 Sorbetto replaces the custom **Sorbet** status bar item from the official extension with the standard [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for Ruby. This approach enables the display of multiple status entries with accompanying actions in a unified and consistent UI. It is possible to pin specific entries to the status bar for quick access, preserving functionality from the official extension design.
@@ -31,7 +33,7 @@ The following entries are available on the language status item:
 - **Sorbet Status**: displays the current status of the Sorbet LSP, including a busy indicator. The **Output** action brings the **Sorbetto** Output pane into view for checking log entries.
 
 ## Sorbet Configuration
-The configuration component has been fully rewritten, and while at the surface it might look similar, the new design allows leveraging stock APIs and easily extending with new features. Adding new features to the internal component is extremely simple, allowing the settings set to grow and expose more of Sorbet's native functionality. With this, the concept of "configurations" is simplified to the basic `Stable`, `Custom`, and `Disabled` states, with *Beta* and *Experimental* as additional options. Likewise, a limited set of experimental features are available as settings like **Enable RBS support** or **Enable `require_ancestor` support**. 
+The configuration component has been fully rewritten, and while at the surface it might look similar, the new design allows leveraging stock APIs and easily extending with new features. Adding new features to the internal component is extremely simple, allowing the settings set to grow and expose more of Sorbet's native functionality. With this, the concept of "configurations" is simplified to the basic `Stable`, `Custom`, and `Disabled` states, with *Beta* and *Experimental* as additional options. Likewise, a limited set of experimental features are available as settings like **Enable RBS support** or **Enable `require_ancestor` support**.
 
 ## Sorbet Snippets
 Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefinedsnippets) for standard Sorbet constructs on top of the ones offered by Sorbet already. In particular, a whole set of `ruby` language snippets are now available via the **Snippet: Fill File with Snippet** and **Snippet: Insert Snippet** commands.
