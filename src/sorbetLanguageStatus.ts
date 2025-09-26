@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { Client } from './client';
-import { SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commands/commandIds';
+import { OPEN_SETTINGS_ID, SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commands/commandIds';
 import { debounce } from './common/utils';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/constants';
@@ -8,8 +8,8 @@ import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { LspStatus } from './types';
 
 const OpenConfigurationSettings: vscode.Command = {
-  arguments: ['sorbetto.sorbet'],
-  command: 'workbench.action.openWorkspaceSettings',
+  arguments: [undefined, 'sorbetto.sorbetLspConfiguration'],
+  command: OPEN_SETTINGS_ID,
   title: 'Configure',
   tooltip: 'Open Configuration Settings',
 };

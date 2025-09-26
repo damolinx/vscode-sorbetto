@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { LspStatus } from '../types';
 import { anySorbetWorkspace } from '../workspaceUtils';
+import { OPEN_SETTINGS_ID } from './commandIds';
 import { getTargetWorkspaceUri } from './utils';
 
 export async function restartSorbet(
@@ -25,7 +26,7 @@ export async function restartSorbet(
   }
 
   if (client.status === LspStatus.Disabled && !client.isEnabledByConfiguration()) {
-    await showDisabledConfigurationNotification();
+    await showDisabledConfigurationNotification(uri);
     return;
   } else if (!vscode.workspace.workspaceFolders?.length) {
     await showNoWorkspaceNotification();
@@ -38,17 +39,14 @@ export async function restartSorbet(
   await client.restart();
 }
 
-async function showDisabledConfigurationNotification() {
+async function showDisabledConfigurationNotification(uri: vscode.Uri) {
   const updateConfigItem: vscode.MessageItem = { title: 'Configure' };
   const selection = await vscode.window.showWarningMessage(
     'Sorbet is disabled by configuration.',
     updateConfigItem,
   );
   if (selection === updateConfigItem) {
-    await vscode.commands.executeCommand(
-      'workbench.action.openWorkspaceSettings',
-      'sorbetto.sorbetLspConfiguration',
-    );
+    await vscode.commands.executeCommand(OPEN_SETTINGS_ID, uri, 'sorbetto.sorbetLspConfiguration');
   }
 }
 
