@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { Client } from './client';
 import { OPEN_SETTINGS_ID, SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commands/commandIds';
 import { debounce } from './common/utils';
-import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/constants';
+import { LspConfigurationType } from './lspClient/configuration/lspConfigurationType';
+import { SorbetClient } from './lspClient/sorbetClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { LspStatus } from './types';
 
@@ -31,7 +31,7 @@ const ALWAYS_SHOW_CONFIG_KEY = 'sorbetto.alwaysShowStatusItems';
 export class SorbetLanguageStatus implements vscode.Disposable {
   private readonly context: SorbetExtensionContext;
   private currentClient?: {
-    client: Client;
+    client: SorbetClient;
     disposables: vscode.Disposable[];
   };
   private readonly disposables: vscode.Disposable[];
@@ -87,7 +87,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     return alwaysShowStatus ? '*' : SORBET_DOCUMENT_SELECTOR;
   }
 
-  private handleEditorOrStatusChange(client?: Client, editor?: vscode.TextEditor) {
+  private handleEditorOrStatusChange(client?: SorbetClient, editor?: vscode.TextEditor) {
     const targetUri = editor?.document.uri;
     const targetClient = client?.inScope(targetUri)
       ? client
@@ -109,7 +109,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     }
   }
 
-  private render(client: Client) {
+  private render(client: SorbetClient) {
     const { lspConfigurationType } = client.configuration;
     const { operations } = this.context.statusProvider;
     this.setConfig({ configType: lspConfigurationType });

@@ -1,4 +1,4 @@
-import { isAvailable } from '../common/processUtils';
+import { isAvailable } from '../../common/processUtils';
 import { ClientConfiguration } from './clientConfiguration';
 import { LspConfiguration } from './lspConfiguration';
 

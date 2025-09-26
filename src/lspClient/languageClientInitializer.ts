@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient/node';
-import { Log } from './common/log';
-import { instrumentLanguageClient } from './common/metrics';
-import { ProcessWithExitPromise, spawnWithExitPromise } from './common/processUtils';
+import { Log } from '../common/log';
+import { instrumentLanguageClient } from '../common/metrics';
+import { ProcessWithExitPromise, spawnWithExitPromise } from '../common/processUtils';
+import { SorbetLanguageClient, createClient } from '../lsp/languageClient';
+import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { SorbetMiddleware } from '../sorbetMiddleware';
 import { LspConfiguration } from './configuration/lspConfiguration';
-import { SorbetLanguageClient, createClient } from './lsp/languageClient';
-import { SorbetExtensionContext } from './sorbetExtensionContext';
-import { SorbetMiddleware } from './sorbetMiddleware';
 
 export const LEGACY_RETRY_EXITCODE = 11;
 

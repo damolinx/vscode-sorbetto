@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { EXTENSION_PREFIX } from '../constants';
-import { HighlightType } from '../lsp/highlightType';
-import { Configuration } from './configuration';
+import { Configuration } from '../../common/configuration';
+import { EXTENSION_PREFIX } from '../../constants';
+import { HighlightType } from '../../lsp/highlightType';
 import { EnableWatchmanType } from './enableWatchmanType';
 import { LspConfigurationOption, LspConfigurationOptions } from './lspConfigurationOptions';
 import { LspConfigurationType } from './lspConfigurationType';

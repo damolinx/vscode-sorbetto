@@ -1,15 +1,15 @@
 import * as vscode from 'vscode';
-import { Client, ClientId, createClientId } from './client';
-import { debounce } from './common/utils';
-import { SorbetExtensionContext } from './sorbetExtensionContext';
-import { isSorbetWorkspace } from './workspaceUtils';
+import { debounce } from '../common/utils';
+import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { isSorbetWorkspace } from '../workspaceUtils';
+import { SorbetClient, SorbetClientId, createClientId } from './sorbetClient';
 
-export class ClientManager implements vscode.Disposable {
-  private readonly clients: Map<ClientId, Client>;
+export class SorbetClientManager implements vscode.Disposable {
+  private readonly clients: Map<SorbetClientId, SorbetClient>;
   private readonly context: SorbetExtensionContext;
   private readonly disposables: vscode.Disposable[];
-  private readonly onClientAddedEmitter: vscode.EventEmitter<Client>;
-  private readonly onClientRemovedEmitter: vscode.EventEmitter<Client>;
+  private readonly onClientAddedEmitter: vscode.EventEmitter<SorbetClient>;
+  private readonly onClientRemovedEmitter: vscode.EventEmitter<SorbetClient>;
 
   constructor(context: SorbetExtensionContext) {
     this.clients = new Map();
@@ -54,14 +54,14 @@ export class ClientManager implements vscode.Disposable {
     if (!(await isSorbetWorkspace(workspaceFolder))) {
       return false;
     }
-    const client = new Client(this.context, workspaceFolder);
+    const client = new SorbetClient(this.context, workspaceFolder);
     this.clients.set(clientId, client);
     this.onClientAddedEmitter.fire(client);
     await client.start();
     return true;
   }
 
-  public getClient(uri: vscode.Uri): Client | undefined {
+  public getClient(uri: vscode.Uri): SorbetClient | undefined {
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
     if (!workspaceFolder) {
       return undefined;
@@ -70,15 +70,15 @@ export class ClientManager implements vscode.Disposable {
     return this.clients.get(clientId);
   }
 
-  public getClients(): Client[] {
+  public getClients(): SorbetClient[] {
     return [...this.clients.values()];
   }
 
-  public get onClientAdded(): vscode.Event<Client> {
+  public get onClientAdded(): vscode.Event<SorbetClient> {
     return this.onClientAddedEmitter.event;
   }
 
-  public get onClientRemoved(): vscode.Event<Client> {
+  public get onClientRemoved(): vscode.Event<SorbetClient> {
     return this.onClientRemovedEmitter.event;
   }
 

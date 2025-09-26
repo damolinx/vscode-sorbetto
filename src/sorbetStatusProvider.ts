@@ -1,16 +1,16 @@
 import * as vscode from 'vscode';
-import { Client } from './client';
 import { SorbetShowOperationParams } from './lsp/showOperationNotification';
+import { SorbetClient } from './lspClient/sorbetClient';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { LspStatus } from './types';
 
 export interface StatusChangedEvent {
-  readonly client?: Client;
+  readonly client?: SorbetClient;
   readonly status: LspStatus;
 }
 
 export interface ShowOperationEvent {
-  readonly client: Client;
+  readonly client: SorbetClient;
   readonly operationParams: SorbetShowOperationParams;
 }
 
@@ -61,7 +61,10 @@ export class SorbetStatusProvider implements vscode.Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified. Spurious events are filtered out.
    */
-  private fireOnShowOperation(client: Client, operationParams: SorbetShowOperationParams): void {
+  private fireOnShowOperation(
+    client: SorbetClient,
+    operationParams: SorbetShowOperationParams,
+  ): void {
     let changed = false;
     if (operationParams.status === 'end') {
       const filteredOps = this.operationStack.filter(
@@ -86,7 +89,7 @@ export class SorbetStatusProvider implements vscode.Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified.
    */
-  private fireOnStatusChanged(client?: Client): void {
+  private fireOnStatusChanged(client?: SorbetClient): void {
     if (!client || client.status === LspStatus.Disabled) {
       this.operationStack = [];
     }

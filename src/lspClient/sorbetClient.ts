@@ -1,26 +1,26 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient/node';
-import { Log } from './common/log';
-import { E_COMMAND_NOT_FOUND, ErrorInfo } from './common/processUtils';
+import { Log } from '../common/log';
+import { E_COMMAND_NOT_FOUND, ErrorInfo } from '../common/processUtils';
+import { InitializationOptions } from '../lsp/initializationOptions';
+import { SorbetLanguageClient } from '../lsp/languageClient';
+import { READ_FILE_REQUEST_METHOD } from '../lsp/readFileRequest';
+import {
+  SorbetShowOperationParams,
+  SHOW_OPERATION_NOTIFICATION_METHOD,
+} from '../lsp/showOperationNotification';
+import { SHOW_SYMBOL_REQUEST_METHOD } from '../lsp/showSymbolRequest';
+import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from '../lsp/workspaceDidChangeConfigurationNotification';
+import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { LspStatus } from '../types';
 import { ClientConfiguration } from './configuration/clientConfiguration';
 import { buildLspConfiguration } from './configuration/lspConfiguration';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { InitializeProcessResult, LanguageClientInitializer } from './languageClientInitializer';
-import { InitializationOptions } from './lsp/initializationOptions';
-import { SorbetLanguageClient } from './lsp/languageClient';
-import { READ_FILE_REQUEST_METHOD } from './lsp/readFileRequest';
-import {
-  SorbetShowOperationParams,
-  SHOW_OPERATION_NOTIFICATION_METHOD,
-} from './lsp/showOperationNotification';
-import { SHOW_SYMBOL_REQUEST_METHOD } from './lsp/showSymbolRequest';
-import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from './lsp/workspaceDidChangeConfigurationNotification';
-import { SorbetExtensionContext } from './sorbetExtensionContext';
-import { LspStatus } from './types';
 
-export type ClientId = string & { __clientIdBrand: never };
-export function createClientId(workspaceFolder: vscode.WorkspaceFolder): ClientId {
-  return workspaceFolder.uri.toString() as ClientId;
+export type SorbetClientId = string & { __clientIdBrand: never };
+export function createClientId(workspaceFolder: vscode.WorkspaceFolder): SorbetClientId {
+  return workspaceFolder.uri.toString() as SorbetClientId;
 }
 
 const MAX_RETRIES = 38; // About 15min, base 10s and cap 60s
@@ -35,7 +35,7 @@ const THROTTLE_CONFIG = {
  */
 export const SORBET_CLIENT_DISPOSE_TIMEOUT_MS = 5000;
 
-export class Client implements vscode.Disposable {
+export class SorbetClient implements vscode.Disposable {
   private _client?: SorbetLanguageClient;
   private _clientDisposable?: vscode.Disposable;
   private _status: LspStatus;
@@ -44,11 +44,11 @@ export class Client implements vscode.Disposable {
   private readonly context: SorbetExtensionContext;
   private readonly disposables: vscode.Disposable[];
   private readonly onShowOperationEmitter: vscode.EventEmitter<{
-    client: Client;
+    client: SorbetClient;
     params: SorbetShowOperationParams;
   }>;
   private readonly onStatusChangedEmitter: vscode.EventEmitter<{
-    client: Client;
+    client: SorbetClient;
     status: LspStatus;
   }>;
   private restartWatchers?: vscode.FileSystemWatcher[];
@@ -155,7 +155,7 @@ export class Client implements vscode.Disposable {
    * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification
    */
   public get onShowOperationNotification(): vscode.Event<{
-    client: Client;
+    client: SorbetClient;
     params: SorbetShowOperationParams;
   }> {
     //return this.lspClient.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, handler);
@@ -165,7 +165,7 @@ export class Client implements vscode.Disposable {
   /**
    * Event fired on {@link status} changes.
    */
-  public get onStatusChanged(): vscode.Event<{ client: Client; status: LspStatus }> {
+  public get onStatusChanged(): vscode.Event<{ client: SorbetClient; status: LspStatus }> {
     return this.onStatusChangedEmitter.event;
   }
 
