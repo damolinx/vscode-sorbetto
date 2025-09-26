@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
-import { executeCommandsInTerminal } from './utils';
+import { executeCommandsInTerminal, getTargetWorkspaceUri } from './utils';
 import { verifyEnvironment } from './verifyEnvironment';
 
 const GEMFILE_HEADER: readonly string[] = ["source 'https://rubygems.org'", ''];
@@ -50,7 +50,7 @@ export async function setupWorkspace(
       const disposable = vscode.window.onDidCloseTerminal(async (closedTerminal) => {
         if (closedTerminal === terminal) {
           disposable.dispose();
-          await context.clientManager.startSorbet();
+          await context.clientManager.getClient(uri)?.start();
         }
       });
     }
@@ -120,21 +120,4 @@ async function verifySorbetConfig(
     changed = true;
   }
   return changed;
-}
-
-async function getTargetWorkspaceUri(): Promise<vscode.Uri | undefined> {
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  switch (workspaceFolders?.length) {
-    case 0:
-    case undefined:
-      return;
-    case 1:
-      return workspaceFolders[0].uri;
-    default:
-      return vscode.window
-        .showWorkspaceFolderPick({
-          placeHolder: 'Select a workspace folder',
-        })
-        .then((value) => value?.uri);
-  }
 }

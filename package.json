@@ -83,12 +83,8 @@
     "configuration": [{
         "title": "Sorbetto for VS Code",
         "properties": {
-          "sorbetto.alwaysShowStatusItems": {
-            "type": "boolean",
-            "default": false,
-            "description": "Keep Sorbet language status items visible whenever an editor is open, not only when the active editor is Ruby. Note: VS Code hides all status items when no editor is open."
-          },
           "sorbetto.enableWatchman": {
+            "scope": "resource",
             "type": "string",
             "default": "Auto",
             "markdownDescription": "Use `watchman` to improve file watching performance. Check [documentation](https://sorbet.org/docs/lsp#watchman).",
@@ -102,6 +98,76 @@
               "Always use `watchman`. Sorbet will fail to start if it is not available",
               "Disable `watchman`"
             ]
+          },
+          "sorbetto.restartFilePatterns": {
+            "scope": "resource",
+            "type": "array",
+            "description": "Glob patterns that would force a restart of Sorbet.",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "**/sorbet/config",
+              "**/Gemfile.lock"
+            ],
+            "uniqueItems": true
+          },
+          "sorbetto.sorbetLspConfiguration": {
+            "scope": "resource",
+            "type": "string",
+            "default": "stable",
+            "description": "Specifies the LSP configuration to use.",
+            "enum": [
+              "disabled",
+              "stable",
+              "custom"
+            ],
+            "enumItemLabels": [
+              "Disabled",
+              "Stable",
+              "Custom"
+            ],
+            "markdownEnumDescriptions": [
+              "Disable Sorbet language server",
+              "Enable Sorbet language server",
+              "Use configuration defined in the [`sorbetLspCustomConfiguration`](#sorbetto.sorbetLspConfiguration) setting"
+            ]
+          },
+          "sorbetto.sorbetLspCustomConfiguration": {
+            "scope": "resource",
+            "type": "array",
+            "default": [],
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "markdownDescription": "Specifies a custom LSP Server launch configuration. Used when [`sorbetLspConfiguration`](#sorbetto.sorbetLspConfiguration) is `custom`; ignores [`sorbetto.sorbetTypecheckCommand`](#sorbetto.sorbetTypecheckCommand) value."
+          },
+          "sorbetto.sorbetTypecheckCommand": {
+            "scope": "resource",
+            "type": "array",
+            "markdownDescription": "Command used to invoke `srb typecheck`.",
+            "default": [
+              "bundle",
+              "exec",
+              "srb",
+              "typecheck"
+            ],
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minLength": 1
+          }
+        }
+      },
+      {
+        "title": "Preferences",
+        "properties": {
+          "sorbetto.alwaysShowStatusItems": {
+            "type": "boolean",
+            "default": false,
+            "description": "Keep Sorbet language status items visible whenever an editor is open, not only when the active editor is Ruby. Note: VS Code hides all status items when no editor is open."
           },
           "sorbetto.highlightUntypedCode": {
             "type": "string",
@@ -130,57 +196,6 @@
               "No squiggles"
             ]
           },
-          "sorbetto.restartFilePatterns": {
-            "type": "array",
-            "description": "Glob patterns that would force a restart of Sorbet.",
-            "items": {
-              "type": "string"
-            },
-            "default": [
-              "**/sorbet/config",
-              "**/Gemfile.lock"
-            ],
-            "uniqueItems": true
-          },
-          "sorbetto.sorbetLspConfiguration": {
-            "type": "string",
-            "default": "stable",
-            "description": "Specifies the LSP configuration to use.",
-            "enum": [
-              "disabled",
-              "stable",
-              "custom"
-            ],
-            "markdownEnumDescriptions": [
-              "Disable Sorbet language server",
-              "Enable Sorbet language server",
-              "Use configuration defined in the [`sorbetLspCustomConfiguration`](#sorbetto.sorbetLspConfiguration) setting"
-            ]
-          },
-          "sorbetto.sorbetLspCustomConfiguration": {
-            "type": "array",
-            "default": [],
-            "items": {
-              "type": "string",
-              "minLength": 1
-            },
-            "markdownDescription": "Specifies a custom LSP Server launch configuration. Used when [`sorbetLspConfiguration`](#sorbetto.sorbetLspConfiguration) is `custom`; ignores [`sorbetto.sorbetTypecheckCommand`](#sorbetto.sorbetTypecheckCommand) value."
-          },
-          "sorbetto.sorbetTypecheckCommand": {
-            "type": "array",
-            "markdownDescription": "Command used to invoke `srb typecheck`.",
-            "default": [
-              "bundle",
-              "exec",
-              "srb",
-              "typecheck"
-            ],
-            "items": {
-              "type": "string",
-              "minLength": 1
-            },
-            "minLength": 1
-          },
           "sorbetto.typedFalseCompletionNudges": {
             "type": "boolean",
             "markdownDescription": "Display an auto-complete nudge in `typed: false` files.",
@@ -197,21 +212,25 @@
         "title": "Beta & Experimental",
         "properties": {
           "sorbetto.enableAllBetaFeatures": {
+            "scope": "resource",
             "type": "boolean",
             "default": false,
             "markdownDescription": "Enable all **beta** features. These features are considered ready for open beta."
           },
           "sorbetto.enableAllExperimentalFeatures": {  
+            "scope": "resource",
             "type": "boolean",
             "default": false,
             "markdownDescription": "Enable all **experimental** features. These features might be unstable and lead to crashes."
           },
           "sorbetto.enableRbsSupport": {
+            "scope": "resource",
             "type": "boolean",
             "default": false,
             "markdownDescription": "Enable **experimental** RBS support. Implicitly enabled by [`enableAllExperimentalFeatures`](#sorbetto.enableAllExperimentalFeatures). Check [documentation](https://sorbet.org/docs/rbs-support)"
           },
           "sorbetto.enableRequiresAncestor": {
+            "scope": "resource",
             "type": "boolean",
             "default": false,
             "markdownDescription": "Enable **experimental** `requires_ancestor` support. Implicitly enabled by [`enableAllExperimentalFeatures`](#sorbetto.enableAllExperimentalFeatures). Check [documentation](https://sorbet.org/docs/requires-ancestor)."

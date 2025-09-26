@@ -1,4 +1,4 @@
-import { Configuration } from './configuration';
+import { ClientConfiguration } from './clientConfiguration';
 import { enableWatchmanSupport } from './enableWatchmanType';
 import { LspConfigurationType } from './lspConfigurationType';
 
@@ -10,7 +10,7 @@ export interface LspConfiguration {
 }
 
 export async function buildLspConfiguration(
-  config: Configuration,
+  config: ClientConfiguration,
 ): Promise<LspConfiguration | undefined> {
   let lspConfig: LspConfiguration | undefined;
 

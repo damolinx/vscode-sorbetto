@@ -1,5 +1,5 @@
 import { commands, ExtensionContext, Uri, workspace } from 'vscode';
-import { ExtensionApiProvider } from './api/extensionApiProvider';
+import { createExtensionApi } from './api/extensionApiProvider';
 import { mapStatus } from './api/status';
 import { autocorrectAll } from './commands/autocorrectAll';
 import { bundleInstall } from './commands/bundleInstall';
@@ -7,6 +7,7 @@ import * as cmdIds from './commands/commandIds';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { debugRubyFile } from './commands/debugRubyFile';
 import { handleRename } from './commands/handleRename';
+import { openSettings } from './commands/openSettings';
 import { restartSorbet } from './commands/restartSorbet';
 import { runRubyFile } from './commands/runRubyFile';
 import { savePackageFiles } from './commands/savePackageFiles';
@@ -18,8 +19,7 @@ import { registerSorbetContentProvider } from './providers/sorbetContentProvider
 import { registerTypedOptionsCompletionProvider } from './providers/typedOptionsCompletionProvider';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
-import { ServerStatus, RestartReason } from './types';
-import { anySorbetWorkspace } from './workspaceUtils';
+import { LspStatus } from './types';
 
 /**
  * Extension entrypoint.
@@ -48,18 +48,19 @@ export async function activate(extensionContext: ExtensionContext) {
   const rc = commands.registerCommand;
   extensionContext.subscriptions.push(
     rc(cmdIds.AUTOCORRECT_ALL_ID, (code: string | number, contextUri: Uri) =>
-      autocorrectAll(context, code, contextUri),
+      autocorrectAll(context, contextUri, code),
     ),
     rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | Uri) => bundleInstall(context, gemfile)),
     rc(cmdIds.DEBUG_RUBY_FILE_ID, (pathOrUri?: string | Uri) => debugRubyFile(context, pathOrUri)),
+    rc(cmdIds.OPEN_SETTINGS_ID, (pathOrUri: string | Uri, setting?: string) =>
+      openSettings(context, pathOrUri, setting),
+    ),
     rc(cmdIds.RUN_RUBY_FILE_ID, (pathOrUri?: string | Uri) => runRubyFile(context, pathOrUri)),
     rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) => setupWorkspace(context, pathOrUri)),
     rc(cmdIds.SHOW_OUTPUT_ID, (preserveFocus?: boolean) =>
       context.logOutputChannel.show(preserveFocus ?? true),
     ),
-    rc(cmdIds.SORBET_RESTART_ID, (reason = RestartReason.COMMAND) =>
-      restartSorbet(context, reason),
-    ),
+    rc(cmdIds.SORBET_RESTART_ID, (pathOrUri?: string | Uri) => restartSorbet(context, pathOrUri)),
     rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_ID, () => savePackageFiles(context)),
   );
 
@@ -77,19 +78,15 @@ export async function activate(extensionContext: ExtensionContext) {
   }
 
   // Initialize: start in disabled state until client reports status.
-  setSorbetStatusContext(ServerStatus.DISABLED);
+  setSorbetStatusContext(LspStatus.Disabled);
 
-  // If enabled, start the extension.
-  if (!context.configuration.isDisabled && (await anySorbetWorkspace())) {
-    await context.clientManager.startSorbet();
-  }
+  // Initialize client manager with existing workspace folders.
+  workspace.workspaceFolders?.forEach((folder) => context.clientManager.addWorkspace(folder));
 
   // Extension API
-  const api = new ExtensionApiProvider(context);
-  extensionContext.subscriptions.push(api);
-  return api.toApi();
+  return createExtensionApi(context);
 }
 
-export function setSorbetStatusContext(status: ServerStatus) {
+export function setSorbetStatusContext(status: LspStatus) {
   commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(status));
 }

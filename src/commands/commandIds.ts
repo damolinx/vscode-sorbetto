@@ -21,6 +21,11 @@ export const COPY_SYMBOL_ID = `${EXTENSION_PREFIX}.copySymbolToClipboard`;
 export const DEBUG_RUBY_FILE_ID = `${EXTENSION_PREFIX}.debugRubyFile`;
 
 /**
+ * Open Settings, multi-root workspace supported.
+ */
+export const OPEN_SETTINGS_ID = `_${EXTENSION_PREFIX}.openSettings`;
+
+/**
  * Run a Ruby file.
  */
 export const RUN_RUBY_FILE_ID = `${EXTENSION_PREFIX}.runRubyFile`;

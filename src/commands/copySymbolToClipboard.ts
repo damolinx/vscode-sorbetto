@@ -1,15 +1,8 @@
-import {
-  CancellationToken,
-  CancellationTokenSource,
-  env,
-  ProgressLocation,
-  TextEditor,
-  window,
-} from 'vscode';
+import * as vscode from 'vscode';
 import { TextDocumentPositionParams } from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
-import { ServerStatus } from '../types';
+import { LspStatus } from '../types';
 
 /**
  * Copy symbol at current.
@@ -17,20 +10,23 @@ import { ServerStatus } from '../types';
  */
 export async function copySymbolToClipboard(
   context: SorbetExtensionContext,
-  editor: TextEditor,
+  editor: vscode.TextEditor,
 ): Promise<void> {
-  const { sorbetClient } = context.clientManager;
-  if (sorbetClient?.status !== ServerStatus.RUNNING) {
-    context.log.warn('CopySymbol: No active Sorbet client.');
+  const client = context.clientManager.getClient(editor.document.uri);
+
+  if (client?.status !== LspStatus.Running) {
+    context.log.warn(
+      'CopySymbol: No active Sorbet client.',
+      vscode.workspace.asRelativePath(editor.document.uri),
+    );
     return;
   }
 
-  if (!sorbetClient.lspClient.initializeResult?.capabilities.sorbetShowSymbolProvider) {
-    context.log.warn("CopySymbol: Sorbet LSP does not support 'showSymbol' capability.");
-    return;
-  }
+  // if (!client.lspClient.initializeResult?.capabilities.sorbetShowSymbolProvider) {
+  //   context.log.warn("CopySymbol: Sorbet LSP does not support 'showSymbol' capability.");
+  //   return;
+  // }
 
-  const selectionEmpty = editor.selection.isEmpty;
   const params: TextDocumentPositionParams = {
     position: editor.selection.start,
     textDocument: {
@@ -42,31 +38,27 @@ export async function copySymbolToClipboard(
   // To avoid having a long operation unexpectedly write to the clipboard,
   // a cancelable progress notification is shown after 2s.
   const symbolInfo = await withProgress(
-    (token) => sorbetClient.sendShowSymbolRequest(params, token),
+    (token) => client.sendShowSymbolRequest(params, token),
     2000,
     context.log,
   );
 
   if (symbolInfo) {
     context.log.info('CopySymbol: Copied symbol to clipboard:', symbolInfo.name);
-    await env.clipboard.writeText(symbolInfo.name);
+    await vscode.env.clipboard.writeText(symbolInfo.name);
   } else {
     context.log.info('CopySymbol: No symbol found.');
-    await window.showWarningMessage(
-      selectionEmpty
-        ? 'No symbol found at cursor location.'
-        : 'No symbol found at the start of your selection.',
-    );
+    await vscode.window.showWarningMessage('No symbol found at the selected location.');
   }
 }
 
 async function withProgress<T>(
-  task: (token: CancellationToken) => Promise<T>,
-  progressDelayMS: number,
+  task: (token: vscode.CancellationToken) => Promise<T>,
+  showProgressAfterMs: number,
   log: Log,
 ): Promise<T | undefined> {
   let resolved = false;
-  const cts = new CancellationTokenSource();
+  const cts = new vscode.CancellationTokenSource();
   const resultPromise = task(cts.token).then((r) => {
     log.trace('CopySymbol: Operation completed:', r);
     resolved = true;
@@ -74,11 +66,11 @@ async function withProgress<T>(
   });
 
   await Promise.race([
-    new Promise<void>((resolve) => setTimeout(resolve, progressDelayMS)).then(() => {
+    new Promise<void>((resolve) => setTimeout(resolve, showProgressAfterMs)).then(() => {
       if (!resolved) {
-        window.withProgress(
+        vscode.window.withProgress(
           {
-            location: ProgressLocation.Notification,
+            location: vscode.ProgressLocation.Notification,
             title: 'Querying Sorbet …',
             cancellable: true,
           },

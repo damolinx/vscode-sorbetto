@@ -1,19 +1,20 @@
 import * as vscode from 'vscode';
-import { EXTENSION_PREFIX } from '../constants';
-import { HighlightType } from '../lsp/highlightType';
+import { Configuration } from '../../common/configuration';
+import { EXTENSION_PREFIX } from '../../constants';
+import { HighlightType } from '../../lsp/highlightType';
 import { EnableWatchmanType } from './enableWatchmanType';
 import { LspConfigurationOption, LspConfigurationOptions } from './lspConfigurationOptions';
 import { LspConfigurationType } from './lspConfigurationType';
 
-export class Configuration implements vscode.Disposable {
-  private readonly disposables: vscode.Disposable[];
+export class ClientConfiguration extends Configuration {
   private readonly onDidChangeLspConfigurationEmitter: vscode.EventEmitter<void>;
   private readonly onDidChangeLspOptionsEmitter: vscode.EventEmitter<LspConfigurationOption>;
   private readonly scope?: vscode.WorkspaceFolder;
 
   constructor(scope?: vscode.WorkspaceFolder) {
+    super();
     this.scope = scope;
-    this.disposables = [
+    this.disposables.push(
       (this.onDidChangeLspConfigurationEmitter = new vscode.EventEmitter()),
       (this.onDidChangeLspOptionsEmitter = new vscode.EventEmitter()),
       vscode.workspace.onDidChangeConfiguration(({ affectsConfiguration }) => {
@@ -40,24 +41,11 @@ export class Configuration implements vscode.Disposable {
           }
         }
       }),
-    ];
+    );
   }
 
-  dispose(): void {
-    vscode.Disposable.from(...this.disposables).dispose();
-  }
-
-  private get configuration(): vscode.WorkspaceConfiguration {
+  protected override get configuration(): vscode.WorkspaceConfiguration {
     return vscode.workspace.getConfiguration(EXTENSION_PREFIX, this.scope);
-  }
-
-  /**
-   * Return a value from {@link EXTENSION_PREFIX} configuration.
-   */
-  public getValue<T>(section: string): T | undefined;
-  public getValue<T>(section: string, defaultValue: T): T;
-  public getValue<T>(section: string, defaultValue?: T): T | undefined {
-    return this.configuration.get(section, defaultValue);
   }
 
   /**

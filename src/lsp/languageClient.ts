@@ -29,7 +29,7 @@ export function createClient(
       documentSelector: SORBET_DOCUMENT_SELECTOR,
       errorHandler,
       initializationFailedHandler: createInitializationFailedHandler(),
-      initializationOptions: createInitializationOptions(),
+      initializationOptions: createInitializationOptions(workspaceFolder.uri),
       middleware,
       outputChannel: context.logOutputChannel,
       progressOnInitialization: true,
@@ -48,15 +48,17 @@ export function createClient(
     };
   }
 
-  function createInitializationOptions(): InitializationOptions {
-    const { configuration } = context;
-    return {
-      enableTypedFalseCompletionNudges: configuration.nudgeTypedFalseCompletion,
-      highlightUntyped: configuration.highlightUntypedCode,
-      highlightUntypedDiagnosticSeverity: configuration.highlightUntypedCodeDiagnosticSeverity,
-      supportsOperationNotifications: true,
-      supportsSorbetURIs: true,
-    };
+  function createInitializationOptions(contextUri: vscode.Uri): InitializationOptions {
+    const configuration = context.clientManager.getClient(contextUri)?.configuration;
+    return configuration
+      ? {
+          enableTypedFalseCompletionNudges: configuration.nudgeTypedFalseCompletion,
+          highlightUntyped: configuration.highlightUntypedCode,
+          highlightUntypedDiagnosticSeverity: configuration.highlightUntypedCodeDiagnosticSeverity,
+          supportsOperationNotifications: true,
+          supportsSorbetURIs: true,
+        }
+      : {};
   }
 }
 

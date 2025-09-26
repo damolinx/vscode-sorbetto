@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.0
+- Support multi-root workspaces.
+
 ## 0.2.25
 - `Beta` and `Experimental` configurations are now settings.
 - Updated README.
