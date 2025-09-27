@@ -5,10 +5,7 @@ import { E_COMMAND_NOT_FOUND, ErrorInfo } from '../common/processUtils';
 import { InitializationOptions } from '../lsp/initializationOptions';
 import { SorbetLanguageClient } from '../lsp/languageClient';
 import { READ_FILE_REQUEST_METHOD } from '../lsp/readFileRequest';
-import {
-  SorbetShowOperationParams,
-  SHOW_OPERATION_NOTIFICATION_METHOD,
-} from '../lsp/showOperationNotification';
+import { SHOW_OPERATION_NOTIFICATION_METHOD } from '../lsp/showOperationNotification';
 import { SHOW_SYMBOL_REQUEST_METHOD } from '../lsp/showSymbolRequest';
 import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from '../lsp/workspaceDidChangeConfigurationNotification';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
@@ -17,6 +14,8 @@ import { ClientConfiguration } from './configuration/clientConfiguration';
 import { buildLspConfiguration } from './configuration/lspConfiguration';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { InitializeProcessResult, LanguageClientInitializer } from './languageClientInitializer';
+import { ShowOperationEvent } from './showOperationEvent';
+import { StatusChangedEvent } from './statusChangedEvent';
 
 const MAX_RETRIES = 38; // About 15min, base 10s and cap 60s
 const THROTTLE_CONFIG = {
@@ -38,14 +37,8 @@ export class SorbetClient implements vscode.Disposable {
   public readonly configuration: ClientConfiguration;
   private readonly context: SorbetExtensionContext;
   private readonly disposables: vscode.Disposable[];
-  private readonly onShowOperationEmitter: vscode.EventEmitter<{
-    client: SorbetClient;
-    params: SorbetShowOperationParams;
-  }>;
-  private readonly onStatusChangedEmitter: vscode.EventEmitter<{
-    client: SorbetClient;
-    status: LspStatus;
-  }>;
+  private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
+  private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
   private restartWatchers?: vscode.FileSystemWatcher[];
   public readonly workspaceFolder: vscode.WorkspaceFolder;
 
@@ -149,10 +142,7 @@ export class SorbetClient implements vscode.Disposable {
    * Register a handler for 'sorbet/showOperation' notifications.
    * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification
    */
-  public get onShowOperationNotification(): vscode.Event<{
-    client: SorbetClient;
-    params: SorbetShowOperationParams;
-  }> {
+  public get onShowOperationNotification(): vscode.Event<ShowOperationEvent> {
     //return this.lspClient.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, handler);
     return this.onShowOperationEmitter.event;
   }
@@ -160,7 +150,7 @@ export class SorbetClient implements vscode.Disposable {
   /**
    * Event fired on {@link status} changes.
    */
-  public get onStatusChanged(): vscode.Event<{ client: SorbetClient; status: LspStatus }> {
+  public get onStatusChanged(): vscode.Event<StatusChangedEvent> {
     return this.onStatusChangedEmitter.event;
   }
 
