@@ -1,15 +1,16 @@
 import * as vscode from 'vscode';
-import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import * as vslc from 'vscode-languageclient';
+import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
-import { SORBET_DOCUMENT_SELECTOR } from './constants';
+import { getWorkspaceDocumentSelector } from './constants';
 import { InitializationOptions } from './initializationOptions';
 import { SorbetInitializeResult } from './initializeResult';
 import { ReadFileRequest } from './readFileRequest';
 import { ShowOperationNotification } from './showOperationNotification';
 import { ShowSymbolRequest } from './showSymbolRequest';
 import { WorkspaceDidChangeConfigurationNotification } from './workspaceDidChangeConfigurationNotification';
+import { WorkspaceFolderOutputChannel } from './workspaceFolderOutputChannel';
 
 /**
  * Create a {@link LanguageClient client} for Sorbet.
@@ -26,12 +27,12 @@ export function createClient(
     'Sorbet',
     serverOptions,
     {
-      documentSelector: SORBET_DOCUMENT_SELECTOR,
+      documentSelector: getWorkspaceDocumentSelector(workspaceFolder),
       errorHandler,
       initializationFailedHandler: createInitializationFailedHandler(),
       initializationOptions: createInitializationOptions(workspaceFolder.uri),
       middleware,
-      outputChannel: context.logOutputChannel,
+      outputChannel: new WorkspaceFolderOutputChannel(context.logOutputChannel, workspaceFolder),
       progressOnInitialization: true,
       revealOutputChannelOn: vslc.RevealOutputChannelOn.Never,
       workspaceFolder,

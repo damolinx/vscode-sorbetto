@@ -43,6 +43,11 @@ export default tseslint.config(
               position: 'before',
             },
             {
+              pattern: 'vscode-languageclient',
+              group: 'builtin',
+              position: 'before',
+            },
+            {
               pattern: 'vscode-languageclient/**',
               group: 'builtin',
               position: 'before',
@@ -52,7 +57,7 @@ export default tseslint.config(
         },
       ],
       '@eslint/prettier/prettier': [
-        'error', 
+        'error',
         {
           'semi': true,
           'singleQuote': true,
