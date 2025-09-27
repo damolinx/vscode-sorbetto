@@ -9,7 +9,7 @@ export async function restartSorbet(
   context: SorbetExtensionContext,
   pathOrUri?: string | vscode.Uri,
 ) {
-  //TODO: With settings - bad
+
   const uri = pathOrUri
     ? pathOrUri instanceof vscode.Uri
       ? pathOrUri
@@ -24,7 +24,6 @@ export async function restartSorbet(
     context.log.info('No Sorbet client for the selected workspace.', uri.toString());
     return;
   }
-
   if (client.status === LspStatus.Disabled && !client.isEnabledByConfiguration()) {
     await showDisabledConfigurationNotification(uri);
     return;

@@ -12,6 +12,7 @@ import { LspStatus } from '../types';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { SorbetClientConfiguration } from './configuration/sorbetClientConfiguration';
 import { InitializeProcessResult, LanguageClientCreator } from './languageClientCreator';
+import { RestartWatcher } from './restartWatcher';
 import { ShowOperationEvent } from './showOperationEvent';
 import { StatusChangedEvent } from './statusChangedEvent';
 
@@ -28,8 +29,10 @@ const THROTTLE_CONFIG = {
 export const SORBET_CLIENT_DISPOSE_TIMEOUT_MS = 5000;
 
 export class SorbetClient implements vscode.Disposable {
-  private _client?: vslcn.LanguageClient;
-  private _clientDisposable?: vscode.Disposable;
+  private _languageClient?: {
+    client: vslcn.LanguageClient;
+    disposables: vscode.Disposable[];
+  };
   private _status: LspStatus;
 
   public readonly configuration: SorbetClientConfiguration;
@@ -37,63 +40,33 @@ export class SorbetClient implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
   private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
-  private restartWatchers?: vscode.FileSystemWatcher[];
+  private readonly restartWatcher: RestartWatcher;
   public readonly workspaceFolder: vscode.WorkspaceFolder;
 
   constructor(context: SorbetExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
     this._status = LspStatus.Disabled;
-    this.configuration = new SorbetClientConfiguration(workspaceFolder);
     this.context = context;
     this.onShowOperationEmitter = new vscode.EventEmitter();
     this.onStatusChangedEmitter = new vscode.EventEmitter();
     this.workspaceFolder = workspaceFolder;
+
+    this.configuration = new SorbetClientConfiguration(workspaceFolder);
+    this.configuration.onDidChangeLspConfig(() => this.handleLspConfigurationChanged());
+    this.configuration.onDidChangeLspOptions((option) => this.handleLspOptionChanged(option));
+
+    this.restartWatcher = new RestartWatcher(this, this.context.log);
+
     this.disposables = [
       this.configuration,
-      this.configuration.onDidChangeLspConfig(() => this.handleLspConfigurationChanged()),
-      this.configuration.onDidChangeLspOptions((option) => this.handleLspOptionChanged(option)),
       this.onShowOperationEmitter,
       this.onStatusChangedEmitter,
-      {
-        dispose: () => {
-          this._clientDisposable?.dispose();
-          this._client?.dispose(SORBET_CLIENT_DISPOSE_TIMEOUT_MS);
-        },
-      },
+      this.restartWatcher,
+      { dispose: () => (this.languageClient = undefined) },
     ];
   }
 
   dispose(): void {
-    this.disposeRestartWatchers();
     vscode.Disposable.from(...this.disposables).dispose();
-  }
-
-  private disposeRestartWatchers() {
-    if (this.restartWatchers) {
-      vscode.Disposable.from(...this.restartWatchers).dispose();
-      this.context.log.trace('Disposed restart FS watchers', this.restartWatchers.length);
-      this.restartWatchers = undefined;
-    }
-  }
-
-  private startRestartWatchers(restart?: true): void {
-    if (this.restartWatchers && !restart) {
-      this.context.log.debug(
-        'Ignored restart-watcher creation request, already exists',
-        this.restartWatchers.length,
-        this.workspaceFolder.uri,
-      );
-      return;
-    }
-
-    const onChangeListener = () => this.restart();
-    this.restartWatchers = this.configuration.restartFilePatterns.map((pattern) => {
-      const watcher = vscode.workspace.createFileSystemWatcher(pattern);
-      watcher.onDidChange(onChangeListener);
-      watcher.onDidCreate(onChangeListener);
-      watcher.onDidDelete(onChangeListener);
-      return watcher;
-    });
-    this.context.log.trace('Created restart FS watchers', this.restartWatchers.length);
   }
 
   private async handleLspConfigurationChanged(): Promise<void> {
@@ -110,9 +83,6 @@ export class SorbetClient implements vscode.Disposable {
         await this.sendDidChangeConfigurationNotification({
           highlightUntyped: this.configuration.highlightUntypedCode,
         });
-        break;
-      case 'restartFilePatterns':
-        this.startRestartWatchers(true);
         break;
       default:
         await this.restart();
@@ -151,22 +121,40 @@ export class SorbetClient implements vscode.Disposable {
     return this.onStatusChangedEmitter.event;
   }
 
-  public get lspClient(): vslcn.LanguageClient | undefined {
-    return this._client;
+  public get languageClient(): vslcn.LanguageClient | undefined {
+    return this._languageClient?.client;
   }
 
-  public set lspClient(value: vslcn.LanguageClient | undefined) {
-    if (this._client !== value) {
-      this._clientDisposable?.dispose();
-      this._client?.dispose();
+  private set languageClient(value: vslcn.LanguageClient | undefined) {
+    if (this._languageClient?.client === value) {
+      return;
+    }
 
-      this._client = value;
-      if (this._client) {
-        this._clientDisposable = this._client.onNotification(
-          SHOW_OPERATION_NOTIFICATION_METHOD,
-          (params) => this.onShowOperationEmitter.fire({ client: this, params }),
-        );
-      }
+    if (this._languageClient) {
+      vscode.Disposable.from(...this._languageClient.disposables).dispose();
+      this._languageClient = undefined;
+    }
+
+    if (value) {
+      this._languageClient = {
+        client: value,
+        disposables: [
+          value, // Presumes ownership of LanguageClient
+          value.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, (params) =>
+            this.onShowOperationEmitter.fire({ client: this, params }),
+          ),
+          value.onDidChangeState((event) => {
+            if (event.newState === vslcn.State.Stopped) {
+              this.context.log.debug(
+                'LSP client state changed to Stopped',
+                this.workspaceFolder.uri.toString(true),
+              );
+              this.status = LspStatus.Disabled;
+              this.restartWatcher.disable();
+            }
+          }),
+        ],
+      };
     }
   }
 
@@ -194,7 +182,7 @@ export class SorbetClient implements vscode.Disposable {
    * Starts the Sorbet LSP client if it is not already running.
    */
   public async start() {
-    if (this.lspClient) {
+    if (this.languageClient) {
       this.context.log.debug('Ignored start request, already running.', this.workspaceFolder.uri);
       return;
     }
@@ -233,11 +221,11 @@ export class SorbetClient implements vscode.Disposable {
               retry = false;
             }
             this.status = LspStatus.Error;
-            this.lspClient = undefined;
+            this.languageClient = undefined;
           } else {
-            this.lspClient = client;
+            this.languageClient = client;
             this.status = LspStatus.Running;
-            this.startRestartWatchers();
+            this.restartWatcher.enable();
             this.context.metrics.increment('start', 1);
             retry = false;
           }
@@ -258,7 +246,7 @@ export class SorbetClient implements vscode.Disposable {
             );
             retry = true;
           }
-          this.lspClient = undefined;
+          this.languageClient = undefined;
         }
       } while (retry && ++retryAttempt < MAX_RETRIES);
     });
@@ -310,17 +298,17 @@ export class SorbetClient implements vscode.Disposable {
    * selectively clean-up resources.
    */
   public async stop(restarting?: true) {
-    if (!this.lspClient) {
+    if (!this.languageClient) {
       this.context.log.debug('Ignored stop request, not running.', this.workspaceFolder.uri);
       return;
     }
 
-    await this.lspClient.stop().then(
+    await this.languageClient.stop().then(
       () => {
-        this.lspClient = undefined;
+        this.languageClient = undefined;
         this.status = LspStatus.Disabled;
         if (!restarting) {
-          this.disposeRestartWatchers();
+          this.restartWatcher.disable();
         }
         this.context.metrics.increment('stop', 1);
       },
@@ -336,7 +324,7 @@ export class SorbetClient implements vscode.Disposable {
    * See https://sorbet.org/docs/lsp#workspacedidchangeconfiguration-notification.
    */
   public async sendDidChangeConfigurationNotification(param: InitializationOptions): Promise<void> {
-    await this.lspClient?.sendNotification(DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, {
+    await this.languageClient?.sendNotification(DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD, {
       settings: param,
     });
   }
@@ -349,7 +337,7 @@ export class SorbetClient implements vscode.Disposable {
     param: vslcn.TextDocumentIdentifier,
     token?: vscode.CancellationToken,
   ): Promise<vslcn.TextDocumentItem | undefined> {
-    const content = await this.lspClient?.sendRequest<vslcn.TextDocumentItem>(
+    const content = await this.languageClient?.sendRequest<vslcn.TextDocumentItem>(
       READ_FILE_REQUEST_METHOD,
       param,
       token,
@@ -365,7 +353,7 @@ export class SorbetClient implements vscode.Disposable {
     param: vslcn.TextDocumentPositionParams,
     token?: vscode.CancellationToken,
   ): Promise<vslcn.SymbolInformation | undefined> {
-    const symbolInfo = await this.lspClient?.sendRequest<vslcn.SymbolInformation>(
+    const symbolInfo = await this.languageClient?.sendRequest<vslcn.SymbolInformation>(
       SHOW_SYMBOL_REQUEST_METHOD,
       param,
       token,
