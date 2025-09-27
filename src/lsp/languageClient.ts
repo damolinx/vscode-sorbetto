@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
 import * as vslcn from 'vscode-languageclient/node';
 import { Log } from '../common/log';
+import { WorkspaceFolderOutputChannel } from '../common/workspaceFolderOutputChannel';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { getWorkspaceDocumentSelector } from './constants';
 import { SorbetInitializeResult } from './initializeResult';
@@ -9,7 +10,6 @@ import { ReadFileRequest } from './readFileRequest';
 import { ShowOperationNotification } from './showOperationNotification';
 import { ShowSymbolRequest } from './showSymbolRequest';
 import { WorkspaceDidChangeConfigurationNotification } from './workspaceDidChangeConfigurationNotification';
-import { WorkspaceFolderOutputChannel } from './workspaceFolderOutputChannel';
 
 /**
  * Create a {@link LanguageClient client} for Sorbet.

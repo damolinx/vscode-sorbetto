@@ -2,14 +2,14 @@ import * as vscode from 'vscode';
 import { Configuration } from '../../common/configuration';
 import { EXTENSION_PREFIX } from '../../constants';
 import { HighlightType } from '../../lsp/highlightType';
+import { EnableWatchmanType } from './enableWatchmanType';
+import { LspConfigurationType } from './lspConfigurationType';
 import {
   ToggleConfigurationKey,
   ConfigurationKey,
   LspOptionConfigurationKey,
   LspOptionConfigurationKeys,
 } from './sorbetClientConfigurationSections';
-import { EnableWatchmanType } from './enableWatchmanType';
-import { LspConfigurationType } from './lspConfigurationType';
 
 export class SorbetClientConfiguration extends Configuration {
   private readonly onDidChangeLspConfigurationEmitter: vscode.EventEmitter<void>;
