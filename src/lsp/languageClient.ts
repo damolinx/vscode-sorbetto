@@ -10,6 +10,7 @@ import { ReadFileRequest } from './readFileRequest';
 import { ShowOperationNotification } from './showOperationNotification';
 import { ShowSymbolRequest } from './showSymbolRequest';
 import { WorkspaceDidChangeConfigurationNotification } from './workspaceDidChangeConfigurationNotification';
+import { WorkspaceFolderOutputChannel } from './workspaceFolderOutputChannel';
 
 /**
  * Create a {@link LanguageClient client} for Sorbet.
@@ -31,7 +32,7 @@ export function createClient(
       initializationFailedHandler: createInitializationFailedHandler(),
       initializationOptions: createInitializationOptions(workspaceFolder.uri),
       middleware,
-      outputChannel: context.logOutputChannel,
+      outputChannel: new WorkspaceFolderOutputChannel(context.logOutputChannel, workspaceFolder),
       progressOnInitialization: true,
       revealOutputChannelOn: vslc.RevealOutputChannelOn.Never,
       workspaceFolder,
