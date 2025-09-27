@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0
+## 0.2.99
 - Support for multi-root workspaces.
 
 ## 0.2.25

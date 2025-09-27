@@ -4,7 +4,7 @@ Sorbetto is a Visual Studio Code extension that provides language support for Ru
 
 Since then, Sorbetto's internals have been extensively rewritten, and new functionality has been added. While it continues to serve as an experimentation platform, it now follows its own path—compatibility with the original extension is no longer a priority.
 
-It is important to note, however, that both extensions rely on the same Sorbet Language Server ([LSP](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server)), so any differences in behavior occur exclusively in the VS Code layer.
+Note that both extensions rely on the same Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server), so any differences in behavior occur exclusively in the VS Code layer.
 
 ## Features
 
@@ -14,7 +14,7 @@ It is important to note, however, that both extensions rely on the same Sorbet L
 - Getting started experience:
   - Set up a workspace for Ruby development via the **Setup Workspace** command
   - `Gemfile` files include an **Install** action
-  - Code snippets are available to create diverse Sorbet artifacts
+  - Code snippets are available to create standard Sorbet constructs
 - Autocomplete is enabled in several contexts:
   - `require_relative` statements
   - `gem` entries in `Gemfile` files
@@ -33,10 +33,10 @@ Two aspects to be aware of:
 
 - When context is needed to determine the target of an action—e.g., showing the appropriate language status items—the current active text editor is used as a cue. If an action cannot determine its target workspace, a selection dropdown will be shown. This typically occurs with VS Code stock commands that do not accept a URI as context.
 
-- Configuration values are read in the following order of precedence: first from the workspace folder, then the workspace, and finally the user scope. Be sure to set configuration values at the appropriate layer. Note that UI settings can only be set at workspace or user level. This is likely the more complex management piece you will encounter when using multi-root workspaces, so refer to the [documentation](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces#_settings) if needed. 
+- Configuration values are read in the following order of precedence: first from the workspace folder, then the workspace, and finally the user scope. Be sure to set configuration values at the appropriate layer. Note that UI settings can only be set at workspace or user level. This is likely the most complex management piece you will encounter when using multi-root workspaces, so refer to the [documentation](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces#_settings) if needed. 
  
 ## Sorbet Language Status Item
-Sorbetto replaces the custom **Sorbet** status bar item from the official extension with the standard [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for Ruby. This approach enables the display of multiple status entries with accompanying actions in a unified and consistent UI. It is possible to pin specific entries to the status bar for quick access, preserving functionality from the official extension design.
+Sorbetto replaces the custom **Sorbet** status bar item from the official extension with the standard [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for Ruby. This approach enables the display of multiple status entries with accompanying actions in a unified and consistent UI. It is possible to pin specific entries to the status bar for quick access, preserving familiar functionality from the official extension design.
 
 <p align=center>
   <img width="376" height="128" src="https://github.com/user-attachments/assets/5ca5466e-bacd-41a6-a5f9-07fdfd7051e5" alt="Ruby Language Item with Sorbetto entries and statusbar-pinned Status item with Sorbet in Idle state target Stable configuration" />
@@ -47,7 +47,9 @@ The following entries are available on the language status item:
 - **Sorbet Status**: displays the current status of the Sorbet LSP, including a busy indicator. The **Output** action brings the **Sorbetto** Output pane into view for checking log entries.
 
 ## Sorbet Configuration
-The configuration component has been fully rewritten, and while at the surface it might look similar, the new design allows leveraging stock APIs and easily extending with new features. Adding new features to the internal component is extremely simple, allowing the settings set to grow and expose more of Sorbet's native functionality. With this, the concept of "configurations" is simplified to the basic `Stable`, `Custom`, and `Disabled` states, with *Beta* and *Experimental* as additional options. Likewise, a limited set of experimental features are available as settings like **Enable RBS support** or **Enable `require_ancestor` support**.
+The configuration component has been fully rewritten. While it may look similar on the surface, the new design leverages stock APIs and is easily extensible. Adding new features to the internal component is straightforward, allowing the settings set to grow and expose more of Sorbet's native functionality.
+
+The concept of "configurations" is simplified to the basic `Stable`, `Custom`, and `Disabled` states, with *Beta* and *Experimental* now being just additional flags. A limited set of experimental features are also available as settings, such as **Enable RBS support** and **Enable `require_ancestor` support**.
 
 ## Sorbet Snippets
 Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefinedsnippets) for standard Sorbet constructs on top of the ones offered by Sorbet already. In particular, a whole set of `ruby` language snippets are now available via the **Snippet: Fill File with Snippet** and **Snippet: Insert Snippet** commands.
@@ -58,7 +60,7 @@ All snippets have an associated trigger word recognized by IntelliSense while ty
 </p>
 
 ## Workspace Setup
-The **Setup Workspace** command automates all steps from [Adopting Sorbet](https://sorbet.org/docs/adopting) in one convenient place. When setting up `bundler`, this command will force local installation of gems via `bundle config set --local path 'vendor/bundle'`.
+The **Setup Workspace** command automates all steps from [Adopting Sorbet](https://sorbet.org/docs/adopting) in one convenient place. This command configures `bundler` to install gems locally via `bundle config set --local path 'vendor/bundle'`.
 
 > **Note:** Do not use this command if you prefer globally installed gems; instead, follow the linked documentation to set up your workspace.
 
