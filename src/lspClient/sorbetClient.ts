@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
-import * as vslc from 'vscode-languageclient/node';
+import * as vslcn from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { E_COMMAND_NOT_FOUND, ErrorInfo } from '../common/processUtils';
 import { InitializationOptions } from '../lsp/initializationOptions';
-import { SorbetLanguageClient } from '../lsp/languageClient';
 import { READ_FILE_REQUEST_METHOD } from '../lsp/readFileRequest';
 import { SHOW_OPERATION_NOTIFICATION_METHOD } from '../lsp/showOperationNotification';
 import { SHOW_SYMBOL_REQUEST_METHOD } from '../lsp/showSymbolRequest';
@@ -11,9 +10,8 @@ import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from '../lsp/workspaceDi
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { LspStatus } from '../types';
 import { ClientConfiguration } from './configuration/clientConfiguration';
-import { buildLspConfiguration } from './configuration/lspConfiguration';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
-import { InitializeProcessResult, LanguageClientInitializer } from './languageClientInitializer';
+import { InitializeProcessResult, LanguageClientCreator } from './languageClientCreator';
 import { ShowOperationEvent } from './showOperationEvent';
 import { StatusChangedEvent } from './statusChangedEvent';
 
@@ -30,7 +28,7 @@ const THROTTLE_CONFIG = {
 export const SORBET_CLIENT_DISPOSE_TIMEOUT_MS = 5000;
 
 export class SorbetClient implements vscode.Disposable {
-  private _client?: SorbetLanguageClient;
+  private _client?: vslcn.LanguageClient;
   private _clientDisposable?: vscode.Disposable;
   private _status: LspStatus;
 
@@ -143,7 +141,6 @@ export class SorbetClient implements vscode.Disposable {
    * See https://sorbet.org/docs/lsp#sorbetshowoperation-notification
    */
   public get onShowOperationNotification(): vscode.Event<ShowOperationEvent> {
-    //return this.lspClient.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, handler);
     return this.onShowOperationEmitter.event;
   }
 
@@ -154,11 +151,11 @@ export class SorbetClient implements vscode.Disposable {
     return this.onStatusChangedEmitter.event;
   }
 
-  public get lspClient(): SorbetLanguageClient | undefined {
+  public get lspClient(): vslcn.LanguageClient | undefined {
     return this._client;
   }
 
-  public set lspClient(value: SorbetLanguageClient | undefined) {
+  public set lspClient(value: vslcn.LanguageClient | undefined) {
     if (this._client !== value) {
       this._clientDisposable?.dispose();
       this._client?.dispose();
@@ -202,15 +199,10 @@ export class SorbetClient implements vscode.Disposable {
       return;
     }
 
-    const configuration = await buildLspConfiguration(this.configuration);
-    if (!configuration) {
-      throw new Error('Missing start configuration');
-    }
-
-    const initializer = new LanguageClientInitializer(
+    const initializer = new LanguageClientCreator(
       this.context,
       this.workspaceFolder,
-      configuration,
+      this.configuration,
     );
 
     await withLock(this, async () => {
@@ -225,7 +217,7 @@ export class SorbetClient implements vscode.Disposable {
         let lspProcess: InitializeProcessResult | undefined;
         try {
           this.status = LspStatus.Initializing;
-          lspProcess = await initializer.initialize();
+          const { client, result: lspProcess } = await initializer.create();
           if (lspProcess.hasExited) {
             if (lspProcess.exitedWithLegacyRetryCode) {
               this.context.log.warn(
@@ -243,7 +235,7 @@ export class SorbetClient implements vscode.Disposable {
             this.status = LspStatus.Error;
             this.lspClient = undefined;
           } else {
-            this.lspClient = initializer.lspClient;
+            this.lspClient = client;
             this.status = LspStatus.Running;
             this.startRestartWatchers();
             this.context.metrics.increment('start', 1);
@@ -354,10 +346,10 @@ export class SorbetClient implements vscode.Disposable {
    * See https://sorbet.org/docs/lsp#sorbetreadfile-request.
    */
   public async sendReadFileRequest(
-    param: vslc.TextDocumentIdentifier,
+    param: vslcn.TextDocumentIdentifier,
     token?: vscode.CancellationToken,
-  ): Promise<vslc.TextDocumentItem | undefined> {
-    const content = await this.lspClient?.sendRequest<vslc.TextDocumentItem>(
+  ): Promise<vslcn.TextDocumentItem | undefined> {
+    const content = await this.lspClient?.sendRequest<vslcn.TextDocumentItem>(
       READ_FILE_REQUEST_METHOD,
       param,
       token,
@@ -370,10 +362,10 @@ export class SorbetClient implements vscode.Disposable {
    * See https://sorbet.org/docs/lsp#sorbetshowsymbol-request.
    */
   public async sendShowSymbolRequest(
-    param: vslc.TextDocumentPositionParams,
+    param: vslcn.TextDocumentPositionParams,
     token?: vscode.CancellationToken,
-  ): Promise<vslc.SymbolInformation | undefined> {
-    const symbolInfo = await this.lspClient?.sendRequest<vslc.SymbolInformation>(
+  ): Promise<vslcn.SymbolInformation | undefined> {
+    const symbolInfo = await this.lspClient?.sendRequest<vslcn.SymbolInformation>(
       SHOW_SYMBOL_REQUEST_METHOD,
       param,
       token,

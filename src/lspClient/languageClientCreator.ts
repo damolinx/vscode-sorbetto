@@ -1,12 +1,15 @@
 import * as vscode from 'vscode';
-import * as vslc from 'vscode-languageclient/node';
+import * as vslcn from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { instrumentLanguageClient } from '../common/metrics';
 import { ProcessWithExitPromise, spawnWithExitPromise } from '../common/processUtils';
-import { SorbetLanguageClient, createClient } from '../lsp/languageClient';
+import { InitializationOptions } from '../lsp/initializationOptions';
+import { createClient } from '../lsp/languageClient';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
-import { SorbetMiddleware } from '../sorbetMiddleware';
-import { LspConfiguration } from './configuration/lspConfiguration';
+import { ClientConfiguration } from './configuration/clientConfiguration';
+import { createLspConfiguration, LspConfiguration } from './configuration/lspConfiguration';
+import { LanguageClientErrorHandler } from './languageClientErrorHandler';
+import { LanguageClientMiddleware } from './languageClientMiddleware';
 
 export const LEGACY_RETRY_EXITCODE = 11;
 
@@ -15,50 +18,70 @@ export type InitializeProcessResult = ProcessWithExitPromise & {
   exitedWithLegacyRetryCode: boolean;
 };
 
-export class LanguageClientInitializer {
+export class LanguageClientCreator {
+  private readonly configuration: ClientConfiguration;
   private log: Log;
-  public readonly lspClient: SorbetLanguageClient;
+  private readonly lspClient: vslcn.LanguageClient;
   public lspProcess?: ProcessWithExitPromise;
   private workspaceFolder: vscode.WorkspaceFolder;
 
   constructor(
     context: SorbetExtensionContext,
     workspaceFolder: vscode.WorkspaceFolder,
-    configuration: LspConfiguration,
+    configuration: ClientConfiguration,
   ) {
+    this.configuration = configuration;
     this.log = context.log;
     this.workspaceFolder = workspaceFolder;
     this.lspClient = instrumentLanguageClient(
       createClient(
         context,
         this.workspaceFolder,
+        {
+          errorHandler: new LanguageClientErrorHandler(),
+          initializationOptions: this.createInitializationOptions(),
+          middleware: new LanguageClientMiddleware(),
+        },
         async () => {
-          this.lspProcess = await this.startLspClient(configuration);
+          const lspConfiguration = await createLspConfiguration(this.configuration);
+          if (!lspConfiguration) {
+            throw new Error('Missing start configuration');
+          }
+
+          this.lspProcess = await this.startLspClient(lspConfiguration);
           return this.lspProcess.process;
         },
-        {
-          closed: () => ({
-            action: vslc.CloseAction.DoNotRestart,
-            handled: true,
-          }),
-          error: () => ({
-            action: vslc.ErrorAction.Shutdown,
-            handled: true,
-          }),
-        } as vslc.ErrorHandler,
-        new SorbetMiddleware(),
       ),
       context.metrics,
     );
   }
 
-  public async initialize(): Promise<InitializeProcessResult> {
+  private createInitializationOptions(): InitializationOptions | undefined {
+    return {
+      enableTypedFalseCompletionNudges: this.configuration.isEnabled(
+        'typedFalseCompletionNudges',
+        true,
+      ),
+      highlightUntyped: this.configuration.highlightUntypedCode,
+      highlightUntypedDiagnosticSeverity: this.configuration.highlightUntypedCodeDiagnosticSeverity,
+      supportsOperationNotifications: true,
+      supportsSorbetURIs: true,
+    };
+  }
+
+  public async create(): Promise<{
+    client?: vslcn.LanguageClient;
+    result: InitializeProcessResult;
+  }> {
     await this.lspClient.start();
     const { process } = this.lspProcess!;
     return {
-      ...this.lspProcess!,
-      hasExited: process.exitCode !== null,
-      exitedWithLegacyRetryCode: process.exitCode === LEGACY_RETRY_EXITCODE,
+      client: this.lspClient,
+      result: {
+        ...this.lspProcess!,
+        hasExited: process.exitCode !== null,
+        exitedWithLegacyRetryCode: process.exitCode === LEGACY_RETRY_EXITCODE,
+      },
     };
   }
 

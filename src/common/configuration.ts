@@ -12,8 +12,18 @@ export class Configuration implements vscode.Disposable {
     vscode.Disposable.from(...this.disposables).dispose();
   }
 
+  /**
+   * Get a `sorbetto`-scoped workspace configuration object.
+   */
   protected get configuration(): vscode.WorkspaceConfiguration {
     return vscode.workspace.getConfiguration(EXTENSION_PREFIX);
+  }
+
+  /**
+   * Whether {@link section configuration} is `false` or `true`.
+   */
+  public isEnabled(section: string, defaultValue = false): boolean {
+    return this.configuration.get<boolean>(section, defaultValue);
   }
 
   /**

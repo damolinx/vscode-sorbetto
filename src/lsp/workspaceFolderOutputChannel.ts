@@ -1,6 +1,12 @@
 import * as vscode from 'vscode';
 
 export class WorkspaceFolderOutputChannel implements vscode.OutputChannel {
+  public static normalizedLogValue(value: string, workspaceName: string): string {
+    const single = vscode.workspace.workspaceFolders?.length === 1;
+    const normalizedValue = value.trim();
+    return single ? normalizedValue : `${workspaceName} ${normalizedValue}`;
+  }
+
   private readonly outputChannel: vscode.OutputChannel;
   private readonly workspaceName: string;
 
@@ -12,11 +18,15 @@ export class WorkspaceFolderOutputChannel implements vscode.OutputChannel {
   dispose(): void {}
 
   append(value: string): void {
-    this.outputChannel.append(this.normalizeValue(value));
+    this.outputChannel.append(
+      WorkspaceFolderOutputChannel.normalizedLogValue(value, this.workspaceName),
+    );
   }
 
   appendLine(value: string): void {
-    this.outputChannel.appendLine(this.normalizeValue(value));
+    this.outputChannel.appendLine(
+      WorkspaceFolderOutputChannel.normalizedLogValue(value, this.workspaceName),
+    );
   }
 
   clear(): void {
@@ -29,12 +39,6 @@ export class WorkspaceFolderOutputChannel implements vscode.OutputChannel {
 
   get name(): string {
     return this.outputChannel.name;
-  }
-
-  private normalizeValue(value: string) {
-    const single = vscode.workspace.workspaceFolders?.length === 1;
-    const normalizedValue = value.trim();
-    return single ? normalizedValue : `${this.workspaceName} ${normalizedValue}`;
   }
 
   replace(value: string): void {

@@ -1,10 +1,9 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
-import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
+import * as vslcn from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { getWorkspaceDocumentSelector } from './constants';
-import { InitializationOptions } from './initializationOptions';
 import { SorbetInitializeResult } from './initializeResult';
 import { ReadFileRequest } from './readFileRequest';
 import { ShowOperationNotification } from './showOperationNotification';
@@ -16,55 +15,38 @@ import { WorkspaceFolderOutputChannel } from './workspaceFolderOutputChannel';
  * Create a {@link LanguageClient client} for Sorbet.
  */
 export function createClient(
-  context: SorbetExtensionContext,
+  { log, logOutputChannel }: SorbetExtensionContext,
   workspaceFolder: vscode.WorkspaceFolder,
-  serverOptions: ServerOptions,
-  errorHandler: vslc.ErrorHandler,
-  middleware?: vslc.Middleware,
-): SorbetLanguageClient {
-  const client = new SorbetLanguageClient(
-    'ruby.sorbet',
-    'Sorbet',
-    serverOptions,
-    {
-      documentSelector: getWorkspaceDocumentSelector(workspaceFolder),
-      errorHandler,
-      initializationFailedHandler: createInitializationFailedHandler(),
-      initializationOptions: createInitializationOptions(workspaceFolder.uri),
-      middleware,
-      outputChannel: new WorkspaceFolderOutputChannel(context.logOutputChannel, workspaceFolder),
-      progressOnInitialization: true,
-      revealOutputChannelOn: vslc.RevealOutputChannelOn.Never,
-      workspaceFolder,
-    },
-    context.log,
-  );
-
-  return client;
-
-  function createInitializationFailedHandler(): vslc.InitializationFailedHandler {
-    return (error) => {
-      context.log.error('Failed to initialize Sorbet.', error);
+  clientOptions: Omit<
+    vslc.LanguageClientOptions,
+    'workspaceFolder' | 'documentSelector' | 'outputChannel'
+  >,
+  serverOptions: vslcn.ServerOptions,
+): vslcn.LanguageClient {
+  const mergedClientOptions: vslc.LanguageClientOptions = {
+    documentSelector: getWorkspaceDocumentSelector(workspaceFolder),
+    initializationFailedHandler: (error) => {
+      log.error(
+        WorkspaceFolderOutputChannel.normalizedLogValue(
+          'Failed to initialize Sorbet.',
+          workspaceFolder.name,
+        ),
+        error,
+      );
       return false;
-    };
-  }
+    },
+    outputChannel: new WorkspaceFolderOutputChannel(logOutputChannel, workspaceFolder),
+    progressOnInitialization: true,
+    revealOutputChannelOn: vslc.RevealOutputChannelOn.Never,
+    workspaceFolder,
+    ...clientOptions,
+  };
 
-  function createInitializationOptions(contextUri: vscode.Uri): InitializationOptions {
-    const configuration = context.clientManager.getClient(contextUri)?.configuration;
-    return configuration
-      ? {
-          enableTypedFalseCompletionNudges: configuration.nudgeTypedFalseCompletion,
-          highlightUntyped: configuration.highlightUntypedCode,
-          highlightUntypedDiagnosticSeverity: configuration.highlightUntypedCodeDiagnosticSeverity,
-          supportsOperationNotifications: true,
-          supportsSorbetURIs: true,
-        }
-      : {};
-  }
+  return new SorbetLanguageClient(serverOptions, mergedClientOptions, log);
 }
 
-export class SorbetLanguageClient
-  extends LanguageClient
+class SorbetLanguageClient
+  extends vslcn.LanguageClient
   implements
     ReadFileRequest,
     ShowOperationNotification,
@@ -74,13 +56,11 @@ export class SorbetLanguageClient
   private readonly log: Log;
 
   constructor(
-    id: string,
-    name: string,
-    serverOptions: ServerOptions,
+    serverOptions: vslcn.ServerOptions,
     clientOptions: vslc.LanguageClientOptions,
     log: Log,
   ) {
-    super(id, name, serverOptions, clientOptions);
+    super('ruby.sorbet', 'Sorbet', serverOptions, clientOptions);
     this.log = log;
   }
 

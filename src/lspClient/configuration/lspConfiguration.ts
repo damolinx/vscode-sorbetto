@@ -9,42 +9,53 @@ export interface LspConfiguration {
   type: LspConfigurationType;
 }
 
-export async function buildLspConfiguration(
-  config: ClientConfiguration,
+/**
+ * Creates a new {@link LspConfiguration} from the given {@link ClientConfiguration configuration}.
+ * @returns A configuration instance, or `undefined` if the LSP is disabled.
+ */
+export async function createLspConfiguration(
+  configuration: ClientConfiguration,
 ): Promise<LspConfiguration | undefined> {
   let lspConfig: LspConfiguration | undefined;
 
-  switch (config.lspConfigurationType) {
+  switch (configuration.lspConfigurationType) {
     case LspConfigurationType.Custom:
-      lspConfig = parse(config.lspConfigurationType, config.sorbetLspCustomConfiguration);
+      lspConfig = parse(
+        configuration.lspConfigurationType,
+        configuration.sorbetLspCustomConfiguration,
+      );
       break;
     case LspConfigurationType.Stable:
-      lspConfig = parse(config.lspConfigurationType, config.sorbetTypecheckCommand, '--lsp');
+      lspConfig = parse(
+        configuration.lspConfigurationType,
+        configuration.sorbetTypecheckCommand,
+        '--lsp',
+      );
       break;
     case LspConfigurationType.Disabled:
       lspConfig = undefined;
       break;
     default:
-      throw new Error(`Unknown configuration type: ${config.lspConfigurationType}`);
+      throw new Error(`Unknown configuration type: ${configuration.lspConfigurationType}`);
   }
 
   if (lspConfig) {
-    if (config.enableAllBetaFeatures) {
+    if (configuration.isEnabled('enableAllBetaFeatures')) {
       lspConfig.args.push('--enable-all-beta-lsp-features');
     }
 
-    if (config.enableAllExperimentalFeatures) {
+    if (configuration.isEnabled('enableAllExperimentalFeatures')) {
       lspConfig.args.push('--enable-all-experimental-lsp-features');
     } else {
-      if (config.enableRbsSupport) {
+      if (configuration.isEnabled('enableRbsSupport')) {
         lspConfig.args.push('--enable-experimental-rbs-comments');
       }
-      if (config.enableRequiresAncestor) {
+      if (configuration.isEnabled('enableRequiresAncestor')) {
         lspConfig.args.push('--enable-experimental-requires-ancestor');
       }
     }
 
-    await enableWatchmanSupport(lspConfig, config);
+    await enableWatchmanSupport(lspConfig, configuration);
   }
 
   return lspConfig;
@@ -61,6 +72,6 @@ export async function buildLspConfiguration(
     if (cmd === undefined) {
       throw new Error(`Missing LSP command for '${type}' configuration.`);
     }
-    return { cmd, args, type: config.lspConfigurationType };
+    return { cmd, args, type: configuration.lspConfigurationType };
   }
 }
