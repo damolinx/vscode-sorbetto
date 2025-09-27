@@ -6,8 +6,8 @@ import { ProcessWithExitPromise, spawnWithExitPromise } from '../common/processU
 import { InitializationOptions } from '../lsp/initializationOptions';
 import { createClient } from '../lsp/languageClient';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
-import { ClientConfiguration } from './configuration/clientConfiguration';
 import { createLspConfiguration, LspConfiguration } from './configuration/lspConfiguration';
+import { SorbetClientConfiguration } from './configuration/sorbetClientConfiguration';
 import { LanguageClientErrorHandler } from './languageClientErrorHandler';
 import { LanguageClientMiddleware } from './languageClientMiddleware';
 
@@ -19,7 +19,7 @@ export type InitializeProcessResult = ProcessWithExitPromise & {
 };
 
 export class LanguageClientCreator {
-  private readonly configuration: ClientConfiguration;
+  private readonly configuration: SorbetClientConfiguration;
   private log: Log;
   private readonly lspClient: vslcn.LanguageClient;
   public lspProcess?: ProcessWithExitPromise;
@@ -28,7 +28,7 @@ export class LanguageClientCreator {
   constructor(
     context: SorbetExtensionContext,
     workspaceFolder: vscode.WorkspaceFolder,
-    configuration: ClientConfiguration,
+    configuration: SorbetClientConfiguration,
   ) {
     this.configuration = configuration;
     this.log = context.log;

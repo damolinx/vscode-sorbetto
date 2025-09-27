@@ -9,8 +9,8 @@ import { SHOW_SYMBOL_REQUEST_METHOD } from '../lsp/showSymbolRequest';
 import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from '../lsp/workspaceDidChangeConfigurationNotification';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { LspStatus } from '../types';
-import { ClientConfiguration } from './configuration/clientConfiguration';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
+import { SorbetClientConfiguration } from './configuration/sorbetClientConfiguration';
 import { InitializeProcessResult, LanguageClientCreator } from './languageClientCreator';
 import { ShowOperationEvent } from './showOperationEvent';
 import { StatusChangedEvent } from './statusChangedEvent';
@@ -32,7 +32,7 @@ export class SorbetClient implements vscode.Disposable {
   private _clientDisposable?: vscode.Disposable;
   private _status: LspStatus;
 
-  public readonly configuration: ClientConfiguration;
+  public readonly configuration: SorbetClientConfiguration;
   private readonly context: SorbetExtensionContext;
   private readonly disposables: vscode.Disposable[];
   private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
@@ -42,7 +42,7 @@ export class SorbetClient implements vscode.Disposable {
 
   constructor(context: SorbetExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
     this._status = LspStatus.Disabled;
-    this.configuration = new ClientConfiguration(workspaceFolder);
+    this.configuration = new SorbetClientConfiguration(workspaceFolder);
     this.context = context;
     this.onShowOperationEmitter = new vscode.EventEmitter();
     this.onStatusChangedEmitter = new vscode.EventEmitter();

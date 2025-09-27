@@ -1,6 +1,7 @@
-import { ClientConfiguration } from './clientConfiguration';
-import { enableWatchmanSupport } from './enableWatchmanType';
+import { isAvailable } from '../../common/processUtils';
+import { EnableWatchmanType } from './enableWatchmanType';
 import { LspConfigurationType } from './lspConfigurationType';
+import { SorbetClientConfiguration } from './sorbetClientConfiguration';
 
 export interface LspConfiguration {
   args: string[];
@@ -10,11 +11,11 @@ export interface LspConfiguration {
 }
 
 /**
- * Creates a new {@link LspConfiguration} from the given {@link ClientConfiguration configuration}.
- * @returns A configuration instance, or `undefined` if the LSP is disabled.
+ * Creates a {@link LspConfiguration LSP configuration} from the given {@link SorbetClientConfiguration client configuration}.
+ * @returns A  {@link LspConfiguration} instance, or `undefined` if the LSP is disabled.
  */
 export async function createLspConfiguration(
-  configuration: ClientConfiguration,
+  configuration: SorbetClientConfiguration,
 ): Promise<LspConfiguration | undefined> {
   let lspConfig: LspConfiguration | undefined;
 
@@ -73,5 +74,40 @@ export async function createLspConfiguration(
       throw new Error(`Missing LSP command for '${type}' configuration.`);
     }
     return { cmd, args, type: configuration.lspConfigurationType };
+  }
+
+  async function enableWatchmanSupport(
+    lspConfig: LspConfiguration,
+    config: SorbetClientConfiguration,
+  ) {
+    const DISABLE_WATCHMAN_OPT = '--disable-watchman';
+
+    switch (config.enableWatchman) {
+      case EnableWatchmanType.Auto:
+        if (await isAvailable('watchman')) {
+          enable();
+        } else {
+          disable();
+        }
+        break;
+      case EnableWatchmanType.Enabled:
+        enable();
+        break;
+      case EnableWatchmanType.Disabled:
+        disable();
+        break;
+    }
+
+    function enable() {
+      if (lspConfig.args.includes(DISABLE_WATCHMAN_OPT)) {
+        lspConfig.args = lspConfig.args.filter((arg) => arg === DISABLE_WATCHMAN_OPT);
+      }
+    }
+
+    function disable() {
+      if (!lspConfig.args.includes(DISABLE_WATCHMAN_OPT)) {
+        lspConfig.args.push(DISABLE_WATCHMAN_OPT);
+      }
+    }
   }
 }

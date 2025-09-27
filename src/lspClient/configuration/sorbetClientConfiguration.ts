@@ -2,30 +2,18 @@ import * as vscode from 'vscode';
 import { Configuration } from '../../common/configuration';
 import { EXTENSION_PREFIX } from '../../constants';
 import { HighlightType } from '../../lsp/highlightType';
+import {
+  ToggleConfigurationKey,
+  ConfigurationKey,
+  LspOptionConfigurationKey,
+  LspOptionConfigurationKeys,
+} from './sorbetClientConfigurationSections';
 import { EnableWatchmanType } from './enableWatchmanType';
-import { LspConfigurationOption, LspConfigurationOptions } from './lspConfigurationOptions';
 import { LspConfigurationType } from './lspConfigurationType';
 
-export type EnabledConfigurationSection =
-  | 'enableAllBetaFeatures'
-  | 'enableAllExperimentalFeatures'
-  | 'enableRbsSupport'
-  | 'enableRequiresAncestor'
-  | 'typedFalseCompletionNudges';
-
-export type ConfigurationSection =
-  | EnabledConfigurationSection
-  | 'enableWatchman'
-  | 'highlightUntypedCode'
-  | 'highlightUntypedCodeDiagnosticSeverity'
-  | 'restartFilePatterns'
-  | 'sorbetLspConfiguration'
-  | 'sorbetLspCustomConfiguration'
-  | 'sorbetTypecheckCommand';
-
-export class ClientConfiguration extends Configuration {
+export class SorbetClientConfiguration extends Configuration {
   private readonly onDidChangeLspConfigurationEmitter: vscode.EventEmitter<void>;
-  private readonly onDidChangeLspOptionsEmitter: vscode.EventEmitter<LspConfigurationOption>;
+  private readonly onDidChangeLspOptionsEmitter: vscode.EventEmitter<LspOptionConfigurationKey>;
   private readonly scope?: vscode.WorkspaceFolder;
 
   constructor(scope?: vscode.WorkspaceFolder) {
@@ -50,7 +38,7 @@ export class ClientConfiguration extends Configuration {
             this.onDidChangeLspConfigurationEmitter.fire();
           }
         } else {
-          const lspOption = LspConfigurationOptions.find((option) =>
+          const lspOption = LspOptionConfigurationKeys.find((option) =>
             affectsConfiguration(`${EXTENSION_PREFIX}.${option}`),
           );
           if (lspOption) {
@@ -65,9 +53,9 @@ export class ClientConfiguration extends Configuration {
     return vscode.workspace.getConfiguration(EXTENSION_PREFIX, this.scope);
   }
 
-  public override getValue<T>(section: ConfigurationSection): T | undefined;
-  public override getValue<T>(section: ConfigurationSection, defaultValue: T): T;
-  public override getValue<T>(section: ConfigurationSection, defaultValue?: T): T | undefined {
+  public override getValue<T>(section: ConfigurationKey): T | undefined;
+  public override getValue<T>(section: ConfigurationKey, defaultValue: T): T;
+  public override getValue<T>(section: ConfigurationKey, defaultValue?: T): T | undefined {
     return super.getValue(section, defaultValue);
   }
 
@@ -95,7 +83,7 @@ export class ClientConfiguration extends Configuration {
       : undefined;
   }
 
-  public override isEnabled(section: EnabledConfigurationSection, defaultValue = false): boolean {
+  public override isEnabled(section: ToggleConfigurationKey, defaultValue = false): boolean {
     return super.isEnabled(section, defaultValue);
   }
 
@@ -116,7 +104,7 @@ export class ClientConfiguration extends Configuration {
   /**
    * Event that is fired when the LSP options change.
    */
-  public get onDidChangeLspOptions(): vscode.Event<LspConfigurationOption> {
+  public get onDidChangeLspOptions(): vscode.Event<LspOptionConfigurationKey> {
     return this.onDidChangeLspOptionsEmitter.event;
   }
 
