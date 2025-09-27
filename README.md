@@ -1,26 +1,40 @@
 # Sorbetto for VS Code
 
-Sorbetto is an extension that provides language-features for Ruby using [Sorbet](https://github.com/sorbet/sorbet). It was started as a fork of the official [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension to explore code maintainability and user experience (UX) improvements but by now most internals have been rewritten and behaviors have started to diverge. Some of the learnings might be ported back but extension in general will follow its own path.
+Sorbetto is a Visual Studio Code extension that provides language support for Ruby via [Sorbet](https://github.com/sorbet/sorbet), a type checker developed by Stripe. It began as a fork of the official [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension, originally created to explore improvements in code maintainability and user experience (UX).
+
+Since then, Sorbetto's internals have been extensively rewritten, and new functionality has been added. While it continues to serve as an experimentation platform, it now follows its own path—compatibility with the original extension is no longer a priority.
+
+It is important to note, however, that both extensions rely on the same Sorbet Language Server ([LSP](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server)), so any differences in behavior occur exclusively in the VS Code layer.
 
 ## Features
 
-- Use the [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) to report status.
-- New configuration model.
+- [Multi-root workspace](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) support, including separate Sorbet LSP instances per workspace folder
+- Uses the [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) to report status
+- New configuration model
 - Getting started experience:
-  - Setting up a basic workspace can be done via the **Setup Workspace** command.
-  - `Gemfile` gains an **Install** action.
-  - Code snippets are accessible to create Sorbet artifacts.
-- Autocomplete experience is enabled in several places:
-  - `require_relative` statements.
-  - `gem` entries in `Gemfile` files.
-  - `# typed` sigils.
+  - Set up a workspace for Ruby development via the **Setup Workspace** command
+  - `Gemfile` files include an **Install** action
+  - Code snippets are available to create diverse Sorbet artifacts
+- Autocomplete is enabled in several contexts:
+  - `require_relative` statements
+  - `gem` entries in `Gemfile` files
+  - `# typed` sigils
 - Improved quickfix actions, e.g., fix all instances of a given error code across all files ([documentation](https://sorbet.org/docs/cli#limiting-autocorrect-suggestions)).
 
 ### Maintainability Updates
-- Minimum VS Code version updated to 1.99, allowing use of more recent extensibility APIs.
-- Language Client library updated to version 9.0.
-- Migration to `esbuild` enables minification and bundling, resulting in a significantly smaller extension code.
+- Minimum VS Code version updated to 1.99, enabling use of more recent extensibility APIs.
+- Language Client library upgraded to version 9.0.
+- Migration to `esbuild` enables minification and bundling, resulting in a significantly smaller extension footprint.
 
+## Multi-root Workspaces
+[Multi-root workspaces](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) allow developers to work on multiple project folders simultaneously within a single VS Code window. Each folder is treated independently, with its own settings, extensions, and language server instances. Extensions must be intentionally coded to handle all references as potentially belonging to different projects—and Sorbetto is designed with this in mind, creating a separate Sorbet LSP client for every configured workspace folder.
+
+Two aspects to be aware of:
+
+- When context is needed to determine the target of an action—e.g., showing the appropriate language status items—the current active text editor is used as a cue. If an action cannot determine its target workspace, a selection dropdown will be shown. This typically occurs with VS Code stock commands that do not accept a URI as context.
+
+- Configuration values are read in the following order of precedence: first from the workspace folder, then the workspace, and finally the user scope. Be sure to set configuration values at the appropriate layer. Note that UI settings can only be set at workspace or user level. This is likely the more complex management piece you will encounter when using multi-root workspaces, so refer to the [documentation](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces#_settings) if needed. 
+ 
 ## Sorbet Language Status Item
 Sorbetto replaces the custom **Sorbet** status bar item from the official extension with the standard [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for Ruby. This approach enables the display of multiple status entries with accompanying actions in a unified and consistent UI. It is possible to pin specific entries to the status bar for quick access, preserving functionality from the official extension design.
 
