@@ -18,11 +18,6 @@ import { buildLspConfiguration } from './configuration/lspConfiguration';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { InitializeProcessResult, LanguageClientInitializer } from './languageClientInitializer';
 
-export type SorbetClientId = string & { __clientIdBrand: never };
-export function createClientId(workspaceFolder: vscode.WorkspaceFolder): SorbetClientId {
-  return workspaceFolder.uri.toString() as SorbetClientId;
-}
-
 const MAX_RETRIES = 38; // About 15min, base 10s and cap 60s
 const THROTTLE_CONFIG = {
   baseDelayMs: 10000,

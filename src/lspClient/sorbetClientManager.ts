@@ -2,7 +2,8 @@ import * as vscode from 'vscode';
 import { debounce } from '../common/utils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { isSorbetWorkspace } from '../workspaceUtils';
-import { SorbetClient, SorbetClientId, createClientId } from './sorbetClient';
+import { SorbetClient } from './sorbetClient';
+import { createClientId, SorbetClientId } from './sorbetClientId';
 
 export class SorbetClientManager implements vscode.Disposable {
   private readonly clients: Map<SorbetClientId, SorbetClient>;
