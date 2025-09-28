@@ -27,7 +27,7 @@ Note that both extensions rely on the same Sorbet [Language Server](https://code
 - Migration to `esbuild` enables minification and bundling, resulting in a significantly smaller extension footprint.
 
 ## Multi-root Workspaces
-[Multi-root workspaces](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) allow developers to work on multiple project folders simultaneously within a single VS Code window. Each folder is treated independently, with its own settings, extensions, and language server instances. Extensions must be intentionally coded to handle all references as potentially belonging to different projects—and Sorbetto is designed with this in mind, creating a separate Sorbet LSP client for every configured workspace folder.
+[Multi-root workspaces](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) allow developers to work on multiple project folders simultaneously within a single VS Code window. This model requires for extensions to follow specific rules to work correctly as they must resolve all references to specific project roots. Sorbetto 0.3.0 was updated with this in mind, creating one  Sorbet LSP client for every configured workspace folder.
 
 Two aspects to be aware of:
 
