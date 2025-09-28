@@ -133,6 +133,7 @@ export class SorbetClient implements vscode.Disposable {
     if (this._languageClient) {
       vscode.Disposable.from(...this._languageClient.disposables).dispose();
       this._languageClient = undefined;
+      this.status = LspStatus.Disabled;
     }
 
     if (value) {
@@ -144,13 +145,29 @@ export class SorbetClient implements vscode.Disposable {
             this.onShowOperationEmitter.fire({ client: this, params }),
           ),
           value.onDidChangeState((event) => {
-            if (event.newState === vslcn.State.Stopped) {
-              this.context.log.debug(
-                'LSP client state changed to Stopped',
-                this.workspaceFolder.uri.toString(true),
-              );
-              this.status = LspStatus.Disabled;
-              this.restartWatcher.disable();
+            switch (event.newState) {
+              case vslcn.State.Running:
+                this.context.log.trace(
+                  'LSP client state changed to Running',
+                  this.workspaceFolder.uri.toString(true),
+                );
+                this.status = LspStatus.Running;
+                break;
+              case vslcn.State.Starting:
+                this.context.log.trace(
+                  'LSP client state changed to Starting',
+                  this.workspaceFolder.uri.toString(true),
+                );
+                this.status = LspStatus.Initializing;
+                break;
+              case vslcn.State.Stopped:
+                this.context.log.trace(
+                  'LSP client state changed to Stopped',
+                  this.workspaceFolder.uri.toString(true),
+                );
+                this.status = LspStatus.Disabled;
+                this.restartWatcher.disable();
+                break;
             }
           }),
         ],
@@ -299,24 +316,25 @@ export class SorbetClient implements vscode.Disposable {
    */
   public async stop(restarting?: true) {
     if (!this.languageClient) {
-      this.context.log.debug('Ignored stop request, not running.', this.workspaceFolder.uri);
+      this.context.log.debug('Ignored stop request, no client to stop.', this.workspaceFolder.uri);
       return;
     }
 
-    await this.languageClient.stop().then(
-      () => {
-        this.languageClient = undefined;
-        this.status = LspStatus.Disabled;
-        if (!restarting) {
-          this.restartWatcher.disable();
-        }
-        this.context.metrics.increment('stop', 1);
-      },
-      (reason) => {
+    if (this.languageClient.needsStop()) {
+      await this.languageClient.stop().catch((reason) => {
         this.context.metrics.increment('stop.failed', 1);
         throw reason;
-      },
-    );
+      });
+    } else {
+      this.context.log.debug('Ignored stop request, stop not required.', this.workspaceFolder.uri);
+    }
+
+    this.languageClient = undefined;
+    this.status = LspStatus.Disabled;
+    if (!restarting) {
+      this.restartWatcher.disable();
+    }
+    this.context.metrics.increment('stop', 1);
   }
 
   /**

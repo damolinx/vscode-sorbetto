@@ -9,7 +9,6 @@ export async function restartSorbet(
   context: SorbetExtensionContext,
   pathOrUri?: string | vscode.Uri,
 ) {
-
   const uri = pathOrUri
     ? pathOrUri instanceof vscode.Uri
       ? pathOrUri
