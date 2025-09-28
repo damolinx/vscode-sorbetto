@@ -16,11 +16,10 @@ import { RestartWatcher } from './restartWatcher';
 import { ShowOperationEvent } from './showOperationEvent';
 import { StatusChangedEvent } from './statusChangedEvent';
 
-const MAX_RETRIES = 38; // About 15min, base 10s and cap 60s
 const THROTTLE_CONFIG = {
-  baseDelayMs: 10000,
-  attemptsPerTier: 12,
-  maxDelayMs: 60000,
+  baseDelayMs: 10000, // 10 seconds
+  attemptsPerTier: 30, // 5 minutes @ 10s base
+  maxDelayMs: 30000, // 30 seconds
 } as const;
 
 /**
@@ -217,7 +216,7 @@ export class SorbetClient implements vscode.Disposable {
 
       do {
         retryTimestamp = await throttle(retryAttempt, retryTimestamp, this.context.log);
-        this.context.log.debug('Start attempt —', 1 + retryAttempt, 'of', MAX_RETRIES);
+        this.context.log.debug('Start attempt —', 1 + retryAttempt);
 
         let lspProcess: InitializeProcessResult | undefined;
         try {
@@ -265,7 +264,7 @@ export class SorbetClient implements vscode.Disposable {
           }
           this.languageClient = undefined;
         }
-      } while (retry && ++retryAttempt < MAX_RETRIES);
+      } while (retry && ++retryAttempt < Number.MAX_SAFE_INTEGER);
     });
 
     function isUnrecoverable(errorInfo: ErrorInfo): boolean {
