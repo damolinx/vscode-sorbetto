@@ -1,11 +1,11 @@
 # Changelog
 
-## 0.2.99
-- Support for multi-root workspaces.
+## 0.2.999
+- Multi-root workspace support, including per-folder Sorbet clients configurable individually or at the workspace level.
 
 ## 0.2.25
 - `Beta` and `Experimental` configurations are now settings.
-- Updated README.
+- Update README.
 - Fix: Empty `Custom` configuration leads to silent failure / meaningless log entry.
 
 ## 0.2.24

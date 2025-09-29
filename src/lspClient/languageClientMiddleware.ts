@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
-import { AUTOCORRECT_ALL_ID } from './commands/commandIds';
+import { AUTOCORRECT_ALL_ID } from '../commands/commandIds';
 
-export class SorbetMiddleware implements vslc.Middleware {
+export class LanguageClientMiddleware implements vslc.Middleware {
   public async handleDiagnostics(
     uri: vscode.Uri,
     diagnostics: vscode.Diagnostic[],

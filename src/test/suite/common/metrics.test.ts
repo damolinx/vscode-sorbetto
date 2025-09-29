@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as sinon from 'sinon';
-import { NoopMetrics } from '../../../common/metrics';
+import { Metrics, Tags } from '../../../common/metrics';
 
 suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
   let testRestorables: { restore: () => void }[];
@@ -48,3 +48,11 @@ suite(`Test Suite: ${path.basename(__filename, '.test.js')}`, () => {
     sinon.assert.calledWithMatch(timingStub, expectedMetricName, expectedCount, expectedTags);
   });
 });
+
+export class NoopMetrics implements Metrics {
+  increment(_metric: string, _count?: number, _tags?: Tags): void {}
+
+  gauge(_metric: string, _value: number, _tags?: Tags): void {}
+
+  timing(_metric: string, _value: number | Date, _tags?: Tags): void {}
+}

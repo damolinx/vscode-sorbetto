@@ -1,6 +1,6 @@
-import { LogLevel } from 'vscode';
-import { AbstractMessageSignature } from 'vscode-jsonrpc/lib/common/messages';
-import { SorbetLanguageClient } from '../lsp/languageClient';
+import * as vscode from 'vscode';
+import * as vslcn from 'vscode-languageclient/node';
+import * as vsjrpc from 'vscode-jsonrpc/lib/common/messages';
 import { Log } from './log';
 
 export type Tags = Record<string, string>;
@@ -20,17 +20,13 @@ export interface Metrics {
    * Records a runtime for the specific metric.
    */
   timing(metric: string, value: number | Date, tags?: Tags): Promise<void> | void;
-
-  /**
-   * Emits any unsent metrics.
-   */
-  flush(): Promise<void> | void;
 }
 
+/**
+ * A {@link Metrics} implementation that logs all metrics to the {@link log given} {@link Log}.
+ */
 export class LogMetrics implements Metrics {
-  private readonly log: Log;
-
-  constructor(log: Log) {
+  constructor(private readonly log: Log) {
     this.log = log;
   }
 
@@ -51,7 +47,7 @@ export class LogMetrics implements Metrics {
   }
 
   timing(metric: string, value: number | Date, tags?: Tags): void {
-    if (this.log.logLevel == LogLevel.Trace) {
+    if (this.log.logLevel == vscode.LogLevel.Trace) {
       const time = Date.now() - (typeof value === 'number' ? value : value.getTime());
       if (tags) {
         this.log.trace('Timing', metric, time, tags);
@@ -60,18 +56,6 @@ export class LogMetrics implements Metrics {
       }
     }
   }
-
-  flush(): void {}
-}
-
-export class NoopMetrics implements Metrics {
-  increment(_metric: string, _count?: number, _tags?: Tags): void {}
-
-  gauge(_metric: string, _value: number, _tags?: Tags): void {}
-
-  timing(_metric: string, _value: number | Date, _tags?: Tags): void {}
-
-  flush(): void {}
 }
 
 /**
@@ -79,11 +63,14 @@ export class NoopMetrics implements Metrics {
  * @returns The instrumented language client.
  */
 export function instrumentLanguageClient(
-  client: SorbetLanguageClient,
+  client: vslcn.LanguageClient,
   metrics: Metrics,
-): SorbetLanguageClient {
+): vslcn.LanguageClient {
   const originalSendRequest = client.sendRequest;
-  client.sendRequest = async (methodOrType: string | AbstractMessageSignature, ...args: any[]) => {
+  client.sendRequest = async (
+    methodOrType: string | vsjrpc.AbstractMessageSignature,
+    ...args: any[]
+  ) => {
     const metric = `latency.${getRequestName(methodOrType)}_ms`;
     args.unshift(methodOrType);
 
@@ -102,7 +89,7 @@ export function instrumentLanguageClient(
 
   return client;
 
-  function getRequestName(methodOrType: string | AbstractMessageSignature): string {
+  function getRequestName(methodOrType: string | vsjrpc.AbstractMessageSignature): string {
     const requestName = typeof methodOrType === 'string' ? methodOrType : methodOrType.method;
     return requestName.replace(/[/$]/g, '_');
   }

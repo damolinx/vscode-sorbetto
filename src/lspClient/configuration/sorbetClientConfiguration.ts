@@ -3,12 +3,17 @@ import { Configuration } from '../../common/configuration';
 import { EXTENSION_PREFIX } from '../../constants';
 import { HighlightType } from '../../lsp/highlightType';
 import { EnableWatchmanType } from './enableWatchmanType';
-import { LspConfigurationOption, LspConfigurationOptions } from './lspConfigurationOptions';
 import { LspConfigurationType } from './lspConfigurationType';
+import {
+  ToggleConfigurationKey,
+  ConfigurationKey,
+  LspOptionConfigurationKey,
+  LspOptionConfigurationKeys,
+} from './sorbetClientConfigurationSections';
 
-export class ClientConfiguration extends Configuration {
+export class SorbetClientConfiguration extends Configuration {
   private readonly onDidChangeLspConfigurationEmitter: vscode.EventEmitter<void>;
-  private readonly onDidChangeLspOptionsEmitter: vscode.EventEmitter<LspConfigurationOption>;
+  private readonly onDidChangeLspOptionsEmitter: vscode.EventEmitter<LspOptionConfigurationKey>;
   private readonly scope?: vscode.WorkspaceFolder;
 
   constructor(scope?: vscode.WorkspaceFolder) {
@@ -33,7 +38,7 @@ export class ClientConfiguration extends Configuration {
             this.onDidChangeLspConfigurationEmitter.fire();
           }
         } else {
-          const lspOption = LspConfigurationOptions.find((option) =>
+          const lspOption = LspOptionConfigurationKeys.find((option) =>
             affectsConfiguration(`${EXTENSION_PREFIX}.${option}`),
           );
           if (lspOption) {
@@ -48,32 +53,10 @@ export class ClientConfiguration extends Configuration {
     return vscode.workspace.getConfiguration(EXTENSION_PREFIX, this.scope);
   }
 
-  /**
-   * Enable all beta features.
-   */
-  public get enableAllBetaFeatures(): boolean {
-    return this.getValue('enableAllBetaFeatures', false);
-  }
-
-  /**
-   * Enable all experimental features.
-   */
-  public get enableAllExperimentalFeatures(): boolean {
-    return this.getValue('enableAllExperimentalFeatures', false);
-  }
-
-  /**
-   * Enable RBS support.
-   */
-  public get enableRbsSupport(): boolean {
-    return this.getValue('enableRbsSupport', false);
-  }
-
-  /**
-   * Enable `requires_ancestor` support.
-   */
-  public get enableRequiresAncestor(): boolean {
-    return this.getValue('enableRequiresAncestor', false);
+  public override getValue<T>(section: ConfigurationKey): T | undefined;
+  public override getValue<T>(section: ConfigurationKey, defaultValue: T): T;
+  public override getValue<T>(section: ConfigurationKey, defaultValue?: T): T | undefined {
+    return super.getValue(section, defaultValue);
   }
 
   /**
@@ -81,13 +64,6 @@ export class ClientConfiguration extends Configuration {
    */
   public get enableWatchman(): EnableWatchmanType {
     return this.getValue('enableWatchman', EnableWatchmanType.Auto);
-  }
-
-  /**
-   * Sorbet LSP launch {@link LspConfigurationType configuration type}.
-   */
-  public get lspConfigurationType(): LspConfigurationType {
-    return this.getValue('sorbetLspConfiguration', LspConfigurationType.Stable);
   }
 
   /**
@@ -107,26 +83,15 @@ export class ClientConfiguration extends Configuration {
       : undefined;
   }
 
-  /**
-   * Whether the Sorbet LSP is disabled by {@link lspConfigurationType configuration}.
-   */
-  public get isDisabled(): boolean {
-    return this.lspConfigurationType === LspConfigurationType.Disabled;
+  public override isEnabled(section: ToggleConfigurationKey, defaultValue = false): boolean {
+    return super.isEnabled(section, defaultValue);
   }
 
   /**
-   * Whether to show a notice explaining when Sorbet refuses to provide completion
-   * results because a file is `# typed: false`.
+   * Sorbet LSP launch {@link LspConfigurationType configuration type}.
    */
-  public get nudgeTypedFalseCompletion(): boolean | undefined {
-    return this.getValue('typedFalseCompletionNudges');
-  }
-
-  /**
-   * Patterns identifying files that should cause Sorbet to restart if changed.
-   */
-  public get restartFilePatterns(): string[] {
-    return this.getValue('restartFilePatterns', []);
+  public get lspConfigurationType(): LspConfigurationType {
+    return this.getValue('sorbetLspConfiguration', LspConfigurationType.Stable);
   }
 
   /**
@@ -139,8 +104,15 @@ export class ClientConfiguration extends Configuration {
   /**
    * Event that is fired when the LSP options change.
    */
-  public get onDidChangeLspOptions(): vscode.Event<LspConfigurationOption> {
+  public get onDidChangeLspOptions(): vscode.Event<LspOptionConfigurationKey> {
     return this.onDidChangeLspOptionsEmitter.event;
+  }
+
+  /**
+   * Patterns identifying files that should cause Sorbet to restart if changed.
+   */
+  public get restartFilePatterns(): string[] {
+    return this.getValue('restartFilePatterns', []);
   }
 
   public get sorbetLspCustomConfiguration(): string[] {

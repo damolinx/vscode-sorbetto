@@ -1,18 +1,10 @@
 import * as vscode from 'vscode';
 import { SorbetShowOperationParams } from './lsp/showOperationNotification';
+import { ShowOperationEvent } from './lspClient/showOperationEvent';
 import { SorbetClient } from './lspClient/sorbetClient';
+import { StatusChangedEvent } from './lspClient/statusChangedEvent';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { LspStatus } from './types';
-
-export interface StatusChangedEvent {
-  readonly client?: SorbetClient;
-  readonly status: LspStatus;
-}
-
-export interface ShowOperationEvent {
-  readonly client: SorbetClient;
-  readonly operationParams: SorbetShowOperationParams;
-}
 
 export class SorbetStatusProvider implements vscode.Disposable {
   private readonly clientEventDisposables: vscode.Disposable[];
@@ -61,26 +53,23 @@ export class SorbetStatusProvider implements vscode.Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified. Spurious events are filtered out.
    */
-  private fireOnShowOperation(
-    client: SorbetClient,
-    operationParams: SorbetShowOperationParams,
-  ): void {
+  private fireOnShowOperation(client: SorbetClient, params: SorbetShowOperationParams): void {
     let changed = false;
-    if (operationParams.status === 'end') {
+    if (params.status === 'end') {
       const filteredOps = this.operationStack.filter(
-        (otherP) => otherP.operationName !== operationParams.operationName,
+        (otherP) => otherP.operationName !== params.operationName,
       );
       if (filteredOps.length !== this.operationStack.length) {
         this.operationStack = filteredOps;
         changed = true;
       }
     } else {
-      this.operationStack.push(operationParams);
+      this.operationStack.push(params);
       changed = true;
     }
 
     if (changed) {
-      this.onShowOperationEmitter.fire({ client, operationParams });
+      this.onShowOperationEmitter.fire({ client, params });
     }
   }
 
@@ -89,7 +78,7 @@ export class SorbetStatusProvider implements vscode.Disposable {
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified.
    */
-  private fireOnStatusChanged(client?: SorbetClient): void {
+  private fireOnStatusChanged(client: SorbetClient): void {
     if (!client || client.status === LspStatus.Disabled) {
       this.operationStack = [];
     }
