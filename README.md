@@ -11,7 +11,7 @@ Some relevant custom features:
 - Getting started experience:
   - Set up a workspace for Ruby development via the **Setup Workspace** command
   - `Gemfile` files include an **Install** action
-  - Code snippets are available to create standard Sorbet constructs
+  - Provides code snippets for standard Sorbet constructs
 - Autocomplete is enabled in several contexts:
   - `require_relative` statements
   - `gem` entries in `Gemfile` files
@@ -21,8 +21,18 @@ Some relevant custom features:
 Some of the maintainability updates: 
 - Minimum VS Code version updated to 1.99, enabling use of more recent extensibility APIs.
 - Language Client library upgraded to version 9.0.
-- Migration to `esbuild` enables minification and bundling, resulting in a significantly smaller extension footprint.
+- Migrated to `esbuild` for minification and bundling, reducing extension footprint significantly.
 
+## Table of Contents
+- [Getting Started](#getting-started)
+  - [Setting Up a Workspace](#setting-up-a-workspace)
+  - [Running a Ruby Script](#running-a-ruby-script)
+- [Sorbet Language Status Item](#sorbet-language-status-item)
+- [Sorbet Configuration](#sorbet-configuration)
+- [Sorbet Snippets](#sorbet-snippets)
+- [Multi-root Workspaces](#multi-root-workspaces)
+- [Workspace Setup](#workspace-setup)
+- [Extension Logs](#extension-logs)
 
 ## Getting Started
 
@@ -31,11 +41,13 @@ Some of the maintainability updates:
 2. Run the **Sorbetto: Setup Workspace** command.
 3. Your workspace is ready to use.
 
-### Running a Ruby script
+### Running a Ruby Script
 1. Create a new Ruby file, for example `main.rb`.
 2. Add some content to it — you can use the **Snippets: Fill File with Snippet** command and select a `ruby` snippet.
 3. Run the file with the **Sorbetto: Run Ruby File** command.
    - Later, you may want to create a [Launch Configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations), but this command is the quickest way to run a standalone script.
+
+[↑ Back to top](#table-of-contents)
 
 ## Sorbet Language Status Item
 Sorbetto uses the [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for Ruby to report LSP status. This approach provides a unified, consistent UI that can display multiple status entries with associated actions. Specific entries can also be pinned to the status bar for quick access, preserving the familiar UX from the official extension. 
@@ -50,17 +62,21 @@ The following entries are available on the language status item:
 
 > **Note** VS Code only displays the language status item when an editor for the matching language is open. You can extend this behavior to any-language editors by enabling the **Sorbetto: Always Show Status Items** setting. However, at least one editor must still be open for the item to appear.
 
+[↑ Back to top](#table-of-contents)
+
 ## Sorbet Configuration
 Use the [Settings Editor](https://code.visualstudio.com/docs/configure/settings#_settings-editor) to modify the configuration values used by the extension.
 
 The most important setting is the `Sorbet Lsp Configuration` which provides the following values:
- - **Stable**: runs the Sorbet LSP using `bundle exec srb typecheck`, and any other settings values you migth have added.
+ - **Stable**: runs the Sorbet LSP using `bundle exec srb typecheck`, and any other settings values you might have added.
  - **Custom**: runs the Sorbet LSP using a custom command and arguments you provide in the **Sorbet Lsp Custom Configuration** setting.
- - **Disabled**: do not run Sorbet at all.
+ - **Disabled**: disables Sorbet entirely.
 
 Compared to the official extension, *Beta* and *Experimental* are not configuration modes here but instead settings you can enable separately. Additionally, a limited set of features are exposed as standalone settings, such as **Enable RBS support** and **Enable `require_ancestor` support**. It is expected over time the number of settings will grow. The extension attempts to de-duplicate configuration values whenever they might overlap.
 
-You can also edit the `sorbet/config` file in your workspace directly. However the extension does not process this file, so you may inadvertently create conflicting configurations. For details, see the [Sorbet: Config file](https://sorbet.org/docs/cli#config-file) documentation.
+You can also edit the `sorbet/config` file in your workspace directly. However, the extension does not process this file, so you may inadvertently create conflicting configurations. For details, see the [Sorbet: Config file](https://sorbet.org/docs/cli#config-file) documentation.
+
+[↑ Back to top](#table-of-contents)
 
 ## Sorbet Snippets
 Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefinedsnippets) for standard Sorbet constructs on top of the ones offered by Sorbet already. In particular, a whole set of `ruby` language snippets are now available via the **Snippet: Fill File with Snippet** and **Snippet: Insert Snippet** commands.
@@ -71,9 +87,9 @@ All snippets have an associated trigger word recognized by IntelliSense while ty
 </p>
 
 ## Multi-root Workspaces
-[Multi-root workspaces](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) allow developers to work on multiple project folders simultaneously within a single VS Code window. This model requires for extensions to follow specific rules to work correctly as they must resolve all references to specific project roots. 
+[Multi-root workspaces](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) allow developers to work on multiple project folders simultaneously within a single VS Code window. This model requires extensions to follow specific rules to work correctly, as they must resolve all references to project roots. 
 
-Sorbetto 0.3.0 was updated with this in mind, creating one  Sorbet LSP client for every configured workspace folder. This is useful in scenarios when working on multiple projects, each relying on distinct Ruby or gem versions.
+Sorbetto 0.3.0 was updated with this in mind, creating one Sorbet LSP client for every configured workspace folder. This is useful in scenarios when working on multiple projects, each relying on distinct Ruby or gem versions.
 
 Two aspects to be aware of:
 
@@ -81,11 +97,16 @@ Two aspects to be aware of:
 
 - Configuration values are read in the following order of precedence: first from the workspace folder, then the workspace, and finally the user scope. Be sure to set configuration values at the appropriate layer. Note that UI settings can only be set at workspace or user level. This is likely the most complex management piece you will encounter when using multi-root workspaces, so refer to the [documentation](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces#_settings) if needed. 
 
+[↑ Back to top](#table-of-contents)
 
 ## Workspace Setup
 The **Setup Workspace** command automates all steps from [Adopting Sorbet](https://sorbet.org/docs/adopting) in one convenient place. This command configures `bundler` to install gems locally via `bundle config set --local path 'vendor/bundle'`.
 
 > **Note:** Do not use this command if you prefer globally installed gems; instead, follow the linked documentation to set up your workspace.
 
+[↑ Back to top](#table-of-contents)
+
 ## Extension Logs
-Sorbetto uses a single output channel to log its exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
+Sorbetto uses a single output channel to log both its own exceptions and Sorbet’s. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
+
+[↑ Back to top](#table-of-contents)
