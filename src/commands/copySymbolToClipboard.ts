@@ -22,11 +22,6 @@ export async function copySymbolToClipboard(
     return;
   }
 
-  // if (!client.lspClient.initializeResult?.capabilities.sorbetShowSymbolProvider) {
-  //   context.log.warn("CopySymbol: Sorbet LSP does not support 'showSymbol' capability.");
-  //   return;
-  // }
-
   const params: TextDocumentPositionParams = {
     position: editor.selection.start,
     textDocument: {

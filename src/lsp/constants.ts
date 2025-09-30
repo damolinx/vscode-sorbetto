@@ -14,7 +14,6 @@ export function getWorkspaceDocumentSelector(
 ): vslc.DocumentSelector {
   const pattern = posix.join(workspaceFolder.uri.path, '**/*');
   return SORBET_DOCUMENT_SELECTOR.map((s) =>
-    (('scheme' in s) && s.scheme === workspaceFolder.uri.scheme)
-      ? ({ ...s, pattern })
-      : pattern);
+    'scheme' in s && s.scheme === workspaceFolder.uri.scheme ? { ...s, pattern } : pattern,
+  );
 }

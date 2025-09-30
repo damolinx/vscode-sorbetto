@@ -40,7 +40,7 @@ export class LanguageClientCreator {
         {
           errorHandler: new LanguageClientErrorHandler(),
           initializationOptions: this.createInitializationOptions(),
-          middleware: new LanguageClientMiddleware(),
+          middleware: LanguageClientMiddleware,
         },
         async () => {
           const lspConfiguration = await createLspConfiguration(this.configuration);
