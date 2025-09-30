@@ -15,6 +15,7 @@ import { setupWorkspace } from './commands/setupWorkspace';
 import { registerGemfileCodeLensProvider } from './providers/gemfileCodeLensProvider';
 import { registerGemfileCompletionProvider } from './providers/gemfileCompletionProvider';
 import { registerRequireCompletionProvider } from './providers/requireCompletionProvider';
+import { registerRequireDefinitionProvider } from './providers/requireDefinitionProvider';
 import { registerSorbetContentProvider } from './providers/sorbetContentProvider';
 import { registerTypedOptionsCompletionProvider } from './providers/typedOptionsCompletionProvider';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
@@ -40,6 +41,7 @@ export async function activate(extensionContext: ExtensionContext) {
     registerGemfileCodeLensProvider(),
     registerGemfileCompletionProvider(),
     registerRequireCompletionProvider(),
+    registerRequireDefinitionProvider(),
     registerSorbetContentProvider(context),
     registerTypedOptionsCompletionProvider(),
   );
