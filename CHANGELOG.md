@@ -1,6 +1,9 @@
 # Changelog
 
-## 0.2.999
+## 0.3.1
+ - **Run Ruby File** and **Debug Ruby File** commmands force-save files before running.
+
+## 0.3.0
 - Multi-root workspace support, including per-folder Sorbet clients configurable individually or at the workspace level.
 
 ## 0.2.25
