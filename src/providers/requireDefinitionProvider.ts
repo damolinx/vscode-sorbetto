@@ -24,7 +24,7 @@ export class RequireDefinitionProvider implements vscode.DefinitionProvider {
     while ((match = regex.exec(line.text)) && !link && !token.isCancellationRequested) {
       const [start, end] = match.indices!.at(2)!;
       if (position.character >= start && position.character <= end) {
-        const baseDir = path.dirname(document.uri.fsPath);
+        const baseDir = path.dirname(document.fileName);
         const target = vscode.Uri.file(path.resolve(baseDir, match.groups!.path + '.rb'));
         link = new vscode.Location(target, new vscode.Range(0, 0, 0, 0));
       }

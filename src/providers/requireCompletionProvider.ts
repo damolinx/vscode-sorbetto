@@ -22,17 +22,15 @@ export class RequireCompletionProvider implements vscode.CompletionItemProvider 
     _token: vscode.CancellationToken,
     _context: vscode.CompletionContext,
   ): Promise<vscode.CompletionItem[] | undefined> {
-    const line = document.lineAt(position).text.substring(0, position.character + 1);
+    const line = document.lineAt(position).text.substring(0, position.character);
 
-    const groups = line.match(
-      /^\s*require_relative\s*(?<startQuote>['"])(?<path>[^"']*)(?<endQuote>\1?)(?!\s|;|$)/,
-    )?.groups;
-    if (!groups) {
+    const match = line.match(/^\s*require_relative\s*(?<startQuote>['"])(?<path>(?:[^"']+|$))/d);
+    if (!match?.groups || !match?.indices) {
       return;
     }
 
     const documentDirPath = dirname(document.fileName);
-    const hintPath = determineHintPath(documentDirPath, groups.path);
+    const hintPath = determineHintPath(documentDirPath, match.groups.path);
     if (!hintPath) {
       return;
     }
@@ -42,10 +40,14 @@ export class RequireCompletionProvider implements vscode.CompletionItemProvider 
       return;
     }
 
+    const [start, end] = match.indices.groups!.path;
+    const replaceRange = match.groups.path.length
+      ? new vscode.Range(position.line, start, position.line, end)
+      : undefined;
     return suggestions.map(([path, type]) => {
       const item = new vscode.CompletionItem(path, type);
-      item.insertText = path.substring(hintPath.path.length);
-      item.commitCharacters = [groups.startQuote];
+      item.range = replaceRange;
+      item.commitCharacters = [match.groups!.startQuote];
       if (type === vscode.CompletionItemKind.Folder) {
         item.commitCharacters.push('/');
       }

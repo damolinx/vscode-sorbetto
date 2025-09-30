@@ -3,6 +3,7 @@
 ## 0.3.1
  - **Run Ruby File** and **Debug Ruby File** commmands force-save files before running.
  - Support navigation to `require_relative` target via a definition provider (enables **Peek**).
+ - Fix: `require_relative` completes incorrectly partial paths.
 
 ## 0.3.0
 - Multi-root workspace support, including per-folder Sorbet clients configurable individually or at the workspace level.
