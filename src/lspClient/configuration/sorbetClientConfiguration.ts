@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { Configuration } from '../../common/configuration';
 import { EXTENSION_PREFIX } from '../../constants';
 import { HighlightType } from '../../lsp/highlightType';
-import { EnableWatchmanType } from './enableWatchmanType';
+import { WatchmanMode } from './watchmanMode';
 import { LspConfigurationType } from './lspConfigurationType';
 import {
   ToggleConfigurationKey,
@@ -62,8 +62,8 @@ export class SorbetClientConfiguration extends Configuration {
   /**
    * Enable `watchman` mode.
    */
-  public get enableWatchman(): EnableWatchmanType {
-    return this.getValue('enableWatchman', EnableWatchmanType.Auto);
+  public get enableWatchman(): WatchmanMode {
+    return this.getValue('enableWatchman', WatchmanMode.Auto);
   }
 
   /**

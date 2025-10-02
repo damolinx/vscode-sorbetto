@@ -1,4 +1,4 @@
-export const enum EnableWatchmanType {
+export const enum WatchmanMode {
   /**
    * Watchman support is automatically enabled if `watchman` is available.
    */

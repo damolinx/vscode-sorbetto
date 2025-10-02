@@ -1,5 +1,5 @@
 import { isAvailable } from '../../common/processUtils';
-import { EnableWatchmanType } from './enableWatchmanType';
+import { WatchmanMode } from './watchmanMode';
 import { LspConfigurationType } from './lspConfigurationType';
 import { SorbetClientConfiguration } from './sorbetClientConfiguration';
 
@@ -83,17 +83,17 @@ export async function createLspConfiguration(
     const DISABLE_WATCHMAN_OPT = '--disable-watchman';
 
     switch (config.enableWatchman) {
-      case EnableWatchmanType.Auto:
+      case WatchmanMode.Auto:
         if (await isAvailable('watchman')) {
           enable();
         } else {
           disable();
         }
         break;
-      case EnableWatchmanType.Enabled:
+      case WatchmanMode.Enabled:
         enable();
         break;
-      case EnableWatchmanType.Disabled:
+      case WatchmanMode.Disabled:
         disable();
         break;
     }
