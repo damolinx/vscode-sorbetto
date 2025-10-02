@@ -1,9 +1,4 @@
-import {
-  LanguageClient,
-  LanguageClientOptions,
-  ServerOptions,
-  TransportKind,
-} from 'vscode-languageclient/node';
+import * as vslcn from 'vscode-languageclient/node';
 import * as assert from 'assert';
 import { instrumentLanguageClient, Metrics, Tags } from '../../../common/metrics';
 import { TestLanguageServerSpecialURIs } from '../testLanguageServerSpecialURIs';
@@ -38,7 +33,7 @@ class RecordingMetrics implements Metrics {
 }
 
 // Uninitialized client. Call start and await on it before use.
-function createLanguageClient(): LanguageClient {
+function createLanguageClient(): vslcn.LanguageClient {
   // The server is implemented in node
   const serverModule = require.resolve('./testLanguageServer');
   // The debug options for the server
@@ -46,24 +41,24 @@ function createLanguageClient(): LanguageClient {
 
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
-  const serverOptions: ServerOptions = {
-    run: { module: serverModule, transport: TransportKind.ipc },
+  const serverOptions: vslcn.ServerOptions = {
+    run: { module: serverModule, transport: vslcn.TransportKind.ipc },
     debug: {
       module: serverModule,
-      transport: TransportKind.ipc,
+      transport: vslcn.TransportKind.ipc,
       options: debugOptions,
     },
   };
 
   // Options to control the language client
-  const clientOptions: LanguageClientOptions = {
+  const clientOptions: vslcn.LanguageClientOptions = {
     // Register the server for plain text documents
     documentSelector: [{ scheme: 'file', language: 'plaintext' }],
     synchronize: {},
   };
 
   // Create the language client and start the client.
-  const client = new LanguageClient(
+  const client = new vslcn.LanguageClient(
     'languageServerExample',
     'Language Server Example',
     serverOptions,

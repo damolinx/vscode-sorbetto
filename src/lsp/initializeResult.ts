@@ -1,9 +1,9 @@
-import { InitializeResult, ServerCapabilities } from 'vscode-languageclient/node';
+import * as vslcn from 'vscode-languageclient/node';
 
-export type SorbetInitializeResult = InitializeResult<any> & {
+export type SorbetInitializeResult = vslcn.InitializeResult<any> & {
   capabilities: SorbetServerCapabilities;
 };
 
-export type SorbetServerCapabilities = ServerCapabilities & {
+export type SorbetServerCapabilities = vslcn.ServerCapabilities & {
   sorbetShowSymbolProvider: boolean;
 };

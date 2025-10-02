@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { TextDocumentPositionParams } from 'vscode-languageclient/node';
+import * as vslcn from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { LspStatus } from '../types';
@@ -22,7 +22,7 @@ export async function copySymbolToClipboard(
     return;
   }
 
-  const params: TextDocumentPositionParams = {
+  const params: vslcn.TextDocumentPositionParams = {
     position: editor.selection.start,
     textDocument: {
       uri: editor.document.uri.toString(),

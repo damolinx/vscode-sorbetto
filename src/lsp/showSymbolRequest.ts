@@ -1,8 +1,4 @@
-import {
-  CancellationToken,
-  SymbolInformation,
-  TextDocumentPositionParams,
-} from 'vscode-languageclient';
+import * as vslc from 'vscode-languageclient';
 
 export const SHOW_SYMBOL_REQUEST_METHOD = 'sorbet/showSymbol';
 
@@ -12,7 +8,7 @@ export const SHOW_SYMBOL_REQUEST_METHOD = 'sorbet/showSymbol';
 export interface ShowSymbolRequest {
   sendRequest(
     method: typeof SHOW_SYMBOL_REQUEST_METHOD,
-    param: TextDocumentPositionParams,
-    token?: CancellationToken,
-  ): Promise<SymbolInformation>;
+    param: vslc.TextDocumentPositionParams,
+    token?: vslc.CancellationToken,
+  ): Promise<vslc.SymbolInformation>;
 }
