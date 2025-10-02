@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SORBET_SCHEME } from '../lsp/constants';
+import { SORBET_SCHEME } from '../lsp/documentSelectors';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
 /**

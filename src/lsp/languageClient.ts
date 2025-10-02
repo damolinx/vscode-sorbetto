@@ -4,7 +4,7 @@ import * as vslcn from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { WorkspaceFolderOutputChannel } from '../common/workspaceFolderOutputChannel';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
-import { getWorkspaceDocumentSelector } from './constants';
+import { getWorkspaceDocumentSelector } from './documentSelectors';
 import { SorbetInitializeResult } from './initializeResult';
 import { ReadFileRequest } from './readFileRequest';
 import { ShowOperationNotification } from './showOperationNotification';

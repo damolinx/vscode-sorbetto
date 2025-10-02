@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { SORBET_FILE_DOCUMENT_SELECTOR } from '../lsp/constants';
+import { SORBET_FILE_DOCUMENT_SELECTOR } from '../lsp/documentSelectors';
 
 export function registerRequireDefinitionProvider(): vscode.Disposable {
   return vscode.languages.registerDefinitionProvider(

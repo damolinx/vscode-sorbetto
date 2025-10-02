@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { Configuration } from '../../common/configuration';
 import { EXTENSION_PREFIX } from '../../constants';
 import { HighlightType } from '../../lsp/highlightType';
-import { WatchmanMode } from './watchmanMode';
 import { LspConfigurationType } from './lspConfigurationType';
 import {
   ToggleConfigurationKey,
@@ -10,6 +9,7 @@ import {
   LspOptionConfigurationKey,
   LspOptionConfigurationKeys,
 } from './sorbetClientConfigurationSections';
+import { WatchmanMode } from './watchmanMode';
 
 export class SorbetClientConfiguration extends Configuration {
   private readonly onDidChangeLspConfigurationEmitter: vscode.EventEmitter<void>;

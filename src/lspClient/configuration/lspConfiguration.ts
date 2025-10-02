@@ -1,7 +1,7 @@
 import { isAvailable } from '../../common/processUtils';
-import { WatchmanMode } from './watchmanMode';
 import { LspConfigurationType } from './lspConfigurationType';
 import { SorbetClientConfiguration } from './sorbetClientConfiguration';
+import { WatchmanMode } from './watchmanMode';
 
 export interface LspConfiguration {
   args: string[];

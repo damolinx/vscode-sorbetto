@@ -19,7 +19,7 @@
 - Add **Enable Rbs Support**, **Enable Requires Ancestor** settings.
 
 ## 0.2.23
-- Improve getting started experience: 
+- Improve getting started experience:
   - Add **Run Ruby File** and **Debug Ruby File** command.
   - Improve dependency verification: **Setup Workspace** command, **Install** CodeLens.
   - Update snippets:
