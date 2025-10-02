@@ -177,6 +177,11 @@
               "disabled",
               "everywhere",
               "everywhere-but-tests"
+            ],
+            "enumItemLabels": [
+              "Disabled",
+              "Everywhere",
+              "Everywhere but tests"
             ]
           },
           "sorbetto.highlightUntypedCodeDiagnosticSeverity": {
@@ -217,7 +222,7 @@
             "default": false,
             "markdownDescription": "Enable all **beta** features. These features are considered ready for open beta."
           },
-          "sorbetto.enableAllExperimentalFeatures": {  
+          "sorbetto.enableAllExperimentalFeatures": {
             "scope": "resource",
             "type": "boolean",
             "default": false,
