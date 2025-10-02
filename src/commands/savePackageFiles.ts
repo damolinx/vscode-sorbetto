@@ -1,4 +1,4 @@
-import { workspace } from 'vscode';
+import * as vscode from 'vscode';
 import { basename } from 'path';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
@@ -11,7 +11,7 @@ export const PACKAGE_FILENAME = '__package.rb';
  * @return `true` if all the files were successfully saved.
  */
 export async function savePackageFiles(context: SorbetExtensionContext): Promise<boolean> {
-  const pkgDocs = workspace.textDocuments.filter(
+  const pkgDocs = vscode.workspace.textDocuments.filter(
     (document) => document.isDirty && basename(document.fileName) === PACKAGE_FILENAME,
   );
 

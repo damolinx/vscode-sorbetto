@@ -1,4 +1,4 @@
-import { DiagnosticSeverity } from 'vscode';
+import * as vscode from 'vscode';
 import { HighlightType } from './highlightType';
 
 /**
@@ -23,7 +23,7 @@ export interface InitializationOptions {
    * when undefined.
    * See https://sorbet.org/docs/vscode#sorbethighlightuntypeddiagnosticseverity
    */
-  highlightUntypedDiagnosticSeverity?: DiagnosticSeverity;
+  highlightUntypedDiagnosticSeverity?: vscode.DiagnosticSeverity;
   /**
    * Whether to show Sorbet server statuses.
    * See https://sorbet.org/docs/server-status#api

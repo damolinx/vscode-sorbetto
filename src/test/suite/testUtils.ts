@@ -1,11 +1,11 @@
-import { LogLevel } from 'vscode';
+import * as vscode from 'vscode';
 import { Log } from '../../common/log';
 
 /**
  * Stub {@link Log} interface.
  * @param level Default log-level.
  */
-export function createLogStub(level = LogLevel.Error): Log {
+export function createLogStub(level = vscode.LogLevel.Error): Log {
   return {
     debug: () => {},
     error: () => {},

@@ -1,4 +1,4 @@
-import { Range, TextDocument, Uri, workspace, WorkspaceEdit } from 'vscode';
+import * as vscode from 'vscode';
 import { dirname, extname, relative, sep } from 'path';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
@@ -8,11 +8,11 @@ import { SorbetExtensionContext } from '../sorbetExtensionContext';
 const REQUIRE_RELATIVE_REGEX = /(?<before>require_relative\s+(['"]))(?<path>.+)\2/g;
 
 interface FileRename {
-  readonly oldUri: Uri;
-  readonly newUri: Uri;
+  readonly oldUri: vscode.Uri;
+  readonly newUri: vscode.Uri;
 }
 interface RequireMatch {
-  readonly range: Range;
+  readonly range: vscode.Range;
   readonly path: string;
 }
 
@@ -33,11 +33,11 @@ export async function handleRename(
     return; // No files to update
   }
 
-  const workspaceEdit = new WorkspaceEdit();
-  const docsToSave: TextDocument[] = [];
+  const workspaceEdit = new vscode.WorkspaceEdit();
+  const docsToSave: vscode.TextDocument[] = [];
 
   for (const { oldUri, newUri } of renameMap.values()) {
-    const document = await workspace.openTextDocument(newUri);
+    const document = await vscode.workspace.openTextDocument(newUri);
     const matches = findRequires(document);
     if (matches.length === 0) {
       continue; // No require_relative to update
@@ -49,7 +49,7 @@ export async function handleRename(
     }
   }
 
-  const succeeded = await workspace.applyEdit(workspaceEdit);
+  const succeeded = await vscode.workspace.applyEdit(workspaceEdit);
   if (succeeded) {
     for (const doc of docsToSave) {
       await doc.save();
@@ -57,7 +57,7 @@ export async function handleRename(
   }
 }
 
-function findRequires(document: TextDocument): RequireMatch[] {
+function findRequires(document: vscode.TextDocument): RequireMatch[] {
   const matches: RequireMatch[] = [];
   const text = document.getText();
 
@@ -65,21 +65,21 @@ function findRequires(document: TextDocument): RequireMatch[] {
   while ((match = REQUIRE_RELATIVE_REGEX.exec(text))) {
     const path = match.groups!.path;
     const start = document.positionAt(match.index + match.groups!.before.length);
-    matches.push({ path: path, range: new Range(start, start.translate(0, path.length)) });
+    matches.push({ path: path, range: new vscode.Range(start, start.translate(0, path.length)) });
   }
 
   return matches;
 }
 
 async function updateRequires(
-  edit: WorkspaceEdit,
-  oldUri: Uri,
-  newUri: Uri,
+  edit: vscode.WorkspaceEdit,
+  oldUri: vscode.Uri,
+  newUri: vscode.Uri,
   matches: RequireMatch[],
   renameMap: Map<string, FileRename>,
 ): Promise<boolean> {
-  const oldDirUri = Uri.file(dirname(oldUri.fsPath));
-  const newDirUri = Uri.file(dirname(newUri.fsPath));
+  const oldDirUri = vscode.Uri.file(dirname(oldUri.fsPath));
+  const newDirUri = vscode.Uri.file(dirname(newUri.fsPath));
 
   let updates = 0;
   for (let i = matches.length - 1; i >= 0; i--) {
@@ -92,8 +92,8 @@ async function updateRequires(
   }
   return updates > 0;
 
-  function getCurrentRequireFullPath(base: Uri, match: RequireMatch) {
-    let requireUri = Uri.joinPath(base, match.path);
+  function getCurrentRequireFullPath(base: vscode.Uri, match: RequireMatch) {
+    let requireUri = vscode.Uri.joinPath(base, match.path);
     const updateRequirePathEntry = renameMap.get(requireUri.fsPath);
     if (updateRequirePathEntry) {
       requireUri = updateRequirePathEntry.newUri;
@@ -101,7 +101,7 @@ async function updateRequires(
     return requireUri;
   }
 
-  function getTargetRequireRelativePath(from: Uri, requireUri: Uri) {
+  function getTargetRequireRelativePath(from: vscode.Uri, requireUri: vscode.Uri) {
     let newRequirePath = relative(from.fsPath, requireUri.fsPath);
     if (sep !== '/') {
       newRequirePath = newRequirePath.replaceAll(sep, '/');
@@ -109,11 +109,11 @@ async function updateRequires(
     return newRequirePath;
   }
 
-  async function shouldUpdate(requireUri: Uri) {
+  async function shouldUpdate(requireUri: vscode.Uri) {
     const requireUriWithRb = requireUri.path.endsWith('.rb')
       ? requireUri
       : requireUri.with({ path: requireUri.path + '.rb' });
-    return workspace.fs.stat(requireUriWithRb).then(
+    return vscode.workspace.fs.stat(requireUriWithRb).then(
       () => true,
       () => false,
     );

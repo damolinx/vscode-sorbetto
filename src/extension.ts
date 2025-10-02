@@ -1,4 +1,4 @@
-import { commands, ExtensionContext, Uri, workspace } from 'vscode';
+import * as vscode from 'vscode';
 import { createExtensionApi } from './api/extensionApiProvider';
 import { mapStatus } from './api/status';
 import { autocorrectAll } from './commands/autocorrectAll';
@@ -25,7 +25,7 @@ import { LspStatus } from './types';
 /**
  * Extension entrypoint.
  */
-export async function activate(extensionContext: ExtensionContext) {
+export async function activate(extensionContext: vscode.ExtensionContext) {
   const context = new SorbetExtensionContext(extensionContext);
   extensionContext.subscriptions.push(
     context,
@@ -47,27 +47,35 @@ export async function activate(extensionContext: ExtensionContext) {
   );
 
   // Register commands
-  const rc = commands.registerCommand;
+  const rc = vscode.commands.registerCommand;
   extensionContext.subscriptions.push(
-    rc(cmdIds.AUTOCORRECT_ALL_ID, (code: string | number, contextUri: Uri) =>
+    rc(cmdIds.AUTOCORRECT_ALL_ID, (code: string | number, contextUri: vscode.Uri) =>
       autocorrectAll(context, contextUri, code),
     ),
-    rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | Uri) => bundleInstall(context, gemfile)),
-    rc(cmdIds.DEBUG_RUBY_FILE_ID, (pathOrUri?: string | Uri) => debugRubyFile(context, pathOrUri)),
-    rc(cmdIds.OPEN_SETTINGS_ID, (pathOrUri: string | Uri, setting?: string) =>
+    rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | vscode.Uri) => bundleInstall(context, gemfile)),
+    rc(cmdIds.DEBUG_RUBY_FILE_ID, (pathOrUri?: string | vscode.Uri) =>
+      debugRubyFile(context, pathOrUri),
+    ),
+    rc(cmdIds.OPEN_SETTINGS_ID, (pathOrUri: string | vscode.Uri, setting?: string) =>
       openSettings(context, pathOrUri, setting),
     ),
-    rc(cmdIds.RUN_RUBY_FILE_ID, (pathOrUri?: string | Uri) => runRubyFile(context, pathOrUri)),
-    rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | Uri) => setupWorkspace(context, pathOrUri)),
+    rc(cmdIds.RUN_RUBY_FILE_ID, (pathOrUri?: string | vscode.Uri) =>
+      runRubyFile(context, pathOrUri),
+    ),
+    rc(cmdIds.SETUP_WORKSPACE_ID, (pathOrUri?: string | vscode.Uri) =>
+      setupWorkspace(context, pathOrUri),
+    ),
     rc(cmdIds.SHOW_OUTPUT_ID, (preserveFocus?: boolean) =>
       context.logOutputChannel.show(preserveFocus ?? true),
     ),
-    rc(cmdIds.SORBET_RESTART_ID, (pathOrUri?: string | Uri) => restartSorbet(context, pathOrUri)),
+    rc(cmdIds.SORBET_RESTART_ID, (pathOrUri?: string | vscode.Uri) =>
+      restartSorbet(context, pathOrUri),
+    ),
     rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_ID, () => savePackageFiles(context)),
   );
 
   // Register text editor commands
-  const rtc = commands.registerTextEditorCommand;
+  const rtc = vscode.commands.registerTextEditorCommand;
   extensionContext.subscriptions.push(
     rtc(cmdIds.COPY_SYMBOL_ID, (textEditor) => copySymbolToClipboard(context, textEditor)),
   );
@@ -75,7 +83,7 @@ export async function activate(extensionContext: ExtensionContext) {
   // Register configurable features
   if (context.configuration.getValue('updateRequireRelative', true)) {
     extensionContext.subscriptions.push(
-      workspace.onDidRenameFiles(({ files }) => handleRename(context, files)),
+      vscode.workspace.onDidRenameFiles(({ files }) => handleRename(context, files)),
     );
   }
 
@@ -83,12 +91,14 @@ export async function activate(extensionContext: ExtensionContext) {
   setSorbetStatusContext(LspStatus.Disabled);
 
   // Initialize client manager with existing workspace folders.
-  workspace.workspaceFolders?.forEach((folder) => context.clientManager.addWorkspace(folder));
+  vscode.workspace.workspaceFolders?.forEach((folder) =>
+    context.clientManager.addWorkspace(folder),
+  );
 
   // Extension API
   return createExtensionApi(context);
 }
 
 export function setSorbetStatusContext(status: LspStatus) {
-  commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(status));
+  vscode.commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(status));
 }

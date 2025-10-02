@@ -1,4 +1,4 @@
-import { Disposable, EventEmitter } from 'vscode';
+import * as vscode from 'vscode';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { SorbetStatusProvider } from '../sorbetStatusProvider';
 import { ExtensionApi } from './extensionApi';
@@ -14,13 +14,13 @@ export function createExtensionApi(context: SorbetExtensionContext): ExtensionAp
 /**
  * {@link ExtensionApi Extension API } provider.
  */
-export class ExtensionApiProvider implements Disposable {
-  private readonly disposables: Disposable[];
-  private readonly onStatusChangedEmitter: EventEmitter<StatusChangedEvent>;
+export class ExtensionApiProvider implements vscode.Disposable {
+  private readonly disposables: vscode.Disposable[];
+  private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
   private readonly statusProvider: SorbetStatusProvider;
 
   constructor({ statusProvider }: SorbetExtensionContext) {
-    this.onStatusChangedEmitter = new EventEmitter();
+    this.onStatusChangedEmitter = new vscode.EventEmitter();
     this.statusProvider = statusProvider;
     this.disposables = [
       this.onStatusChangedEmitter,
@@ -34,7 +34,7 @@ export class ExtensionApiProvider implements Disposable {
   }
 
   dispose(): void {
-    Disposable.from(...this.disposables).dispose();
+    vscode.Disposable.from(...this.disposables).dispose();
   }
 
   /**

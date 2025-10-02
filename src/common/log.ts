@@ -1,4 +1,4 @@
-import { LogLevel } from 'vscode';
+import * as vscode from 'vscode';
 
 /**
  * Logger.
@@ -36,7 +36,7 @@ export interface Log {
   /**
    * Log level.
    */
-  logLevel: LogLevel;
+  logLevel: vscode.LogLevel;
 
   /**
    * Appends a new trace message to the log.
