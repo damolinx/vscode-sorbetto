@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.2
+- Fix: `sorbet` content provider does not resolve files after multi-root update.
+
 ## 0.3.1
  - **Run Ruby File** and **Debug Ruby File** commmands force-save files before running.
  - Support navigation to `require_relative` target via a definition provider (enables **Peek**).
