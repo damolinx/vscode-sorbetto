@@ -13,7 +13,7 @@ export class Configuration implements vscode.Disposable {
   }
 
   /**
-   * Get a `sorbetto`-scoped workspace configuration object.
+   * Get a {@link EXTENSION_PREFIX `sorbetto`}-scoped workspace configuration object.
    */
   protected get configuration(): vscode.WorkspaceConfiguration {
     return vscode.workspace.getConfiguration(EXTENSION_PREFIX);

@@ -12,7 +12,7 @@ export interface LspConfiguration {
 
 /**
  * Creates a {@link LspConfiguration LSP configuration} from the given {@link SorbetClientConfiguration client configuration}.
- * @returns A  {@link LspConfiguration} instance, or `undefined` if the LSP is disabled.
+ * @returns A {@link LspConfiguration} instance, or `undefined` if the LSP is disabled.
  */
 export async function createLspConfiguration(
   configuration: SorbetClientConfiguration,

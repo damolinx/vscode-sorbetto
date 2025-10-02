@@ -17,19 +17,19 @@ const ConfigurationKeys = {
 } as const;
 
 /**
- * {@link SorbetClient client} configuration name (`sorbetto.«name»`).
+ * {@link SorbetClient Client} configuration name (`sorbetto.«name»`).
  */
 export type ConfigurationKey = keyof typeof ConfigurationKeys;
 
 /**
- * {@link SorbetClient client} configuration name (`sorbetto.«name»`) that is a `true` or `false` value.
+ * {@link SorbetClient Client} configuration name (`sorbetto.«name»`) with a `true` or `false` value.
  */
 export type ToggleConfigurationKey = {
   [K in ConfigurationKey]: (typeof ConfigurationKeys)[K] extends { toggle: true } ? K : never;
 }[ConfigurationKey];
 
 /**
- * {@link SorbetClient client} configuration name (`sorbetto.«name»`) that is a Sorbet LSP option.
+ * {@link SorbetClient Client} configuration name (`sorbetto.«name»`) that is a Sorbet LSP option.
  * These lead to restart the client on change.
  */
 export type LspOptionConfigurationKey = {
@@ -37,7 +37,7 @@ export type LspOptionConfigurationKey = {
 }[ConfigurationKey];
 
 /**
- *  {@link SorbetClient client} configuration names (`sorbetto.«name»`) that are Sorbet LSP options.
+ * {@link SorbetClient Client} configuration names (`sorbetto.«name»`) that are Sorbet LSP options.
  */
 export const LspOptionConfigurationKeys = Object.entries(ConfigurationKeys)
   .filter(([, value]) => (value as any).lspOption === true)

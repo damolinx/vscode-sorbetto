@@ -1,6 +1,6 @@
 export const enum LspConfigurationType {
   /**
-   * Sorbet is started with custom.
+   * Sorbet is started using a custom configuration.
    */
   Custom = 'custom',
   /**
