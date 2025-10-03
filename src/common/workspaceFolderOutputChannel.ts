@@ -1,9 +1,12 @@
 import * as vscode from 'vscode';
 
 export class WorkspaceFolderOutputChannel implements vscode.OutputChannel {
-  public static normalizedLogValue(value: string, workspaceName: string): string {
+  public static normalizedLogValue(value: string, workspaceName: string, forceSingleLine?: true): string {
     const single = vscode.workspace.workspaceFolders?.length === 1;
-    const normalizedValue = value.trim();
+    let normalizedValue = value.trim();
+    if (forceSingleLine) {
+      normalizedValue = normalizedValue.replaceAll(/\.?\s*\n/g, '. ');
+    }
     return single ? normalizedValue : `${workspaceName} ${normalizedValue}`;
   }
 
@@ -15,11 +18,11 @@ export class WorkspaceFolderOutputChannel implements vscode.OutputChannel {
     this.workspaceName = `[${workspaceFolder.name}]`;
   }
 
-  dispose(): void {}
+  dispose(): void { }
 
   append(value: string): void {
     this.outputChannel.append(
-      WorkspaceFolderOutputChannel.normalizedLogValue(value, this.workspaceName),
+      WorkspaceFolderOutputChannel.normalizedLogValue(value, this.workspaceName, true),
     );
   }
 
