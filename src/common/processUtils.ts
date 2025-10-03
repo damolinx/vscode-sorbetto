@@ -9,11 +9,11 @@ export interface ErrorInfo {
   code?: string;
   errno?: number;
   message?: string;
-  pid?: number;
 }
 
 export interface ProcessWithExitPromise {
   exit: Promise<ErrorInfo | undefined>;
+  kill: (signa?: NodeJS.Signals | number) => boolean;
   process: ChildProcess;
 }
 
@@ -30,7 +30,6 @@ export function spawnWithExitPromise(
           code: err?.code,
           errno: err?.errno,
           message: err?.message,
-          pid: childProcess.pid,
         });
       })
       .on('exit', (code: number | null, signal: string | null) => {
@@ -40,12 +39,16 @@ export function spawnWithExitPromise(
             : {
                 errno: code ?? undefined,
                 message: signal ?? undefined,
-                pid: childProcess.pid,
               },
         );
       });
   });
-  return { process: childProcess, exit: exitPromise };
+  return {
+    exit: exitPromise,
+    kill: (signal: NodeJS.Signals | number = constants.signals.SIGKILL) =>
+      childProcess.kill(signal),
+    process: childProcess,
+  };
 }
 
 export async function isAvailable(command: string): Promise<boolean> {

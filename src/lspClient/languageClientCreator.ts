@@ -79,7 +79,7 @@ export class LanguageClientCreator {
       client: this.lspClient,
       result: {
         ...this.lspProcess!,
-        hasExited: process.exitCode !== null,
+        hasExited: process.exitCode !== null || process.signalCode !== null,
         exitedWithLegacyRetryCode: process.exitCode === LEGACY_RETRY_EXITCODE,
       },
     };
@@ -100,14 +100,12 @@ export class LanguageClientCreator {
     }
 
     lspProcess.exit = lspProcess.exit.then((errorInfo) => {
+      const pid = childProcess.pid ?? '«no pid»';
       if (errorInfo) {
-        this.log.debug('Sorbet LSP process failed.', errorInfo?.pid ?? '«no pid»', errorInfo);
+        this.log.debug('Sorbet LSP process failed.', pid, errorInfo);
       } else {
-        this.log.debug(
-          'Sorbet LSP process exited.',
-          childProcess.pid ?? '«no pid»',
-          childProcess.exitCode,
-        );
+        const exitCode = childProcess.exitCode ?? '«no exitCode»';
+        this.log.debug('Sorbet LSP process exited.', pid, exitCode);
       }
       return errorInfo;
     });
