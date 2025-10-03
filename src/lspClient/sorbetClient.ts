@@ -199,7 +199,7 @@ export class SorbetClient implements vscode.Disposable {
    */
   public async start() {
     if (this.languageClient) {
-      this.context.log.debug('Ignored start request, already running.', this.workspaceFolder.uri);
+      this.context.log.debug('Ignored start request, already running.', this.workspaceFolder.uri.toString(true));
       return;
     }
 
@@ -315,7 +315,7 @@ export class SorbetClient implements vscode.Disposable {
    */
   public async stop(restarting?: true) {
     if (!this.languageClient) {
-      this.context.log.debug('Ignored stop request, no client to stop.', this.workspaceFolder.uri);
+      this.context.log.debug('Ignored stop request, no client to stop.', this.workspaceFolder.uri.toString(true));
       return;
     }
 
@@ -325,7 +325,7 @@ export class SorbetClient implements vscode.Disposable {
         throw reason;
       });
     } else {
-      this.context.log.debug('Ignored stop request, stop not required.', this.workspaceFolder.uri);
+      this.context.log.debug('Ignored stop request, stop not required.', this.workspaceFolder.uri.toString(true));
     }
 
     this.languageClient = undefined;

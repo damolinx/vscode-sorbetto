@@ -27,20 +27,28 @@ export class SorbetContentProvider implements vscode.TextDocumentContentProvider
     uri: vscode.Uri,
     token?: vscode.CancellationToken,
   ): Promise<string> {
-    // TODO: This is not exactly right, but at least one Sorbet should be able
-    // to resolve this URI, with the only edge case being resolution being
-    // workspace dependent.
+    // TODO: This isn't entirely correct, but at least one Sorbet instance should be able
+    // to resolve this URI - an edge case is that resolution may depend on the workspace.
     const clients = this.context.clientManager.getClients();
 
     let response: vslc.TextDocumentItem | undefined;
     if (clients.length === 0) {
-      this.context.log.warn('ContentProvider: No Sorbet Client available to resolve URI', uri.toString(true));
+      this.context.log.warn(
+        'ContentProvider: No Sorbet Client available to resolve URI',
+        uri.toString(true),
+      );
     } else {
       const requestParams: vslc.TextDocumentIdentifier = { uri: uri.toString() };
       for (const client of this.context.clientManager.getClients()) {
         response = await client.sendReadFileRequest(requestParams, token);
         if (response) {
-          this.context.log.debug('ContentProvider: Resolved', uri.toString(true), 'with Sorbet client for', client.workspaceFolder.name, 'workspace');
+          this.context.log.debug(
+            'ContentProvider: Resolved',
+            uri.toString(true),
+            'with Sorbet client for',
+            client.workspaceFolder.name,
+            'workspace',
+          );
           break;
         }
       }

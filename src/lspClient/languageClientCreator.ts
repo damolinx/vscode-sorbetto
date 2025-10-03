@@ -86,7 +86,7 @@ export class LanguageClientCreator {
   }
 
   private async startLspClient(configuration: LspConfiguration): Promise<ProcessWithExitPromise> {
-    this.log.info('Start Sorbet LSP', this.workspaceFolder.uri.toString());
+    this.log.info('Start Sorbet LSP', this.workspaceFolder.uri.toString(true));
     this.log.info('>', configuration.cmd, ...configuration.args);
 
     const lspProcess = spawnWithExitPromise(configuration.cmd, configuration.args, {
