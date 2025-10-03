@@ -334,12 +334,21 @@ export class SorbetClient implements vscode.Disposable {
       }
       this.languageClient = undefined;
     } else if (this._languageClientInitializer) {
-      const killed = this._languageClientInitializer?.lspProcess?.kill();
-      if (killed !== undefined && !killed) {
-        throw new Error(
-          `Zombie initialization with pid: ${this._languageClientInitializer.lspProcess?.process.pid}`,
-        );
+      if (this._languageClientInitializer.lspProcess) {
+        const killed = this._languageClientInitializer.lspProcess.kill();
+        if (killed !== undefined && !killed) {
+          throw new Error(
+            `Zombie initialization with pid: ${this._languageClientInitializer.lspProcess?.process.pid}`,
+          );
+        } else {
+          this.context.log.debug(
+            'Zombie initializer but no associated process.',
+            this.workspaceFolder.uri.toString(true),
+          );
+          this._languageClientInitializer = undefined;
+        }
       }
+
     }
 
     this.status = LspStatus.Disabled;
