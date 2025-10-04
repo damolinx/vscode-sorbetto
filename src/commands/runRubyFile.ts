@@ -1,26 +1,24 @@
 import * as vscode from 'vscode';
 import { basename } from 'path';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
-import { executeCommandsInTerminal } from './utils';
+import { executeCommandsInTerminal, getTargetEditorUri } from './utils';
 import { verifyEnvironment } from './verifyEnvironment';
 
 export async function runRubyFile(
   context: SorbetExtensionContext,
   pathOrUri?: string | vscode.Uri,
 ) {
-  const uri = pathOrUri
-    ? pathOrUri instanceof vscode.Uri
-      ? pathOrUri
-      : vscode.Uri.file(pathOrUri)
-    : vscode.window.activeTextEditor?.document.uri;
-
+  const uri = getTargetEditorUri(pathOrUri);
   if (!uri) {
-    context.log.info('No file to run. Open a Ruby file or provide a path.');
+    context.log.info('RunRuby: No file to run.');
     return;
   }
 
   if (uri.scheme !== 'file') {
-    context.log.info('File must be saved locally to be run.', uri.toString(true));
+    context.log.info(
+      'RunRuby: File must be saved locally to be run.',
+      vscode.workspace.asRelativePath(uri),
+    );
     return;
   }
 
@@ -29,7 +27,10 @@ export async function runRubyFile(
 
   const document = await vscode.workspace.openTextDocument(uri);
   if (document.isDirty) {
-    context.log.info('Saving file before running.', targetPath);
+    context.log.info(
+      'RunRuby: Saving file before running.',
+      vscode.workspace.asRelativePath(document.uri),
+    );
     await document.save();
   }
 

@@ -15,12 +15,9 @@ export async function setupWorkspace(
   context: SorbetExtensionContext,
   pathOrUri?: string | vscode.Uri,
 ) {
-  const uri = pathOrUri
-    ? pathOrUri instanceof vscode.Uri
-      ? pathOrUri
-      : vscode.Uri.parse(pathOrUri)
-    : await getTargetWorkspaceUri();
+  const uri = await getTargetWorkspaceUri(pathOrUri);
   if (!uri) {
+    context.log.debug('SetupWorkspace: No workspace.');
     return; // No target workspace
   }
 
@@ -31,9 +28,9 @@ export async function setupWorkspace(
     // When files are only being created (not edited), `applyEdit` returns `false`
     // even on success so return value is useless to detect failures.
     await vscode.workspace.applyEdit(edit);
-    context.log.info('Workspace verification: Added Gemfile and Sorbet config.');
+    context.log.info('SetupWorkspace: Added Gemfile and Sorbet config.');
   } else {
-    context.log.info('Workspace verification: No files were added.');
+    context.log.info('SetupWorkspace: No files were added.');
   }
 
   if (await verifyEnvironment(context)) {

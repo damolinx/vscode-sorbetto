@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { debounce } from '../common/utils';
+import { debounce, onSafeActiveTextEditorChanged } from '../common/utils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { isSorbetWorkspace } from '../workspaceUtils';
 import { SorbetClient } from './sorbetClient';
@@ -21,7 +21,7 @@ export class SorbetClientManager implements vscode.Disposable {
     this.disposables = [
       this.onClientAddedEmitter,
       this.onClientRemovedEmitter,
-      vscode.window.onDidChangeActiveTextEditor(
+      onSafeActiveTextEditorChanged(
         debounce(async (editor) => {
           if (editor?.document.languageId !== 'ruby') {
             return;

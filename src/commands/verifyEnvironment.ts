@@ -35,9 +35,9 @@ export function getDocumentationLinks(missingCommands: string[]): Map<string, vs
   const links = new Map<string, vscode.Uri>();
   for (const missingCommand of missingCommands) {
     if (SORBET_COMMANDS.includes(missingCommand)) {
-      links.set('Sorbet Docs', vscode.Uri.parse('https://sorbet.org/docs/adopting'));
+      links.set('Sorbet documentation', vscode.Uri.parse('https://sorbet.org/docs/adopting'));
     } else if (missingCommand === 'rdbg') {
-      links.set('rdbg Docs', vscode.Uri.parse('https://github.com/ruby/debug'));
+      links.set('rdbg documentation', vscode.Uri.parse('https://github.com/ruby/debug'));
     }
   }
   return links;

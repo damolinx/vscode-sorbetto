@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { OPEN_SETTINGS_ID, SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commands/commandIds';
-import { debounce } from './common/utils';
+import { debounce, onSafeActiveTextEditorChanged, safeActiveTextEditorUri } from './common/utils';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/documentSelectors';
 import { LspConfigurationType } from './lspClient/configuration/lspConfigurationType';
 import { SorbetClient } from './lspClient/sorbetClient';
@@ -49,7 +49,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     this.setStatus({ status: 'Disabled', command: StartCommand });
 
     this.disposables = [
-      vscode.window.onDidChangeActiveTextEditor(
+      onSafeActiveTextEditorChanged(
         debounce((editor) => this.handleEditorOrStatusChange(undefined, editor)),
       ),
       this.context.statusProvider.onShowOperation(({ client }) =>
@@ -88,12 +88,13 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   }
 
   private handleEditorOrStatusChange(client?: SorbetClient, editor?: vscode.TextEditor) {
-    const targetUri = editor?.document.uri;
-    const targetClient = client?.inScope(targetUri)
-      ? client
-      : targetUri
-        ? this.context.clientManager.getClient(targetUri)
-        : undefined;
+    const targetUri = editor?.document.uri || safeActiveTextEditorUri();
+    const targetClient =
+      targetUri && client?.inScope(targetUri)
+        ? client
+        : targetUri
+          ? this.context.clientManager.getClient(targetUri)
+          : undefined;
 
     if (targetClient) {
       if (this.currentClient?.client !== targetClient) {

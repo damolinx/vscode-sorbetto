@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { safeActiveTextEditorUri } from '../common/utils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { LspStatus } from '../types';
 import { anySorbetWorkspace } from '../workspaceUtils';
@@ -9,18 +10,17 @@ export async function restartSorbet(
   context: SorbetExtensionContext,
   pathOrUri?: string | vscode.Uri,
 ) {
-  const uri = pathOrUri
-    ? pathOrUri instanceof vscode.Uri
-      ? pathOrUri
-      : vscode.Uri.parse(pathOrUri)
-    : (vscode.window.activeTextEditor?.document.uri ?? (await getTargetWorkspaceUri()));
+  const uri = await getTargetWorkspaceUri(pathOrUri ?? safeActiveTextEditorUri(), {
+    forceSorbetWorkspace: true,
+  });
   if (!uri) {
+    context.log.debug('RestartSorbet: No Sorbet workspace.');
     return; // No target workspace
   }
 
   const client = context.clientManager.getClient(uri);
   if (!client) {
-    context.log.info('No Sorbet client for the selected workspace.', uri.toString());
+    context.log.info('RestartSorbet: No Sorbet client for selected workspace.', uri.toString(true));
     return;
   }
   if (client.status === LspStatus.Disabled && !client.isEnabledByConfiguration()) {

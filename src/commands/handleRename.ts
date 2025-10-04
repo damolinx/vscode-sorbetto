@@ -21,7 +21,7 @@ interface RequireMatch {
  * files being renamed are updated, not files referencing them.
  */
 export async function handleRename(
-  _context: SorbetExtensionContext,
+  context: SorbetExtensionContext,
   renames: readonly FileRename[],
 ) {
   const renameMap = new Map(
@@ -30,6 +30,7 @@ export async function handleRename(
       .map((entry) => [entry.oldUri.fsPath, entry]),
   );
   if (renameMap.size === 0) {
+    context.log.debug('Rename: No files to update.');
     return; // No files to update
   }
 

@@ -1,7 +1,11 @@
 import * as vscode from 'vscode';
 
 export class WorkspaceFolderOutputChannel implements vscode.OutputChannel {
-  public static normalizedLogValue(value: string, workspaceName: string, forceSingleLine?: true): string {
+  public static normalizedLogValue(
+    value: string,
+    workspaceName: string,
+    forceSingleLine?: true,
+  ): string {
     const single = vscode.workspace.workspaceFolders?.length === 1;
     let normalizedValue = value.trim();
     if (forceSingleLine) {
@@ -18,7 +22,7 @@ export class WorkspaceFolderOutputChannel implements vscode.OutputChannel {
     this.workspaceName = `[${workspaceFolder.name}]`;
   }
 
-  dispose(): void { }
+  dispose(): void {}
 
   append(value: string): void {
     this.outputChannel.append(

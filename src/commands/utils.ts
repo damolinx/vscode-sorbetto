@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import { safeActiveTextEditorUri } from '../common/utils';
+import { isSorbetWorkspace } from '../workspaceUtils';
 
 export async function executeCommandsInTerminal(options: {
   commands: string[];
@@ -25,19 +27,50 @@ export async function executeCommandsInTerminal(options: {
   return terminal;
 }
 
-export async function getTargetWorkspaceUri(): Promise<vscode.Uri | undefined> {
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  switch (workspaceFolders?.length) {
-    case 0:
-    case undefined:
-      return;
-    case 1:
-      return workspaceFolders[0].uri;
-    default:
-      return vscode.window
-        .showWorkspaceFolderPick({
+export function getTargetEditorUri(pathOrUri?: string | vscode.Uri): vscode.Uri | undefined {
+  const uri = pathOrUri
+    ? pathOrUri instanceof vscode.Uri
+      ? pathOrUri
+      : vscode.Uri.parse(pathOrUri)
+    : safeActiveTextEditorUri();
+  return uri;
+}
+
+export async function getTargetWorkspaceUri(
+  contextPathOrUri?: string | vscode.Uri,
+  options?: { forceSorbetWorkspace?: true },
+): Promise<vscode.Uri | undefined> {
+  let uri: vscode.Uri | undefined;
+  if (contextPathOrUri) {
+    const contextUri =
+      contextPathOrUri instanceof vscode.Uri
+        ? contextPathOrUri
+        : vscode.Uri.parse(contextPathOrUri);
+    uri = vscode.workspace.getWorkspaceFolder(contextUri)?.uri;
+  } else {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    switch (workspaceFolders?.length) {
+      case 0:
+      case undefined:
+        break;
+      case 1:
+        uri = workspaceFolders[0].uri;
+        break;
+      default:
+        // eslint-disable-next-line no-case-declarations
+        const workspaceFolder = await vscode.window.showWorkspaceFolderPick({
           placeHolder: 'Select a workspace folder',
-        })
-        .then((value) => value?.uri);
+        });
+        if (workspaceFolder) {
+          if (options?.forceSorbetWorkspace && !(await isSorbetWorkspace(workspaceFolder))) {
+            await vscode.window.showErrorMessage('Selected workspace is not Sorbet-enabled');
+          } else {
+            uri = workspaceFolder.uri;
+          }
+        }
+        break;
+    }
   }
+
+  return uri;
 }

@@ -95,15 +95,10 @@ export class SorbetClient implements vscode.Disposable {
   }
 
   /**
-   * Evaluates if {@link uri} is in scope of {@link workspaceFolder}. If {@link uri}
-   * is missing, it defaults to `vscode.window.activeTextEditor`'s.
+   * Evaluates if {@link uri} is in scope of {@link workspaceFolder}.
    */
-  public inScope(uri?: vscode.Uri): boolean {
-    const targetUri = uri ?? vscode.window.activeTextEditor?.document.uri;
-    return (
-      !!targetUri &&
-      vscode.workspace.getWorkspaceFolder(targetUri)?.name === this.workspaceFolder.name
-    );
+  public inScope(uri: vscode.Uri): boolean {
+    return vscode.workspace.getWorkspaceFolder(uri)?.name === this.workspaceFolder.name;
   }
 
   /**
@@ -348,7 +343,6 @@ export class SorbetClient implements vscode.Disposable {
           this._languageClientInitializer = undefined;
         }
       }
-
     }
 
     this.status = LspStatus.Disabled;

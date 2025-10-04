@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.4
+- Improve context editor and workspace tracking.
+- Update logs entries.
+
 ## 0.3.3
 - Improve tracking of process lifecycle. 
 - Improve reliability of `Restart Sorbet` command when Sorbet doesn't exit but does not start the LSP service either.

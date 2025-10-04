@@ -1,16 +1,14 @@
 import * as vscode from 'vscode';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { getTargetEditorUri } from './utils';
 
 export async function openSettings(
-  _context: SorbetExtensionContext,
+  context: SorbetExtensionContext,
   pathOrUri?: string | vscode.Uri,
   setting = 'sorbetto',
 ) {
-  const uri = pathOrUri
-    ? pathOrUri instanceof vscode.Uri
-      ? pathOrUri
-      : vscode.Uri.parse(pathOrUri)
-    : vscode.window.activeTextEditor?.document.uri;
+  const uri = getTargetEditorUri(pathOrUri);
+  context.log.debug('Open settings', uri ? vscode.workspace.asRelativePath(uri) : '');
 
   const inspectedConfiguration = vscode.workspace.getConfiguration(undefined, uri).inspect(setting);
   let command: string | undefined;

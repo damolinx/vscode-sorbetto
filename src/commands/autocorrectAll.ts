@@ -9,7 +9,10 @@ export async function autocorrectAll(
 ) {
   const configuration = context.clientManager.getClient(contextUri)?.configuration;
   if (!configuration) {
-    context.log.error('No Sorbet client found for autocorrect.', vscode.workspace);
+    context.log.error(
+      'AutocorrectAll: No Sorbet client.',
+      vscode.workspace.asRelativePath(contextUri),
+    );
     return;
   }
 

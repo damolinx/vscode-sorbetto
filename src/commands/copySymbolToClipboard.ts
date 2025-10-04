@@ -16,7 +16,7 @@ export async function copySymbolToClipboard(
 
   if (client?.status !== LspStatus.Running) {
     context.log.warn(
-      'CopySymbol: No active Sorbet client.',
+      'CopySymbol: No Sorbet client for editor.',
       vscode.workspace.asRelativePath(editor.document.uri),
     );
     return;
