@@ -7,7 +7,7 @@
 
 ## 0.3.3
 - Improve tracking of process lifecycle. 
-- Improve reliability of `Restart Sorbet` command when Sorbet doesn't exit but does not start the LSP service either.
+- Improve reliability of the **Restart Sorbet** command when Sorbet doesn't exit but does not start the LSP service either.
 
 ## 0.3.2
 - Fix: `sorbet` content provider does not resolve files after multi-root update.
