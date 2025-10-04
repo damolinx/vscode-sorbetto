@@ -113,10 +113,11 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   private render(client: SorbetClient) {
     const { lspConfigurationType } = client.configuration;
     const { operations } = this.context.statusProvider;
-    this.setConfig({ configType: lspConfigurationType });
+    this.setConfig({ client, configType: lspConfigurationType });
 
     if (client.status !== LspStatus.Error && operations.length > 0) {
       this.setStatus({
+        client,
         busy: true,
         status: operations.at(-1)?.description,
       });
@@ -124,6 +125,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
       switch (client.status) {
         case LspStatus.Disabled:
           this.setStatus({
+            client,
             command: StartCommand,
             severity: vscode.LanguageStatusSeverity.Warning,
             status: 'Disabled',
@@ -131,6 +133,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
           break;
         case LspStatus.Error:
           this.setStatus({
+            client,
             detail: 'Sorbet LSP ran into an error. See Output panel for details',
             severity: vscode.LanguageStatusSeverity.Error,
             status: 'Error',
@@ -138,23 +141,26 @@ export class SorbetLanguageStatus implements vscode.Disposable {
           break;
         case LspStatus.Initializing:
           this.setStatus({
+            client,
             busy: true,
             status: 'Initializing',
           });
           break;
         case LspStatus.Restarting:
           this.setStatus({
+            client,
             busy: true,
             detail: 'Sorbet is restarting',
             status: 'Initializing',
           });
           break;
         case LspStatus.Running:
-          this.setStatus({ status: 'Idle' });
+          this.setStatus({ client, status: 'Idle' });
           break;
         default:
           this.context.log.error('Invalid ServerStatus', client.status);
           this.setStatus({
+            client,
             detail: `Unknown Status: ${client.status}`,
             severity: vscode.LanguageStatusSeverity.Error,
             status: 'Unknown',
@@ -164,16 +170,17 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     }
   }
 
-  private setConfig(options: { configType?: LspConfigurationType }): void {
+  private setConfig(options: { client?: SorbetClient; configType?: LspConfigurationType }): void {
     const titleCasedConfig = options.configType
       ? options.configType.charAt(0).toUpperCase() + options.configType.slice(1)
       : '';
     this.configItem.command = OpenConfigurationSettings;
-    this.configItem.detail = 'Sorbet Configuration';
+    this.configItem.detail = this.getWorkspaceAwareDetail('Sorbet Configuration', options.client);
     this.configItem.text = `$(ruby) ${titleCasedConfig}`;
   }
 
   private setStatus(options: {
+    client?: SorbetClient;
     busy?: boolean;
     command?: vscode.Command;
     detail?: string;
@@ -183,7 +190,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     const {
       busy = false,
       command = ShowOutputCommand,
-      detail = 'Sorbet Status',
+      detail = this.getWorkspaceAwareDetail('Sorbet Status', options.client),
       severity = vscode.LanguageStatusSeverity.Information,
       status = 'Unknown',
     } = options;
@@ -192,5 +199,11 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     this.statusItem.detail = detail;
     this.statusItem.severity = severity;
     this.statusItem.text = `$(ruby) ${status}`;
+  }
+
+  private getWorkspaceAwareDetail(prefix: string, client?: SorbetClient): string | undefined {
+    return (client && this.context.clientManager.clientCount > 1)
+      ? `${prefix} (${client.workspaceFolder.name})`
+      : prefix;
   }
 }

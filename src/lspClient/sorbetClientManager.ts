@@ -62,6 +62,10 @@ export class SorbetClientManager implements vscode.Disposable {
     return true;
   }
 
+  public get clientCount(): number {
+    return this.clients.size;
+  }
+
   public getClient(uri: vscode.Uri): SorbetClient | undefined {
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
     if (!workspaceFolder) {

@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.3.4
+- Language status item entries show the target workspace name (multi-root with multiple Ruby-Sorbet workspaces).
 - Improve context editor and workspace tracking.
 - Update logs entries.
 
