@@ -202,7 +202,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   }
 
   private getWorkspaceAwareDetail(prefix: string, client?: SorbetClient): string | undefined {
-    return (client && this.context.clientManager.clientCount > 1)
+    return client && this.context.clientManager.clientCount > 1
       ? `${prefix} (${client.workspaceFolder.name})`
       : prefix;
   }

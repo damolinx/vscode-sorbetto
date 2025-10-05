@@ -14,6 +14,7 @@ import { SorbetClientConfiguration } from './configuration/sorbetClientConfigura
 import { InitializeProcessResult, LanguageClientCreator } from './languageClientCreator';
 import { RestartWatcher } from './restartWatcher';
 import { ShowOperationEvent } from './showOperationEvent';
+import { SorbetClientId } from './sorbetClientId';
 import { StatusChangedEvent } from './statusChangedEvent';
 
 const THROTTLE_CONFIG = {
@@ -38,14 +39,20 @@ export class SorbetClient implements vscode.Disposable {
   public readonly configuration: SorbetClientConfiguration;
   private readonly context: SorbetExtensionContext;
   private readonly disposables: vscode.Disposable[];
+  public readonly id: SorbetClientId;
   private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
   private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
   private readonly restartWatcher: RestartWatcher;
   public readonly workspaceFolder: vscode.WorkspaceFolder;
 
-  constructor(context: SorbetExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
+  constructor(
+    id: SorbetClientId,
+    context: SorbetExtensionContext,
+    workspaceFolder: vscode.WorkspaceFolder,
+  ) {
     this._status = LspStatus.Disabled;
     this.context = context;
+    this.id = id;
     this.onShowOperationEmitter = new vscode.EventEmitter();
     this.onStatusChangedEmitter = new vscode.EventEmitter();
     this.workspaceFolder = workspaceFolder;

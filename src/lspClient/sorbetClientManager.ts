@@ -55,7 +55,7 @@ export class SorbetClientManager implements vscode.Disposable {
     if (!(await isSorbetWorkspace(workspaceFolder))) {
       return false;
     }
-    const client = new SorbetClient(this.context, workspaceFolder);
+    const client = new SorbetClient(clientId, this.context, workspaceFolder);
     this.clients.set(clientId, client);
     this.onClientAddedEmitter.fire(client);
     await client.start();
@@ -71,7 +71,10 @@ export class SorbetClientManager implements vscode.Disposable {
     if (!workspaceFolder) {
       return undefined;
     }
-    const clientId = createClientId(workspaceFolder);
+    return this.getClientById(createClientId(workspaceFolder));
+  }
+
+  public getClientById(clientId: SorbetClientId) {
     return this.clients.get(clientId);
   }
 
