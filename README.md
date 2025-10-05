@@ -60,7 +60,7 @@ The following entries are available on the language status item:
 - **Sorbet Configuration**: shows the active Sorbet LSP configuration name as set via `sorbetto.sorbetLspConfiguration`, along with a quick **Configure** action to modify it.
 - **Sorbet Status**: displays the current status of the Sorbet LSP, including a busy indicator. The **Output** action brings the **Sorbetto** Output pane into view for checking log entries.
 
-> **Note** VS Code only displays the language status item when an editor for the matching language is open. You can extend this behavior to any-language editors by enabling the **Sorbetto: Always Show Status Items** setting. However, at least one editor must still be open for the item to appear.
+> **Note** VS Code displays the language status item only when an editor for the matching language is open. You can extend this behavior to editors of any language by enabling the **Sorbetto: Always Show Status Items** setting. However, at least one editor must still be open for the item to appear.
 
 [↑ Back to top](#table-of-contents)
 
