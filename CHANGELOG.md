@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.3.5
+- Add **Sorbetto: Start Sorbet** and **Sorbetto: Stop Sorbet** commands.
+- Improved lifecycle methods logging. 
 - Fix: Tracking of active editor fails in a multi-root workspace when there are multi-tabgroups.
 
 ## 0.3.4

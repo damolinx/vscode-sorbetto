@@ -64,7 +64,19 @@
         "command": "sorbetto.restart",
         "title": "Restart Sorbet",
         "category": "Sorbetto",
-        "enablement": "workbenchState != empty"
+        "enablement": "sorbetto:active && sorbetto:sorbetStatus != disabled"
+      },
+      {
+        "command": "sorbetto.start",
+        "title": "Start Sorbet",
+        "category": "Sorbetto",
+        "enablement": "sorbetto:active && (!sorbetto:sorbetStatus || sorbetto:sorbetStatus == disabled)"
+      },
+      {
+        "command": "sorbetto.stop",
+        "title": "Stop Sorbet",
+        "category": "Sorbetto",
+        "enablement": "sorbetto:active && sorbetto:sorbetStatus != disabled"
       },
       {
         "command": "sorbetto.runRubyFile",

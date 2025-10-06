@@ -49,3 +49,13 @@ export const SORBET_SAVE_PACKAGE_FILES_ID = 'sorbet.savePackageFiles';
  * Restart Sorbet.
  */
 export const SORBET_RESTART_ID = `${EXTENSION_PREFIX}.restart`;
+
+/**
+ * Start Sorbet.
+ */
+export const SORBET_START_ID = `${EXTENSION_PREFIX}.start`;
+
+/**
+ * Stop Sorbet.
+ */
+export const SORBET_STOP_ID = `${EXTENSION_PREFIX}.stop`;

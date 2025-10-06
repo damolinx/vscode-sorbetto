@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import { createExtensionApi } from './api/extensionApiProvider';
-import { mapStatus } from './api/status';
 import { autocorrectAll } from './commands/autocorrectAll';
 import { bundleInstall } from './commands/bundleInstall';
 import * as cmdIds from './commands/commandIds';
@@ -19,18 +18,15 @@ import { registerRequireDefinitionProvider } from './providers/requireDefinition
 import { registerSorbetContentProvider } from './providers/sorbetContentProvider';
 import { registerTypedOptionsCompletionProvider } from './providers/typedOptionsCompletionProvider';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
+import { registerContextValueHandlers } from './sorbetExtensionContextValues';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
-import { LspStatus } from './types';
 
 /**
  * Extension entrypoint.
  */
 export async function activate(extensionContext: vscode.ExtensionContext) {
   const context = new SorbetExtensionContext(extensionContext);
-  extensionContext.subscriptions.push(
-    context,
-    context.statusProvider.onStatusChanged(({ status }) => setSorbetStatusContext(status)),
-  );
+  extensionContext.subscriptions.push(context, ...registerContextValueHandlers(context));
 
   // Register Language Status Item
   const statusBarEntry = new SorbetLanguageStatus(context);
@@ -69,7 +65,13 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
       context.logOutputChannel.show(preserveFocus ?? true),
     ),
     rc(cmdIds.SORBET_RESTART_ID, (pathOrUri?: string | vscode.Uri) =>
-      restartSorbet(context, pathOrUri),
+      restartSorbet(context, 'restart', pathOrUri),
+    ),
+    rc(cmdIds.SORBET_START_ID, (pathOrUri?: string | vscode.Uri) =>
+      restartSorbet(context, 'start', pathOrUri),
+    ),
+    rc(cmdIds.SORBET_STOP_ID, (pathOrUri?: string | vscode.Uri) =>
+      restartSorbet(context, 'stop', pathOrUri),
     ),
     rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_ID, () => savePackageFiles(context)),
   );
@@ -87,9 +89,6 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     );
   }
 
-  // Initialize: start in disabled state until client reports status.
-  setSorbetStatusContext(LspStatus.Disabled);
-
   // Initialize client manager with existing workspace folders.
   vscode.workspace.workspaceFolders?.forEach((folder) =>
     context.clientManager.addWorkspace(folder),
@@ -97,8 +96,4 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
 
   // Extension API
   return createExtensionApi(context);
-}
-
-export function setSorbetStatusContext(status: LspStatus) {
-  vscode.commands.executeCommand('setContext', 'sorbetto:sorbetStatus', mapStatus(status));
 }

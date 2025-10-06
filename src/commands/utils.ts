@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { safeActiveTextEditorUri } from '../common/utils';
 import { isSorbetWorkspace } from '../workspaceUtils';
+import { SETUP_WORKSPACE_ID } from './commandIds';
 
 export async function executeCommandsInTerminal(options: {
   commands: string[];
@@ -63,7 +64,20 @@ export async function getTargetWorkspaceUri(
         });
         if (workspaceFolder) {
           if (options?.forceSorbetWorkspace && !(await isSorbetWorkspace(workspaceFolder))) {
-            await vscode.window.showErrorMessage('Selected workspace is not Sorbet-enabled');
+            const setupWorkspace: vscode.MessageItem = { title: 'Setup Workspace' };
+            const option = await vscode.window.showErrorMessage(
+              `${workspaceFolder.name} is not Sorbet-enabled`,
+              {
+                modal: true,
+                detail:
+                  "A workspace is considered Sorbed-enabled if it contains a 'sorbet/' configuration folder.",
+              },
+              setupWorkspace,
+              { title: 'Cancel', isCloseAffordance: true },
+            );
+            if (option === setupWorkspace) {
+              await vscode.commands.executeCommand(SETUP_WORKSPACE_ID, workspaceFolder.uri);
+            }
           } else {
             uri = workspaceFolder.uri;
           }
