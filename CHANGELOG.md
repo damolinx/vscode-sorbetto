@@ -1,7 +1,10 @@
 # Changelog
 
+## 0.3.5
+- Fix: Tracking of active editor fails in a multi-root workspace when there are multi-tabgroups.
+
 ## 0.3.4
-- Language status item entries show the target workspace name (multi-root with multiple Ruby-Sorbet workspaces).
+- Language status item entries show the target workspace name (only on multi-root with multiple Ruby-Sorbet workspaces).
 - Improve context editor and workspace tracking.
 - Update logs entries.
 

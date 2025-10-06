@@ -17,7 +17,11 @@ export function debounce<T extends (...args: any[]) => void>(fn: T, delayMs = 25
 export function onSafeActiveTextEditorChanged(
   callback: (editor: vscode.TextEditor | undefined) => void,
 ): vscode.Disposable {
-  return vscode.window.tabGroups.onDidChangeTabs(() => callback(safeActiveTextEditor()));
+  return vscode.window.tabGroups.onDidChangeTabGroups(({ changed }) => {
+    if (changed.length === 1 && changed[0].isActive) {
+      callback(safeActiveTextEditor());
+    }
+  });
 }
 
 /**
