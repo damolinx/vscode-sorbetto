@@ -13,13 +13,13 @@ export async function restartSorbet(
     forceSorbetWorkspace: true,
   });
   if (!uri) {
-    context.log.debug('No target workspace.');
+    context.log.debug('No target workspace.', action);
     return; // No target workspace
   }
 
   const client = context.clientManager.getClient(uri);
   if (!client) {
-    context.log.info('RestartSorbet: No Sorbet client for selected workspace.', uri.toString(true));
+    context.log.info('No Sorbet client for selected workspace.', action, uri.toString(true));
     return;
   }
 

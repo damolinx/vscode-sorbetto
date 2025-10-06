@@ -2,6 +2,7 @@
 
 ## 0.3.5
 - Add **Sorbetto: Start Sorbet** and **Sorbetto: Stop Sorbet** commands.
+- **Setup Workspace** now will attempt to start Sorbet after setup terminal is dismissed.
 - Improved lifecycle methods logging. 
 - Fix: Tracking of active editor fails in a multi-root workspace when there are multi-tabgroups.
 

@@ -47,8 +47,13 @@ export async function getTargetWorkspaceUri(
       contextPathOrUri instanceof vscode.Uri
         ? contextPathOrUri
         : vscode.Uri.parse(contextPathOrUri);
-    uri = vscode.workspace.getWorkspaceFolder(contextUri)?.uri;
-  } else {
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(contextUri);
+    if (workspaceFolder && (await isSorbetWorkspace(workspaceFolder))) {
+      uri = workspaceFolder.uri;
+    }
+  }
+
+  if (!uri) {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     switch (workspaceFolders?.length) {
       case 0:
@@ -64,20 +69,7 @@ export async function getTargetWorkspaceUri(
         });
         if (workspaceFolder) {
           if (options?.forceSorbetWorkspace && !(await isSorbetWorkspace(workspaceFolder))) {
-            const setupWorkspace: vscode.MessageItem = { title: 'Setup Workspace' };
-            const option = await vscode.window.showErrorMessage(
-              `${workspaceFolder.name} is not Sorbet-enabled`,
-              {
-                modal: true,
-                detail:
-                  "A workspace is considered Sorbed-enabled if it contains a 'sorbet/' configuration folder.",
-              },
-              setupWorkspace,
-              { title: 'Cancel', isCloseAffordance: true },
-            );
-            if (option === setupWorkspace) {
-              await vscode.commands.executeCommand(SETUP_WORKSPACE_ID, workspaceFolder.uri);
-            }
+            await showNotSorbetEnabledWarning(workspaceFolder);
           } else {
             uri = workspaceFolder.uri;
           }
@@ -87,4 +79,21 @@ export async function getTargetWorkspaceUri(
   }
 
   return uri;
+}
+
+export async function showNotSorbetEnabledWarning(workspaceFolder: vscode.WorkspaceFolder) {
+  const setupWorkspace: vscode.MessageItem = { title: 'Setup Workspace' };
+  const option = await vscode.window.showErrorMessage(
+    `${workspaceFolder.name} is not Sorbet-enabled`,
+    {
+      modal: true,
+      detail:
+        "A workspace is considered Sorbed-enabled if it contains a 'sorbet/' configuration folder.",
+    },
+    setupWorkspace,
+    { title: 'Cancel', isCloseAffordance: true },
+  );
+  if (option === setupWorkspace) {
+    await vscode.commands.executeCommand(SETUP_WORKSPACE_ID, workspaceFolder.uri);
+  }
 }

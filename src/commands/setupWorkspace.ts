@@ -47,7 +47,13 @@ export async function setupWorkspace(
       const disposable = vscode.window.onDidCloseTerminal(async (closedTerminal) => {
         if (closedTerminal === terminal) {
           disposable.dispose();
-          await context.clientManager.getClient(uri)?.start();
+          const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+          if (workspaceFolder) {
+            const added = await context.clientManager.addWorkspace(workspaceFolder);
+            if (added) {
+              await context.clientManager.getClient(uri)?.start();
+            }
+          }
         }
       });
     }
