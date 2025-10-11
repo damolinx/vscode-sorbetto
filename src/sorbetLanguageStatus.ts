@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { OPEN_SETTINGS_ID, SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commands/commandIds';
-import { onMainAreaActiveTextEditorChanged, mainAreaActiveTextEditorUri } from './common/utils';
+import { onMainAreaActiveTextEditorChanged, mainAreaActiveEditorUri } from './common/utils';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/documentSelectors';
 import { LspConfigurationType } from './lspClient/configuration/lspConfigurationType';
 import { SorbetClient } from './lspClient/sorbetClient';
@@ -50,7 +50,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
 
     this.disposables = [
       onMainAreaActiveTextEditorChanged((editor) =>
-        this.handleEditorOrStatusChange(undefined, editor),
+        this.handleEditorOrStatusChange(editor?.document.uri),
       ),
       this.context.statusProvider.onShowOperation(({ client }) =>
         this.handleEditorOrStatusChange(client),
@@ -87,14 +87,16 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     return alwaysShowStatus ? '*' : SORBET_DOCUMENT_SELECTOR;
   }
 
-  private handleEditorOrStatusChange(client?: SorbetClient, editor?: vscode.TextEditor) {
-    const targetUri = editor?.document.uri ?? mainAreaActiveTextEditorUri();
-    const targetClient =
-      targetUri && client?.inScope(targetUri)
-        ? client
-        : targetUri
-          ? this.context.clientManager.getClient(targetUri)
-          : undefined;
+  private handleEditorOrStatusChange(clientOrContextUri?: SorbetClient | vscode.Uri) {
+    let targetClient: SorbetClient | undefined;
+    if (clientOrContextUri instanceof SorbetClient) {
+      targetClient = clientOrContextUri;
+    } else if (this.context.clientManager.clientCount === 1) {
+      [targetClient] = this.context.clientManager.getClients();
+    } else {
+      const contextUri = clientOrContextUri ?? mainAreaActiveEditorUri();
+      targetClient = contextUri && this.context.clientManager.getClient(contextUri);
+    }
 
     if (targetClient) {
       if (this.currentClient?.client !== targetClient) {

@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.3.6
+- Improved tracking of context editors.
 - Fix: Tracking of active editor from 0.3.5 was incomplete.
 
 ## 0.3.5

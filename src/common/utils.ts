@@ -25,8 +25,7 @@ export function onMainAreaActiveTextEditorChanged(
 }
 
 /**
- * Returns the URI of the active text editor only if it's a main-area file editor,
- * excludes Output, Debug Console, and views.
+ * Returns the URI of the active {@link vscode.TextEditor} in the editor-area.
  */
 export function mainAreaActiveTextEditorUri(): vscode.Uri | undefined {
   let uri: vscode.Uri | undefined;
@@ -36,6 +35,32 @@ export function mainAreaActiveTextEditorUri(): vscode.Uri | undefined {
     if (tab.input instanceof vscode.TabInputText) {
       uri = tab.input.uri;
     } else if (tab.input instanceof vscode.TabInputTextDiff) {
+      uri = tab.input.modified ?? tab.input.original;
+    }
+  }
+
+  return uri;
+}
+
+/**
+ * Returns the URI of the active editor in the editor-area. It might not be a
+ * {@link vscode.TextEditor}, prefer {@link mainAreaActiveTextEditorUri} if
+ * that is needed.
+ */
+export function mainAreaActiveEditorUri(): vscode.Uri | undefined {
+  let uri: vscode.Uri | undefined;
+  const tab = vscode.window.tabGroups.activeTabGroup.activeTab;
+  if (tab) {
+    if (
+      tab.input instanceof vscode.TabInputText ||
+      tab.input instanceof vscode.TabInputCustom ||
+      tab.input instanceof vscode.TabInputNotebook
+    ) {
+      uri = tab.input.uri;
+    } else if (
+      tab.input instanceof vscode.TabInputTextDiff ||
+      tab.input instanceof vscode.TabInputNotebookDiff
+    ) {
       uri = tab.input.modified ?? tab.input.original;
     }
   }
