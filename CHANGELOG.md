@@ -1,13 +1,13 @@
 # Changelog
 
 ## 0.3.6
-- Improved tracking of context editors.
+- Improve tracking of context editors.
 - Fix: Tracking of active editor from 0.3.5 was incomplete.
 
 ## 0.3.5
 - Add **Sorbetto: Start Sorbet** and **Sorbetto: Stop Sorbet** commands.
 - **Setup Workspace** now will attempt to start Sorbet after setup terminal is dismissed.
-- Improved lifecycle methods logging. 
+- Improve lifecycle methods logging. 
 - Fix: Tracking of active editor fails in a multi-root workspace when there are multi-tabgroups.
 
 ## 0.3.4
