@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { mapStatus, SorbetStatus } from './api/status';
-import { onSafeActiveTextEditorChanged, safeActiveTextEditorUri } from './common/utils';
+import { onMainAreaActiveTextEditorChanged, mainAreaActiveTextEditorUri } from './common/utils';
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 
 export function registerContextValueHandlers(context: SorbetExtensionContext): vscode.Disposable[] {
@@ -14,12 +14,12 @@ function registerSorbetClientStatus({
   const contextKey = 'sorbetto:sorbetStatus';
   setContext<SorbetStatus | undefined>(contextKey, undefined);
   return [
-    onSafeActiveTextEditorChanged((editor) => {
+    onMainAreaActiveTextEditorChanged((editor) => {
       const status = editor && clientManager.getClient(editor.document.uri)?.status;
       setContext<SorbetStatus | undefined>(contextKey, status && mapStatus(status));
     }),
     statusProvider.onStatusChanged(({ client }) => {
-      const currentEditor = safeActiveTextEditorUri();
+      const currentEditor = mainAreaActiveTextEditorUri();
       if (currentEditor && client.inScope(currentEditor)) {
         setContext<SorbetStatus | undefined>(contextKey, mapStatus(client.status));
       }

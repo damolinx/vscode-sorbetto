@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { debounce, onSafeActiveTextEditorChanged } from '../common/utils';
+import { onMainAreaActiveTextEditorChanged } from '../common/utils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { isSorbetWorkspace } from '../workspaceUtils';
 import { SorbetClient } from './sorbetClient';
@@ -21,18 +21,16 @@ export class SorbetClientManager implements vscode.Disposable {
     this.disposables = [
       this.onClientAddedEmitter,
       this.onClientRemovedEmitter,
-      onSafeActiveTextEditorChanged(
-        debounce(async (editor) => {
-          if (editor?.document.languageId !== 'ruby') {
-            return;
-          }
-          const workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
-          if (!workspaceFolder) {
-            return;
-          }
-          await this.addWorkspace(workspaceFolder);
-        }),
-      ),
+      onMainAreaActiveTextEditorChanged(async (editor) => {
+        if (editor?.document.languageId !== 'ruby') {
+          return;
+        }
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+        if (!workspaceFolder) {
+          return;
+        }
+        await this.addWorkspace(workspaceFolder);
+      }),
       vscode.workspace.onDidChangeWorkspaceFolders(async (event) => {
         event.removed.forEach((folder) => this.removeWorkspace(folder));
         await Promise.allSettled(event.added.map((folder) => this.addWorkspace(folder)));

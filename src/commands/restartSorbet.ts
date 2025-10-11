@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { safeActiveTextEditorUri } from '../common/utils';
+import { mainAreaActiveTextEditorUri } from '../common/utils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { OPEN_SETTINGS_ID } from './commandIds';
 import { getTargetWorkspaceUri } from './utils';
@@ -9,7 +9,7 @@ export async function restartSorbet(
   action: 'start' | 'stop' | 'restart',
   pathOrUri?: string | vscode.Uri,
 ) {
-  const uri = await getTargetWorkspaceUri(pathOrUri ?? safeActiveTextEditorUri(), {
+  const uri = await getTargetWorkspaceUri(pathOrUri ?? mainAreaActiveTextEditorUri(), {
     forceSorbetWorkspace: true,
   });
   if (!uri) {

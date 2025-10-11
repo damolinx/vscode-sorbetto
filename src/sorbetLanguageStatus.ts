@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { OPEN_SETTINGS_ID, SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commands/commandIds';
-import { onSafeActiveTextEditorChanged, safeActiveTextEditorUri } from './common/utils';
+import { onMainAreaActiveTextEditorChanged, mainAreaActiveTextEditorUri } from './common/utils';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/documentSelectors';
 import { LspConfigurationType } from './lspClient/configuration/lspConfigurationType';
 import { SorbetClient } from './lspClient/sorbetClient';
@@ -49,7 +49,9 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     this.setStatus({ status: 'Disabled', command: StartCommand });
 
     this.disposables = [
-      onSafeActiveTextEditorChanged((editor) => this.handleEditorOrStatusChange(undefined, editor)),
+      onMainAreaActiveTextEditorChanged((editor) =>
+        this.handleEditorOrStatusChange(undefined, editor),
+      ),
       this.context.statusProvider.onShowOperation(({ client }) =>
         this.handleEditorOrStatusChange(client),
       ),
@@ -86,7 +88,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   }
 
   private handleEditorOrStatusChange(client?: SorbetClient, editor?: vscode.TextEditor) {
-    const targetUri = editor?.document.uri || safeActiveTextEditorUri();
+    const targetUri = editor?.document.uri ?? mainAreaActiveTextEditorUri();
     const targetClient =
       targetUri && client?.inScope(targetUri)
         ? client

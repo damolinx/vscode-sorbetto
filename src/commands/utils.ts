@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { safeActiveTextEditorUri } from '../common/utils';
+import { mainAreaActiveTextEditorUri } from '../common/utils';
 import { isSorbetWorkspace } from '../workspaceUtils';
 import { SETUP_WORKSPACE_ID } from './commandIds';
 
@@ -33,7 +33,7 @@ export function getTargetEditorUri(pathOrUri?: string | vscode.Uri): vscode.Uri 
     ? pathOrUri instanceof vscode.Uri
       ? pathOrUri
       : vscode.Uri.parse(pathOrUri)
-    : safeActiveTextEditorUri();
+    : mainAreaActiveTextEditorUri();
   return uri;
 }
 

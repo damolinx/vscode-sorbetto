@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.6
+- Fix: Tracking of active editor from 0.3.5 was incomplete.
+
 ## 0.3.5
 - Add **Sorbetto: Start Sorbet** and **Sorbetto: Stop Sorbet** commands.
 - **Setup Workspace** now will attempt to start Sorbet after setup terminal is dismissed.
