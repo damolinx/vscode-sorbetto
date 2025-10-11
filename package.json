@@ -257,8 +257,6 @@
     ],
     "configurationDefaults": {
       "[ruby]": {
-        "editor.defaultFormatter": "damolinx.damolinx-sorbetto",
-        "editor.formatOnSave": true,
         "editor.wordBasedSuggestions": "off"
       }
     },
