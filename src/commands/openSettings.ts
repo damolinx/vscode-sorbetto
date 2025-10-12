@@ -1,16 +1,19 @@
 import * as vscode from 'vscode';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
-import { getTargetEditorUri } from './utils';
+import { getTargetWorkspaceUri } from './utils';
+import { mainAreaActiveEditorUri } from '../common/utils';
 
 export async function openSettings(
   context: SorbetExtensionContext,
-  pathOrUri?: string | vscode.Uri,
+  contextPathOrUri?: string | vscode.Uri,
   setting = 'sorbetto',
 ) {
-  const uri = getTargetEditorUri(pathOrUri);
-  context.log.debug('Open settings', uri ? vscode.workspace.asRelativePath(uri) : '');
+  const contextUri = contextPathOrUri
+    ? contextPathOrUri instanceof vscode.Uri ? contextPathOrUri : vscode.Uri.parse(contextPathOrUri)
+    : (mainAreaActiveEditorUri() ?? await getTargetWorkspaceUri());
+  context.log.debug('Open settings', contextUri ? vscode.workspace.asRelativePath(contextUri) : '');
 
-  const inspectedConfiguration = vscode.workspace.getConfiguration(undefined, uri).inspect(setting);
+  const inspectedConfiguration = vscode.workspace.getConfiguration(undefined, contextUri).inspect(setting);
   let command: string | undefined;
   if (inspectedConfiguration?.workspaceFolderValue !== undefined) {
     command = 'workbench.action.openFolderSettings';
@@ -20,8 +23,5 @@ export async function openSettings(
     command = 'workbench.action.openSettings';
   }
 
-  if (uri) {
-    await vscode.window.showTextDocument(uri, { preview: true });
-  }
   await vscode.commands.executeCommand(command, setting);
 }
