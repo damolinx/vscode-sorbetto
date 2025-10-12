@@ -133,6 +133,12 @@ export class SorbetClient implements vscode.Disposable {
           highlightUntyped: this.configuration.highlightUntypedCode,
         });
         break;
+      case 'highlightUntypedCodeDiagnosticSeverity':
+        await this.sendDidChangeConfigurationNotification({
+          highlightUntypedDiagnosticSeverity:
+            this.configuration.highlightUntypedCodeDiagnosticSeverity,
+        });
+        break;
       default:
         await this.restart();
         break;

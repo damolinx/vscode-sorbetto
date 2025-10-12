@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.3.6
+- Handle `highlightUntypedDiagnosticSeverity` setting changes via `workspace/didChangeConfiguration` notification.
 - Improved tracking of context by looking at additional types of editors.
 - Fix: Tracking of Sorbet operations not multi-root aware.
 - Fix: Tracking of active editor from 0.3.5 was incomplete.
