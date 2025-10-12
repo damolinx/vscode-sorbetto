@@ -4,6 +4,7 @@
 - Improved tracking of context by looking at additional types of editors.
 - Fix: Tracking of Sorbet operations not multi-root aware.
 - Fix: Tracking of active editor from 0.3.5 was incomplete.
+- Fix: `Disabled` configuration would show **Error** instead of **Disabled** as status.
 
 ## 0.3.5
 - Add **Sorbetto: Start Sorbet** and **Sorbetto: Stop Sorbet** commands.

@@ -247,13 +247,16 @@ export class SorbetClient implements vscode.Disposable {
   }
 
   /**
-   * Starts the Sorbet LSP client if it is not already running.
+   * Starts the Sorbet LSP client if it is not already running, or disabled.
    */
   public async start() {
     const logPrefix =
       this.context.clientManager.clientCount > 1 ? `[${this.workspaceFolder.name}] ` : '';
     if (this.languageClient) {
       this.context.log.info(`${logPrefix}Ignored start request, already running.`);
+      return;
+    } else if (this.configuration.lspConfigurationType === LspConfigurationType.Disabled) {
+      this.context.log.info(`${logPrefix}Ignored start request, disabled by configuration.`);
       return;
     }
 
