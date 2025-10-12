@@ -1,4 +1,4 @@
-import * as vscode from 'vscode';
+import * as vslc from 'vscode-languageclient';
 import { HighlightType } from './highlightType';
 
 /**
@@ -13,17 +13,20 @@ export interface InitializationOptions {
    */
   enableTypedFalseCompletionNudges?: boolean;
   /**
-   * Whether to highlight usages of untyped. Default: {@link HighlightType.Everywhere}.
+   * Whether to highlight usages of untyped. Default: {@link HighlightType.Disabled}.
    * See https://sorbet.org/docs/vscode#sorbethighlightuntyped
    */
   highlightUntyped?: boolean | HighlightType;
   /**
-   * {@link DiagnosticSeverity Severity} to highlight usages of untyped at. Applies only when
-   * {@link highlightUntyped} is enabled. Defaults to {@link DiagnosticSeverity.Warning}.
-   * when undefined.
+   * {@link vslc.DiagnosticSeverity Severity} to highlight usages of untyped at.
+   * Applies {@link highlightUntyped} is enabled. Defaults to
+   * {@link vslc.DiagnosticSeverity.Warning} when `undefined`.
    * See https://sorbet.org/docs/vscode#sorbethighlightuntypeddiagnosticseverity
+   *
+   * **Important**: `vscode` uses 0-based severities, `vslc` uses 1-based so they
+   * are only interchangeable by name.
    */
-  highlightUntypedDiagnosticSeverity?: vscode.DiagnosticSeverity;
+  highlightUntypedDiagnosticSeverity?: vslc.DiagnosticSeverity;
   /**
    * Whether to show Sorbet server statuses.
    * See https://sorbet.org/docs/server-status#api

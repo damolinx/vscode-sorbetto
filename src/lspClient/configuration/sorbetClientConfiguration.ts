@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as vslc from 'vscode-languageclient';
 import { Configuration } from '../../common/configuration';
 import { EXTENSION_PREFIX } from '../../constants';
 import { HighlightType } from '../../lsp/highlightType';
@@ -25,7 +26,7 @@ export class SorbetClientConfiguration extends Configuration {
       vscode.workspace.onDidChangeConfiguration(({ affectsConfiguration }) => {
         if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetLspConfiguration`, this.scope)) {
           this.onDidChangeLspConfigurationEmitter.fire();
-        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetTypecheckCommand`)) {
+        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetTypecheckCommand`, this.scope)) {
           if (
             ![LspConfigurationType.Custom, LspConfigurationType.Disabled].includes(
               this.lspConfigurationType,
@@ -33,13 +34,15 @@ export class SorbetClientConfiguration extends Configuration {
           ) {
             this.onDidChangeLspConfigurationEmitter.fire();
           }
-        } else if (affectsConfiguration(`${EXTENSION_PREFIX}.sorbetLspCustomConfiguration`)) {
+        } else if (
+          affectsConfiguration(`${EXTENSION_PREFIX}.sorbetLspCustomConfiguration`, this.scope)
+        ) {
           if (this.lspConfigurationType === LspConfigurationType.Custom) {
             this.onDidChangeLspConfigurationEmitter.fire();
           }
         } else {
           const lspOption = LspOptionConfigurationKeys.find((option) =>
-            affectsConfiguration(`${EXTENSION_PREFIX}.${option}`),
+            affectsConfiguration(`${EXTENSION_PREFIX}.${option}`, this.scope),
           );
           if (lspOption) {
             this.onDidChangeLspOptionsEmitter.fire(lspOption);
@@ -76,11 +79,11 @@ export class SorbetClientConfiguration extends Configuration {
   /**
    * {@link DiagnosticSeverity Severity} to highlight usages of untyped at.
    */
-  public get highlightUntypedCodeDiagnosticSeverity(): vscode.DiagnosticSeverity | undefined {
-    const strValue = this.getValue<string>('highlightUntypedCodeDiagnosticSeverity');
-    return strValue !== undefined
-      ? vscode.DiagnosticSeverity[strValue as keyof typeof vscode.DiagnosticSeverity]
-      : undefined;
+  public get highlightUntypedCodeDiagnosticSeverity(): vslc.DiagnosticSeverity | undefined {
+    const strValue = this.getValue<keyof typeof vslc.DiagnosticSeverity>(
+      'highlightUntypedCodeDiagnosticSeverity',
+    );
+    return strValue !== undefined ? vslc.DiagnosticSeverity[strValue] : undefined;
   }
 
   public override isEnabled(section: ToggleConfigurationKey, defaultValue = false): boolean {

@@ -1,11 +1,14 @@
 # Changelog
 
 ## 0.3.6
-- Handle `highlightUntypedDiagnosticSeverity` setting changes via `workspace/didChangeConfiguration` notification.
-- Improved tracking of context by looking at additional types of editors.
-- Fix: Tracking of Sorbet operations not multi-root aware.
+- Expand context tracking to include additional editor types for more accurate resolution.
+- Scope configuration-changed events to appropriate clients to reduce noise.
+- Handle `highlightUntypedDiagnosticSeverity` setting change is handled via `workspace/didChangeConfiguration` notification vs a client restart.
+  - Documentation states this is possible but Sorbet incorrectly reports only `highlightUntyped` is supported in error messages.
+- Fix: VSCode and LSP's `DiagnosticSeverity` are incompatible by value as they are 0- and 1- based enums respectively.
+- Fix: Tracking of Sorbet operations is not multi-root aware.
 - Fix: Tracking of active editor from 0.3.5 was incomplete.
-- Fix: `Disabled` configuration would show **Error** instead of **Disabled** as status.
+- Fix: `Disabled` configuration shows **Error** status instead of expected **Disabled**.
 
 ## 0.3.5
 - Add **Sorbetto: Start Sorbet** and **Sorbetto: Stop Sorbet** commands.

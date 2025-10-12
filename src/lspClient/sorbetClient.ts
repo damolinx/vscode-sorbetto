@@ -129,15 +129,19 @@ export class SorbetClient implements vscode.Disposable {
   private async handleLspOptionChanged(option: string): Promise<void> {
     switch (option) {
       case 'highlightUntypedCode':
-        await this.sendDidChangeConfigurationNotification({
-          highlightUntyped: this.configuration.highlightUntypedCode,
-        });
+        if (this.configuration.highlightUntypedCode) {
+          await this.sendDidChangeConfigurationNotification({
+            highlightUntyped: this.configuration.highlightUntypedCode,
+          });
+        }
         break;
       case 'highlightUntypedCodeDiagnosticSeverity':
-        await this.sendDidChangeConfigurationNotification({
-          highlightUntypedDiagnosticSeverity:
-            this.configuration.highlightUntypedCodeDiagnosticSeverity,
-        });
+        if (this.configuration.highlightUntypedCodeDiagnosticSeverity) {
+          await this.sendDidChangeConfigurationNotification({
+            highlightUntypedDiagnosticSeverity:
+              this.configuration.highlightUntypedCodeDiagnosticSeverity,
+          });
+        }
         break;
       default:
         await this.restart();
