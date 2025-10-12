@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
+import { SorbetClientManager } from '../lspClient/sorbetClientManager';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
-import { SorbetStatusProvider } from '../sorbetStatusProvider';
 import { ExtensionApi } from './extensionApi';
 import { mapStatus, SorbetStatus } from './status';
 import { StatusChangedEvent } from './statusChangedEvent';
@@ -17,14 +17,14 @@ export function createExtensionApi(context: SorbetExtensionContext): ExtensionAp
 export class ExtensionApiProvider implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
-  private readonly statusProvider: SorbetStatusProvider;
+  private readonly clientManager: SorbetClientManager;
 
-  constructor({ statusProvider }: SorbetExtensionContext) {
+  constructor({ clientManager }: SorbetExtensionContext) {
     this.onStatusChangedEmitter = new vscode.EventEmitter();
-    this.statusProvider = statusProvider;
+    this.clientManager = clientManager;
     this.disposables = [
       this.onStatusChangedEmitter,
-      statusProvider.onStatusChanged(({ status, client }) => {
+      clientManager.onStatusChanged(({ status, client }) => {
         this.onStatusChangedEmitter.fire({
           status: mapStatus(status) ?? SorbetStatus.Disabled,
           workspace: client?.workspaceFolder?.uri,
@@ -43,9 +43,9 @@ export class ExtensionApiProvider implements vscode.Disposable {
   public toApi(): ExtensionApi {
     return {
       onStatusChanged: this.onStatusChangedEmitter.event,
-      statuses: this.statusProvider.getServerStatuses().map(({ status, workspace }) => ({
+      statuses: this.clientManager.getClients().map(({ status, workspaceFolder }) => ({
         status: mapStatus(status) ?? SorbetStatus.Disabled,
-        workspace,
+        workspace: workspaceFolder.uri,
       })),
     };
   }

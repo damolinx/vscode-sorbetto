@@ -52,10 +52,10 @@ export class SorbetLanguageStatus implements vscode.Disposable {
       onMainAreaActiveTextEditorChanged((editor) =>
         this.handleEditorOrStatusChange(editor?.document.uri),
       ),
-      this.context.statusProvider.onShowOperation(({ client }) =>
+      this.context.clientManager.onShowOperation(({ client }) =>
         this.handleEditorOrStatusChange(client),
       ),
-      this.context.statusProvider.onStatusChanged(({ client }) =>
+      this.context.clientManager.onStatusChanged(({ client }) =>
         this.handleEditorOrStatusChange(client),
       ),
       vscode.workspace.onDidChangeConfiguration((e) => {
@@ -113,8 +113,10 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   }
 
   private render(client: SorbetClient) {
-    const { lspConfigurationType } = client.configuration;
-    const { operations } = this.context.statusProvider;
+    const {
+      configuration: { lspConfigurationType },
+      operations,
+    } = client;
     this.setConfig({ client, configType: lspConfigurationType });
 
     if (client.status !== LspStatus.Error && operations.length > 0) {

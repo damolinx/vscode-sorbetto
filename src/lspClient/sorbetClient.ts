@@ -4,7 +4,10 @@ import { Log } from '../common/log';
 import { E_COMMAND_NOT_FOUND, ErrorInfo } from '../common/processUtils';
 import { InitializationOptions } from '../lsp/initializationOptions';
 import { READ_FILE_REQUEST_METHOD } from '../lsp/readFileRequest';
-import { SHOW_OPERATION_NOTIFICATION_METHOD } from '../lsp/showOperationNotification';
+import {
+  SHOW_OPERATION_NOTIFICATION_METHOD,
+  SorbetShowOperationParams,
+} from '../lsp/showOperationNotification';
 import { SHOW_SYMBOL_REQUEST_METHOD } from '../lsp/showSymbolRequest';
 import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from '../lsp/workspaceDidChangeConfigurationNotification';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
@@ -34,6 +37,7 @@ export class SorbetClient implements vscode.Disposable {
     disposables: vscode.Disposable[];
   };
   private _languageClientInitializer?: LanguageClientCreator;
+  private _operations: SorbetShowOperationParams[];
   private _status: LspStatus;
 
   public readonly configuration: SorbetClientConfiguration;
@@ -50,6 +54,7 @@ export class SorbetClient implements vscode.Disposable {
     context: SorbetExtensionContext,
     workspaceFolder: vscode.WorkspaceFolder,
   ) {
+    this._operations = [];
     this._status = LspStatus.Disabled;
     this.context = context;
     this.id = id;
@@ -74,6 +79,43 @@ export class SorbetClient implements vscode.Disposable {
 
   dispose(): void {
     vscode.Disposable.from(...this.disposables).dispose();
+  }
+
+  /**
+   * Raise {@link onShowOperation} event. Prefer this over calling
+   * {@link EventEmitter.fire} directly so known state is updated before
+   * event listeners are notified. Spurious events are filtered out.
+   */
+  private fireOnShowOperation(params: SorbetShowOperationParams): void {
+    let changed = false;
+    if (params.status === 'end') {
+      const filteredOps = this._operations.filter(
+        (ops) => ops.operationName !== params.operationName,
+      );
+      if (filteredOps.length !== this._operations.length) {
+        this._operations = filteredOps;
+        changed = true;
+      }
+    } else {
+      this._operations.push(params);
+      changed = true;
+    }
+
+    if (changed) {
+      this.onShowOperationEmitter.fire({ client: this, params });
+    }
+  }
+
+  /**
+   * Raise {@link onServerStatusChanged} event. Prefer this over calling
+   * {@link EventEmitter.fire} directly so known state is updated before
+   * event listeners are notified.
+   */
+  private fireOnStatusChanged(): void {
+    if (this.status === LspStatus.Disabled) {
+      this._operations = [];
+    }
+    this.onStatusChangedEmitter.fire({ client: this, status: this.status });
   }
 
   private async handleLspConfigurationChanged(): Promise<void> {
@@ -144,7 +186,7 @@ export class SorbetClient implements vscode.Disposable {
         disposables: [
           value, // Presumes ownership of LanguageClient
           value.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, (params) =>
-            this.onShowOperationEmitter.fire({ client: this, params }),
+            this.fireOnShowOperation(params),
           ),
           value.onDidChangeState((event) => {
             switch (event.newState) {
@@ -177,6 +219,13 @@ export class SorbetClient implements vscode.Disposable {
     }
   }
 
+  /**
+   * Sorbet client current operation stack.
+   */
+  public get operations(): readonly Readonly<SorbetShowOperationParams>[] {
+    return this._operations;
+  }
+
   public get status(): LspStatus {
     return this._status;
   }
@@ -184,7 +233,7 @@ export class SorbetClient implements vscode.Disposable {
   public set status(value: LspStatus) {
     if (this._status !== value) {
       this._status = value;
-      this.onStatusChangedEmitter.fire({ client: this, status: value });
+      this.fireOnStatusChanged();
     }
   }
 

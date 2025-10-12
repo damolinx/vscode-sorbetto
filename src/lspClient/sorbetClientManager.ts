@@ -2,8 +2,10 @@ import * as vscode from 'vscode';
 import { onMainAreaActiveTextEditorChanged } from '../common/utils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { isSorbetWorkspace } from '../workspaceUtils';
+import { ShowOperationEvent } from './showOperationEvent';
 import { SorbetClient } from './sorbetClient';
 import { createClientId, SorbetClientId } from './sorbetClientId';
+import { StatusChangedEvent } from './statusChangedEvent';
 
 export class SorbetClientManager implements vscode.Disposable {
   private readonly clients: Map<SorbetClientId, SorbetClient>;
@@ -11,16 +13,24 @@ export class SorbetClientManager implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
   private readonly onClientAddedEmitter: vscode.EventEmitter<SorbetClient>;
   private readonly onClientRemovedEmitter: vscode.EventEmitter<SorbetClient>;
+  private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
+  private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
 
   constructor(context: SorbetExtensionContext) {
     this.clients = new Map();
     this.context = context;
     this.onClientAddedEmitter = new vscode.EventEmitter();
     this.onClientRemovedEmitter = new vscode.EventEmitter();
+    this.onShowOperationEmitter = new vscode.EventEmitter();
+    this.onStatusChangedEmitter = new vscode.EventEmitter();
 
     this.disposables = [
       this.onClientAddedEmitter,
       this.onClientRemovedEmitter,
+      this.onClientAdded((client) => {
+        client.onShowOperationNotification((e) => this.onShowOperationEmitter.fire(e));
+        client.onStatusChanged((e) => this.onStatusChangedEmitter.fire(e));
+      }),
       onMainAreaActiveTextEditorChanged(async (editor) => {
         if (editor?.document.languageId !== 'ruby') {
           return;
@@ -86,6 +96,20 @@ export class SorbetClientManager implements vscode.Disposable {
 
   public get onClientRemoved(): vscode.Event<SorbetClient> {
     return this.onClientRemovedEmitter.event;
+  }
+
+  /**
+   * Event raised on a {@link SorbetShowOperationParams show-operation} notification.
+   */
+  public get onShowOperation(): vscode.Event<ShowOperationEvent> {
+    return this.onShowOperationEmitter.event;
+  }
+
+  /**
+   * Event raised on {@link LspStatus status} changes.
+   */
+  public get onStatusChanged(): vscode.Event<StatusChangedEvent> {
+    return this.onStatusChangedEmitter.event;
   }
 
   public removeWorkspace(

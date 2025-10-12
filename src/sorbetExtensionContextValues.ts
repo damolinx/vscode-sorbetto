@@ -9,7 +9,6 @@ export function registerContextValueHandlers(context: SorbetExtensionContext): v
 
 function registerSorbetClientStatus({
   clientManager,
-  statusProvider,
 }: SorbetExtensionContext): vscode.Disposable[] {
   const contextKey = 'sorbetto:sorbetStatus';
   setContext<SorbetStatus | undefined>(contextKey, undefined);
@@ -18,7 +17,7 @@ function registerSorbetClientStatus({
       const status = editor && clientManager.getClient(editor.document.uri)?.status;
       setContext<SorbetStatus | undefined>(contextKey, status && mapStatus(status));
     }),
-    statusProvider.onStatusChanged(({ client }) => {
+    clientManager.onStatusChanged(({ client }) => {
       const currentEditor = mainAreaActiveEditorUri();
       if (currentEditor && client.inScope(currentEditor)) {
         setContext<SorbetStatus | undefined>(contextKey, mapStatus(client.status));
