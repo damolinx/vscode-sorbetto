@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
+import { mainAreaActiveEditorUri } from '../common/utils';
 import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { getTargetWorkspaceUri } from './utils';
-import { mainAreaActiveEditorUri } from '../common/utils';
 
 export async function openSettings(
   context: SorbetExtensionContext,
@@ -9,11 +9,15 @@ export async function openSettings(
   setting = 'sorbetto',
 ) {
   const contextUri = contextPathOrUri
-    ? contextPathOrUri instanceof vscode.Uri ? contextPathOrUri : vscode.Uri.parse(contextPathOrUri)
-    : (mainAreaActiveEditorUri() ?? await getTargetWorkspaceUri());
+    ? contextPathOrUri instanceof vscode.Uri
+      ? contextPathOrUri
+      : vscode.Uri.parse(contextPathOrUri)
+    : (mainAreaActiveEditorUri() ?? (await getTargetWorkspaceUri()));
   context.log.debug('Open settings', contextUri ? vscode.workspace.asRelativePath(contextUri) : '');
 
-  const inspectedConfiguration = vscode.workspace.getConfiguration(undefined, contextUri).inspect(setting);
+  const inspectedConfiguration = vscode.workspace
+    .getConfiguration(undefined, contextUri)
+    .inspect(setting);
   let command: string | undefined;
   if (inspectedConfiguration?.workspaceFolderValue !== undefined) {
     command = 'workbench.action.openFolderSettings';
