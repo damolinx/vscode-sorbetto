@@ -29,8 +29,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   extensionContext.subscriptions.push(context, ...registerContextValueHandlers(context));
 
   // Register Language Status Item
-  const statusBarEntry = new SorbetLanguageStatus(context);
-  extensionContext.subscriptions.push(statusBarEntry);
+  extensionContext.subscriptions.push(new SorbetLanguageStatus(context));
 
   // Register providers
   extensionContext.subscriptions.push(
