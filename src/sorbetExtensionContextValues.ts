@@ -4,37 +4,48 @@ import { onMainAreaActiveTextEditorChanged, mainAreaActiveEditorUri } from './co
 import { SorbetExtensionContext } from './sorbetExtensionContext';
 
 export function registerContextValueHandlers(context: SorbetExtensionContext): vscode.Disposable[] {
-  return [...registerSorbettoActive(context), ...registerSorbetClientStatus(context)].flat();
+  const disposables: vscode.Disposable[] = [];
+  registerSorbetStatus(context, disposables);
+  registerSorbettoActive(context, disposables);
+  return disposables;
 }
 
-function registerSorbetClientStatus({
-  clientManager,
-}: SorbetExtensionContext): vscode.Disposable[] {
+function registerSorbetStatus(
+  { clientManager }: SorbetExtensionContext,
+  disposables: vscode.Disposable[],
+): void {
   const contextKey = 'sorbetto:sorbetStatus';
   setContext<SorbetStatus | undefined>(contextKey, undefined);
-  return [
-    onMainAreaActiveTextEditorChanged((editor) => {
-      const status = editor && clientManager.getClient(editor.document.uri)?.status;
-      setContext<SorbetStatus | undefined>(contextKey, status && mapStatus(status));
-    }),
+
+  disposables.push(
     clientManager.onStatusChanged(({ client }) => {
-      const currentEditor = mainAreaActiveEditorUri();
-      if (currentEditor && client.inScope(currentEditor)) {
+      const editor = mainAreaActiveEditorUri();
+      if (editor && client.inScope(editor)) {
         setContext<SorbetStatus | undefined>(contextKey, mapStatus(client.status));
       }
     }),
-  ];
+    onMainAreaActiveTextEditorChanged((editor) => {
+      const client = editor && clientManager.getClient(editor.document.uri);
+      if (client) {
+        setContext<SorbetStatus | undefined>(contextKey, mapStatus(client.status));
+      }
+    }),
+  );
 }
 
-function registerSorbettoActive({ clientManager }: SorbetExtensionContext): vscode.Disposable[] {
+function registerSorbettoActive(
+  { clientManager }: SorbetExtensionContext,
+  disposables: vscode.Disposable[],
+): void {
   const contextKey = 'sorbetto:active';
   setContext<boolean>(contextKey, Boolean(clientManager.clientCount));
-  return [
-    clientManager.onClientAdded(() => setContext(contextKey, true)),
+
+  disposables.push(
+    clientManager.onClientAdded(() => setContext<boolean>(contextKey, true)),
     clientManager.onClientRemoved(
-      () => !clientManager.clientCount && setContext(contextKey, false),
+      () => !clientManager.clientCount && setContext<boolean>(contextKey, false),
     ),
-  ];
+  );
 }
 
 function setContext<T>(contextKey: string, arg: T) {
