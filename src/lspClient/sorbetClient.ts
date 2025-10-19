@@ -283,7 +283,7 @@ export class SorbetClient implements vscode.Disposable {
 
       do {
         retryTimestamp = await throttle(retryAttempt, retryTimestamp, this.context.log);
-        this.context.log.debug(`${logPrefix}Start attempt —`, 1 + retryAttempt);
+        this.context.log.debug(`${logPrefix}Start attempt`, 1 + retryAttempt);
 
         let lspProcess: InitializeProcessResult | undefined;
         try {
