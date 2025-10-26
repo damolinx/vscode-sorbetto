@@ -9,7 +9,7 @@ export async function bundleInstall(
   gemfile: string | vscode.Uri,
   action: 'install' | 'update',
 ) {
-  if (!(await verifyEnvironment(context, 'bundle'))) {
+  if (!(await verifyEnvironment(context, ['bundle']))) {
     context.log.info('Skipping `bundle install` due to missing dependencies.');
     return;
   }

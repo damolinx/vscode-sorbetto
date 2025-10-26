@@ -1,4 +1,4 @@
-import { EXTENSION_PREFIX } from '../constants';
+import { EXTENSION_PREFIX } from './constants';
 
 /**
  * Run `srb tc --autocorrect`

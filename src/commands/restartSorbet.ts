@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
+import { OPEN_SETTINGS_ID } from '../commandIds';
 import { mainAreaActiveEditorUri } from '../common/utils';
 import { ExtensionContext } from '../extensionContext';
-import { OPEN_SETTINGS_ID } from './commandIds';
 import { getTargetWorkspaceUri } from './utils';
 
 export async function restartSorbet(

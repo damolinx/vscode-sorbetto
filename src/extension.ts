@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { createExtensionApi } from './api/extensionApiProvider';
+import * as cmdIds from './commandIds';
 import { autocorrectAll } from './commands/autocorrectAll';
 import { bundleInstall } from './commands/bundleInstall';
-import * as cmdIds from './commands/commandIds';
 import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { debugRubyFile } from './commands/debugRubyFile';
 import { handleRename } from './commands/handleRename';

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
-import { AUTOCORRECT_ALL_ID } from '../../commands/commandIds';
+import { AUTOCORRECT_ALL_ID } from '../../commandIds';
 
 export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
   provideCodeActions: async (

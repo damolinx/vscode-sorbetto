@@ -99,7 +99,7 @@ async function updateRequires(
     return requireUri;
   }
 
-  function getTargetRequireRelativePath(from: vscode.Uri, requireUri: vscode.Uri) {
+  function getTargetRequireRelativePath(from: vscode.Uri, requireUri: vscode.Uri): string {
     let newRequirePath = relative(from.fsPath, requireUri.fsPath);
     if (sep !== '/') {
       newRequirePath = newRequirePath.replaceAll(sep, '/');
@@ -107,12 +107,12 @@ async function updateRequires(
     return newRequirePath;
   }
 
-  async function shouldUpdate(requireUri: vscode.Uri) {
+  function shouldUpdate(requireUri: vscode.Uri): PromiseLike<boolean> {
     const requireUriWithRb = requireUri.path.endsWith('.rb')
       ? requireUri
       : requireUri.with({ path: requireUri.path + '.rb' });
     return vscode.workspace.fs.stat(requireUriWithRb).then(
-      () => true,
+      ({ type }) => type === vscode.FileType.File || type === vscode.FileType.SymbolicLink,
       () => false,
     );
   }

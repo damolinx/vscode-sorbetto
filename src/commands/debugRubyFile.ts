@@ -31,13 +31,11 @@ export async function debugRubyFile(context: ExtensionContext, pathOrUri?: strin
     await document.save();
   }
 
-  if (await verifyEnvironment(context, 'ruby', 'bundle', 'rdbg')) {
-    return executeCommandsInTerminal({
+  if (await verifyEnvironment(context, ['ruby', 'bundle', 'rdbg'])) {
+    await executeCommandsInTerminal({
       commands: [`bundle exec rdbg ${targetPath}`],
       cwd: workspaceFolder?.uri.fsPath,
       name: `Debug ${basename(targetPath)}`,
     });
   }
-
-  return;
 }

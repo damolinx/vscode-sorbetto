@@ -7,8 +7,8 @@ export async function autocorrectAll(
   contextUri: vscode.Uri,
   code: string | number,
 ) {
-  const configuration = context.clientManager.getClient(contextUri)?.configuration;
-  if (!configuration) {
+  const client = context.clientManager.getClient(contextUri);
+  if (!client) {
     context.log.error(
       'AutocorrectAll: No Sorbet client.',
       vscode.workspace.asRelativePath(contextUri),
@@ -16,10 +16,10 @@ export async function autocorrectAll(
     return;
   }
 
-  const sorbetCommand = configuration.sorbetTypecheckCommand.join(' ').trim();
+  const sorbetCommand = client.configuration.sorbetTypecheckCommand.join(' ').trim();
   await executeCommandsInTerminal({
     commands: [`${sorbetCommand} --autocorrect --isolate-error-code=${code}`],
-    cwd: vscode.workspace.getWorkspaceFolder(contextUri)?.uri,
+    cwd: client.workspaceFolder.uri,
     name: 'sorbet autocorrect',
     preserveFocus: true,
   });

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { BUNDLE_INSTALL_ID, BUNDLE_UPDATE_ID } from '../commands/commandIds';
+import { BUNDLE_INSTALL_ID, BUNDLE_UPDATE_ID } from '../commandIds';
 import { ExtensionContext } from '../extensionContext';
 
 export function registerGemfileCodeLensProvider({ disposables }: ExtensionContext): void {

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { OPEN_SETTINGS_ID, SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commands/commandIds';
+import { OPEN_SETTINGS_ID, SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commandIds';
 import { onMainAreaActiveTextEditorChanged, mainAreaActiveEditorUri } from './common/utils';
 import { ExtensionContext } from './extensionContext';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/documentSelectors';

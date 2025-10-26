@@ -5,13 +5,13 @@ import { ExtensionContext } from '../extensionContext';
 export const SORBET_COMMANDS: readonly string[] = ['bundle', 'ruby'];
 
 export async function verifyEnvironment(
-  _context: ExtensionContext,
-  ...commandsToCheck: string[]
+  context: ExtensionContext,
+  commandsToCheck: readonly string[] = SORBET_COMMANDS,
 ): Promise<boolean> {
-  const targetCommands = commandsToCheck.length ? commandsToCheck : SORBET_COMMANDS;
-  const results = await Promise.all(targetCommands.map((cmd) => isAvailable(cmd)));
-  const missingCommands = targetCommands.filter((_, i) => !results[i]);
+  const results = await Promise.all(commandsToCheck.map((cmd) => isAvailable(cmd)));
+  const missingCommands = commandsToCheck.filter((_, i) => !results[i]);
   if (missingCommands.length === 0) {
+    context.log.debug('VerifyEnvironment: Found all commands', commandsToCheck);
     return true;
   }
 
