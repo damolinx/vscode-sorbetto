@@ -1,8 +1,6 @@
 import * as vscode from 'vscode';
-import * as vslcn from 'vscode-languageclient/node';
-import { Log } from '../common/log';
 import { ExtensionContext } from '../extensionContext';
-import { LspStatus } from '../types';
+import { SorbetClientStatus } from '../lspClient/sorbetClientStatus';
 
 /**
  * Copy symbol at current.
@@ -13,8 +11,7 @@ export async function copySymbolToClipboard(
   editor: vscode.TextEditor,
 ): Promise<void> {
   const client = context.clientManager.getClient(editor.document.uri);
-
-  if (client?.status !== LspStatus.Running) {
+  if (client?.status !== SorbetClientStatus.Running) {
     context.log.warn(
       'CopySymbol: No Sorbet client for editor.',
       vscode.workspace.asRelativePath(editor.document.uri),
@@ -22,20 +19,13 @@ export async function copySymbolToClipboard(
     return;
   }
 
-  const params: vslcn.TextDocumentPositionParams = {
-    position: editor.selection.start,
-    textDocument: {
-      uri: editor.document.uri.toString(),
-    },
-  };
-
   // If Sorbet is busy, retrieving symbol information might take a while.
   // To avoid having a long operation unexpectedly write to the clipboard,
   // a cancelable progress notification is shown after 2s.
   const symbolInfo = await withProgress(
-    (token) => client.sendShowSymbolRequest(params, token),
+    (token) => client.sendShowSymbolRequest(editor, editor.selection.start, token),
     2000,
-    context.log,
+    context,
   );
 
   if (symbolInfo) {
@@ -50,7 +40,7 @@ export async function copySymbolToClipboard(
 async function withProgress<T>(
   task: (token: vscode.CancellationToken) => Promise<T>,
   showProgressAfterMs: number,
-  log: Log,
+  { log }: ExtensionContext,
 ): Promise<T | undefined> {
   let resolved = false;
   const cts = new vscode.CancellationTokenSource();

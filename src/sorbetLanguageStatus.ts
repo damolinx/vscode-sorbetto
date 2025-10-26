@@ -5,7 +5,7 @@ import { ExtensionContext } from './extensionContext';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/documentSelectors';
 import { LspConfigurationType } from './lspClient/configuration/lspConfigurationType';
 import { SorbetClient } from './lspClient/sorbetClient';
-import { LspStatus } from './types';
+import { SorbetClientStatus } from './lspClient/sorbetClientStatus';
 
 const OpenConfigurationSettings: vscode.Command = {
   arguments: [undefined, 'sorbetto.sorbetLspConfiguration'],
@@ -119,7 +119,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     } = client;
     this.setConfig({ client, configType: lspConfigurationType });
 
-    if (client.status !== LspStatus.Error && operations.length > 0) {
+    if (client.status !== SorbetClientStatus.Error && operations.length > 0) {
       this.setStatus({
         client,
         busy: true,
@@ -127,7 +127,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
       });
     } else {
       switch (client.status) {
-        case LspStatus.Disabled:
+        case SorbetClientStatus.Disabled:
           this.setStatus({
             client,
             command: StartCommand,
@@ -135,7 +135,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
             status: 'Disabled',
           });
           break;
-        case LspStatus.Error:
+        case SorbetClientStatus.Error:
           this.setStatus({
             client,
             detail: 'Sorbet LSP ran into an error. See Output panel for details',
@@ -143,14 +143,14 @@ export class SorbetLanguageStatus implements vscode.Disposable {
             status: 'Error',
           });
           break;
-        case LspStatus.Initializing:
+        case SorbetClientStatus.Initializing:
           this.setStatus({
             client,
             busy: true,
             status: 'Initializing',
           });
           break;
-        case LspStatus.Restarting:
+        case SorbetClientStatus.Restarting:
           this.setStatus({
             client,
             busy: true,
@@ -158,7 +158,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
             status: 'Initializing',
           });
           break;
-        case LspStatus.Running:
+        case SorbetClientStatus.Running:
           this.setStatus({ client, status: 'Idle' });
           break;
         default:

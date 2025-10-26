@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import * as vslc from 'vscode-languageclient';
 import { ExtensionContext } from '../extensionContext';
 import { SORBET_SCHEME } from '../lsp/documentSelectors';
 
@@ -27,35 +26,40 @@ export class SorbetContentProvider implements vscode.TextDocumentContentProvider
     uri: vscode.Uri,
     token?: vscode.CancellationToken,
   ): Promise<string> {
-    // TODO: This isn't entirely correct, but at least one Sorbet instance should be able
-    // to resolve this URI - an edge case is that resolution may depend on the workspace.
-    const clients = this.context.clientManager.getClients();
+    let content = '';
 
-    let response: vslc.TextDocumentItem | undefined;
+    // TODO: This isn't entirely correct, but at least one Sorbet instance might be able
+    // to resolve the URI - an edge case is that resolution may depend on the workspace.
+    const clients = this.context.clientManager.getClients();
     if (clients.length === 0) {
       this.context.log.warn(
         'ContentProvider: No Sorbet Client available to resolve URI',
         uri.toString(true),
       );
-    } else {
-      const requestParams: vslc.TextDocumentIdentifier = { uri: uri.toString() };
-      for (const client of this.context.clientManager.getClients()) {
-        response = await client.sendReadFileRequest(requestParams, token);
-        if (response) {
-          this.context.log.debug(
-            'ContentProvider: Resolved',
-            uri.toString(true),
-            'with Sorbet client for',
-            client.workspaceFolder.name,
-            'workspace',
-          );
-          break;
-        }
+      return content;
+    }
+
+    for (const client of clients) {
+      const response = await client.sendReadFileRequest(uri, token);
+      if (response) {
+        content = response.text;
+        this.context.log.debug(
+          'ContentProvider: Resolved',
+          uri.toString(true),
+          'with Sorbet client for',
+          client.workspaceFolder.name,
+          'workspace',
+        );
+        break;
       }
     }
 
-    const content = response?.text ?? '';
-    this.context.log.debug('ContentProvider: Retrieve', uri.path, 'Size:', content.length);
+    this.context.log.debug(
+      'ContentProvider: Retrieved',
+      uri.path,
+      'Content-length',
+      content.length,
+    );
     return content;
   }
 }

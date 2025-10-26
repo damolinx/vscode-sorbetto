@@ -1,7 +1,7 @@
-import { LspStatus } from '../types';
 import { SorbetClient } from './sorbetClient';
+import { SorbetClientStatus } from './sorbetClientStatus';
 
 export interface StatusChangedEvent {
   readonly client: SorbetClient;
-  readonly status: LspStatus;
+  readonly status: SorbetClientStatus;
 }
