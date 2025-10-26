@@ -12,7 +12,7 @@ export function createExtensionApi(context: ExtensionContext): ExtensionApi {
 }
 
 /**
- * {@link ExtensionApi Extension API } provider.
+ * {@link ExtensionApi Extension API} provider.
  */
 export class ExtensionApiProvider implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];

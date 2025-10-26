@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { mainAreaActiveTextEditorUri } from '../common/utils';
-import { isSorbetWorkspace } from '../workspaceUtils';
+import { isSorbetWorkspace } from '../common/workspaceUtils';
 import { SETUP_WORKSPACE_ID } from './commandIds';
 
 export async function executeCommandsInTerminal(options: {

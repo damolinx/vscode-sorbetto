@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { onMainAreaActiveTextEditorChanged } from '../common/utils';
+import { isSorbetWorkspace } from '../common/workspaceUtils';
 import { ExtensionContext } from '../extensionContext';
-import { isSorbetWorkspace } from '../workspaceUtils';
 import { ShowOperationEvent } from './showOperationEvent';
 import { SorbetClient } from './sorbetClient';
 import { createClientId, SorbetClientId } from './sorbetClientId';
