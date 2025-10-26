@@ -3,8 +3,7 @@ import { SorbetStatus } from './status';
 import { StatusChangedEvent } from './statusChangedEvent';
 
 /**
- * API exposed by the extension to other extensions. This should be
- * fwd/bwd compatible to prevent breaking any external inetgration.
+ * API exposed by the extension to other extensions.
  */
 export interface ExtensionApi {
   readonly onStatusChanged?: vscode.Event<StatusChangedEvent>;
