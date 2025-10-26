@@ -1,13 +1,16 @@
 import * as vscode from 'vscode';
 import * as https from 'https';
+import { ExtensionContext } from '../extensionContext';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['"', "'"];
 
-export function registerGemfileCompletionProvider(): vscode.Disposable {
-  return vscode.languages.registerCompletionItemProvider(
-    { pattern: '**/Gemfile' },
-    new GemfileCompletionProvider(),
-    ...TRIGGER_CHARACTERS,
+export function registerGemfileCompletionProvider({ disposables }: ExtensionContext): void {
+  disposables.push(
+    vscode.languages.registerCompletionItemProvider(
+      { pattern: '**/Gemfile' },
+      new GemfileCompletionProvider(),
+      ...TRIGGER_CHARACTERS,
+    ),
   );
 }
 
@@ -23,7 +26,7 @@ export class GemfileCompletionProvider implements vscode.CompletionItemProvider 
   ): Promise<vscode.CompletionList | undefined> {
     const line = document.lineAt(position).text;
     const match = line.match(/\bgem\s*(?<start>["'])(?<hint>[^"']*)(?<end>\k<start>)/d);
-    if (!match || !match.groups || !match.indices?.groups) {
+    if (!match?.groups || !match.indices?.groups) {
       return;
     }
 

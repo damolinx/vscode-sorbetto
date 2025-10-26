@@ -3,7 +3,7 @@ import * as vslc from 'vscode-languageclient';
 import * as vslcn from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { WorkspaceFolderOutputChannel } from '../common/workspaceFolderOutputChannel';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ExtensionContext } from '../extensionContext';
 import { getWorkspaceDocumentSelector } from './documentSelectors';
 import { SorbetInitializeResult } from './initializeResult';
 import { ReadFileRequest } from './readFileRequest';
@@ -15,7 +15,7 @@ import { WorkspaceDidChangeConfigurationNotification } from './workspaceDidChang
  * Create a {@link LanguageClient client} for Sorbet.
  */
 export function createClient(
-  { log, logOutputChannel }: SorbetExtensionContext,
+  { log, logOutputChannel }: ExtensionContext,
   workspaceFolder: vscode.WorkspaceFolder,
   clientOptions: Omit<
     vslc.LanguageClientOptions,
@@ -71,7 +71,7 @@ class SorbetLanguageClient
     //
     // But this override also allows to clean-up logs as the language client
     // tries to insert Date-info and extra spaces. `data2String` is what
-    // BaseClientLanguage uses, but does not expose.
+    // BaseClientLanguage uses but does not expose.
     if (data) {
       this.log.error(message, data2String(data).trim());
     } else {

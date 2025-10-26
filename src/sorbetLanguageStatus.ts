@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 import { OPEN_SETTINGS_ID, SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commands/commandIds';
 import { onMainAreaActiveTextEditorChanged, mainAreaActiveEditorUri } from './common/utils';
+import { ExtensionContext } from './extensionContext';
 import { SORBET_DOCUMENT_SELECTOR } from './lsp/documentSelectors';
 import { LspConfigurationType } from './lspClient/configuration/lspConfigurationType';
 import { SorbetClient } from './lspClient/sorbetClient';
-import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { LspStatus } from './types';
 
 const OpenConfigurationSettings: vscode.Command = {
@@ -29,7 +29,7 @@ const ShowOutputCommand: vscode.Command = {
 const ALWAYS_SHOW_CONFIG_KEY = 'sorbetto.alwaysShowStatusItems';
 
 export class SorbetLanguageStatus implements vscode.Disposable {
-  private readonly context: SorbetExtensionContext;
+  private readonly context: ExtensionContext;
   private currentClient?: {
     client: SorbetClient;
     disposables: vscode.Disposable[];
@@ -39,7 +39,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   private readonly configItem: vscode.LanguageStatusItem;
   private readonly statusItem: vscode.LanguageStatusItem;
 
-  constructor(context: SorbetExtensionContext) {
+  constructor(context: ExtensionContext) {
     this.context = context;
 
     const selector = this.getSelector();

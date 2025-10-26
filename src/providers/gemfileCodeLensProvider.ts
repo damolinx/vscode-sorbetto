@@ -1,10 +1,13 @@
 import * as vscode from 'vscode';
 import { BUNDLE_INSTALL_ID } from '../commands/commandIds';
+import { ExtensionContext } from '../extensionContext';
 
-export function registerGemfileCodeLensProvider(): vscode.Disposable {
-  return vscode.languages.registerCodeLensProvider(
-    { pattern: '**/Gemfile', scheme: 'file' },
-    new GemfileCodeLensProvider(),
+export function registerGemfileCodeLensProvider({ disposables }: ExtensionContext): void {
+  disposables.push(
+    vscode.languages.registerCodeLensProvider(
+      { pattern: '**/Gemfile', scheme: 'file' },
+      new GemfileCodeLensProvider(),
+    ),
   );
 }
 

@@ -1,19 +1,14 @@
 import * as vscode from 'vscode';
 import { mapStatus, SorbetStatus } from './api/status';
 import { onMainAreaActiveTextEditorChanged, mainAreaActiveEditorUri } from './common/utils';
-import { SorbetExtensionContext } from './sorbetExtensionContext';
+import { ExtensionContext } from './extensionContext';
 
-export function registerContextValueHandlers(context: SorbetExtensionContext): vscode.Disposable[] {
-  const disposables: vscode.Disposable[] = [];
-  registerSorbetStatus(context, disposables);
-  registerSorbettoActive(context, disposables);
-  return disposables;
+export function registerContextValueHandlers(context: ExtensionContext): void {
+  registerSorbetStatus(context);
+  registerSorbettoActive(context);
 }
 
-function registerSorbetStatus(
-  { clientManager }: SorbetExtensionContext,
-  disposables: vscode.Disposable[],
-): void {
+function registerSorbetStatus({ clientManager, disposables }: ExtensionContext): void {
   const contextKey = 'sorbetto:sorbetStatus';
   setContext<SorbetStatus | undefined>(contextKey, undefined);
 
@@ -33,10 +28,7 @@ function registerSorbetStatus(
   );
 }
 
-function registerSorbettoActive(
-  { clientManager }: SorbetExtensionContext,
-  disposables: vscode.Disposable[],
-): void {
+function registerSorbettoActive({ clientManager, disposables }: ExtensionContext): void {
   const contextKey = 'sorbetto:active';
   setContext<boolean>(contextKey, Boolean(clientManager.clientCount));
 

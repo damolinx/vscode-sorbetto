@@ -11,13 +11,13 @@ import { restartSorbet } from './commands/restartSorbet';
 import { runRubyFile } from './commands/runRubyFile';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { setupWorkspace } from './commands/setupWorkspace';
+import { ExtensionContext } from './extensionContext';
 import { registerGemfileCodeLensProvider } from './providers/gemfileCodeLensProvider';
 import { registerGemfileCompletionProvider } from './providers/gemfileCompletionProvider';
 import { registerRequireCompletionProvider } from './providers/requireCompletionProvider';
 import { registerRequireDefinitionProvider } from './providers/requireDefinitionProvider';
 import { registerSorbetContentProvider } from './providers/sorbetContentProvider';
 import { registerTypedOptionsCompletionProvider } from './providers/typedOptionsCompletionProvider';
-import { SorbetExtensionContext } from './sorbetExtensionContext';
 import { registerContextValueHandlers } from './sorbetExtensionContextValues';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
 
@@ -25,25 +25,22 @@ import { SorbetLanguageStatus } from './sorbetLanguageStatus';
  * Extension entrypoint.
  */
 export async function activate(extensionContext: vscode.ExtensionContext) {
-  const context = new SorbetExtensionContext(extensionContext);
-  extensionContext.subscriptions.push(context, ...registerContextValueHandlers(context));
+  const context = new ExtensionContext(extensionContext);
+  context.log.info('Activating extension', extensionContext.extension.packageJSON.version);
 
-  // Register Language Status Item
-  extensionContext.subscriptions.push(new SorbetLanguageStatus(context));
+  context.disposables.push(new SorbetLanguageStatus(context));
 
-  // Register providers
-  extensionContext.subscriptions.push(
-    registerGemfileCodeLensProvider(),
-    registerGemfileCompletionProvider(),
-    registerRequireCompletionProvider(),
-    registerRequireDefinitionProvider(),
-    registerSorbetContentProvider(context),
-    registerTypedOptionsCompletionProvider(),
-  );
+  registerContextValueHandlers(context);
+  registerGemfileCodeLensProvider(context);
+  registerGemfileCompletionProvider(context);
+  registerRequireCompletionProvider(context);
+  registerRequireDefinitionProvider(context);
+  registerSorbetContentProvider(context);
+  registerTypedOptionsCompletionProvider(context);
 
   // Register commands
   const rc = vscode.commands.registerCommand;
-  extensionContext.subscriptions.push(
+  context.disposables.push(
     rc(cmdIds.AUTOCORRECT_ALL_ID, (code: string | number, contextUri: vscode.Uri) =>
       autocorrectAll(context, contextUri, code),
     ),
@@ -77,13 +74,13 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
 
   // Register text editor commands
   const rtc = vscode.commands.registerTextEditorCommand;
-  extensionContext.subscriptions.push(
+  context.disposables.push(
     rtc(cmdIds.COPY_SYMBOL_ID, (textEditor) => copySymbolToClipboard(context, textEditor)),
   );
 
   // Register configurable features
   if (context.configuration.getValue('updateRequireRelative', true)) {
-    extensionContext.subscriptions.push(
+    context.disposables.push(
       vscode.workspace.onDidRenameFiles(({ files }) => handleRename(context, files)),
     );
   }

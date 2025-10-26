@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 import { dirname } from 'path';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ExtensionContext } from '../extensionContext';
 import { executeCommandsInTerminal } from './utils';
 import { verifyEnvironment } from './verifyEnvironment';
 
-export async function bundleInstall(context: SorbetExtensionContext, gemfile: string | vscode.Uri) {
+export async function bundleInstall(context: ExtensionContext, gemfile: string | vscode.Uri) {
   if (!(await verifyEnvironment(context, 'bundle'))) {
     context.log.info('Skipping `bundle install` due to missing dependencies.');
     return;

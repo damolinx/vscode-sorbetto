@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { isAvailable } from '../common/processUtils';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ExtensionContext } from '../extensionContext';
 
 export const SORBET_COMMANDS: readonly string[] = ['bundle', 'ruby'];
 
 export async function verifyEnvironment(
-  _context: SorbetExtensionContext,
+  _context: ExtensionContext,
   ...commandsToCheck: string[]
 ): Promise<boolean> {
   const targetCommands = commandsToCheck.length ? commandsToCheck : SORBET_COMMANDS;

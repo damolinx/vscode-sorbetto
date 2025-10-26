@@ -1,12 +1,15 @@
 import * as vscode from 'vscode';
+import { ExtensionContext } from '../extensionContext';
 
 export const TRIGGER_CHARACTERS: readonly string[] = [':'];
 
-export function registerTypedOptionsCompletionProvider(): vscode.Disposable {
-  return vscode.languages.registerCompletionItemProvider(
-    { scheme: 'file', language: 'ruby' },
-    new TypedOptionsCompletionProvider(),
-    ...TRIGGER_CHARACTERS,
+export function registerTypedOptionsCompletionProvider({ disposables }: ExtensionContext): void {
+  disposables.push(
+    vscode.languages.registerCompletionItemProvider(
+      { scheme: 'file', language: 'ruby' },
+      new TypedOptionsCompletionProvider(),
+      ...TRIGGER_CHARACTERS,
+    ),
   );
 }
 

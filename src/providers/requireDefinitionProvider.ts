@@ -1,11 +1,14 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { ExtensionContext } from '../extensionContext';
 import { SORBET_FILE_DOCUMENT_SELECTOR } from '../lsp/documentSelectors';
 
-export function registerRequireDefinitionProvider(): vscode.Disposable {
-  return vscode.languages.registerDefinitionProvider(
-    SORBET_FILE_DOCUMENT_SELECTOR,
-    new RequireDefinitionProvider(),
+export function registerRequireDefinitionProvider({ disposables }: ExtensionContext): void {
+  disposables.push(
+    vscode.languages.registerDefinitionProvider(
+      SORBET_FILE_DOCUMENT_SELECTOR,
+      new RequireDefinitionProvider(),
+    ),
   );
 }
 

@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
+import { ExtensionContext } from '../extensionContext';
 import { SORBET_SCHEME } from '../lsp/documentSelectors';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
 
 /**
  * Register a content provider for the {@link SORBET_SCHEME sorbet:} scheme.
  */
-export function registerSorbetContentProvider(context: SorbetExtensionContext): vscode.Disposable {
+export function registerSorbetContentProvider(context: ExtensionContext): vscode.Disposable {
   return vscode.workspace.registerTextDocumentContentProvider(
     SORBET_SCHEME,
     new SorbetContentProvider(context),
@@ -17,9 +17,9 @@ export function registerSorbetContentProvider(context: SorbetExtensionContext): 
  * Content provider for URIs with {@link SORBET_SCHEME sorbet:} scheme.
  */
 export class SorbetContentProvider implements vscode.TextDocumentContentProvider {
-  private readonly context: SorbetExtensionContext;
+  private readonly context: ExtensionContext;
 
-  constructor(context: SorbetExtensionContext) {
+  constructor(context: ExtensionContext) {
     this.context = context;
   }
 

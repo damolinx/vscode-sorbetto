@@ -1,13 +1,10 @@
 import * as vscode from 'vscode';
 import { basename } from 'path';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ExtensionContext } from '../extensionContext';
 import { executeCommandsInTerminal, getTargetEditorUri } from './utils';
 import { verifyEnvironment } from './verifyEnvironment';
 
-export async function debugRubyFile(
-  context: SorbetExtensionContext,
-  pathOrUri?: string | vscode.Uri,
-) {
+export async function debugRubyFile(context: ExtensionContext, pathOrUri?: string | vscode.Uri) {
   const uri = getTargetEditorUri(pathOrUri);
   if (!uri) {
     context.log.info('DebugRuby: No target file.');

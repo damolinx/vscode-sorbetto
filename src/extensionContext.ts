@@ -4,10 +4,9 @@ import { Log } from './common/log';
 import { LogMetrics, Metrics } from './common/metrics';
 import { SorbetClientManager } from './lspClient/sorbetClientManager';
 
-export class SorbetExtensionContext implements vscode.Disposable {
+export class ExtensionContext {
   public readonly clientManager: SorbetClientManager;
   public readonly configuration: Configuration;
-  private readonly disposables: vscode.Disposable[];
   public readonly extensionContext: vscode.ExtensionContext;
   public readonly logOutputChannel: vscode.LogOutputChannel;
   public readonly metrics: Metrics;
@@ -16,15 +15,21 @@ export class SorbetExtensionContext implements vscode.Disposable {
     this.configuration = new Configuration();
     this.extensionContext = context;
     this.logOutputChannel = vscode.window.createOutputChannel('Sorbetto', { log: true });
-
-    this.clientManager = new SorbetClientManager(this);
     this.metrics = new LogMetrics(this.logOutputChannel);
 
-    this.disposables = [this.configuration, this.clientManager, this.logOutputChannel];
+    this.clientManager = new SorbetClientManager(this);
+
+    this.disposables.push(this.clientManager, this.configuration, this.logOutputChannel);
   }
 
-  dispose(): void {
-    vscode.Disposable.from(...this.disposables).dispose();
+  /**
+   * An array to which disposables can be added. When this
+   * extension is deactivated the disposables will be disposed.
+   *
+   * *Note* that asynchronous dispose-functions aren't awaited.
+   */
+  public get disposables(): vscode.Disposable[] {
+    return this.extensionContext.subscriptions;
   }
 
   /**

@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
+import { ExtensionContext } from '../extensionContext';
 import { SorbetClientManager } from '../lspClient/sorbetClientManager';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { ExtensionApi } from './extensionApi';
 import { mapStatus, SorbetStatus } from './status';
 import { StatusChangedEvent } from './statusChangedEvent';
 
-export function createExtensionApi(context: SorbetExtensionContext): ExtensionApi {
+export function createExtensionApi(context: ExtensionContext): ExtensionApi {
   const provider = new ExtensionApiProvider(context);
-  context.extensionContext.subscriptions.push(provider);
+  context.disposables.push(provider);
   return provider.toApi();
 }
 
@@ -19,7 +19,7 @@ export class ExtensionApiProvider implements vscode.Disposable {
   private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
   private readonly clientManager: SorbetClientManager;
 
-  constructor({ clientManager }: SorbetExtensionContext) {
+  constructor({ clientManager }: ExtensionContext) {
     this.onStatusChangedEmitter = new vscode.EventEmitter();
     this.clientManager = clientManager;
     this.disposables = [

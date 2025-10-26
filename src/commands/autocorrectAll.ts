@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ExtensionContext } from '../extensionContext';
 import { executeCommandsInTerminal } from './utils';
 
 export async function autocorrectAll(
-  context: SorbetExtensionContext,
+  context: ExtensionContext,
   contextUri: vscode.Uri,
   code: string | number,
 ) {

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as vslcn from 'vscode-languageclient/node';
 import { Log } from '../common/log';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ExtensionContext } from '../extensionContext';
 import { LspStatus } from '../types';
 
 /**
@@ -9,7 +9,7 @@ import { LspStatus } from '../types';
  * @param context Sorbet extension context.
  */
 export async function copySymbolToClipboard(
-  context: SorbetExtensionContext,
+  context: ExtensionContext,
   editor: vscode.TextEditor,
 ): Promise<void> {
   const client = context.clientManager.getClient(editor.document.uri);

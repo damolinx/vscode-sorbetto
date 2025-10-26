@@ -1,14 +1,17 @@
 import * as vscode from 'vscode';
 import { existsSync } from 'fs';
 import { basename, dirname, extname, posix, resolve, sep } from 'path';
+import { ExtensionContext } from '../extensionContext';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['"', "'", '/'];
 
-export function registerRequireCompletionProvider(): vscode.Disposable {
-  return vscode.languages.registerCompletionItemProvider(
-    { scheme: 'file', language: 'ruby' },
-    new RequireCompletionProvider(),
-    ...TRIGGER_CHARACTERS,
+export function registerRequireCompletionProvider({ disposables }: ExtensionContext): void {
+  disposables.push(
+    vscode.languages.registerCompletionItemProvider(
+      { scheme: 'file', language: 'ruby' },
+      new RequireCompletionProvider(),
+      ...TRIGGER_CHARACTERS,
+    ),
   );
 }
 

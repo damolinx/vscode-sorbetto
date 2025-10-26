@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ExtensionContext } from '../extensionContext';
 import { executeCommandsInTerminal, getTargetWorkspaceUri } from './utils';
 import { verifyEnvironment } from './verifyEnvironment';
 
@@ -11,10 +11,7 @@ const GEMFILE_DEPS: Readonly<Record<string, string>> = {
   tapioca: "gem 'tapioca', require: false, :group => [:development, :test]",
 };
 
-export async function setupWorkspace(
-  context: SorbetExtensionContext,
-  pathOrUri?: string | vscode.Uri,
-) {
+export async function setupWorkspace(context: ExtensionContext, pathOrUri?: string | vscode.Uri) {
   const uri = await getTargetWorkspaceUri(pathOrUri);
   if (!uri) {
     context.log.debug('SetupWorkspace: No workspace.');

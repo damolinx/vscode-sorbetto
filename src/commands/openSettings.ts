@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 import { mainAreaActiveEditorUri } from '../common/utils';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ExtensionContext } from '../extensionContext';
 import { getTargetWorkspaceUri } from './utils';
 
 export async function openSettings(
-  context: SorbetExtensionContext,
+  context: ExtensionContext,
   contextPathOrUri?: string | vscode.Uri,
   setting = 'sorbetto',
 ) {

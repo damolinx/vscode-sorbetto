@@ -3,9 +3,9 @@ import * as vslcn from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { instrumentLanguageClient } from '../common/metrics';
 import { ProcessWithExitPromise, spawnWithExitPromise } from '../common/processUtils';
+import { ExtensionContext } from '../extensionContext';
 import { InitializationOptions } from '../lsp/initializationOptions';
 import { createClient } from '../lsp/languageClient';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { createLspConfiguration, LspConfiguration } from './configuration/lspConfiguration';
 import { SorbetClientConfiguration } from './configuration/sorbetClientConfiguration';
 import { LanguageClientErrorHandler } from './languageClientErrorHandler';
@@ -26,7 +26,7 @@ export class LanguageClientCreator {
   private workspaceFolder: vscode.WorkspaceFolder;
 
   constructor(
-    context: SorbetExtensionContext,
+    context: ExtensionContext,
     workspaceFolder: vscode.WorkspaceFolder,
     configuration: SorbetClientConfiguration,
   ) {

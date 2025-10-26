@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as vslcn from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { E_COMMAND_NOT_FOUND, ErrorInfo } from '../common/processUtils';
+import { ExtensionContext } from '../extensionContext';
 import { InitializationOptions } from '../lsp/initializationOptions';
 import { READ_FILE_REQUEST_METHOD } from '../lsp/readFileRequest';
 import {
@@ -10,7 +11,6 @@ import {
 } from '../lsp/showOperationNotification';
 import { SHOW_SYMBOL_REQUEST_METHOD } from '../lsp/showSymbolRequest';
 import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from '../lsp/workspaceDidChangeConfigurationNotification';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
 import { LspStatus } from '../types';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { SorbetClientConfiguration } from './configuration/sorbetClientConfiguration';
@@ -41,7 +41,7 @@ export class SorbetClient implements vscode.Disposable {
   private _status: LspStatus;
 
   public readonly configuration: SorbetClientConfiguration;
-  private readonly context: SorbetExtensionContext;
+  private readonly context: ExtensionContext;
   private readonly disposables: vscode.Disposable[];
   public readonly id: SorbetClientId;
   private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
@@ -51,7 +51,7 @@ export class SorbetClient implements vscode.Disposable {
 
   constructor(
     id: SorbetClientId,
-    context: SorbetExtensionContext,
+    context: ExtensionContext,
     workspaceFolder: vscode.WorkspaceFolder,
   ) {
     this._operations = [];

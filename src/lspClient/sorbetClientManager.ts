@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { onMainAreaActiveTextEditorChanged } from '../common/utils';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ExtensionContext } from '../extensionContext';
 import { isSorbetWorkspace } from '../workspaceUtils';
 import { ShowOperationEvent } from './showOperationEvent';
 import { SorbetClient } from './sorbetClient';
@@ -9,14 +9,14 @@ import { StatusChangedEvent } from './statusChangedEvent';
 
 export class SorbetClientManager implements vscode.Disposable {
   private readonly clients: Map<SorbetClientId, SorbetClient>;
-  private readonly context: SorbetExtensionContext;
+  private readonly context: ExtensionContext;
   private readonly disposables: vscode.Disposable[];
   private readonly onClientAddedEmitter: vscode.EventEmitter<SorbetClient>;
   private readonly onClientRemovedEmitter: vscode.EventEmitter<SorbetClient>;
   private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
   private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
 
-  constructor(context: SorbetExtensionContext) {
+  constructor(context: ExtensionContext) {
     this.clients = new Map();
     this.context = context;
     this.onClientAddedEmitter = new vscode.EventEmitter();

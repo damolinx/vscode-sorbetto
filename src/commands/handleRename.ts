@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { dirname, extname, relative, sep } from 'path';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ExtensionContext } from '../extensionContext';
 
 /**
  * Regex to match `require_relative` statements in Ruby files.
@@ -20,10 +20,7 @@ interface RequireMatch {
  * Update `require_relative` statements after a file rename.  Currently, only
  * files being renamed are updated, not files referencing them.
  */
-export async function handleRename(
-  context: SorbetExtensionContext,
-  renames: readonly FileRename[],
-) {
+export async function handleRename(context: ExtensionContext, renames: readonly FileRename[]) {
   const renameMap = new Map(
     renames
       .filter((entry) => extname(entry.newUri.fsPath) === '.rb')

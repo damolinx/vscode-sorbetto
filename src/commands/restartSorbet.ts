@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { mainAreaActiveEditorUri } from '../common/utils';
-import { SorbetExtensionContext } from '../sorbetExtensionContext';
+import { ExtensionContext } from '../extensionContext';
 import { OPEN_SETTINGS_ID } from './commandIds';
 import { getTargetWorkspaceUri } from './utils';
 
 export async function restartSorbet(
-  context: SorbetExtensionContext,
+  context: ExtensionContext,
   action: 'start' | 'stop' | 'restart',
   pathOrUri?: string | vscode.Uri,
 ) {
