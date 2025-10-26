@@ -2,6 +2,7 @@
 
 ## 0.3.7
 - Add **Update** action to Gemfile.
+- Improved `typed` auto-completion edits.
 - Misc. internal code improvements.
 
 ## 0.3.6

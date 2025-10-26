@@ -24,9 +24,17 @@ export class TypedOptionsCompletionProvider implements vscode.CompletionItemProv
     _context: vscode.CompletionContext,
   ): Promise<vscode.CompletionList | undefined> {
     const line = document.lineAt(position).text.substring(0, position.character);
-    if (!/^\s*#\s*typed:\s*[a-z]*$/.test(line)) {
+    const match = line.match(/^\s*#\s*typed:(?<directive>\s*[a-z]*)$/d);
+    if (!match?.indices?.groups) {
       return;
     }
+
+    const replaceRange = new vscode.Range(
+      position.line,
+      match.indices.groups.directive[0],
+      position.line,
+      position.character,
+    );
 
     return new vscode.CompletionList(
       (
@@ -60,6 +68,8 @@ export class TypedOptionsCompletionProvider implements vscode.CompletionItemProv
       ).map(([name, documentation]) => {
         const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Snippet);
         item.documentation = documentation;
+        item.insertText = ` ${name}`;
+        item.range = replaceRange;
         return item;
       }),
     );
