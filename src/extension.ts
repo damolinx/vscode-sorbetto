@@ -12,13 +12,13 @@ import { runRubyFile } from './commands/runRubyFile';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { setupWorkspace } from './commands/setupWorkspace';
 import { ExtensionContext } from './extensionContext';
+import { registerContextValueHandlers } from './extensionContextValues';
 import { registerGemfileCodeLensProvider } from './providers/gemfileCodeLensProvider';
 import { registerGemfileCompletionProvider } from './providers/gemfileCompletionProvider';
 import { registerRequireCompletionProvider } from './providers/requireCompletionProvider';
 import { registerRequireDefinitionProvider } from './providers/requireDefinitionProvider';
 import { registerSorbetContentProvider } from './providers/sorbetContentProvider';
 import { registerTypedOptionsCompletionProvider } from './providers/typedOptionsCompletionProvider';
-import { registerContextValueHandlers } from './sorbetExtensionContextValues';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
 
 /**
