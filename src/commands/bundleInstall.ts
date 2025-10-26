@@ -4,15 +4,19 @@ import { ExtensionContext } from '../extensionContext';
 import { executeCommandsInTerminal } from './utils';
 import { verifyEnvironment } from './verifyEnvironment';
 
-export async function bundleInstall(context: ExtensionContext, gemfile: string | vscode.Uri) {
+export async function bundleInstall(
+  context: ExtensionContext,
+  gemfile: string | vscode.Uri,
+  action: 'install' | 'update',
+) {
   if (!(await verifyEnvironment(context, 'bundle'))) {
     context.log.info('Skipping `bundle install` due to missing dependencies.');
     return;
   }
 
   return executeCommandsInTerminal({
-    commands: ["bundle config set --local path 'vendor/bundle'", 'bundle install'],
+    commands: ["bundle config set --local path 'vendor/bundle'", `bundle ${action}`],
     cwd: dirname(gemfile instanceof vscode.Uri ? gemfile.fsPath : gemfile),
-    name: 'bundle install',
+    name: 'bundler',
   });
 }

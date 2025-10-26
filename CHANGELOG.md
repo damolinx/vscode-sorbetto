@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.7
+- Add **Update** action to Gemfile.
+- Misc. internal code improvements.
+
 ## 0.3.6
 - Expand context tracking to include additional editor types for more accurate resolution.
 - Scope configuration-changed events to relevant clients to reduce noise.
@@ -13,7 +17,7 @@
 ## 0.3.5
 - Add **Sorbetto: Start Sorbet** and **Sorbetto: Stop Sorbet** commands.
 - **Setup Workspace** now attempts to start Sorbet after setup terminal is dismissed.
-- Improve lifecycle-methods logging. 
+- Improve lifecycle-methods logging.
 - Fix: Tracking of active editor fails in a multi-root workspace when there are multi-tabgroups.
 
 ## 0.3.4
@@ -22,7 +26,7 @@
 - Update logs entries.
 
 ## 0.3.3
-- Improve tracking of process lifecycle. 
+- Improve tracking of process lifecycle.
 - Improve reliability of the **Restart Sorbet** command when Sorbet doesn't exit but does not start the LSP service either.
 
 ## 0.3.2

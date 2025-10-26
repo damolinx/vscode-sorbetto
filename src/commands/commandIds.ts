@@ -11,6 +11,11 @@ export const AUTOCORRECT_ALL_ID = `_${EXTENSION_PREFIX}.autocorrectAll`;
 export const BUNDLE_INSTALL_ID = `_${EXTENSION_PREFIX}.bundleInstall`;
 
 /**
+ * Run `bundle update`.
+ */
+export const BUNDLE_UPDATE_ID = `_${EXTENSION_PREFIX}.bundleUpdate`;
+
+/**
  * Copy Symbol to Clipboard.
  */
 export const COPY_SYMBOL_ID = `${EXTENSION_PREFIX}.copySymbolToClipboard`;

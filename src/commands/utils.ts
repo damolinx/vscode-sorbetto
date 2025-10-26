@@ -9,7 +9,7 @@ export async function executeCommandsInTerminal(options: {
   cwd?: string | vscode.Uri;
   preserveFocus?: boolean;
 }) {
-  const cmd = options.commands.join('&&').trim();
+  const cmd = options.commands.join(' && ').trim();
   const terminalOptions: vscode.TerminalOptions = {
     cwd: options.cwd,
     message: `\x1b[1mRunning:\x1b[0m ${cmd}`,

@@ -44,7 +44,12 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     rc(cmdIds.AUTOCORRECT_ALL_ID, (code: string | number, contextUri: vscode.Uri) =>
       autocorrectAll(context, contextUri, code),
     ),
-    rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | vscode.Uri) => bundleInstall(context, gemfile)),
+    rc(cmdIds.BUNDLE_INSTALL_ID, (gemfile: string | vscode.Uri) =>
+      bundleInstall(context, gemfile, 'install'),
+    ),
+    rc(cmdIds.BUNDLE_UPDATE_ID, (gemfile: string | vscode.Uri) =>
+      bundleInstall(context, gemfile, 'update'),
+    ),
     rc(cmdIds.DEBUG_RUBY_FILE_ID, (pathOrUri?: string | vscode.Uri) =>
       debugRubyFile(context, pathOrUri),
     ),
