@@ -260,6 +260,12 @@
         "editor.wordBasedSuggestions": "off"
       }
     },
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "sorbetto.mcp.sorbet",
+        "label": "Cool Cloud Registry"
+      }
+    ],
     "menus": {
       "editor/context": [
         {
@@ -301,7 +307,7 @@
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.18.0",
     "@types/sinon": "^17.0.0",
-    "@types/vscode": "~1.99",
+    "@types/vscode": "~1.102",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.46.0",
     "@vscode/test-electron": "^2.5.0",

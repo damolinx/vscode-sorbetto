@@ -13,6 +13,7 @@ import { savePackageFiles } from './commands/savePackageFiles';
 import { setupWorkspace } from './commands/setupWorkspace';
 import { ExtensionContext } from './extensionContext';
 import { registerContextValueHandlers } from './extensionContextValues';
+import { registerMcpComponents } from './mcp/sorbetMcp';
 import { registerGemfileCodeLensProvider } from './providers/gemfileCodeLensProvider';
 import { registerGemfileCompletionProvider } from './providers/gemfileCompletionProvider';
 import { registerRequireCompletionProvider } from './providers/requireCompletionProvider';
@@ -28,15 +29,16 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   const context = new ExtensionContext(extensionContext);
   context.log.info('Activating extension', extensionContext.extension.packageJSON.version);
 
-  context.disposables.push(new SorbetLanguageStatus(context));
-
   registerContextValueHandlers(context);
   registerGemfileCodeLensProvider(context);
   registerGemfileCompletionProvider(context);
+  registerMcpComponents(context);
   registerRequireCompletionProvider(context);
   registerRequireDefinitionProvider(context);
   registerSorbetContentProvider(context);
   registerTypedOptionsCompletionProvider(context);
+
+  context.disposables.push(new SorbetLanguageStatus(context));
 
   // Register commands
   const rc = vscode.commands.registerCommand;
