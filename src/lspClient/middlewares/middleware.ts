@@ -13,7 +13,7 @@ export const Middleware: vslc.Middleware = {
     diagnostics.forEach((diagnostic) => {
       if (diagnostic.relatedInformation?.length && diagnostic.relatedInformation.length > 1) {
         diagnostic.relatedInformation = diagnostic.relatedInformation.reduce((acc, curr) => {
-          const trimmedMessage = curr.message.replace(/\n{2,}/g, '\n').trim();
+          const trimmedMessage = curr.message.replace(/\.?\n+\s*/g, '. ').trim();
           if (!trimmedMessage) {
             return acc;
           }
