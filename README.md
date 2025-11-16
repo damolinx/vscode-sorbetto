@@ -5,7 +5,7 @@ Sorbetto is a Visual Studio Code extension that provides language support for Ru
 ### Features
 * [Multi-root workspace](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) support, including separate Sorbet LSP instances per workspace folder
 * Uses the [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) to report status
-* New configuration model
+* Improved configuration model
 * Getting started experience:
   * Set up a workspace for Ruby development via the **Setup Workspace** command
   * `Gemfile` files include an **Install** action

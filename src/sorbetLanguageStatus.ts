@@ -139,17 +139,17 @@ export class SorbetLanguageStatus implements vscode.Disposable {
         case SorbetClientStatus.Error:
           this.setStatus({
             client,
-            detail: 'Sorbet LSP ran into an error. See Output panel for details',
+            detail:
+              'Sorbet language server encountered an error. See the Output panel for details.',
             severity: vscode.LanguageStatusSeverity.Error,
             status: 'Error',
           });
           break;
         case SorbetClientStatus.Initializing:
-        case SorbetClientStatus.Restarting:
           this.setStatus({
             client,
             busy: true,
-            detail: `${client.status} …`,
+            detail: 'Starting up Sorbet language server …',
             status: 'Initializing',
           });
           break;

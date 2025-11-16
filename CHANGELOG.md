@@ -5,6 +5,7 @@
   - Handle "disabled by configuration" state in **Status** item.
   - Fix: Current editor not handled on extension activation.
 - Improve diagnostic messages text-compaction heuristic.
+- Remove legacy `Restarting` internal state.
 
 ## 0.3.7
 - Add **Update** action to `Gemfile` files.

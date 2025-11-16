@@ -31,7 +31,6 @@ export function mapStatus(status: SorbetClientStatus): SorbetStatus | undefined 
     case SorbetClientStatus.Error:
       return SorbetStatus.Error;
     case SorbetClientStatus.Initializing:
-    case SorbetClientStatus.Restarting:
       return SorbetStatus.Start;
     case SorbetClientStatus.Running:
       return SorbetStatus.Running;
