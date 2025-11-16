@@ -10,8 +10,8 @@ import { SorbetClientStatus } from './lspClient/sorbetClientStatus';
 const OpenConfigurationSettings: vscode.Command = {
   arguments: [undefined, 'sorbetto.sorbetLspConfiguration'],
   command: OPEN_SETTINGS_ID,
-  title: 'Configure',
-  tooltip: 'Open Configuration Settings',
+  title: 'Settings',
+  tooltip: 'Open Sorbet Settings',
 };
 
 const StartCommand: vscode.Command = {
@@ -23,7 +23,7 @@ const StartCommand: vscode.Command = {
 const ShowOutputCommand: vscode.Command = {
   command: SHOW_OUTPUT_ID,
   title: 'Output',
-  tooltip: 'Show Sorbet Output',
+  tooltip: 'View Sorbet Output',
 };
 
 const ALWAYS_SHOW_CONFIG_KEY = 'sorbetto.alwaysShowStatusItems';
@@ -46,18 +46,20 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     this.configItem = vscode.languages.createLanguageStatusItem('ruby-sorbet-config', selector);
     this.setConfig({ configType: LspConfigurationType.Disabled });
     this.statusItem = vscode.languages.createLanguageStatusItem('ruby-sorbet-status', selector);
-    this.setStatus({ status: 'Disabled', command: StartCommand });
+    this.setStatus({ status: 'Disabled' });
+
+    const clientHandler = (client: SorbetClient) => this.handleEditorOrStatusChange(client);
+    const withClientHandler = ({ client }: { client: SorbetClient }) =>
+      this.handleEditorOrStatusChange(client);
 
     this.disposables = [
       onMainAreaActiveTextEditorChanged((editor) =>
         this.handleEditorOrStatusChange(editor?.document.uri),
       ),
-      this.context.clientManager.onShowOperation(({ client }) =>
-        this.handleEditorOrStatusChange(client),
-      ),
-      this.context.clientManager.onStatusChanged(({ client }) =>
-        this.handleEditorOrStatusChange(client),
-      ),
+      this.context.clientManager.onClientAdded(clientHandler),
+      this.context.clientManager.onClientRemoved(clientHandler),
+      this.context.clientManager.onShowOperation(withClientHandler),
+      this.context.clientManager.onStatusChanged(withClientHandler),
       vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration(ALWAYS_SHOW_CONFIG_KEY)) {
           const selector = this.getSelector();
@@ -130,7 +132,6 @@ export class SorbetLanguageStatus implements vscode.Disposable {
         case SorbetClientStatus.Disabled:
           this.setStatus({
             client,
-            command: StartCommand,
             severity: vscode.LanguageStatusSeverity.Warning,
             status: 'Disabled',
           });
@@ -144,17 +145,11 @@ export class SorbetLanguageStatus implements vscode.Disposable {
           });
           break;
         case SorbetClientStatus.Initializing:
-          this.setStatus({
-            client,
-            busy: true,
-            status: 'Initializing',
-          });
-          break;
         case SorbetClientStatus.Restarting:
           this.setStatus({
             client,
             busy: true,
-            detail: 'Sorbet is restarting',
+            detail: `${client.status} …`,
             status: 'Initializing',
           });
           break;
@@ -186,23 +181,28 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   private setStatus(options: {
     client?: SorbetClient;
     busy?: boolean;
-    command?: vscode.Command;
     detail?: string;
     severity?: vscode.LanguageStatusSeverity;
     status?: string;
   }): void {
     const {
       busy = false,
-      command = ShowOutputCommand,
+      client,
       detail = this.getWorkspaceAwareDetail('Sorbet Status', options.client),
       severity = vscode.LanguageStatusSeverity.Information,
       status = 'Unknown',
     } = options;
     this.statusItem.busy = busy;
-    this.statusItem.command = command;
-    this.statusItem.detail = detail;
     this.statusItem.severity = severity;
     this.statusItem.text = `$(ruby) ${status}`;
+
+    if (client?.isEnabledByConfiguration()) {
+      this.statusItem.command = client.isActive() ? ShowOutputCommand : StartCommand;
+      this.statusItem.detail = detail;
+    } else {
+      this.statusItem.command = undefined;
+      this.statusItem.detail = 'Sorbet is disabled by configuration';
+    }
   }
 
   private getWorkspaceAwareDetail(prefix: string, client?: SorbetClient): string | undefined {

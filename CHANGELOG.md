@@ -1,7 +1,10 @@
 # Changelog
 
 ## 0.3.8
-- Update compaction of diagnostic mesages.
+- Update Language Status item detection:
+  - Handle "disabled by configuration" state in **Status** item.
+  - Fix: Current editor not handled on extension activation.
+- Improve diagnostic messages text-compaction heuristic.
 
 ## 0.3.7
 - Add **Update** action to `Gemfile` files.

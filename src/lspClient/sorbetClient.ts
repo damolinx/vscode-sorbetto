@@ -144,6 +144,10 @@ export class SorbetClient implements vscode.Disposable {
     }
   }
 
+  public isActive(): boolean {
+    return this.status !== SorbetClientStatus.Disabled;
+  }
+
   public isEnabledByConfiguration(): boolean {
     return this.configuration.lspConfigurationType !== LspConfigurationType.Disabled;
   }
