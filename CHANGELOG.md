@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.3.8
-- 
+- Update compaction of diagnostic mesages.
 
 ## 0.3.7
 - Add **Update** action to `Gemfile` files.
