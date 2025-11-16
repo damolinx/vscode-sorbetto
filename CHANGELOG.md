@@ -1,8 +1,11 @@
 # Changelog
 
+## 0.3.8
+- 
+
 ## 0.3.7
-- Add **Update** action to Gemfile.
-- Improved `typed` auto-completion edits.
+- Add **Update** action to `Gemfile` files.
+- Improve `typed` auto-completion.
 - Misc. internal code improvements.
 
 ## 0.3.6

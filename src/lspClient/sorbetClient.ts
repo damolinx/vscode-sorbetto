@@ -26,11 +26,6 @@ const THROTTLE_CONFIG = {
   maxDelayMs: 30000, // 30 seconds
 } as const;
 
-/**
- * Sorbet LSP server timeout before forcefully killing the process.
- */
-export const SORBET_CLIENT_DISPOSE_TIMEOUT_MS = 5000;
-
 export class SorbetClient implements vscode.Disposable {
   private _languageClient?: {
     client: vslcn.LanguageClient;
