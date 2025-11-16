@@ -53,7 +53,7 @@
         "category": "Sorbetto",
         "enablement": "workbenchState != empty && editorLangId == ruby && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote) && sorbetto:sorbetStatus != disabled && sorbetto:sorbetStatus != error"
       },
-            {
+      {
         "command": "sorbetto.debugRubyFile",
         "title": "Debug Ruby File",
         "category": "Sorbetto",
@@ -92,7 +92,8 @@
         "enablement": "workbenchState != empty"
       }
     ],
-    "configuration": [{
+    "configuration": [
+      {
         "title": "Sorbetto for VS Code",
         "properties": {
           "sorbetto.enableWatchman": {
@@ -305,7 +306,7 @@
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.46.0",
     "@vscode/test-electron": "^2.5.0",
-    "@vscode/vsce": "^3.6.0",
+    "@vscode/vsce": "^3.3.2",
     "esbuild": "^0.25.0",
     "eslint": "^9.30.0",
     "eslint-plugin-import": "2.32.0",
