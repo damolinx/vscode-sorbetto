@@ -43,5 +43,5 @@ export const Middleware: vslc.Middleware = {
 } as const;
 
 function compact(msg: string): string {
-  return msg.replace(/\.?\n+\s*/g, '. ').trim();
+  return msg.replace(/\.?\n+\s*(?:Note:\s+)?/g, '. ').trim();
 }
