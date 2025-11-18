@@ -1,9 +1,11 @@
 # Changelog
+## 0.3.9
+- Add `sorbetto.compactSorbetDiagnostics` setting to control compact formatting of Sorbet diagnostics.
 
 ## 0.3.8
 - Update Language Status item detection:
   - Handle "disabled by configuration" state in **Status** item.
-  - Fix: Current editor not handled on extension activation.
+  - Fix: Current editor is not looked on extension activation.
 - Improve diagnostic messages text-compaction heuristic.
 - Remove legacy `Restarting` internal state.
 

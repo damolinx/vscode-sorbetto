@@ -182,6 +182,11 @@
             "default": false,
             "description": "Keep Sorbet language status items visible whenever an editor is open, not only when the active editor is Ruby. Note: VS Code hides all status items when no editor is open."
           },
+          "sorbetto.compactSorbetDiagnostics": {
+            "type": "boolean",
+            "default": true,
+            "description": "Reformat Sorbet diagnostic messages to use a more compact layout."
+          },
           "sorbetto.highlightUntypedCode": {
             "type": "string",
             "default": "disabled",
