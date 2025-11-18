@@ -14,9 +14,11 @@ export const Middleware: vslc.Middleware = {
   ): Promise<void> {
     if (vscode.workspace.getConfiguration().get(COMPACT_SORBET_DIAGNOSTICS_CONFIG_KEY, true)) {
       diagnostics.forEach((diagnostic) => {
+        diagnostic.message = compact(diagnostic.message);
+
         if (diagnostic.relatedInformation?.length && diagnostic.relatedInformation.length > 1) {
           diagnostic.relatedInformation = diagnostic.relatedInformation.reduce((acc, curr) => {
-            const trimmedMessage = curr.message.replace(/\.?\n+\s*/g, '. ').trim();
+            const trimmedMessage = compact(curr.message);
             if (!trimmedMessage) {
               return acc;
             }
@@ -39,3 +41,7 @@ export const Middleware: vslc.Middleware = {
     return next(uri, diagnostics);
   },
 } as const;
+
+function compact(msg: string): string {
+  return msg.replace(/\.?\n+\s*/g, '. ').trim();
+}

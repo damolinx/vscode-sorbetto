@@ -1,6 +1,7 @@
 # Changelog
 ## 0.3.9
 - Add `sorbetto.compactSorbetDiagnostics` setting to control compact formatting of Sorbet diagnostics.
+- Extend diagnostics compaction heuristic to `message`.
 
 ## 0.3.8
 - Update Language Status item detection:
