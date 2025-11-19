@@ -42,6 +42,12 @@ export const Middleware: vslc.Middleware = {
   },
 } as const;
 
-function compact(msg: string): string {
-  return msg.replace(/\.?\n+\s*(?:Note:\s+)?/g, '. ').trim();
+export function compact(msg: string): string {
+  return msg
+    .replace(
+      /([.,;:!?])?\n+\s*(Note:\s+)?(.)/g,
+      (_, prefix, note, suffix) =>
+        `${note || /[A-Z]/.test(suffix) ? (prefix ?? '.') : (prefix ?? '')} ${note ? suffix.toUpperCase() : suffix}`,
+    )
+    .trim();
 }
