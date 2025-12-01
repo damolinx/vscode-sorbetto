@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.3.10
-- Improve diagnostic messages text-compaction heuristic to unexpected separators.
+- Improve diagnostics compaction heuristic when dealing with unexpected separators.
 
 ## 0.3.9
 - Add `sorbetto.compactSorbetDiagnostics` setting to control compact formatting of Sorbet diagnostics.
