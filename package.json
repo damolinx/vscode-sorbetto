@@ -185,7 +185,7 @@
           "sorbetto.compactSorbetDiagnostics": {
             "type": "boolean",
             "default": true,
-            "description": "Reformat Sorbet diagnostic messages to use a more compact layout."
+            "markdownDescription": "Reformat Sorbet diagnostic messages into a compact layout in the **Problems** pane and error tooltips."
           },
           "sorbetto.highlightUntypedCode": {
             "type": "string",
