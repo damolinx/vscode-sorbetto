@@ -53,7 +53,7 @@
         "command": "sorbetto.copySymbolToClipboard",
         "title": "Copy Symbol to Clipboard",
         "category": "Sorbetto",
-        "enablement": "workbenchState != empty && editorLangId == ruby && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote) && sorbetto:sorbetStatus != disabled && sorbetto:sorbetStatus != error"
+        "enablement": "workbenchState != empty && editorLangId == ruby && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote) && sorbetto:sorbetStatus == running"
       },
       {
         "command": "sorbetto.debugRubyFile",
@@ -66,7 +66,7 @@
         "command": "sorbetto.restart",
         "title": "Restart Sorbet",
         "category": "Sorbetto",
-        "enablement": "sorbetto:active && sorbetto:sorbetStatus != disabled"
+        "enablement": "sorbetto:active && (sorbetto:sorbetStatus && sorbetto:sorbetStatus != disabled)"
       },
       {
         "command": "sorbetto.start",
@@ -283,7 +283,7 @@
         {
           "command": "sorbetto.copySymbolToClipboard",
           "group": "9_cutcopypaste",
-          "when": "workbenchState != empty && resourceLangId == ruby"
+          "when": "workbenchState != empty && resourceLangId == ruby && sorbetto:sorbetStatus"
         }
       ]
     },

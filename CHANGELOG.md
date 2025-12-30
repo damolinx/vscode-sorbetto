@@ -1,7 +1,8 @@
 # Changelog
 
 ## 0.3.13
-- Fix: `Setup Workspace` command does not save the Gemfile leading to a run error. 
+- Fix: `Sorbet: Copy Symbol to Clipboard` should not be available if no client exists. 
+- Fix: `Setup Workspace` command does not save the Gemfile leading to a bundler error. 
 
 ## 0.3.12
 - Improve RBS syntax highlighting:
