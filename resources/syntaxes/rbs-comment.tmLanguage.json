@@ -2,9 +2,10 @@
   "scopeName": "rbs.sig.comment",
   "injectionSelector": "L:source.ruby",
   "patterns": [
-    { "include": "#sig-comment" }
+    {
+      "include": "#sig-comment"
+    }
   ],
-
   "repository": {
     "rbs-annotations": {
       "patterns": [
@@ -14,7 +15,6 @@
         }
       ]
     },
-
     "rbs-identifiers": {
       "patterns": [
         {
@@ -23,7 +23,6 @@
         }
       ]
     },
-
     "rbs-keywords": {
       "patterns": [
         {
@@ -32,14 +31,18 @@
         }
       ]
     },
-
     "rbs-op-modifiers": {
       "patterns": [
-        { "match": "\\*", "name": "keyword.operator.splat.rbs" },
-        { "match": "\\?", "name": "keyword.operator.optional.rbs" }
+        {
+          "match": "\\*",
+          "name": "keyword.operator.splat.rbs"
+        },
+        {
+          "match": "\\?",
+          "name": "keyword.operator.optional.rbs"
+        }
       ]
     },
-
     "rbs-op-return": {
       "patterns": [
         {
@@ -48,32 +51,54 @@
         }
       ]
     },
-
     "rbs-op-union-intersection": {
       "patterns": [
-        { "match": "&", "name": "keyword.operator.intersection.rbs" },
-        { "match": "\\|", "name": "keyword.operator.union.rbs" }
+        {
+          "match": "&",
+          "name": "keyword.operator.intersection.rbs"
+        },
+        {
+          "match": "\\|",
+          "name": "keyword.operator.union.rbs"
+        }
       ]
     },
-
     "rbs-punctuation": {
       "patterns": [
-        { "match": ",", "name": "punctuation.separator.comma.rbs" },
-        { "match": ":", "name": "punctuation.separator.key-value.rbs" },
-        { "match": "\\(|\\)", "name": "punctuation.section.parens.rbs" },
-        { "match": "\\{|\\}", "name": "punctuation.section.braces.rbs" },
-        { "match": "\\[|\\]", "name": "punctuation.section.brackets.rbs" }
+        {
+          "match": ",",
+          "name": "punctuation.separator.comma.rbs"
+        },
+        {
+          "match": ":",
+          "name": "punctuation.separator.key-value.rbs"
+        },
+        {
+          "match": "\\(|\\)",
+          "name": "punctuation.section.parens.rbs"
+        },
+        {
+          "match": "\\{|\\}",
+          "name": "punctuation.section.braces.rbs"
+        },
+        {
+          "match": "\\[|\\]",
+          "name": "punctuation.section.brackets.rbs"
+        }
       ]
     },
-
     "rbs-records": {
       "begin": "\\{",
       "beginCaptures": {
-        "0": { "name": "punctuation.section.braces.rbs" }
+        "0": {
+          "name": "punctuation.section.braces.rbs"
+        }
       },
       "end": "\\}",
       "endCaptures": {
-        "0": { "name": "punctuation.section.braces.rbs" }
+        "0": {
+          "name": "punctuation.section.braces.rbs"
+        }
       },
       "name": "meta.type.record.rbs",
       "patterns": [
@@ -81,37 +106,67 @@
           "match": "\\b[a-z_][A-Za-z0-9_]*(?=:)\\b",
           "name": "variable.other.property.rbs"
         },
-        { "include": "#rbs-identifiers" },
-        { "include": "#rbs-keywords" },
-        { "include": "#rbs-op-modifiers" },
-        { "include": "#rbs-op-union-intersection" },
-        { "include": "#rbs-punctuation" },
-        { "include": "#rbs-type-builtin" },
-        { "include": "#rbs-type-const" }
+        {
+          "include": "#rbs-identifiers"
+        },
+        {
+          "include": "#rbs-keywords"
+        },
+        {
+          "include": "#rbs-op-modifiers"
+        },
+        {
+          "include": "#rbs-op-union-intersection"
+        },
+        {
+          "include": "#rbs-punctuation"
+        },
+        {
+          "include": "#rbs-type-builtin"
+        },
+        {
+          "include": "#rbs-type-const"
+        }
       ]
     },
-
     "rbs-tuples": {
       "begin": "\\(",
       "beginCaptures": {
-        "0": { "name": "punctuation.section.parens.rbs" }
+        "0": {
+          "name": "punctuation.section.parens.rbs"
+        }
       },
       "end": "\\)",
       "endCaptures": {
-        "0": { "name": "punctuation.section.parens.rbs" }
+        "0": {
+          "name": "punctuation.section.parens.rbs"
+        }
       },
       "name": "meta.type.tuple.rbs",
       "patterns": [
-        { "include": "#rbs-identifiers" },
-        { "include": "#rbs-keywords" },
-        { "include": "#rbs-op-modifiers" },
-        { "include": "#rbs-op-union-intersection" },
-        { "include": "#rbs-punctuation" },
-        { "include": "#rbs-type-builtin" },
-        { "include": "#rbs-type-const" }
+        {
+          "include": "#rbs-identifiers"
+        },
+        {
+          "include": "#rbs-keywords"
+        },
+        {
+          "include": "#rbs-op-modifiers"
+        },
+        {
+          "include": "#rbs-op-union-intersection"
+        },
+        {
+          "include": "#rbs-punctuation"
+        },
+        {
+          "include": "#rbs-type-builtin"
+        },
+        {
+          "include": "#rbs-type-const"
+        }
       ]
     },
-
     "rbs-type-builtin": {
       "patterns": [
         {
@@ -120,7 +175,6 @@
         }
       ]
     },
-
     "rbs-type-const": {
       "patterns": [
         {
@@ -129,27 +183,57 @@
         }
       ]
     },
-
     "sig-comment": {
       "begin": "(?<!\\S)#:",
       "beginCaptures": {
-        "0": { "name": "comment.line.sig.rbs" }
+        "0": {
+          "name": "comment.line.sig.rbs"
+        }
       },
-      "end": "$",
+      "end": "^(?!\\s*#\\|)",
       "name": "meta.sig.rbs",
       "patterns": [
-        { "include": "#rbs-annotations" },
-        { "include": "#rbs-identifiers" },
-        { "include": "#rbs-keywords" },
-        { "include": "#rbs-op-modifiers" },
-        { "include": "#rbs-op-return" },
-        { "include": "#rbs-op-union-intersection" },
-        { "include": "#rbs-punctuation" },
-        { "include": "#rbs-records" },
-        { "include": "#rbs-tuples" },
-        { "include": "#rbs-type-builtin" },
-        { "include": "#rbs-type-const" }
+        {
+          "include": "#rbs-annotations"
+        },
+        {
+          "include": "#rbs-identifiers"
+        },
+        {
+          "include": "#rbs-keywords"
+        },
+        {
+          "include": "#rbs-op-modifiers"
+        },
+        {
+          "include": "#rbs-op-return"
+        },
+        {
+          "include": "#rbs-op-union-intersection"
+        },
+        {
+          "include": "#rbs-punctuation"
+        },
+        {
+          "include": "#rbs-records"
+        },
+        {
+          "include": "#rbs-tuples"
+        },
+        {
+          "include": "#rbs-type-builtin"
+        },
+        {
+          "include": "#rbs-type-const"
+        },
+        {
+          "include": "#sig-continuation"
+        }
       ]
+    },
+    "sig-continuation": {
+      "match": "(?<!\\S)#\\|",
+      "name": "comment.line.sig.rbs"
     }
   }
 }

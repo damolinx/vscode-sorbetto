@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.12
+- Fix: Support multi-line RBS signatures correctly.
+
 ## 0.3.11
 - Add syntax highlighting for RBS signature comments, tailored for Sorbet specifics
   - Inspired by [Shopify's](https://github.com/Shopify/ruby-lsp/blob/bb73ee69bd7a9b77d63cffcb17b644e2a8e0fff5/vscode/grammars/rbs.injection.json) but ultimately implemented from scratch with Copilot’s assistance. 

@@ -1,7 +1,7 @@
 {
   "name": "damolinx-sorbetto",
   "displayName": "Sorbetto for VS Code",
-  "description": "Sorbetto provides Ruby Language features using Sorbet, a type checker for Ruby.",
+  "description": "Ruby language features using Sorbet, a type checker for Ruby.",
   "author": "damolinx",
   "publisher": "damolinx",
   "license": "Apache-2.0",
@@ -21,26 +21,29 @@
     "Programming Languages"
   ],
   "keywords": [
+    "rbs",
     "ruby",
     "sorbet",
     "sorbetto",
     "language-server"
   ],
   "activationEvents": [
-    "onLanguage:ruby",
     "workspaceContains:sorbet/*"
   ],
   "languages": [
     {
       "id": "ruby",
-      "extensions": [
-        ".rb",
-        ".rbi",
-        ".srb"
-      ],
       "aliases": [
         "Ruby"
-      ]
+      ],
+      "extensions": [
+        ".gemspec",
+        ".rb",
+        ".rbi"
+      ],
+       "filenames": [
+        "Gemfile"
+       ]
     }
   ],
   "main": "./out/extension.js",
