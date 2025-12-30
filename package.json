@@ -266,6 +266,16 @@
         "editor.wordBasedSuggestions": "off"
       }
     },
+    "grammars": [
+      {
+        "path": "./resources/syntaxes/rbs-comment.tmLanguage.json",
+        "scopeName": "rbs.sig.comment",
+        "injectTo": [ "source.ruby" ],
+        "embeddedLanguages": {
+          "meta.type.signature.rbs": "rbs"
+        }
+      }
+    ],
     "menus": {
       "editor/context": [
         {

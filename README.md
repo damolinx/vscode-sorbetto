@@ -31,6 +31,7 @@ Some of the maintainability updates:
 * [Sorbet Configuration](#sorbet-configuration)
 * [Sorbet Snippets](#sorbet-snippets)
 * [Multi-root Workspaces](#multi-root-workspaces)
+* [RBS Support](#rbs-support)
 * [Workspace Setup](#workspace-setup)
 * [Gemfile](#gemfile-tools)
 * [Extension Logs](#extension-logs)
@@ -98,6 +99,13 @@ There are two key aspects to be aware of:
 * **Context resolution**: When determining the target of an action—such as displaying language status items—Sorbetto uses the currently active text editor as a hint. If the target workspace cannot be inferred, a dropdown will prompt for selection. This typically occurs with VS Code stock commands that don’t accept a URI as context.
 
 * **Configuration precedence**: Settings are read in the following order: first from the workspace folder, then the overall workspace, and finally the user scope. Be sure to configure values at the appropriate level. Note that UI settings can only be set at the workspace or user level. This is often the most nuanced aspect of managing multi-root workspaces, so refer to the [documentation](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces#_settings) if needed. 
+
+[↑ Back to top](#table-of-contents)
+
+## RBS Support
+RBS signature comments can be enabled via the **Enable RBS support** setting. This controls whether Sorbet makes use of the RBS signatures for typing information.
+
+Inline RBS signature comments (`#:`) always receive targeted syntax highlighting for Sorbet‑supported constructs, including types, generics, tuples, records, and annotations such as `@abstract`, `@final`, `@sealed`, `@interface`, and `@requires_ancestor`.
 
 [↑ Back to top](#table-of-contents)
 
