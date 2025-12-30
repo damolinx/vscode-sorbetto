@@ -1,7 +1,11 @@
 # Changelog
 
 ## 0.3.12
-- Fix: Support multi-line RBS signatures correctly.
+- Improve RBS syntax highlighting:
+  - Add support for multi-line signature comments  (`#:` / `#|`).
+  - Add string literal highlighting inside signature comments.
+  - Highlight RBS constructs that Sorbet does not support inside signature comments.
+  - Fix: treat Sorbet inline annotations (`# @...`) as regular comments, not signature comments.
 
 ## 0.3.11
 - Add syntax highlighting for RBS signature comments, tailored for Sorbet specifics

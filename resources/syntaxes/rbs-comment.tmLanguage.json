@@ -4,22 +4,33 @@
   "patterns": [
     {
       "include": "#sig-comment"
+    },
+    {
+      "include": "#sorbet-annotations"
     }
   ],
   "repository": {
-    "rbs-annotations": {
-      "patterns": [
-        {
-          "match": "@(abstract|final|interface|requires_ancestor|sealed)\\b",
-          "name": "storage.modifier.annotation.rbs"
-        }
-      ]
-    },
     "rbs-identifiers": {
       "patterns": [
         {
           "match": "(?<!@)\\b[a-z_][A-Za-z0-9_]*\\b",
           "name": "variable.other.rbs"
+        }
+      ]
+    },
+    "rbs-invalid": {
+      "patterns": [
+        {
+          "match": "\\b(attr_reader|class|def|end|extend|include|interface|module|prepend)\\b",
+          "name": "invalid.illegal.unsupported.declarations.sorbet"
+        },
+        {
+          "match": "\\b(private|protected|public)\\b",
+          "name": "invalid.illegal.unsupported.modifiers.sorbet"
+        },
+        {
+          "match": "\\b(do|else|elsif|if|return|until|while|yield)\\b",
+          "name": "invalid.illegal.unsupported.sorbet"
         }
       ]
     },
@@ -129,6 +140,32 @@
         }
       ]
     },
+    "rbs-strings": {
+      "patterns": [
+        {
+          "begin": "\"",
+          "end": "\"|$",
+          "name": "string.quoted.double.rbs",
+          "patterns": [
+            {
+              "match": "\\\\.",
+              "name": "constant.character.escape.rbs"
+            }
+          ]
+        },
+        {
+          "begin": "'",
+          "end": "'|$",
+          "name": "string.quoted.single.rbs",
+          "patterns": [
+            {
+              "match": "\\\\.",
+              "name": "constant.character.escape.rbs"
+            }
+          ]
+        }
+      ]
+    },
     "rbs-tuples": {
       "begin": "\\(",
       "beginCaptures": {
@@ -183,6 +220,18 @@
         }
       ]
     },
+    "sorbet-annotations": {
+      "patterns": [
+        {
+          "match": "(?<=#\\s)@\\b(abstract|final|interface|requires_ancestor|sealed)\\b",
+          "name": "storage.modifier.annotation.sorbet"
+        },
+        {
+          "match": "(?<=#\\s)@override(\\([^)]*\\))?",
+          "name": "storage.modifier.annotation.sorbet"
+        }
+      ]
+    },
     "sig-comment": {
       "begin": "(?<!\\S)#:",
       "beginCaptures": {
@@ -194,7 +243,7 @@
       "name": "meta.sig.rbs",
       "patterns": [
         {
-          "include": "#rbs-annotations"
+          "include": "#rbs-invalid"
         },
         {
           "include": "#rbs-identifiers"
@@ -218,7 +267,10 @@
           "include": "#rbs-records"
         },
         {
-          "include": "#rbs-tuples"
+          "include": "#rbs-records"
+        },
+        {
+          "include": "#rbs-strings"
         },
         {
           "include": "#rbs-type-builtin"
