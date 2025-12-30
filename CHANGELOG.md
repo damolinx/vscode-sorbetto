@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.13
+- Fix: `Setup Workspace` command does not save the Gemfile leading to a run error. 
+
 ## 0.3.12
 - Improve RBS syntax highlighting:
   - Add support for multi-line signature comments  (`#:` / `#|`).

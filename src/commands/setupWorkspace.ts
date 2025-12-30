@@ -25,6 +25,7 @@ export async function setupWorkspace(context: ExtensionContext, pathOrUri?: stri
     // When files are only being created (not edited), `applyEdit` returns `false`
     // even on success so return value is useless to detect failures.
     await vscode.workspace.applyEdit(edit);
+    await Promise.all(edit.entries().map(([uri]) => vscode.workspace.openTextDocument(uri).then((doc) => doc.save())));
     context.log.info('SetupWorkspace: Added Gemfile and Sorbet config.');
   } else {
     context.log.info('SetupWorkspace: No files were added.');
