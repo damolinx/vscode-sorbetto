@@ -77,12 +77,12 @@ async function verifyGemfile(
     edit.createFile(gemFile, { contents: Buffer.from(contents) });
     changed = true;
   } else {
-    const requiredGems = await getRequiredGems(gemFile);
-    if (requiredGems.length) {
+    const requiredStmts = await getRequiredStatements(gemFile);
+    if (requiredStmts.length) {
       edit.insert(
         gemFile,
         new vscode.Position(Number.MAX_VALUE, 0),
-        `\n${requiredGems.join('\n')}`,
+        requiredStmts,
       );
       changed = true;
     }
@@ -90,17 +90,26 @@ async function verifyGemfile(
 
   return changed;
 
-  async function getRequiredGems(gemfile: vscode.Uri): Promise<string[]> {
+  async function getRequiredStatements(gemfile: vscode.Uri): Promise<string> {
+    const requiredStmts: string[] = [];
+
     const contents = await vscode.workspace.fs
       .readFile(gemfile)
       .then((buffer) => buffer.toString());
-    const requiredStmts: string[] = [];
+
+    if (!/source\s+['"']/.test(contents)) {
+      requiredStmts.push(...GEMFILE_HEADER);
+    } else {
+      requiredStmts.push('');
+    }
+
     for (const [name, stmt] of Object.entries(GEMFILE_DEPS)) {
       if (!new RegExp(`gem\\s+(['"])${name}\\1`).test(contents)) {
         requiredStmts.push(stmt);
       }
     }
-    return requiredStmts;
+
+    return requiredStmts.join('\n');
   }
 }
 
