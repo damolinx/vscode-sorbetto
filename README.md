@@ -81,6 +81,10 @@ When compared to the official extension, *Beta* and *Experimental* are not confi
 ### `sorbet/config`
 Support for `sorbet/config` receive editing support with syntax highlighting and limited autocompletion. The extension does not process this file at this point, however, so beware you may create conflicting configurations. For details, see the [Sorbet: Config file](https://sorbet.org/docs/cli#config-file) documentation.
 
+<p align=center>
+  <img width="400" alt="sorbet/config with syntax highlighting and autocomplete" src="https://github.com/user-attachments/assets/c32e6603-b116-46d1-af04-826bc155e5b0" />
+</p>
+
 [↑ Back to top](#table-of-contents)
 
 ## Sorbet Snippets
@@ -126,5 +130,6 @@ CodeLens actions are added to `Gemfile` files, making it easy to **Install** or 
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet’s. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
 [↑ Back to top](#table-of-contents)
+
 
 
