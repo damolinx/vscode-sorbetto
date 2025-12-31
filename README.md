@@ -1,6 +1,6 @@
 # Sorbetto for VS Code
 
-Sorbetto provides language support for Ruby via [Sorbet](https://github.com/sorbet/sorbet), a type checker developed by Stripe. It began as a fork of the official [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension, created to explore improvements in code maintainability and user experience (UX). Since then, Sorbetto's internals have been rewritten,and while it continues to serve as an experimentation platform, it now follows its own path—compatibility with the official extension is no longer a priority. Note that both extensions rely on the same Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server), so differences in behavior occur exclusively in the VS Code layer.
+Sorbetto provides language support for Ruby via [Sorbet](https://github.com/sorbet/sorbet), a type checker developed by Stripe. It began as a fork of the official [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension, created to explore improvements in code maintainability and user experience (UX). Since then, Sorbetto's internals have been rewritten, and while it continues to serve as an experimentation platform, it now follows its own path—compatibility with the official extension is no longer a priority. Note that both extensions rely on the same Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server), so differences in behavior occur exclusively in the VS Code layer.
 
 ### Features
 * [Multi-root workspace](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) support, including separate Sorbet LSP instances per workspace folder.
@@ -130,6 +130,7 @@ CodeLens actions are added to `Gemfile` files, making it easy to **Install** or 
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet’s. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
 [↑ Back to top](#table-of-contents)
+
 
 
 
