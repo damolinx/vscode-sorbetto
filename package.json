@@ -30,22 +30,6 @@
   "activationEvents": [
     "workspaceContains:sorbet/*"
   ],
-  "languages": [
-    {
-      "id": "ruby",
-      "aliases": [
-        "Ruby"
-      ],
-      "extensions": [
-        ".gemspec",
-        ".rb",
-        ".rbi"
-      ],
-       "filenames": [
-        "Gemfile"
-       ]
-    }
-  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -272,10 +256,28 @@
       {
         "path": "./resources/syntaxes/rbs-comment.tmLanguage.json",
         "scopeName": "rbs.sig.comment",
-        "injectTo": [ "source.ruby" ],
+        "injectTo": [
+          "source.ruby"
+        ],
         "embeddedLanguages": {
           "meta.type.signature.rbs": "rbs"
         }
+      }
+    ],
+    "languages": [
+      {
+        "id": "ruby",
+        "aliases": [
+          "Ruby"
+        ],
+        "extensions": [
+          ".gemspec",
+          ".rb",
+          ".rbi"
+        ],
+        "filenames": [
+          "Gemfile"
+        ]
       }
     ],
     "menus": {
