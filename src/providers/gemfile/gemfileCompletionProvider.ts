@@ -1,18 +1,7 @@
 import * as vscode from 'vscode';
 import * as https from 'https';
-import { ExtensionContext } from '../extensionContext';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['"', "'"];
-
-export function registerGemfileCompletionProvider({ disposables }: ExtensionContext): void {
-  disposables.push(
-    vscode.languages.registerCompletionItemProvider(
-      { pattern: '**/Gemfile' },
-      new GemfileCompletionProvider(),
-      ...TRIGGER_CHARACTERS,
-    ),
-  );
-}
 
 /**
  * Completion provider for `gem` entries in Gemfile files.

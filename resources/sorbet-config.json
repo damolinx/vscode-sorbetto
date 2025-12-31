@@ -1,0 +1,375 @@
+{
+  "flags": [
+    {
+      "name": "-e",
+      "description": "Treat the given string as Ruby source.",
+      "argsHint": "string"
+    },
+    {
+      "name": "--allowed-extension",
+      "description": "Specify file extensions Sorbet should discover.",
+      "argsHint": "ext[,ext...]"
+    },
+    {
+      "name": "--autocorrect",
+      "description": "Apply safe autocorrects to source files."
+    },
+    {
+      "name": "--autogen-behavior-allowed-in-rbi-files-paths",
+      "description": "Allow RBI files in these paths to be treated as behavior-defining.",
+      "argsHint": "string"
+    },
+    {
+      "name": "--autogen-msgpack-skip-reference-metadata",
+      "description": "Skip serializing extra reference metadata in msgpack autogen output."
+    },
+    {
+      "name": "--autogen-subclasses-ignore",
+      "description": "Ignore patterns only for autogen-subclasses.",
+      "argsHint": "string"
+    },
+    {
+      "name": "--autogen-subclasses-parent",
+      "description": "Parent class for which to generate a subclass list.",
+      "argsHint": "string"
+    },
+    {
+      "name": "--autogen-version",
+      "description": "Autogen version to output.",
+      "argsHint": "arg"
+    },
+    {
+      "name": "--cache-dir",
+      "description": "Directory used to cache Sorbet data.",
+      "argsHint": "dir"
+    },
+    {
+      "name": "--check-out-of-order-constant-references",
+      "description": "Detect constants referenced before they are defined."
+    },
+    {
+      "name": "--color",
+      "description": "Control whether Sorbet uses color output.",
+      "argsValues": "always|never|auto"
+    },
+    {
+      "name": "--counter",
+      "description": "Print the specified internal counter.",
+      "argsHint": "counter"
+    },
+    {
+      "name": "--counters",
+      "description": "Print all internal counters."
+    },
+    {
+      "name": "--dir",
+      "description": "Typecheck all Ruby and RBI files under the given directory.",
+      "argsHint": "path"
+    },
+    {
+      "name": "--e-rbi",
+      "description": "Treat the given string as RBI source.",
+      "argsHint": "string"
+    },
+    {
+      "name": "--enable-all-beta-lsp-features",
+      "description": "Enable early-access, expected-stable LSP features."
+    },
+    {
+      "name": "--enable-all-experimental-lsp-features",
+      "description": "Enable all experimental LSP features (may be unstable)."
+    },
+    {
+      "name": "--enable-experimental-lsp-document-formatting-rubyfmt",
+      "description": "Enable experimental LSP document formatting via Rubyfmt."
+    },
+    {
+      "name": "--enable-experimental-lsp-document-highlight",
+      "description": "Enable experimental LSP document highlight."
+    },
+    {
+      "name": "--enable-experimental-lsp-extract-to-variable",
+      "description": "Enable experimental LSP Extract To Variable."
+    },
+    {
+      "name": "--enable-experimental-lsp-signature-help",
+      "description": "Enable experimental LSP signature help."
+    },
+    {
+      "name": "--enable-experimental-package-directed",
+      "description": "Enable package-directed checking instead of whole-program mode."
+    },
+    {
+      "name": "--enable-experimental-rbs-assertions",
+      "description": "Enable experimental support for RBS assertions in comments."
+    },
+    {
+      "name": "--enable-experimental-rbs-comments",
+      "description": "Enable experimental RBS signatures and assertions in comments."
+    },
+    {
+      "name": "--enable-experimental-rbs-signatures",
+      "description": "Enable experimental support for RBS signatures in comments."
+    },
+    {
+      "name": "--enable-experimental-requires-ancestor",
+      "description": "Enable experimental `requires_ancestor` annotation."
+    },
+    {
+      "name": "--enable-experimental-rspec",
+      "description": "Enable experimental RSpec support (best effort only)."
+    },
+    {
+      "name": "--error-url-base",
+      "description": "Prefix used to build links for error codes.",
+      "argsHint": "url-base"
+    },
+    {
+      "name": "--experimental-ruby3-keyword-args",
+      "description": "Enforce Ruby 3-style keyword arguments (experimental)."
+    },
+    {
+      "name": "--file",
+      "description": "Typecheck the contents of the given file.",
+      "argsHint": "path"
+    },
+    {
+      "name": "--gen-packages",
+      "description": "Generate package information."
+    },
+    {
+      "name": "--ignore",
+      "description": "Ignore files whose paths match the given pattern.",
+      "argsHint": "pattern"
+    },
+    {
+      "name": "--isolate-error-code",
+      "description": "Report only the specified error code(s).",
+      "argsHint": "error-code"
+    },
+    {
+      "name": "--max-cache-size-bytes",
+      "description": "Maximum LMDB cache size in bytes.",
+      "argsHint": "bytes"
+    },
+    {
+      "name": "--max-threads",
+      "description": "Set number of worker threads.",
+      "argsHint": "n"
+    },
+    {
+      "name": "--metrics-branch",
+      "description": "Set the branch reported in metrics.",
+      "argsHint": "branch"
+    },
+    {
+      "name": "--metrics-extra-tags",
+      "description": "Add extra tags to all StatsD metrics.",
+      "argsHint": "key=value[,key=value]"
+    },
+    {
+      "name": "--metrics-file",
+      "description": "Write counters and timers to a JSON file.",
+      "argsHint": "file"
+    },
+    {
+      "name": "--metrics-prefix",
+      "description": "Prefix applied to all metrics.",
+      "argsHint": "string"
+    },
+    {
+      "name": "--metrics-repo",
+      "description": "Set the repo field in metrics output.",
+      "argsHint": "repo"
+    },
+    {
+      "name": "--metrics-sha",
+      "description": "Set the SHA field in metrics output.",
+      "argsHint": "sha"
+    },
+    {
+      "name": "--minimize-to-rbi",
+      "description": "Output a minimal RBI diff against the given file.",
+      "argsHint": "file.rbi"
+    },
+    {
+      "name": "--no-config",
+      "description": "Do not load the sorbet/config file."
+    },
+    {
+      "name": "--no-error-count",
+      "description": "Do not print the final error count summary."
+    },
+    {
+      "name": "--no-error-sections",
+      "description": "Print only the first line of each error message."
+    },
+    {
+      "name": "--no-stdlib",
+      "description": "Do not load Sorbet's standard library RBI payload."
+    },
+    {
+      "name": "--package-skip-rbi-export-enforcement",
+      "description": "Directories whose RBI constants may be exported.",
+      "argsHint": "dir"
+    },
+    {
+      "name": "--packager-layers",
+      "description": "Define valid package layer names and enable layering checks.",
+      "argsValues": "library|application"
+    },
+    {
+      "name": "--parser",
+      "description": "Select the parser implementation.",
+      "argsValues": "original|prism"
+    },
+    {
+      "name": "--progress",
+      "description": "Draw a progress bar."
+    },
+    {
+      "name": "--quiet",
+      "description": "Silence all non-critical errors."
+    },
+    {
+      "name": "--remove-path-prefix",
+      "description": "Remove the given prefix from printed paths.",
+      "argsHint": "prefix"
+    },
+    {
+      "name": "--reserve-class-table-capacity",
+      "description": "Preallocate class and module table slots.",
+      "argsHint": "n"
+    },
+    {
+      "name": "--reserve-constant-name-table-capacity",
+      "description": "Preallocate constant name table slots.",
+      "argsHint": "n"
+    },
+    {
+      "name": "--reserve-field-table-capacity",
+      "description": "Preallocate field table slots.",
+      "argsHint": "n"
+    },
+    {
+      "name": "--reserve-method-table-capacity",
+      "description": "Preallocate method table slots.",
+      "argsHint": "n"
+    },
+    {
+      "name": "--reserve-type-argument-table-capacity",
+      "description": "Preallocate type argument table slots.",
+      "argsHint": "n"
+    },
+    {
+      "name": "--reserve-type-member-table-capacity",
+      "description": "Preallocate type member table slots.",
+      "argsHint": "n"
+    },
+    {
+      "name": "--reserve-unique-name-table-capacity",
+      "description": "Preallocate unique name table slots.",
+      "argsHint": "n"
+    },
+    {
+      "name": "--reserve-utf8-name-table-capacity",
+      "description": "Preallocate UTF8 name table slots.",
+      "argsHint": "n"
+    },
+    {
+      "name": "--rubyfmt-path",
+      "description": "Path to the rubyfmt executable.",
+      "argsHint": "path"
+    },
+    {
+      "name": "--sorbet-packages",
+      "description": "Enable Sorbet's experimental Ruby package system."
+    },
+    {
+      "name": "--sorbet-packages-hint-message",
+      "description": "Optional hint message added to package-related errors.",
+      "argsHint": "arg"
+    },
+    {
+      "name": "--statsd-host",
+      "description": "Hostname of the StatsD server.",
+      "argsHint": "host"
+    },
+    {
+      "name": "--statsd-port",
+      "description": "Port of the StatsD server.",
+      "argsHint": "port"
+    },
+    {
+      "name": "--statsd-prefix",
+      "description": "Prefix applied to all StatsD metrics.",
+      "argsHint": "prefix"
+    },
+    {
+      "name": "--stop-after",
+      "description": "Stop after the specified compiler phase.",
+      "argsValues": "init|parser|desugarer|rewriter|local-vars|namer|resolver|cfg|inferencer"
+    },
+    {
+      "name": "--store-state",
+      "description": "Store state into symbol, name, and file table files.",
+      "argsHint": "file"
+    },
+    {
+      "name": "--stripe-packages",
+      "description": "Enable Sorbet's experimental Ruby package system."
+    },
+    {
+      "name": "--stripe-packages-hint-message",
+      "description": "Optional hint message added to package-related errors.",
+      "argsHint": "arg"
+    },
+    {
+      "name": "--suggest-typed",
+      "description": "Autocorrect files to the highest valid `# typed:` level."
+    },
+    {
+      "name": "--suggest-unsafe",
+      "description": "Include unsafe autocorrects; optionally wrap with a custom method.",
+      "argsHint": "method"
+    },
+    {
+      "name": "--suppress-error-code",
+      "description": "Suppress the specified error code(s).",
+      "argsHint": "error-code"
+    },
+    {
+      "name": "--suppress-payload-superclass-redefinition-for",
+      "description": "Suppress superclass redefinition errors for the given class.",
+      "argsHint": "Fully::Qualified::ClassName"
+    },
+    {
+      "name": "--track-untyped",
+      "description": "Track untyped usages in file-table output.",
+      "argsValues": "nowhere|everywhere|everywhere-but-tests"
+    },
+    {
+      "name": "--typed",
+      "description": "Force all code to the specified strictness level.",
+      "argsValues": "false|true|strict|strong|auto"
+    },
+    {
+      "name": "--typed-override",
+      "description": "Override strictness for specific files via YAML.",
+      "argsHint": "filepath.yaml"
+    },
+    {
+      "name": "--typed-super",
+      "description": "Enable typechecking of `super` calls."
+    },
+    {
+      "name": "--uniquely-defined-behavior",
+      "description": "Require each class or module to define behavior in one file."
+    },
+    {
+      "name": "--verbose",
+      "description": "Set verbosity level.",
+      "argsValues": "0|1|2|3"
+    }
+  ]
+}

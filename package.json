@@ -254,14 +254,19 @@
     },
     "grammars": [
       {
-        "path": "./resources/syntaxes/rbs-comment.tmLanguage.json",
         "scopeName": "rbs.sig.comment",
-        "injectTo": [
-          "source.ruby"
-        ],
+        "path": "./resources/syntaxes/rbs-comment.tmLanguage.json",
         "embeddedLanguages": {
           "meta.type.signature.rbs": "rbs"
-        }
+        },
+        "injectTo": [
+          "source.ruby"
+        ]
+      },
+      {
+        "scopeName": "source.sorbet-config",
+        "path": "./resources/syntaxes/sorbet-config.tmLanguage.json",
+        "language": "sorbet-config"
       }
     ],
     "languages": [
@@ -277,6 +282,15 @@
         ],
         "filenames": [
           "Gemfile"
+        ]
+      },
+      {
+        "id": "sorbet-config",
+        "aliases": [
+          "Sorbet Config"
+        ],
+        "filenamePatterns": [
+          "**/sorbet/config"
         ]
       }
     ],

@@ -1,0 +1,22 @@
+{
+  "scopeName": "source.sorbet-config",
+  "patterns": [
+    {
+      "match": "^\\s*#.*$",
+      "name": "comment.line.number-sign.sorbet-config"
+    },
+    {
+      "match": "^\\s*(--[a-zA-Z0-9-]+)(=)?(.*)?$",
+      "name": "meta.flag.sorbet-config",
+      "captures": {
+        "1": { "name": "keyword.other.flag.sorbet-config" },
+        "2": { "name": "punctuation.separator.key-value.sorbet-config" },
+        "3": { "name": "string.unquoted.value.sorbet-config" }
+      }
+    },
+    {
+      "match": "^\\s*(?!#)(?!\\s*$)(?!-)([^\\s].*)$",
+      "name": "string.unquoted.value.sorbet-config"
+    }
+  ]
+}

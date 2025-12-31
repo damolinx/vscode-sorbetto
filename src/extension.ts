@@ -13,8 +13,8 @@ import { savePackageFiles } from './commands/savePackageFiles';
 import { setupWorkspace } from './commands/setupWorkspace';
 import { ExtensionContext } from './extensionContext';
 import { registerContextValueHandlers } from './extensionContextValues';
-import { registerGemfileCodeLensProvider } from './providers/gemfileCodeLensProvider';
-import { registerGemfileCompletionProvider } from './providers/gemfileCompletionProvider';
+import { registerSorbetConfigProviders } from './providers/config/sorbetConfigProviders';
+import { registerGemfileProviders } from './providers/gemfile/gemfileProviders';
 import { registerRequireCompletionProvider } from './providers/requireCompletionProvider';
 import { registerRequireDefinitionProvider } from './providers/requireDefinitionProvider';
 import { registerSorbetContentProvider } from './providers/sorbetContentProvider';
@@ -30,9 +30,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
 
   context.disposables.push(new SorbetLanguageStatus(context));
 
+  registerSorbetConfigProviders(context);
   registerContextValueHandlers(context);
-  registerGemfileCodeLensProvider(context);
-  registerGemfileCompletionProvider(context);
+  registerGemfileProviders(context);
   registerRequireCompletionProvider(context);
   registerRequireDefinitionProvider(context);
   registerSorbetContentProvider(context);

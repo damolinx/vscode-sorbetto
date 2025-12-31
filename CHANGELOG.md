@@ -1,14 +1,17 @@
 # Changelog
 
 ## 0.3.13
-- Fix: `languages` section of `package.json` was defined outside `contributes`, therefore being a no-op.
-- Fix: **Sorbetto: Copy Symbol to Clipboard** should not be available if workspace is not "Sorbet enabled".
+- `sorbet/config` files now use the new **sorbet-config** language.
+  - Added basic syntax highlighting.
+  - Added completion and hover providers for a set of [options](https://sorbet.org/docs/cli-ref).
+- Fix: `languages` section of `package.json` was defined outside `contributes`, making it a no-op.
+- Fix: **Sorbetto: Copy Symbol to Clipboard** should not be available if workspace is not Sorbet-enabled.
 - Fix: **Setup Workspace** command conditions leading to `bundle` errors:
    - Save `Gemfile` after edits. 
-   - Ensure `source` statement on extsing `Gemfile` files.
+   - Ensure `source` statement exists in existing `Gemfile` file.
 
 ## 0.3.12
-- Improve RBS syntax highlighting:
+- Improve RBS signature comments syntax highlighting:
   - Add support for multi-line signature comments  (`#:` / `#|`).
   - Add string literal highlighting inside signature comments.
   - Highlight RBS constructs that Sorbet does not support inside signature comments.
