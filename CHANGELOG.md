@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.3.13
-- Fix: `languages` section of `package.json` was defined outside `contributions`, therefore being a no-op.
+- Fix: `languages` section of `package.json` was defined outside `contributes`, therefore being a no-op.
 - Fix: **Sorbetto: Copy Symbol to Clipboard** should not be available if workspace is not "Sorbet enabled".
 - Fix: **Setup Workspace** command conditions leading to `bundle` errors:
    - Save `Gemfile` after edits. 
