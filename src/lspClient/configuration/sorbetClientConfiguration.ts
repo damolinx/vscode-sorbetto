@@ -98,14 +98,14 @@ export class SorbetClientConfiguration extends Configuration {
   }
 
   /**
-   * Event that is fired when the LSP launch configuration type changes.
+   * Event fired when the LSP launch configuration type changes.
    */
   public get onDidChangeLspConfig(): vscode.Event<void> {
     return this.onDidChangeLspConfigurationEmitter.event;
   }
 
   /**
-   * Event that is fired when the LSP options change.
+   * Event fired when the LSP options change.
    */
   public get onDidChangeLspOptions(): vscode.Event<LspOptionConfigurationKey> {
     return this.onDidChangeLspOptionsEmitter.event;
@@ -115,13 +115,20 @@ export class SorbetClientConfiguration extends Configuration {
    * Patterns identifying files that should cause Sorbet to restart if changed.
    */
   public get restartFilePatterns(): string[] {
-    return this.getValue('restartFilePatterns', []);
+    return this.getValue<string[]>('restartFilePatterns', []);
   }
 
+  /**
+   * Custom Sorbet LSP launch configuration.
+   */
   public get sorbetLspCustomConfiguration(): string[] {
-    return this.getValue('sorbetLspCustomConfiguration', []);
+    const configuration = this.getValue<string[]>('sorbetLspCustomConfiguration', []);
+    return configuration.map(entry => entry.trim());
   }
 
+  /**
+   * Sorbet LSP launch configuration for typechecking..
+   */
   public get sorbetTypecheckCommand(): string[] {
     return this.getValue('sorbetTypecheckCommand', ['bundle', 'exec', 'srb', 'typecheck']);
   }
