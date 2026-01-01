@@ -2,28 +2,35 @@ import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
 import { posix } from 'path';
 
-export const SORBET_FILE_DOCUMENT_SELECTOR: vslc.DocumentFilter = {
+export const SORBET_FILE_DOCUMENT_SELECTOR: Readonly<vslc.TextDocumentFilter> = {
   language: 'ruby',
   scheme: 'file',
-} as const;
+};
 
 export const SORBET_SCHEME = 'sorbet';
 
-export const SORBET_SCHEME_DOCUMENT_SELECTOR: vslc.DocumentFilter = {
+export const SORBET_SCHEME_DOCUMENT_SELECTOR: Readonly<vslc.TextDocumentFilter> = {
   language: 'ruby',
   scheme: SORBET_SCHEME,
-} as const;
+};
 
-export const SORBET_DOCUMENT_SELECTOR: readonly vslc.DocumentFilter[] = [
+export const SORBET_DOCUMENT_SELECTOR: readonly Readonly<vslc.DocumentFilter>[] = [
   SORBET_FILE_DOCUMENT_SELECTOR,
   SORBET_SCHEME_DOCUMENT_SELECTOR,
-] as const;
+];
 
 export function getWorkspaceDocumentSelector(
   workspaceFolder: vscode.WorkspaceFolder,
 ): vslc.DocumentSelector {
-  const pattern = posix.join(workspaceFolder.uri.path, '**/*');
-  return SORBET_DOCUMENT_SELECTOR.map((s) =>
-    'scheme' in s && s.scheme === workspaceFolder.uri.scheme ? { ...s, pattern } : pattern,
-  );
+  const selector: vslc.DocumentSelector = [
+    // TODO: `sorbet:` URIs do not have a good hint to discriminate paths per workspace
+    SORBET_SCHEME_DOCUMENT_SELECTOR,
+  ];
+
+  if (workspaceFolder.uri.scheme === SORBET_FILE_DOCUMENT_SELECTOR.scheme) {
+    const pattern = posix.join(workspaceFolder.uri.path, '**/*');
+    selector.push({ ...SORBET_FILE_DOCUMENT_SELECTOR, pattern });
+  }
+
+  return selector;
 }
