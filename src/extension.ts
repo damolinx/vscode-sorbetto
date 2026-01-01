@@ -7,6 +7,7 @@ import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { debugRubyFile } from './commands/debugRubyFile';
 import { handleRename } from './commands/handleRename';
 import { openSettings } from './commands/openSettings';
+import { peekUsages } from './commands/peekUsages';
 import { restartSorbet } from './commands/restartSorbet';
 import { runRubyFile } from './commands/runRubyFile';
 import { savePackageFiles } from './commands/savePackageFiles';
@@ -82,7 +83,10 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   // Register text editor commands
   const rtc = vscode.commands.registerTextEditorCommand;
   context.disposables.push(
-    rtc(cmdIds.COPY_SYMBOL_ID, (textEditor) => copySymbolToClipboard(context, textEditor)),
+    rtc(cmdIds.COPY_SYMBOL_ID, (textEditor: vscode.TextEditor) =>
+      copySymbolToClipboard(context, textEditor),
+    ),
+    rtc(cmdIds.PEEK_USAGES_ID, (textEditor: vscode.TextEditor) => peekUsages(context, textEditor)),
   );
 
   // Register configurable features

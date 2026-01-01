@@ -3,13 +3,14 @@ import * as vslcn from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { E_COMMAND_NOT_FOUND, ErrorInfo } from '../common/processUtils';
 import { ExtensionContext } from '../extensionContext';
+import { HIERARCHY_REFERENCES_REQUEST } from '../lsp/hierarchyReferences';
 import { InitializationOptions } from '../lsp/initializationOptions';
-import { READ_FILE_REQUEST_METHOD } from '../lsp/readFileRequest';
+import { READ_FILE_REQUEST } from '../lsp/readFileRequest';
 import {
   SHOW_OPERATION_NOTIFICATION_METHOD,
   SorbetShowOperationParams,
 } from '../lsp/showOperationNotification';
-import { SHOW_SYMBOL_REQUEST_METHOD } from '../lsp/showSymbolRequest';
+import { SHOW_SYMBOL_REQUEST } from '../lsp/showSymbolRequest';
 import { DID_CHANGE_CONFIGURATION_NOTIFICATION_METHOD } from '../lsp/workspaceDidChangeConfigurationNotification';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { SorbetClientConfiguration } from './configuration/sorbetClientConfiguration';
@@ -431,6 +432,31 @@ export class SorbetClient implements vscode.Disposable {
   }
 
   /**
+   * Send a `sorbet/hierarchyReferences` request to the language server.
+   * See https://sorbet.org/docs/lsp#sorbethierarchyreferences-request
+   */
+  public async sendHierarchyReferences(
+    { uri }: vscode.TextDocument,
+    position: vslcn.Position,
+    context: vscode.ReferenceContext = { includeDeclaration: true },
+    token?: vscode.CancellationToken,
+  ): Promise<vslcn.Location[] | undefined> {
+    const params: vslcn.ReferenceParams = {
+      context,
+      position,
+      textDocument: {
+        uri: uri.toString(),
+      },
+    };
+    const locations = await this.languageClient?.sendRequest(
+      HIERARCHY_REFERENCES_REQUEST,
+      params,
+      token,
+    );
+    return locations ?? undefined;
+  }
+
+  /**
    * Send a `sorbet/readFile` request to the language server.
    * See https://sorbet.org/docs/lsp#sorbetreadfile-request.
    */
@@ -438,11 +464,8 @@ export class SorbetClient implements vscode.Disposable {
     uri: vscode.Uri,
     token?: vscode.CancellationToken,
   ): Promise<vslcn.TextDocumentItem | undefined> {
-    const content = await this.languageClient?.sendRequest<vslcn.TextDocumentItem>(
-      READ_FILE_REQUEST_METHOD,
-      { uri: uri.toString() } as vslcn.TextDocumentIdentifier,
-      token,
-    );
+    const params: vslcn.TextDocumentIdentifier = { uri: uri.toString() };
+    const content = await this.languageClient?.sendRequest(READ_FILE_REQUEST, params, token);
     return content ?? undefined;
   }
 
@@ -451,20 +474,19 @@ export class SorbetClient implements vscode.Disposable {
    * See https://sorbet.org/docs/lsp#sorbetshowsymbol-request.
    */
   public async sendShowSymbolRequest(
-    editor: vscode.TextEditor,
+    { uri }: vscode.TextDocument,
     position: vslcn.Position,
     token?: vscode.CancellationToken,
   ): Promise<vslcn.SymbolInformation | undefined> {
-    const symbolInfo = await this.languageClient?.sendRequest<vslcn.SymbolInformation>(
-      SHOW_SYMBOL_REQUEST_METHOD,
-      {
-        position,
-        textDocument: {
-          uri: editor.document.uri.toString(),
-        },
-      } as vslcn.TextDocumentPositionParams,
-      token,
-    );
+    const params: vslcn.TextDocumentPositionParams = {
+      position,
+      textDocument: {
+        uri: uri.toString(),
+      },
+    };
+
+    const symbolInfo = await this.languageClient?.sendRequest(SHOW_SYMBOL_REQUEST, params, token);
+
     return symbolInfo ?? undefined;
   }
 }

@@ -28,6 +28,8 @@
     "language-server"
   ],
   "activationEvents": [
+    "onLanguage:ruby",
+    "onLanguage:sorbet-config",
     "workspaceContains:sorbet/*"
   ],
   "main": "./out/extension.js",
@@ -45,6 +47,12 @@
         "category": "Sorbetto",
         "icon": "$(debug)",
         "enablement": "workbenchState != empty && !inDebugMode && editorIsOpen && (resourceScheme == file || resourceScheme == vscode-remote) && resourceExtname == .rb"
+      },
+      {
+        "command": "sorbetto.peekUsages",
+        "title": "Peek Usages",
+        "category": "Sorbetto",
+        "enablement": "workbenchState != empty && editorLangId == ruby && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote) && sorbetto:sorbetStatus == running"
       },
       {
         "command": "sorbetto.restart",
@@ -300,7 +308,12 @@
           "command": "sorbetto.copySymbolToClipboard",
           "group": "9_cutcopypaste",
           "when": "workbenchState != empty && resourceLangId == ruby && sorbetto:sorbetStatus"
-        }
+        },
+        {
+          "command": "sorbetto.peekUsages",
+          "group": "navigation@50",
+          "when": "workbenchState != empty && resourceLangId == ruby && sorbetto:sorbetStatus"
+        }        
       ]
     },
     "snippets": [

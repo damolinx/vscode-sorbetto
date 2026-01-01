@@ -123,7 +123,7 @@ export class SorbetClientConfiguration extends Configuration {
    */
   public get sorbetLspCustomConfiguration(): string[] {
     const configuration = this.getValue<string[]>('sorbetLspCustomConfiguration', []);
-    return configuration.map(entry => entry.trim());
+    return configuration.map((entry) => entry.trim());
   }
 
   /**

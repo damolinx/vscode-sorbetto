@@ -31,6 +31,11 @@ export const DEBUG_RUBY_FILE_ID = `${EXTENSION_PREFIX}.debugRubyFile`;
 export const OPEN_SETTINGS_ID = `_${EXTENSION_PREFIX}.openSettings`;
 
 /**
+ * Peek usages of symbol at cursor location.
+ */
+export const PEEK_USAGES_ID = `${EXTENSION_PREFIX}.peekUsages`;
+
+/**
  * Run a Ruby file.
  */
 export const RUN_RUBY_FILE_ID = `${EXTENSION_PREFIX}.runRubyFile`;

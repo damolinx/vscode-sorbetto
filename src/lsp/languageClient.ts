@@ -5,6 +5,7 @@ import { Log } from '../common/log';
 import { WorkspaceFolderOutputChannel } from '../common/workspaceFolderOutputChannel';
 import { ExtensionContext } from '../extensionContext';
 import { getWorkspaceDocumentSelector } from './documentSelectors';
+import { HierarchyReferencesRequest } from './hierarchyReferences';
 import { SorbetInitializeResult } from './initializeResult';
 import { ReadFileRequest } from './readFileRequest';
 import { ShowOperationNotification } from './showOperationNotification';
@@ -48,6 +49,7 @@ export function createClient(
 class SorbetLanguageClient
   extends vslcn.LanguageClient
   implements
+    HierarchyReferencesRequest,
     ReadFileRequest,
     ShowOperationNotification,
     ShowSymbolRequest,

@@ -10,8 +10,12 @@ Sorbetto provides language support for Ruby via [Sorbet](https://github.com/sorb
   * Set up a workspace for Sorbet Ruby developments easily using the **Setup Workspace** command.
   * `Gemfile` files include CodeLens action and autocomplete support.
   * Code snippets for common Sorbet constructs.
-* Improved language support (e.g. autocomplete, syntax highlighting) in several contexts: 
-  * Ruby files, e.g. `require_relative`, RBS signature comments.
+* Improved editor support (e.g. autocomplete, syntax highlighting) in several contexts: 
+  * Ruby files:
+    * `require_relative` autocomplete and linking.
+    * RBS signature comments highlighting.
+    * **Peek Usages** supports [`sorbet/hierarchyReferences`](https://sorbet.org/docs/lsp#sorbethierarchyreferences-request) request.
+    * Improved selection expansion and shrinking.
   * `Gemfile` autocomplete `gem` entries live from https://rubygems.org
   * `sorbet/config`: autocompletes and provides documentation for `srb` options.
 * Improved quickfix actions, e.g., fix all instances of a given error code across all files ([documentation](https://sorbet.org/docs/cli#limiting-autocorrect-suggestions)).

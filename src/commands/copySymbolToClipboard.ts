@@ -8,13 +8,13 @@ import { SorbetClientStatus } from '../lspClient/sorbetClientStatus';
  */
 export async function copySymbolToClipboard(
   context: ExtensionContext,
-  editor: vscode.TextEditor,
+  { document, selection }: vscode.TextEditor,
 ): Promise<void> {
-  const client = context.clientManager.getClient(editor.document.uri);
+  const client = context.clientManager.getClient(document.uri);
   if (client?.status !== SorbetClientStatus.Running) {
     context.log.warn(
       'CopySymbol: No Sorbet client for editor.',
-      vscode.workspace.asRelativePath(editor.document.uri),
+      vscode.workspace.asRelativePath(document.uri),
     );
     return;
   }
@@ -23,13 +23,13 @@ export async function copySymbolToClipboard(
   // To prevent a long operation from unexpectedly writing to the clipboard,
   // a cancelable progress notification is shown after 2s.
   const symbolInfo = await withProgress(
-    (token) => client.sendShowSymbolRequest(editor, editor.selection.start, token),
+    (token) => client.sendShowSymbolRequest(document, selection.start, token),
     2000,
     context,
   );
 
   if (symbolInfo) {
-    context.log.info('CopySymbol: Copied symbol to clipboard:', symbolInfo.name);
+    context.log.info(`CopySymbol: Copied symbol '${symbolInfo.name}'`);
     await vscode.env.clipboard.writeText(symbolInfo.name);
   } else {
     context.log.info('CopySymbol: No symbol found.');
