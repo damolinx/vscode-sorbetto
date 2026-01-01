@@ -25,6 +25,7 @@ Some of the maintainability updates:
 
 ## Table of Contents
 * [Getting Started](#getting-started)
+  * [Using Sorbet](#using-sorbet) 
   * [Setting Up a Workspace](#setting-up-a-workspace)
   * [Running a Ruby Script](#running-a-ruby-script)
 * [Sorbet Language Status Item](#sorbet-language-status-item)
@@ -37,6 +38,9 @@ Some of the maintainability updates:
 * [Extension Logs](#extension-logs)
 
 ## Getting Started
+
+### Using Sorbet
+Refer to [Sorbet](https://sorbet.org/docs/overview) documentation for details on how to use it  in your Ruby codebase.
 
 ### Setting Up a Workspace
 1. Open an existing workspace, or create a new one from an empty folder.
@@ -130,6 +134,7 @@ If your workspace is not set up for Sorbet, the **Sorbetto: Setup Workspace** cr
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet’s. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
 [↑ Back to top](#table-of-contents)
+
 
 
 
