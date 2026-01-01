@@ -17,6 +17,7 @@ import { registerSorbetConfigProviders } from './providers/config/sorbetConfigPr
 import { registerGemfileProviders } from './providers/gemfile/gemfileProviders';
 import { registerRequireCompletionProvider } from './providers/requireCompletionProvider';
 import { registerRequireDefinitionProvider } from './providers/requireDefinitionProvider';
+import { registerSelectionRangeProvider } from './providers/selectionRangeProvider';
 import { registerSorbetContentProvider } from './providers/sorbetContentProvider';
 import { registerTypedOptionsCompletionProvider } from './providers/typedOptionsCompletionProvider';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
@@ -35,6 +36,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   registerGemfileProviders(context);
   registerRequireCompletionProvider(context);
   registerRequireDefinitionProvider(context);
+  registerSelectionRangeProvider(context);
   registerSorbetContentProvider(context);
   registerTypedOptionsCompletionProvider(context);
 

@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.14
+- Add a heuristic `SelectionRangeProvider` to improve behavior of **Expand Selection**, **Shrink Selection** and related commands.
+
 ## 0.3.13
 - `sorbet/config` files now use the new **sorbet-config** language.
   - Added basic syntax highlighting.

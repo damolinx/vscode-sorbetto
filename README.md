@@ -3,23 +3,23 @@
 Sorbetto provides language support for Ruby via [Sorbet](https://github.com/sorbet/sorbet), a type checker developed by Stripe. It began as a fork of the official [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension, created to explore improvements in code maintainability and user experience (UX). Since then, Sorbetto's internals have been rewritten, and while it continues to serve as an experimentation platform, it now follows its own path—compatibility with the official extension is no longer a priority. Note that both extensions rely on the same Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server), so differences in behavior occur exclusively in the VS Code layer.
 
 ### Features
-* [Multi-root workspace](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) support, including separate Sorbet LSP instances per workspace folder.
-* Uses the [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) to report status.
-* Configuration model is rewritten to follow VS Code rules.
+* [Multi-root workspace](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) support, meaning separate Language Server instances per workspace folder.
+* [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) used to report the Language Server status.
+* Streamlined and improved configuration model, with an improved experience for the `sorbet/config` configuration file.
 * Getting started experience:
-  * Set up a workspace for Ruby development via the **Setup Workspace** command.
-  * `Gemfile` files include an **Install** action.
-  * Provides code snippets for standard Sorbet constructs.
-* Improved language support (e.g. autocomplete, syntax highlighting) in several contexts:
-  * Ruby files: `require_relative`, `# typed`,  RBS signature comments
-  * `Gemfile`: `gem` entries receve live completion from https://rubygems.org
-  * `sorbet/config`: autocomplete for Sorbet options.
+  * Set up a workspace for Sorbet Ruby developments easily using the **Setup Workspace** command.
+  * `Gemfile` files include CodeLens action and autocomplete support.
+  * Code snippets for common Sorbet constructs.
+* Improved language support (e.g. autocomplete, syntax highlighting) in several contexts: 
+  * Ruby files, e.g. `require_relative`, RBS signature comments.
+  * `Gemfile` autocomplete `gem` entries live from https://rubygems.org
+  * `sorbet/config`: autocompletes and provides documentation for `srb` options.
 * Improved quickfix actions, e.g., fix all instances of a given error code across all files ([documentation](https://sorbet.org/docs/cli#limiting-autocorrect-suggestions)).
 
 Some of the maintainability updates: 
-* Minimum VS Code version updated to 1.99, enabling use of more recent extensibility APIs.
+* Minimum VS Code version updated to 1.99, enabling use of more recent extensibility APIs while maintaining **Cursor** support.
 * Language Client library upgraded to version 9.0.
-* Migrated to `esbuild` for minification and bundling, reducing extension footprint significantly.
+* Use `esbuild` for minification and bundling, significantly reducing extension footprint.
 
 > **Platform Support**: The extension uses cross-platform practices wherever possible. Its compatibility is limited only by the [platforms supported by Sorbet](https://sorbet.org/docs/faq#what-platforms-does-sorbet-support). As a result, Windows-specific codepaths are rarely exercised since Sorbet does not support the platform.
 
