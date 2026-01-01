@@ -122,7 +122,7 @@ The **Setup Workspace** command automates all steps from [Adopting Sorbet](https
 [↑ Back to top](#table-of-contents)
 
 ## Gemfile Tools
-CodeLens actions are added to `Gemfile` files, making it easy to **Install** or Update dependencies using `bundler`. Additionally, `gem` statements get gem-name autocompletion, queried in real-time from [rubygems.org](https://rubygems.org).
+If your workspace is not set up for Sorbet, the **Sorbetto: Setup Workspace** creates or updates the `Gemfile` file as necessary. You can then use the **Install** and **Update** CodeLens actions to easily install dependencies using `bundler`. And if you decide to manually uppdate the file, `gem` statements get gem-name autocompletion, queried in real-time from [rubygems.org](https://rubygems.org).
 
 [↑ Back to top](#table-of-contents)
 
@@ -130,6 +130,7 @@ CodeLens actions are added to `Gemfile` files, making it easy to **Install** or 
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet’s. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
 [↑ Back to top](#table-of-contents)
+
 
 
 
