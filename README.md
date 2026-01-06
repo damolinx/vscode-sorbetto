@@ -79,7 +79,7 @@ When using [multi-root workspaces](#multi-root-workspaces), the currently focuse
 ## Sorbet Configuration
 Use the [Settings Editor](https://code.visualstudio.com/docs/configure/settings#_settings-editor) to modify the configuration values used by the extension.
 
-The most important setting is the `Sorbet Lsp Configuration` which provides the following values:
+The most important setting is the **Sorbet Lsp Configuration** which provides the following values:
 * **Stable**: runs the Sorbet LSP using `bundle exec srb typecheck`, and any other settings values you might have added.
 * **Custom**: runs the Sorbet LSP using a custom command and arguments you provide in the **Sorbet Lsp Custom Configuration** setting.
 * **Disabled**: disables Sorbet entirely.
@@ -116,9 +116,17 @@ There are two key aspects to be aware of:
 [↑ Back to top](#table-of-contents)
 
 ## RBS Support
-RBS signature comments can be enabled via the **Enable RBS support** setting. This controls whether Sorbet makes use of the RBS signatures for typing information.
+This extension adds lightweight IDE support for RBS signatures, such as syntax highlighting and simple activation through settings, while language services are provided by Sorbet itself. Check the [official documentation](https://sorbet.org/docs/rbs-support) for details.
 
-Inline RBS signature comments (`#:`) always receive targeted syntax highlighting for Sorbet‑supported constructs, including types, generics, tuples, records, and annotations such as `@abstract`, `@final`, `@sealed`, `@interface`, and `@requires_ancestor`.
+* RBS signature comments can be enabled via the **Enable RBS support** setting. This controls whether Sorbet makes use of RBS signatures for typing information.
+
+* Inline RBS signature comments (`#:`) always receive targeted syntax highlighting for Sorbet‑supported constructs, including types, generics, tuples, records, and annotations such as `@abstract`, `@final`, `@sealed`, `@interface`, and `@requires_ancestor`.
+
+In [multi-root workspaces](#multi-root-workspaces), each folder can independently choose whether to use RBS signatures or Sorbet‑generated signatures, allowing mixed setups within a single workspace.
+
+<p align=center>
+<img width="332" alt="RBS sig comment highlight" src="https://github.com/user-attachments/assets/e43a8b80-6fb7-40bc-b1af-94d6fbd8f9df" />
+</p>
 
 [↑ Back to top](#table-of-contents)
 
@@ -138,6 +146,7 @@ If your workspace is not set up for Sorbet, the **Sorbetto: Setup Workspace** cr
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet’s. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
 [↑ Back to top](#table-of-contents)
+
 
 
 
