@@ -39,14 +39,15 @@ export class SelectionRangeProvider implements vscode.SelectionRangeProvider {
       .filter((r) => r.contains(position))
       .sort((a, b) => a.start.line - b.start.line)) {
       currentSelectionRange = new vscode.SelectionRange(
-        this.extendAsNeeded(document, range),
+        this.expandRange(document, range),
         currentSelectionRange,
       );
     }
 
-    // By default, current word and line are part of the expansion, but the definition
-    // of word is too restrictive for so this heuristic expands on it to account for
-    // Ruby consts and strings. The approach also enables looking back safely.
+    // By default, the current word and line are included in the expansion,
+    // but the editor's definition of “word” is too restrictive. This code
+    // extends it to handle Ruby constants and strings, while still allowing
+    // safe backward scanning.
     const wordRange = document.getWordRangeAtPosition(
       position,
       /(?:[A-Z][A-Za-z0-9_]*(?:::[A-Z][A-Za-z0-9_]*)*|"[^"]*"|'[^']*')/,
@@ -58,7 +59,7 @@ export class SelectionRangeProvider implements vscode.SelectionRangeProvider {
     return currentSelectionRange ?? new vscode.SelectionRange(new vscode.Range(position, position));
   }
 
-  private extendAsNeeded(document: vscode.TextDocument, range: vscode.Range): vscode.Range {
+  private expandRange(document: vscode.TextDocument, range: vscode.Range): vscode.Range {
     const line = document.lineAt(range.start.line);
     const { firstNonWhitespaceCharacterIndex, text } = line;
 
