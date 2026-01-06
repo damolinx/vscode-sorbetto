@@ -13,16 +13,19 @@ export async function openSettings(
       ? contextPathOrUri
       : vscode.Uri.parse(contextPathOrUri)
     : (mainAreaActiveEditorUri() ?? (await getTargetWorkspaceUri()));
-  context.log.debug('Open settings', contextUri ? vscode.workspace.asRelativePath(contextUri) : '');
+  context.log.debug(
+    'Open settings',
+    setting,
+    contextUri ? vscode.workspace.asRelativePath(contextUri) : '',
+  );
 
-  const inspectedConfiguration = vscode.workspace
-    .getConfiguration(undefined, contextUri)
-    .inspect(setting);
   let command: string | undefined;
-  if (inspectedConfiguration?.workspaceFolderValue !== undefined) {
-    command = 'workbench.action.openFolderSettings';
-  } else if (inspectedConfiguration?.workspaceValue !== undefined) {
+
+  const workspaceCount = vscode.workspace.workspaceFolders?.length ?? 0;
+  if (workspaceCount === 1) {
     command = 'workbench.action.openWorkspaceSettings';
+  } else if (workspaceCount > 1) {
+    command = 'workbench.action.openFolderSettings';
   } else {
     command = 'workbench.action.openSettings';
   }
