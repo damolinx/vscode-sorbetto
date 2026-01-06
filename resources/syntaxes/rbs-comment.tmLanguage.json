@@ -13,7 +13,7 @@
     "rbs-identifiers": {
       "patterns": [
         {
-          "match": "(?<!@)\\b[a-z_][A-Za-z0-9_]*\\b",
+          "match": "(?<!@)[a-z_][A-Za-z0-9_]*\\b",
           "name": "variable.other.rbs"
         }
       ]
@@ -215,7 +215,7 @@
     "rbs-type-const": {
       "patterns": [
         {
-          "match": "\\b[A-Z][A-Za-z0-9_]*(?:::[A-Z][A-Za-z0-9_]*)*\\b",
+          "match": "\\b[A-Z][A-Za-z0-9_]*(?:::[A-Z][A-Za-z0-9_]*)*",
           "name": "entity.name.type.rbs"
         }
       ]
@@ -223,11 +223,11 @@
     "sorbet-annotations": {
       "patterns": [
         {
-          "match": "(?<=#\\s)@\\b(abstract|final|interface|requires_ancestor|sealed)\\b",
+          "match": "(?<=#\\s+)@(abstract|final|interface|requires_ancestor|sealed)\\b",
           "name": "storage.modifier.annotation.sorbet"
         },
         {
-          "match": "(?<=#\\s)@override(\\([^)]*\\))?",
+          "match": "(?<=#\\s+)@override(\\([^)]*\\))?\\b",
           "name": "storage.modifier.annotation.sorbet"
         }
       ]
@@ -262,9 +262,6 @@
         },
         {
           "include": "#rbs-punctuation"
-        },
-        {
-          "include": "#rbs-records"
         },
         {
           "include": "#rbs-records"
