@@ -34,11 +34,10 @@ From the internal implementation side, there are several improvements as well:
 * Language Client library upgraded to version 9.0.
 * Switched to `esbuild` for bundling and minification, significantly reducing the extension’s footprint.
 
-> **Platform Support**: The extension uses cross-platform practices wherever possible. Its compatibility is limited only by the [platforms supported by Sorbet](https://sorbet.org/docs/faq#what-platforms-does-sorbet-support). As a result, Windows-specific codepaths are rarely exercised since Sorbet does not support the platform.
-
 ## Table of Contents
 * [Getting Started](#getting-started)
   * [Setting Up a Workspace](#setting-up-a-workspace)
+  * [Verifying Everything Works](#verifying-everything-works)
   * [Running a Ruby Script](#running-a-ruby-script)
 * [Sorbet Configuration](#sorbet-configuration)
 * [Sorbet Language Status Item](#sorbet-language-status-item)
@@ -57,16 +56,56 @@ Sorbetto launches Sorbet in a standard mode by default, but you can configure ad
 
 For guidance on how to write typed Ruby, define signatures, and integrate Sorbet into your codebase, refer to the official [Sorbet documentation](https://sorbet.org/docs/overview). It provides a comprehensive overview of the type system, runtime behavior, and recommended workflows for adopting Sorbet effectively.
 
+> **Platform Support**: The extension uses cross-platform practices wherever possible. Compatibility is limited only by the [platforms supported by Sorbet](https://sorbet.org/docs/faq#what-platforms-does-sorbet-support). As a result, Windows-specific codepaths are rarely exercised since Sorbet does not support the platform.
+
 ### Setting Up a Workspace
 1. Open an existing workspace, or create a new one from an empty folder.
 2. Run the **Sorbetto: Setup Workspace** command.
-3. Your workspace is ready to use.
+3. Once all Your workspace is ready.
 
-### Running a Ruby Script
-1. Create a new Ruby file, such as `main.rb`.
-2. Add some content to it — you can use the **Snippets: Fill File with Snippet** command and select a `ruby` snippet.
-3. Run the file using the **Sorbetto: Run Ruby File** command.
-   * Later, you may want to create a [Launch Configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations), but this command is the fastest way to run a standalone script.
+You can [verify](https://sorbet.org/docs/adopting#verify-initialization) the proper structure has been created. If anything looks off or doesn't work, check the installation terminal and the [extension Logs](#extension-logs) for error messages.
+
+> **Multi-root Workspaces**: In multi-root setups, run the setup command **once per workspace folder**. Globally installed tools are detected, but the setup command always installs all required assets locally within each workspace folder.
+
+### Verifying Everything Works
+
+A quick way to confirm that your workspace setup is functioning correctly is to create a small Ruby file and trigger a predictable type error.
+
+1. Create a new file in your workspace, for example:
+
+   **Example:** Broken `example.rb`
+   ```ruby
+   # typed: strict
+
+   class Demo
+     def greet(name)
+       "Hello, #{name}"
+     end
+   end
+   ```
+
+2. You should immediately see a diagnostic error similar to:
+   ```
+   The method 'greet' does not have a 'sig'
+   ```
+   It will appear as a red wavy underline beneath `def greet(name)` line and as an entry in the **Problems** pane.
+
+3. Add a minimal signature to fix the error, either manually or using the Sorbet‑provided quick fix:
+
+   **Example:** Fixed `example.rb`
+   ```ruby
+   # typed: strict
+
+   class Demo
+     extend T::Sig
+     sig { params(name: T.untyped).returns(String) }
+     def greet(name)
+       "Hello, #{name}"
+     end
+   end
+   ```
+
+4. The error should disappear.
 
 [↑ Back to top](#table-of-contents)
 
