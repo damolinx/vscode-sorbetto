@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.3.14
-- Add a heuristic `SelectionRangeProvider` to improve behavior of **Expand Selection**, **Shrink Selection** and related commands.
+- Add a heuristic `SelectionRangeProvider` to improve behavior of **Expand Selection** and **Shrink Selection** commands.
 - Add support for `sorbet/hierarchyReferences` via custom **Peek Usages** context menu command.
 
 ## 0.3.13
@@ -256,3 +256,4 @@
   - Changing configuration via the **Settings** UI now automatically restarts the Sorbet Language Server when necessary. As a result, **Toggle \*** commands are removed to simplify UX.
 
 - Initial version, forked from official 0.3.41.
+
