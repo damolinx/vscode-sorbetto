@@ -2,7 +2,7 @@
 
 Sorbetto provides language support for Ruby by leveraging [Sorbet](https://github.com/sorbet/sorbet), a type checker developed by Stripe.
 
-It began as a fork of the official [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension to explore improvements, but its internals have since been largely rewritten. While it still serves as an experimentation platform, it now follows its own path. Both extensions rely on the same Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server), and neither ships with an embedded version of Sorbet, so any differences in behavior occur exclusively in the VS Code layer.
+It began as a fork of the [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension to explore improvements, but its internals have since been largely rewritten. While it still serves as an experimentation platform, it now follows its own path. Both extensions rely on the same Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server), and neither ships with an embedded version of Sorbet, so any differences in behavior occur exclusively in the VS Code layer.
 
 The following features are unique to Sorbetto:
 
@@ -56,7 +56,7 @@ Sorbetto offers several standalone features—such as RBS syntax highlighting an
 
 Sorbetto launches Sorbet in a standard mode by default, but you can configure additional flags or even custom command-lines, however. See the [Sorbet Configuration](#sorbet-configuration) section below for details.
 
-For guidance on how to write typed Ruby, define signatures, and integrate Sorbet into your codebase, refer to the official [Sorbet documentation](https://sorbet.org/docs/overview). It provides a comprehensive overview of the type system, runtime behavior, and recommended workflows for adopting Sorbet effectively.
+For guidance on how to write typed Ruby, define signatures, and integrate Sorbet into your codebase, refer to the [Sorbet](https://sorbet.org/docs/overview) documentation. It provides a comprehensive overview of the type system, runtime behavior, and recommended workflows for adopting Sorbet effectively.
 
 > **Platform Support**: The extension uses cross-platform practices wherever possible. Compatibility is limited only by the [platforms supported by Sorbet](https://sorbet.org/docs/faq#what-platforms-does-sorbet-support). As a result, Windows-specific codepaths are rarely exercised since Sorbet does not support the platform.
 
@@ -131,7 +131,7 @@ Support for `sorbet/config` receive editing support with syntax highlighting and
 [↑ Back to top](#table-of-contents)
 
 ## Sorbet Language Status Item
-Sorbetto uses a [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for Ruby to report LSP status. This approach provides a unified, consistent UI that can display multiple status entries with associated actions. Specific entries can also be pinned to the status bar for quick access, preserving the familiar UX from the official extension.
+Sorbetto uses a [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for Ruby to report LSP status. This approach provides a unified, consistent UI that can display multiple status entries with associated actions. Specific entries can also be pinned to the status bar for quick access.
 
 <p align=center>
   <img width="376" height="128" src="https://github.com/user-attachments/assets/5ca5466e-bacd-41a6-a5f9-07fdfd7051e5" alt="Ruby Language Item with Sorbetto entries and statusbar-pinned Status item with Sorbet in Idle state target Stable configuration" />
@@ -168,12 +168,12 @@ There are two key aspects to be aware of:
 [↑ Back to top](#table-of-contents)
 
 ## RBI Tools
-The set of RBI commands described in the [RBI Files](https://sorbet.org/docs/rbi) official documentation is supported by the **Sorbetto: Update RBIs** command. The **DSL** option is of particular relevance for Rails' users.
+The set of RBI actions described in the [RBI Files](https://sorbet.org/docs/rbi) documentation is supported by the **Sorbetto: Update RBIs** command. The **DSL** option is of particular relevance for Rails' users.
 
 [↑ Back to top](#table-of-contents)
 
 ## RBS Support
-This extension adds some support for RBS comment signatures, such as syntax highlighting and simple activation through settings, while other language services are provided by Sorbet itself. Check the [official documentation](https://sorbet.org/docs/rbs-support) for details.
+This extension adds some support for RBS comment signatures, such as syntax highlighting and simple activation through settings, while other language services are provided by Sorbet itself. Check the [RBS Comments Support](https://sorbet.org/docs/rbs-support) documentation for details.
 
 * RBS signature comments can be enabled via the **Enable RBS support** setting. This controls whether Sorbet makes use of RBS signatures for typing information.
 
@@ -203,6 +203,7 @@ If your workspace is not set up for Sorbet, the **Sorbetto: Setup Workspace** cr
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet’s. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
 [↑ Back to top](#table-of-contents)
+
 
 
 
