@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../extensionContext';
+import { ExtensionContext } from '../../extensionContext';
 
 export const TRIGGER_CHARACTERS: readonly string[] = [':'];
 

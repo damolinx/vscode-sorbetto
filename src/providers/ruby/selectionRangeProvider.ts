@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { ExtensionContext } from '../extensionContext';
-import { SORBET_DOCUMENT_SELECTOR } from '../lsp/documentSelectors';
+import { ExtensionContext } from '../../extensionContext';
+import { SORBET_DOCUMENT_SELECTOR } from '../../lsp/documentSelectors';
 
 export function registerSelectionRangeProvider(context: ExtensionContext) {
   context.disposables.push(

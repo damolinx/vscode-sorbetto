@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { existsSync } from 'fs';
 import { basename, dirname, extname, posix, resolve, sep } from 'path';
-import { ExtensionContext } from '../extensionContext';
+import { ExtensionContext } from '../../extensionContext';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['"', "'", '/'];
 

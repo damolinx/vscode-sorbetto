@@ -14,13 +14,7 @@ import { savePackageFiles } from './commands/savePackageFiles';
 import { setupWorkspace } from './commands/setupWorkspace';
 import { ExtensionContext } from './extensionContext';
 import { registerContextValueHandlers } from './extensionContextValues';
-import { registerSorbetConfigProviders } from './providers/config/sorbetConfigProviders';
-import { registerGemfileProviders } from './providers/gemfile/gemfileProviders';
-import { registerRequireCompletionProvider } from './providers/requireCompletionProvider';
-import { registerRequireDefinitionProvider } from './providers/requireDefinitionProvider';
-import { registerSelectionRangeProvider } from './providers/selectionRangeProvider';
-import { registerSorbetContentProvider } from './providers/sorbetContentProvider';
-import { registerTypedOptionsCompletionProvider } from './providers/typedOptionsCompletionProvider';
+import { registerProviders } from './providers/providers';
 import { SorbetLanguageStatus } from './sorbetLanguageStatus';
 
 /**
@@ -31,15 +25,8 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   context.log.info('Activating extension', extensionContext.extension.packageJSON.version);
 
   context.disposables.push(new SorbetLanguageStatus(context));
-
-  registerSorbetConfigProviders(context);
   registerContextValueHandlers(context);
-  registerGemfileProviders(context);
-  registerRequireCompletionProvider(context);
-  registerRequireDefinitionProvider(context);
-  registerSelectionRangeProvider(context);
-  registerSorbetContentProvider(context);
-  registerTypedOptionsCompletionProvider(context);
+  registerProviders(context);
 
   // Register commands
   const rc = vscode.commands.registerCommand;
