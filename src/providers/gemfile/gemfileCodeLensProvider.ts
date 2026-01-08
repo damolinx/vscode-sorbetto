@@ -1,5 +1,15 @@
 import * as vscode from 'vscode';
 import { BUNDLE_INSTALL_ID, BUNDLE_UPDATE_ID } from '../../commandIds';
+import { ExtensionContext } from '../../extensionContext';
+
+export function registerGemfileCodeLensProvider({ disposables }: ExtensionContext): void {
+  disposables.push(
+    vscode.languages.registerCodeLensProvider(
+      { pattern: '**/Gemfile', scheme: 'file' },
+      new GemfileCodeLensProvider(),
+    ),
+  );
+}
 
 /**
  * CodeLens actions provider for Gemfile files.
