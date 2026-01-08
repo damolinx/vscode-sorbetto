@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.15
+- Improve content of generated `Gemfile`.
+
 ## 0.3.14
 - Add a heuristic `SelectionRangeProvider` to improve behavior of **Expand Selection** and **Shrink Selection** commands.
 - Add support for `sorbet/hierarchyReferences` via custom **Peek Usages** context menu command.
@@ -11,7 +14,7 @@
 - Fix: `languages` section of `package.json` was defined outside `contributes`, making it a no-op.
 - Fix: **Sorbetto: Copy Symbol to Clipboard** should not be available if workspace is not Sorbet-enabled.
 - Fix: **Setup Workspace** command conditions leading to `bundle` errors:
-   - Save `Gemfile` after edits. 
+   - Save `Gemfile` after edits.
    - Ensure `source` statement exists in existing `Gemfile` file.
 
 ## 0.3.12
@@ -23,7 +26,7 @@
 
 ## 0.3.11
 - Add syntax highlighting for RBS signature comments, tailored for Sorbet specifics
-  - Inspired by [Shopify's](https://github.com/Shopify/ruby-lsp/blob/bb73ee69bd7a9b77d63cffcb17b644e2a8e0fff5/vscode/grammars/rbs.injection.json) but ultimately implemented from scratch with Copilot’s assistance. 
+  - Inspired by [Shopify's](https://github.com/Shopify/ruby-lsp/blob/bb73ee69bd7a9b77d63cffcb17b644e2a8e0fff5/vscode/grammars/rbs.injection.json) but ultimately implemented from scratch with Copilot’s assistance.
 
 ## 0.3.10
 - Improve diagnostics compaction heuristic when dealing with unexpected separators.

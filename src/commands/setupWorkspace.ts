@@ -6,9 +6,9 @@ import { verifyEnvironment } from './verifyEnvironment';
 const GEMFILE_HEADER: readonly string[] = ["source 'https://rubygems.org'", ''];
 
 const GEMFILE_DEPS: Readonly<Record<string, string>> = {
-  sorbet: "gem 'sorbet', :group => :development",
+  sorbet: "gem 'sorbet', group: :development",
   'sorbet-runtime': "gem 'sorbet-runtime'",
-  tapioca: "gem 'tapioca', require: false, :group => [:development, :test]",
+  tapioca: "gem 'tapioca', require: false, group: %i[development test]",
 };
 
 export async function setupWorkspace(context: ExtensionContext, pathOrUri?: string | vscode.Uri) {
@@ -77,7 +77,12 @@ async function verifyGemfile(
       () => false,
     ))
   ) {
-    const contents = GEMFILE_HEADER.concat(Object.values(GEMFILE_DEPS)).join('\n');
+    const contents = [
+      '# frozen_string_literal: true',
+      '',
+      ...GEMFILE_HEADER,
+      ...Object.values(GEMFILE_DEPS),
+    ].join('\n');
     edit.createFile(gemFile, { contents: Buffer.from(contents) });
     changed = true;
   } else {
