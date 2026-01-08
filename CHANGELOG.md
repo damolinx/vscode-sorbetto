@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.3.15
+- New **Sorbetto: Update RBIs** command to manage RBIs using `tapioca`.
 - Improve content of generated `Gemfile`.
 
 ## 0.3.14

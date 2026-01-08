@@ -3,15 +3,19 @@ import { SETUP_WORKSPACE_ID } from '../commandIds';
 import { mainAreaActiveTextEditorUri } from '../common/utils';
 import { isSorbetWorkspace } from '../common/workspaceUtils';
 
+const RUBY_ICON = new vscode.ThemeIcon('ruby');
+
 export async function executeCommandsInTerminal(options: {
   commands: string[];
-  name?: string;
   cwd?: string | vscode.Uri;
+  iconPath?: vscode.IconPath;
+  name?: string;
   preserveFocus?: boolean;
 }) {
   const cmd = options.commands.join(' && ').trim();
   const terminalOptions: vscode.TerminalOptions = {
     cwd: options.cwd,
+    iconPath: options.iconPath ?? RUBY_ICON,
     message: `\x1b[1mRunning:\x1b[0m ${cmd}`,
     name: options.name,
   };

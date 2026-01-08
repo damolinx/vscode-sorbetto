@@ -12,6 +12,7 @@ import { restartSorbet } from './commands/restartSorbet';
 import { runRubyFile } from './commands/runRubyFile';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { setupWorkspace } from './commands/setupWorkspace';
+import { updateRbis } from './commands/updateRbi';
 import { ExtensionContext } from './extensionContext';
 import { registerContextValueHandlers } from './extensionContextValues';
 import { registerProviders } from './providers/providers';
@@ -65,6 +66,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
       restartSorbet(context, 'stop', pathOrUri),
     ),
     rc(cmdIds.SORBET_SAVE_PACKAGE_FILES_ID, () => savePackageFiles(context)),
+    rc(cmdIds.UPDATE_RBIS_ID, () => updateRbis(context)),
   );
 
   // Register text editor commands

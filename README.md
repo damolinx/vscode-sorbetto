@@ -9,8 +9,8 @@ The following features are unique to Sorbetto:
 * [Multi-root workspace](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) support, with separate Language Server instances per workspace folder.
 * [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) integration.
 * New configuration model, including an improved experience for working with the `sorbet/config` file.
-* Enhanced getting-started experience:
-  * Automatically set up the workspace using the **Setup Workspace** command.
+* Getting-started experience:
+  * Set up a workspace for Ruby using the **Setup Workspace** command.
   * Wider set of code snippets for common Sorbet constructs.
 * Improved editor support:
   * Ruby files:
@@ -27,6 +27,7 @@ The following features are unique to Sorbetto:
 * Diagnostics improvements:
   * Compact layout for diagnostic messages.
   * Expanded quick-fix actions, including the ability to fix all instances of a given error code across all files ([documentation](https://sorbet.org/docs/cli#limiting-autocorrect-suggestions)).
+* Other tools.
 
 From the internal implementation side, there are several improvements as well:
 
@@ -43,6 +44,7 @@ From the internal implementation side, there are several improvements as well:
 * [Sorbet Language Status Item](#sorbet-language-status-item)
 * [Sorbet Snippets](#sorbet-snippets)
 * [Multi-root Workspaces](#multi-root-workspaces)
+* [RBI Tools](#rbi-tools)
 * [RBS Support](#rbs-support)
 * [Workspace Setup](#workspace-setup)
 * [Gemfile](#gemfile-tools)
@@ -165,8 +167,13 @@ There are two key aspects to be aware of:
 
 [↑ Back to top](#table-of-contents)
 
+## RBI Tools
+The set of RBI commands described in the [RBI Files](https://sorbet.org/docs/rbi) official documentation is supported by the **Sorbetto: Update RBIs** command. The **DSL** option is of particular relevance for Rails' users.
+
+[↑ Back to top](#table-of-contents)
+
 ## RBS Support
-This extension adds lightweight IDE support for RBS signatures, such as syntax highlighting and simple activation through settings, while language services are provided by Sorbet itself. Check the [official documentation](https://sorbet.org/docs/rbs-support) for details.
+This extension adds some support for RBS comment signatures, such as syntax highlighting and simple activation through settings, while other language services are provided by Sorbet itself. Check the [official documentation](https://sorbet.org/docs/rbs-support) for details.
 
 * RBS signature comments can be enabled via the **Enable RBS support** setting. This controls whether Sorbet makes use of RBS signatures for typing information.
 

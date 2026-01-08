@@ -69,3 +69,8 @@ export const SORBET_START_ID = `${EXTENSION_PREFIX}.start`;
  * Stop Sorbet.
  */
 export const SORBET_STOP_ID = `${EXTENSION_PREFIX}.stop`;
+
+/**
+ * Update RBIs.
+ */
+export const UPDATE_RBIS_ID = `${EXTENSION_PREFIX}.updateRbis`;

@@ -51,9 +51,9 @@ export function spawnWithExitPromise(
   };
 }
 
-export async function isAvailable(command: string): Promise<boolean> {
+export async function isAvailable(command: string, cwd?: string): Promise<boolean> {
   const whereOrWhich = process.platform === 'win32' ? 'where' : 'which';
   return new Promise((resolve, _reject) =>
-    exec(`${whereOrWhich} ${command}`, (error) => resolve(error ? false : true)),
+    exec(`${whereOrWhich} ${command}`, { cwd }, (error) => resolve(error ? false : true)),
   );
 }

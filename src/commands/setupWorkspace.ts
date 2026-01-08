@@ -43,7 +43,7 @@ export async function setupWorkspace(context: ExtensionContext, pathOrUri?: stri
         'bundle exec tapioca init',
       ],
       cwd: uri.fsPath,
-      name: 'bundle install',
+      name: 'setup',
     });
     if (terminal) {
       const disposable = vscode.window.onDidCloseTerminal(async (closedTerminal) => {

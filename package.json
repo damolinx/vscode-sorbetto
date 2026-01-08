@@ -84,6 +84,12 @@
         "title": "Setup Workspace",
         "category": "Sorbetto",
         "enablement": "workbenchState != empty"
+      },
+      {
+        "command": "sorbetto.updateRbis",
+        "title": "Update RBIs",
+        "category": "Sorbetto",
+        "enablement": "workbenchState != empty"
       }
     ],
     "configuration": [
@@ -313,7 +319,7 @@
           "command": "sorbetto.peekUsages",
           "group": "navigation@50",
           "when": "workbenchState != empty && resourceLangId == ruby && sorbetto:sorbetStatus"
-        }        
+        }
       ]
     },
     "snippets": [
