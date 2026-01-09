@@ -65,17 +65,17 @@ For guidance on how to write typed Ruby, define signatures, and integrate Sorbet
 2. Run the **Sorbetto: Setup Workspace** command.
 3. Once all Your workspace is ready.
 
-You can [verify](https://sorbet.org/docs/adopting#verify-initialization) the proper structure has been created. If anything looks off or doesn't work, check the installation terminal and the [extension Logs](#extension-logs) for error messages.
-
-> **Multi-root Workspaces**: In multi-root setups, run the setup command **once per workspace folder**. Globally installed tools are detected, but the setup command always installs all required assets locally within each workspace folder.
+> **Multi-root Workspaces**: run the setup command **once per Ruby workspace folder**. While globally installed tools are detected, the command always installs all required assets under the the given workspace folder.
 
 ### Verifying Everything Works
+
+Verify that the [expected folder structure](https://sorbet.org/docs/adopting#verify-initialization) has been created. If anything looks off or doesn't work, check the installation terminal and the [extension Logs](#extension-logs) for error messages.
 
 A quick way to confirm that your workspace setup is functioning correctly is to create a small Ruby file and trigger a predictable type error.
 
 1. Create a new file in your workspace, for example:
 
-   **Example:** Broken `example.rb`
+   **Example:** `example.rb` is `strict` missing signatures
    ```ruby
    # typed: strict
 
@@ -90,11 +90,11 @@ A quick way to confirm that your workspace setup is functioning correctly is to 
    ```
    The method 'greet' does not have a 'sig'
    ```
-   It will appear as a red wavy underline beneath `def greet(name)` line and as an entry in the **Problems** pane.
+   It will appear as a red wavy underline on `def greet(name)` and as an entry in the **Problems** pane.
 
-3. Add a minimal signature to fix the error, either manually or using the Sorbet‑provided quick fix:
+3. Add the missing signature to fix the error, either manually or using the a quick fix:
 
-   **Example:** Fixed `example.rb`
+   **Example:** Updated `example.rb`
    ```ruby
    # typed: strict
 
@@ -107,26 +107,30 @@ A quick way to confirm that your workspace setup is functioning correctly is to 
    end
    ```
 
-4. The error should disappear.
+4. The missing-sig error should go away.
 
 [↑ Back to top](#table-of-contents)
 
 ## Sorbet Configuration
-Use the [Settings Editor](https://code.visualstudio.com/docs/configure/settings#_settings-editor) to modify the configuration values used by the extension.
+Use the [Settings Editor](https://code.visualstudio.com/docs/configure/settings#_settings-editor) to modify the **Sorbetto** configuration section.
 
-The most important setting is the **Sorbet Lsp Configuration** which provides the following values:
-* **Stable**: runs the Sorbet LSP using `bundle exec srb typecheck`, and any other settings values you might have added.
-* **Custom**: runs the Sorbet LSP using a custom command and arguments you provide in the **Sorbet Lsp Custom Configuration** setting.
+The most important setting to be aware of is **Sorbet Lsp Configuration**, which provides the following values:
+* **Stable**: runs Sorbet using `bundle exec srb typecheck`, and any other settings values you might have enabled. This is the default mode.
+* **Custom**: runs Sorbet using a custom command-line you provide in the **Sorbet Lsp Custom Configuration** setting.
 * **Disabled**: disables Sorbet entirely.
 
-When compared to the official extension, *Beta* and *Experimental* are not configuration modes here but instead settings you can enable separately. Additionally, a limited set of features are exposed as standalone settings, such as **Enable RBS support** and **Enable `require_ancestor` support**. It is expected over time the number of settings will grow. The extension attempts to de-duplicate configuration values whenever they might overlap.
+When compared to the official extension, *Beta* and *Experimental* are not configuration modes here but instead settings you can enable separately for flexibility. A set of features are exposed as standalone settings, such as **Enable RBS support** and **Enable `require_ancestor` support** for better UX. The extension attempts to de-duplicate configuration values whenever they might overlap.
 
 ### `sorbet/config`
-Support for `sorbet/config` receive editing support with syntax highlighting and limited autocompletion. The extension does not process this file at this point, however, so beware you may create conflicting configurations. For details, see the [Sorbet: Config file](https://sorbet.org/docs/cli#config-file) documentation.
+Only a limited set of Sorbet configuration values are exposed as extension settings. Further customization can be done using the `sorbet/config` file in your workspace. Check the [Sorbet: Config file](https://sorbet.org/docs/cli#config-file) documentation for details. 
+
+This file is enhanced with syntax highlighting, autocomplete and hover documentation. Because the latter features are based on the current Sorbet version at the time support was written, some detaila might differ from the version you are currently using. Follow the official Sorbet documentation in such cases. 
 
 <p align=center>
   <img width="400" alt="sorbet/config with syntax highlighting and autocomplete" src="https://github.com/user-attachments/assets/c32e6603-b116-46d1-af04-826bc155e5b0" />
 </p>
+
+The extension does not check today for conflicts between your workspace settings and the `sorbet/config` file.
 
 [↑ Back to top](#table-of-contents)
 
@@ -203,6 +207,7 @@ If your workspace is not set up for Sorbet, the **Sorbetto: Setup Workspace** cr
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet’s. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
 [↑ Back to top](#table-of-contents)
+
 
 
 
