@@ -51,10 +51,7 @@ export async function setupWorkspace(context: ExtensionContext, pathOrUri?: stri
           disposable.dispose();
           const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
           if (workspaceFolder) {
-            const added = await context.clientManager.addWorkspace(workspaceFolder);
-            if (added) {
-              await context.clientManager.getClient(uri)?.start();
-            }
+            await context.clientManager.addWorkspace(workspaceFolder);
           }
         }
       });
