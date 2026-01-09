@@ -2,7 +2,7 @@
 
 Sorbetto provides language support for Ruby by leveraging [Sorbet](https://github.com/sorbet/sorbet), a type checker developed by Stripe.
 
-It began as a fork of the [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension to explore improvements, but its internals have since been largely rewritten. While it still serves as an experimentation platform, it now follows its own path. Both extensions rely on the same Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server), and neither ships with an embedded version of Sorbet, so any differences in behavior occur exclusively in the VS Code layer.
+It began as a fork of the [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension to explore improvements, but its internals have since been rewritten. While it still serves as an experimentation platform, it now follows its own path. Both extensions rely on the same Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server), and neither ship with an embedded version of Sorbet, so any differences in behavior occur exclusively in the VS Code layer.
 
 The following features are unique to Sorbetto:
 
@@ -52,24 +52,24 @@ From the internal implementation side, there are several improvements as well:
 
 ## Getting Started
 
-Sorbetto offers several standalone features—such as RBS syntax highlighting and Gemfile tooling—that work without any Sorbet installation. To access the full experience, including type checking, inline diagnostics, and related tooling, your project must be configured to use Sorbet. The [Adopting Sorbet in an Existing Codebase](https://sorbet.org/docs/adopting) guide outlines the essentials, but in practice you need Bundler, the Sorbet runtime installed locally, and a `sorbet/config` file in your project. The **Sorbetto: Setup Workspace** command automates setting up a workspace from scratch; see [Setting Up a Workspace](#setting-up-a-workspace) for details. With these pieces in place, the extension can launch the Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server) and provide the complete feature set.
+Sorbetto offers several standalone features that work without any Sorbet installation, such as RBS syntax highlighting and `Gemfile` tooling. To access the full experience, like type checking, your project must be configured to use Sorbet. The [Adopting Sorbet in an Existing Codebase](https://sorbet.org/docs/adopting) guide outlines the essentials, but in practice you need Bundler, the Sorbet runtime installed locally, and a `sorbet/config` file in your project. The **Sorbetto: Setup Workspace** command automates setting up a workspace from scratch; see [Setting Up a Workspace](#setting-up-a-workspace) for details. With these pieces in place, the extension can launch the Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server) and provide the complete feature set.
 
 Sorbetto launches Sorbet in a standard mode by default, but you can configure additional flags or even custom command-lines, however. See the [Sorbet Configuration](#sorbet-configuration) section below for details.
 
 For guidance on how to write typed Ruby, define signatures, and integrate Sorbet into your codebase, refer to the [Sorbet](https://sorbet.org/docs/overview) documentation. It provides a comprehensive overview of the type system, runtime behavior, and recommended workflows for adopting Sorbet effectively.
 
-> **Platform Support**: The extension uses cross-platform practices wherever possible. Compatibility is limited only by the [platforms supported by Sorbet](https://sorbet.org/docs/faq#what-platforms-does-sorbet-support). As a result, Windows-specific codepaths are rarely exercised since Sorbet does not support the platform.
+> **Platform Support**: The extension uses cross-platform practices wherever possible. Compatibility is limited only by the [platforms supported by Sorbet](https://sorbet.org/docs/faq#what-platforms-does-sorbet-support). As a result, Windows-specific code paths are rarely exercised since Sorbet does not support the platform.
 
 ### Setting Up a Workspace
-1. Open an existing workspace, or create a new one from an empty folder.
+1. Open an existing workspace or create a new one from an empty folder.
 2. Run the **Sorbetto: Setup Workspace** command.
 3. Once all Your workspace is ready.
 
-> **Multi-root Workspaces**: run the setup command **once per Ruby workspace folder**. While globally installed tools are detected, the command always installs all required assets under the the given workspace folder.
+> **Multi-root Workspaces**: run the setup command **once per Ruby workspace folder**. While globally installed tools are detected, the command always installs all required assets under the given workspace folder.
 
 ### Verifying Everything Works
 
-Verify that the [expected folder structure](https://sorbet.org/docs/adopting#verify-initialization) has been created. If anything looks off or doesn't work, check the installation terminal and the [extension Logs](#extension-logs) for error messages.
+Verify that the [expected folder structure](https://sorbet.org/docs/adopting#verify-initialization) has been created. If anything looks off or does not work, check the installation terminal and the [extension Logs](#extension-logs) for error messages.
 
 A quick way to confirm that your workspace setup is functioning correctly is to create a small Ruby file and trigger a predictable type error.
 
@@ -86,7 +86,7 @@ A quick way to confirm that your workspace setup is functioning correctly is to 
    end
    ```
 
-2. You should immediately see a diagnostic error similar to:
+2. You should immediately see a diagnostic error like:
    ```
    The method 'greet' does not have a 'sig'
    ```
@@ -122,9 +122,9 @@ The most important setting to be aware of is **Sorbet Lsp Configuration**, which
 When compared to the official extension, *Beta* and *Experimental* are not configuration modes here but instead settings you can enable separately for flexibility. A set of features are exposed as standalone settings, such as **Enable RBS support** and **Enable `require_ancestor` support** for better UX. The extension attempts to de-duplicate configuration values whenever they might overlap.
 
 ### `sorbet/config`
-Only a limited set of Sorbet configuration values are exposed as extension settings. Further customization can be done using the `sorbet/config` file in your workspace. Check the [Sorbet: Config file](https://sorbet.org/docs/cli#config-file) documentation for details. 
+Only a limited set of Sorbet configuration values are exposed as extension settings. Further customization can be done using the `sorbet/config` file in your workspace. Check the [Sorbet: Config file](https://sorbet.org/docs/cli#config-file) documentation for details.
 
-This file is enhanced with syntax highlighting, autocomplete and hover documentation. Because the latter features are based on the current Sorbet version at the time support was written, some detaila might differ from the version you are currently using. Follow the official Sorbet documentation in such cases. 
+This file is enhanced with syntax highlighting, autocomplete and hover documentation. Because the latter features are based on the specific Sorbet version at the time they were written, details might differ from the version you are currently using. Follow the official Sorbet documentation in such cases.
 
 <p align=center>
   <img width="400" alt="sorbet/config with syntax highlighting and autocomplete" src="https://github.com/user-attachments/assets/c32e6603-b116-46d1-af04-826bc155e5b0" />
@@ -138,12 +138,12 @@ The extension does not check today for conflicts between your workspace settings
 Sorbetto uses a [Language Status Item](https://code.visualstudio.com/api/references/vscode-api#LanguageStatusItem) for Ruby to report LSP status. This approach provides a unified, consistent UI that can display multiple status entries with associated actions. Specific entries can also be pinned to the status bar for quick access.
 
 <p align=center>
-  <img width="376" height="128" src="https://github.com/user-attachments/assets/5ca5466e-bacd-41a6-a5f9-07fdfd7051e5" alt="Ruby Language Item with Sorbetto entries and statusbar-pinned Status item with Sorbet in Idle state target Stable configuration" />
+  <img width="376" height="128" src="https://github.com/user-attachments/assets/5ca5466e-bacd-41a6-a5f9-07fdfd7051e5" alt="Ruby Language Item with Sorbetto entries and a pinned Status item with Sorbet in Idle state and targeting a Stable configuration" />
 </p>
 
 The following entries are available on the language status item:
 * **Sorbet Configuration**: shows the active Sorbet LSP configuration name as set via `sorbetto.sorbetLspConfiguration`, along with a quick **Configure** action to modify it.
-* **Sorbet Status**: displays the current status of the Sorbet LSP, including a busy indicator. The **Output** action brings the **Sorbetto** Output pane into view for checking log entries.
+* **Sorbet Status**: displays the status of the Sorbet LSP, including a busy indicator. The **Output** action brings the **Sorbetto** Output pane into view for checking log entries.
 
 VS Code displays the language status item only when an editor for the matching language is open. You can extend this behavior to editors of any language by enabling the **Sorbetto: Always Show Status Items** setting. However, at least one editor must still be open for the item to appear.
 
@@ -152,7 +152,7 @@ When using [multi-root workspaces](#multi-root-workspaces), the currently focuse
 [↑ Back to top](#table-of-contents)
 
 ## Sorbet Snippets
-Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefinedsnippets) for standard Sorbet constructs on top of the ones offered by Sorbet already. In particular, a whole set of `ruby` language snippets are now available via the **Snippet: Fill File with Snippet** and **Snippet: Insert Snippet** commands.
+Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefinedsnippets) for standard Sorbet constructs on top of the ones offered by Sorbet already. These are available from the **Snippet: Fill File with Snippet** and **Snippet: Insert Snippet** commands.
 All snippets have an associated trigger word recognized by IntelliSense while typing, making them easily accessible. For example, typing `abstract` will display the snippets for an abstract class, module, or method, allowing for quick and intuitive code insertion.
 
 <p align=center>
@@ -165,25 +165,25 @@ Starting with version 0.3.0, Sorbetto creates a dedicated Sorbet LSP client for 
 
 There are two key aspects to be aware of:
 
-* **Context resolution**: When determining the target of an action—such as displaying language status items—Sorbetto uses the currently active text editor as a hint. If the target workspace cannot be inferred, a dropdown will prompt for selection. This typically occurs with VS Code stock commands that don’t accept a URI as context.
+* **Context resolution**: When determining the target of an action—such as displaying language status items—Sorbetto uses the currently active text editor as a hint. If the target workspace cannot be inferred, a workspace selection dropdown will be displayed. This typically occurs with VS Code stock commands that do not take in a URI as context.
 
 * **Configuration precedence**: Settings are read in the following order: first from the workspace folder, then the overall workspace, and finally the user scope. Be sure to configure values at the appropriate level. Note that UI settings can only be set at the workspace or user level. This is often the most nuanced aspect of managing multi-root workspaces, so refer to the [documentation](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces#_settings) if needed.
 
 [↑ Back to top](#table-of-contents)
 
 ## RBI Tools
-The set of RBI actions described in the [RBI Files](https://sorbet.org/docs/rbi) documentation is supported by the **Sorbetto: Update RBIs** command. The **DSL** option is of particular relevance for Rails' users.
+The set of RBI actions described in the [RBI Files](https://sorbet.org/docs/rbi) documentation is supported by the **Sorbetto: Update RBIs** command. The **DSL** option is of rticular relevance for Rails users.
 
 [↑ Back to top](#table-of-contents)
 
 ## RBS Support
-This extension adds some support for RBS comment signatures, such as syntax highlighting and simple activation through settings, while other language services are provided by Sorbet itself. Check the [RBS Comments Support](https://sorbet.org/docs/rbs-support) documentation for details.
+This extension adds support for RBS comment signatures with syntax highlighting and simple activation through settings, although language services are still provided by Sorbet itself. Check the [RBS Comments Support](https://sorbet.org/docs/rbs-support) documentation for details.
 
-* RBS signature comments can be enabled via the **Enable RBS support** setting. This controls whether Sorbet makes use of RBS signatures for typing information.
+* RBS signature comments can be enabled using the **Enable RBS support** setting. This controls whether Sorbet makes use of RBS signatures for typing information.
 
-* Inline RBS signature comments (`#:`) always receive targeted syntax highlighting for Sorbet‑supported constructs, including types, generics, tuples, records, and annotations such as `@abstract`, `@final`, `@sealed`, `@interface`, and `@requires_ancestor`.
+* RBS signature comments (`#:`) always receive targeted syntax highlighting for Sorbet‑supported constructs, including types, generics, tuples, records, and annotations such as `@abstract`, `@final`, `@sealed`, `@interface`, and `@requires_ancestor`.
 
-In [multi-root workspaces](#multi-root-workspaces), each folder can independently choose whether to use RBS signatures or Sorbet‑generated signatures, allowing mixed setups within a single workspace.
+In [multi-root workspaces](#multi-root-workspaces), each workspace folder can be configured to use RBS or Sorbet signatures.
 
 <p align=center>
 <img width="332" alt="RBS sig comment highlight" src="https://github.com/user-attachments/assets/e43a8b80-6fb7-40bc-b1af-94d6fbd8f9df" />
@@ -199,7 +199,7 @@ The **Setup Workspace** command automates all steps from [Adopting Sorbet](https
 [↑ Back to top](#table-of-contents)
 
 ## Gemfile Tools
-If your workspace is not set up for Sorbet, the **Sorbetto: Setup Workspace** creates or updates the `Gemfile` file as necessary. You can then use the **Install** and **Update** CodeLens actions to easily install dependencies using `bundler`. And if you decide to manually uppdate the file, `gem` statements get gem-name autocompletion, queried in real-time from [rubygems.org](https://rubygems.org).
+The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file, as necessary. You can also use the **Install** and **Update** CodeLens actions to easily install dependencies using `bundler`, When editing the file, `gem` statements get autocompletion, queried in real-time from [rubygems.org](https://rubygems.org).
 
 [↑ Back to top](#table-of-contents)
 
