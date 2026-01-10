@@ -41,6 +41,11 @@ export const PEEK_USAGES_ID = `${EXTENSION_PREFIX}.peekUsages`;
 export const RUN_RUBY_FILE_ID = `${EXTENSION_PREFIX}.runRubyFile`;
 
 /**
+ * Send to sorbet.run.
+ */
+export const SEND_TO_SORBETRUN_ID = `${EXTENSION_PREFIX}.sendToSorbetRun`;
+
+/**
  * Setup workspace.
  */
 export const SETUP_WORKSPACE_ID = `${EXTENSION_PREFIX}.setup.workspace`;

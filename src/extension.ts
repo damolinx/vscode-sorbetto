@@ -11,6 +11,7 @@ import { peekUsages } from './commands/peekUsages';
 import { restartSorbet } from './commands/restartSorbet';
 import { runRubyFile } from './commands/runRubyFile';
 import { savePackageFiles } from './commands/savePackageFiles';
+import { sendToSorbetRun } from './commands/sendToSorbetRun';
 import { setupWorkspace } from './commands/setupWorkspace';
 import { updateRbis } from './commands/updateRbi';
 import { ExtensionContext } from './extensionContext';
@@ -76,6 +77,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
       copySymbolToClipboard(context, textEditor),
     ),
     rtc(cmdIds.PEEK_USAGES_ID, (textEditor: vscode.TextEditor) => peekUsages(context, textEditor)),
+    rtc(cmdIds.SEND_TO_SORBETRUN_ID, (textEditor: vscode.TextEditor) =>
+      sendToSorbetRun(context, textEditor),
+    ),
   );
 
   // Register configurable features

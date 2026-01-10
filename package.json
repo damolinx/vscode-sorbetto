@@ -61,6 +61,12 @@
         "enablement": "sorbetto:active && (sorbetto:sorbetStatus && sorbetto:sorbetStatus != disabled)"
       },
       {
+        "command": "sorbetto.sendToSorbetRun",
+        "title": "Send Selection to sorbet.run",
+        "category": "Sorbetto",
+        "enablement": "workbenchState != empty && editorHasSelection && editorLangId == ruby"
+      },
+      {
         "command": "sorbetto.start",
         "title": "Start Sorbet",
         "category": "Sorbetto",
