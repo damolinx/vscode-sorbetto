@@ -1,10 +1,10 @@
 # Changelog
 
 ## 0.3.16
- - Rename `sorbetto.enableAllBetaFeatures`/`sorbetto.enableAllExperimentalFeatures` to `sorbetto.enableAllBetaLspFeatures` and `sorbetto.enableAllExperimentalLspFeatures`.
+ - Rename `sorbetto.enableAllBetaFeatures`/`sorbetto.enableAllExperimentalFeatures` settings to `sorbetto.enableAllBetaLspFeatures` and `sorbetto.enableAllExperimentalLspFeatures`.
    - This is a breaking change on settings but they did not represent correctly their LSP-specific connection.
    - RBS / `require_ancestor` are no longer linked to these settings (from extension perspective).
-- Add new `sorbetto.enablePackageSupport` to enable LSP package support via `--sorbet-packages` flag. 
+- Add `sorbetto.enablePackageSupport` setting to enable LSP package support via `--sorbet-packages` flag. 
 - Add **Sobetto: Send Selection to sorbet.run** command (1MB cap).
 
 ## 0.3.15
