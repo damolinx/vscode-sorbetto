@@ -1,30 +1,23 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
-import { SorbetConfigFlagData } from './sorbetConfigFlagData';
+import { getFlag, getFlags } from './sorbetConfigFlagData';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['-', '='];
 
-export function registerSorbetCompletionProvider(
-  { disposables }: ExtensionContext,
-  flagData: SorbetConfigFlagData,
-) {
-  disposables.push(
+export function registerSorbetCompletionProvider(context: ExtensionContext) {
+  context.disposables.push(
     vscode.languages.registerCompletionItemProvider(
       { language: 'sorbet-config' },
-      new SorbetConfigCompletionProvider(flagData),
+      new SorbetConfigCompletionProvider(context),
       ...TRIGGER_CHARACTERS,
     ),
   );
 }
 
 export class SorbetConfigCompletionProvider implements vscode.CompletionItemProvider {
-  private readonly flagData: SorbetConfigFlagData;
+  constructor(private readonly context: ExtensionContext) {}
 
-  constructor(flagData: SorbetConfigFlagData) {
-    this.flagData = flagData;
-  }
-
-  public provideCompletionItems(
+  public async provideCompletionItems(
     document: vscode.TextDocument,
     position: vscode.Position,
     _token: vscode.CancellationToken,
@@ -34,10 +27,10 @@ export class SorbetConfigCompletionProvider implements vscode.CompletionItemProv
     const items: vscode.CompletionItem[] = [];
 
     if (position.character > 1 && line.slice(position.character - 2, position.character) === '--') {
-      for (const flag of this.flagData.flags) {
-        const item = new vscode.CompletionItem(flag.name, vscode.CompletionItemKind.Keyword);
-        item.detail = flag.description;
-        item.insertText = flag.name.slice(2);
+      for (const [name, { description }] of await getFlags(this.context)) {
+        const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Keyword);
+        item.detail = description;
+        item.insertText = name.slice(2);
         items.push(item);
       }
       return items;
@@ -45,7 +38,7 @@ export class SorbetConfigCompletionProvider implements vscode.CompletionItemProv
 
     if (position.character > 3 && line.at(position.character - 1) === '=') {
       const flagName = line.slice(0, position.character - 1).trimStart();
-      const flag = this.flagData.flags.find((f) => f.name === flagName);
+      const flag = await getFlag(this.context, flagName);
       if (flag?.argsValues) {
         for (const value of flag.argsValues.split('|')) {
           const item = new vscode.CompletionItem(value, vscode.CompletionItemKind.Value);

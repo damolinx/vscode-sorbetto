@@ -1,38 +1,31 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
-import { SorbetConfigFlagData } from './sorbetConfigFlagData';
+import { getFlag } from './sorbetConfigFlagData';
 
-export function registerSorbetConfigHoverProvider(
-  { disposables }: ExtensionContext,
-  flagData: SorbetConfigFlagData,
-): void {
-  disposables.push(
+export function registerSorbetConfigHoverProvider(context: ExtensionContext): void {
+  context.disposables.push(
     vscode.languages.registerHoverProvider(
       { language: 'sorbet-config' },
-      new SorbetConfigHoverProvider(flagData),
+      new SorbetConfigHoverProvider(context),
     ),
   );
 }
 
 export class SorbetConfigHoverProvider implements vscode.HoverProvider {
-  private readonly flagData: SorbetConfigFlagData;
+  constructor(private readonly context: ExtensionContext) {}
 
-  constructor(flagData: SorbetConfigFlagData) {
-    this.flagData = flagData;
-  }
-
-  public provideHover(
+  public async provideHover(
     document: vscode.TextDocument,
     position: vscode.Position,
     _token: vscode.CancellationToken,
-  ) {
+  ): Promise<vscode.Hover | undefined> {
     const range = document.getWordRangeAtPosition(position, /--[a-zA-Z0-9-]+/);
     if (!range) {
       return;
     }
 
     const word = document.getText(range);
-    const flag = this.flagData.flags.find((f) => f.name === word);
+    const flag = await getFlag(this.context, word);
     if (!flag) {
       return;
     }
