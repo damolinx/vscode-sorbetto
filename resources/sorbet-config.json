@@ -15,30 +15,6 @@
       "description": "Apply safe autocorrects to source files."
     },
     {
-      "name": "--autogen-behavior-allowed-in-rbi-files-paths",
-      "description": "Allow RBI files in these paths to be treated as behavior-defining.",
-      "argsHint": "string"
-    },
-    {
-      "name": "--autogen-msgpack-skip-reference-metadata",
-      "description": "Skip serializing extra reference metadata in msgpack autogen output."
-    },
-    {
-      "name": "--autogen-subclasses-ignore",
-      "description": "Ignore patterns only for autogen-subclasses.",
-      "argsHint": "string"
-    },
-    {
-      "name": "--autogen-subclasses-parent",
-      "description": "Parent class for which to generate a subclass list.",
-      "argsHint": "string"
-    },
-    {
-      "name": "--autogen-version",
-      "description": "Autogen version to output.",
-      "argsHint": "arg"
-    },
-    {
       "name": "--cache-dir",
       "description": "Directory used to cache Sorbet data.",
       "argsHint": "dir"
