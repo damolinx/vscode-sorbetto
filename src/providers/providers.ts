@@ -1,5 +1,7 @@
 import { ExtensionContext } from '../extensionContext';
-import { registerSorbetConfigProviders } from './config/sorbetConfigProviders';
+import { registerSorbetCompletionProvider } from './config/sorbetConfigCompletionProvider';
+import { loadFlagData } from './config/sorbetConfigFlagData';
+import { registerSorbetConfigHoverProvider } from './config/sorbetConfigHoverProvider';
 import { registerGemfileCodeLensProvider } from './gemfile/gemfileCodeLensProvider';
 import { registerGemfileCompletionProvider } from './gemfile/gemfileCompletionProvider';
 import { registerRequireCompletionProvider } from './ruby/requireCompletionProvider';
@@ -14,7 +16,10 @@ export function registerProviders(context: ExtensionContext): void {
   registerRequireCompletionProvider(context);
   registerRequireDefinitionProvider(context);
   registerSelectionRangeProvider(context);
-  registerSorbetConfigProviders(context);
   registerSorbetContentProvider(context);
   registerTypedOptionsCompletionProvider(context);
+
+  const flagData = loadFlagData(context);
+  registerSorbetCompletionProvider(context, flagData);
+  registerSorbetConfigHoverProvider(context, flagData);
 }

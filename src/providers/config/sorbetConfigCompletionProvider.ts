@@ -1,7 +1,21 @@
 import * as vscode from 'vscode';
+import { ExtensionContext } from '../../extensionContext';
 import { SorbetConfigFlagData } from './sorbetConfigFlagData';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['-', '='];
+
+export function registerSorbetCompletionProvider(
+  { disposables }: ExtensionContext,
+  flagData: SorbetConfigFlagData,
+) {
+  disposables.push(
+    vscode.languages.registerCompletionItemProvider(
+      { language: 'sorbet-config' },
+      new SorbetConfigCompletionProvider(flagData),
+      ...TRIGGER_CHARACTERS,
+    ),
+  );
+}
 
 export class SorbetConfigCompletionProvider implements vscode.CompletionItemProvider {
   private readonly flagData: SorbetConfigFlagData;

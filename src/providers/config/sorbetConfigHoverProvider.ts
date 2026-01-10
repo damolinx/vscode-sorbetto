@@ -1,5 +1,18 @@
 import * as vscode from 'vscode';
+import { ExtensionContext } from '../../extensionContext';
 import { SorbetConfigFlagData } from './sorbetConfigFlagData';
+
+export function registerSorbetConfigHoverProvider(
+  { disposables }: ExtensionContext,
+  flagData: SorbetConfigFlagData,
+): void {
+  disposables.push(
+    vscode.languages.registerHoverProvider(
+      { language: 'sorbet-config' },
+      new SorbetConfigHoverProvider(flagData),
+    ),
+  );
+}
 
 export class SorbetConfigHoverProvider implements vscode.HoverProvider {
   private readonly flagData: SorbetConfigFlagData;
