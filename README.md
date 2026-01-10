@@ -90,7 +90,7 @@ A quick way to confirm that your workspace setup is functioning correctly is to 
    ```
    The method 'greet' does not have a 'sig'
    ```
-   It will appear as a red wavy underline on `def greet(name)` and as an entry in the **Problems** pane.
+   It will appear as error squiggles on `def greet(name)` and as an entry in the **Problems** pane.
 
 3. Add the missing signature to fix the error, either manually or using the a quick fix:
 
