@@ -3,7 +3,8 @@
 ## 0.3.16
  - Rename `sorbetto.enableAllBetaFeatures`/`sorbetto.enableAllExperimentalFeatures` to `sorbetto.enableAllBetaLspFeatures` and `sorbetto.enableAllExperimentalLspFeatures`.
    - This is a breaking change on settings but they did not represent correctly their LSP-specific connection.
-   - RBS / `require_ancestor` are no longer linked to these settings (from extension perspective). 
+   - RBS / `require_ancestor` are no longer linked to these settings (from extension perspective).
+- Add new `sorbetto.enablePackageSupport` to enable LSP package support via `--sorbet-packages` flag. 
 
 ## 0.3.15
 - New **Sorbetto: Update RBIs** command to manage RBIs using `tapioca`.

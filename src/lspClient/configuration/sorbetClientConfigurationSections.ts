@@ -4,8 +4,9 @@
 const ConfigurationKeys = {
   enableAllBetaLspFeatures: { lspOption: true, toggle: true },
   enableAllExperimentalLspFeatures: { lspOption: true, toggle: true },
-  enableRbsSupport: { lspOption: true, toggle: true },
+  enablePackageSupport: { lspOption: true, toggle: true },
   enableRequiresAncestor: { lspOption: true, toggle: true },
+  enableRbsSupport: { lspOption: true, toggle: true },
   enableWatchman: { lspOption: true },
   highlightUntypedCode: { lspOption: true },
   highlightUntypedCodeDiagnosticSeverity: { lspOption: true },

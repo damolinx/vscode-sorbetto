@@ -246,17 +246,23 @@
             "default": false,
             "markdownDescription": "Enable all **experimental** LSP features. These features might be unstable and lead to crashes."
           },
-          "sorbetto.enableRbsSupport": {
+          "sorbetto.enablePackageSupport": {
             "scope": "resource",
             "type": "boolean",
             "default": false,
-            "markdownDescription": "Enable **experimental** RBS support. Check [documentation](https://sorbet.org/docs/rbs-support)"
+            "markdownDescription": "Enable support for Sorbet's experimental Ruby package system. Check [documentation](https://sorbet.org/docs/cli-ref#sorbet-packages-mode-options)."
           },
           "sorbetto.enableRequiresAncestor": {
             "scope": "resource",
             "type": "boolean",
             "default": false,
             "markdownDescription": "Enable **experimental** `requires_ancestor` support. Check [documentation](https://sorbet.org/docs/requires-ancestor)."
+          },
+          "sorbetto.enableRbsSupport": {
+            "scope": "resource",
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Enable **experimental** RBS support. Check [documentation](https://sorbet.org/docs/rbs-support)"
           }
         }
       }

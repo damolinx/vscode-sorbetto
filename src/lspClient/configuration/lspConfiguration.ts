@@ -47,11 +47,14 @@ export async function createLspConfiguration(
     if (configuration.isEnabled('enableAllExperimentalLspFeatures')) {
       lspConfig.args.push('--enable-all-experimental-lsp-features');
     }
-    if (configuration.isEnabled('enableRbsSupport')) {
-      lspConfig.args.push('--enable-experimental-rbs-comments');
+    if (configuration.isEnabled('enablePackageSupport')) {
+      lspConfig.args.push('--sorbet-packages');
     }
     if (configuration.isEnabled('enableRequiresAncestor')) {
       lspConfig.args.push('--enable-experimental-requires-ancestor');
+    }
+    if (configuration.isEnabled('enableRbsSupport')) {
+      lspConfig.args.push('--enable-experimental-rbs-comments');
     }
 
     await enableWatchmanSupport(lspConfig, configuration);
