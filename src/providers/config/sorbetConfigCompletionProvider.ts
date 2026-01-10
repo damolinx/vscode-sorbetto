@@ -41,20 +41,6 @@ export class SorbetConfigCompletionProvider implements vscode.CompletionItemProv
       return items;
     }
 
-    // Case 3: Value on next line
-    const prevLine = position.line > 0 ? document.lineAt(position.line - 1).text.trim() : '';
-
-    const prevFlag = this.flagData.flags.find((f) => prevLine.startsWith(f.name));
-    if (prevFlag?.argsHint) {
-      const values = prevFlag.argsHint.split('|');
-      for (const v of values) {
-        const item = new vscode.CompletionItem(v, vscode.CompletionItemKind.Value);
-        item.detail = `Value for ${prevFlag.name}`;
-        items.push(item);
-      }
-      return items;
-    }
-
     return undefined;
   }
 }
