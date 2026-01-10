@@ -169,10 +169,6 @@
       "argsHint": "file.rbi"
     },
     {
-      "name": "--no-config",
-      "description": "Do not load the sorbet/config file."
-    },
-    {
       "name": "--no-error-count",
       "description": "Do not print the final error count summary."
     },
