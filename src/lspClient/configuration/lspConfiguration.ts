@@ -41,19 +41,17 @@ export async function createLspConfiguration(
   }
 
   if (lspConfig) {
-    if (configuration.isEnabled('enableAllBetaFeatures')) {
+    if (configuration.isEnabled('enableAllBetaLspFeatures')) {
       lspConfig.args.push('--enable-all-beta-lsp-features');
     }
-
-    if (configuration.isEnabled('enableAllExperimentalFeatures')) {
+    if (configuration.isEnabled('enableAllExperimentalLspFeatures')) {
       lspConfig.args.push('--enable-all-experimental-lsp-features');
-    } else {
-      if (configuration.isEnabled('enableRbsSupport')) {
-        lspConfig.args.push('--enable-experimental-rbs-comments');
-      }
-      if (configuration.isEnabled('enableRequiresAncestor')) {
-        lspConfig.args.push('--enable-experimental-requires-ancestor');
-      }
+    }
+    if (configuration.isEnabled('enableRbsSupport')) {
+      lspConfig.args.push('--enable-experimental-rbs-comments');
+    }
+    if (configuration.isEnabled('enableRequiresAncestor')) {
+      lspConfig.args.push('--enable-experimental-requires-ancestor');
     }
 
     await enableWatchmanSupport(lspConfig, configuration);

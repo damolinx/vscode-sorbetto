@@ -2,8 +2,8 @@
  *  All {@link SorbetClient client} configuration names (`sorbetto.«name»`).
  */
 const ConfigurationKeys = {
-  enableAllBetaFeatures: { lspOption: true, toggle: true },
-  enableAllExperimentalFeatures: { lspOption: true, toggle: true },
+  enableAllBetaLspFeatures: { lspOption: true, toggle: true },
+  enableAllExperimentalLspFeatures: { lspOption: true, toggle: true },
   enableRbsSupport: { lspOption: true, toggle: true },
   enableRequiresAncestor: { lspOption: true, toggle: true },
   enableWatchman: { lspOption: true },
