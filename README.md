@@ -121,7 +121,7 @@ For guidance on writing typed Ruby, including how to define signatures, understa
 
 ## Commands
 
-| Displayed Name                   | Description |
+| Command                          | Description |
 |----------------------------------|-------------|
 | **Copy Symbol to Clipboard**     | Copies the symbol at the cursor to the clipboard. |
 | **Debug Ruby File**              | Debugs the active Ruby file using either the registered `rdbg` debugger type or the `rdbg` executable. Intended for quick verification of standalone scripts, not as a replacement for a workspace [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
@@ -264,6 +264,7 @@ The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file,
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
 [↑ Back to top](#table-of-contents)
+
 
 
 
