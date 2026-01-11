@@ -31,11 +31,34 @@ export async function debugRubyFile(context: ExtensionContext, pathOrUri?: strin
     await document.save();
   }
 
-  if (await verifyEnvironment(context, ['ruby', 'bundle', 'rdbg'])) {
+  if (isDebuggerTypeAvailable('rdbg')) {
+    context.log.info('DebugRuby: Using registered `rdbg` debugger type');
+    await vscode.debug.startDebugging(workspaceFolder, {
+      type: 'rdbg',
+      name: `Debug ${basename(document.fileName)}`,
+      request: 'launch',
+      cwd: workspaceFolder?.uri.fsPath,
+      script: document.fileName,
+    });
+  } else if (await verifyEnvironment(context, ['ruby', 'bundle', 'rdbg'])) {
+    context.log.info('DebugRuby: Using `rdbg` executable');
     await executeCommandsInTerminal({
       commands: [`bundle exec rdbg ${targetPath}`],
       cwd: workspaceFolder?.uri.fsPath,
       name: `Debug ${basename(targetPath)}`,
     });
+  } else {
+    context.log.error('DebugRuby: No registered `rdbg` debugger-type or executable found');
+    vscode.window.showErrorMessage(
+      'No `rdbg` debugger detected. Install a Ruby debug extension or ensure `rdbg` is available in your environment.',
+    );
   }
+}
+
+function isDebuggerTypeAvailable(type: string): boolean {
+  return vscode.extensions.all.some((ext) => {
+    const contributes = ext.packageJSON?.contributes;
+    const debuggers = contributes?.debuggers as any[] | undefined;
+    return !!debuggers?.some((d) => d.type === type);
+  });
 }

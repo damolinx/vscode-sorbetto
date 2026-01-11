@@ -119,13 +119,13 @@ For guidance on writing typed Ruby, including how to define signatures, understa
 | Displayed Name                   | Description |
 |----------------------------------|-------------|
 | **Copy Symbol to Clipboard**     | Copies the symbol at the cursor to the clipboard. |
-| **Debug Ruby File**              | Starts an `rdbg` debug session for the active Ruby file. Intended for quick verification of standalone scripts, not as a replacement for a [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
+| **Debug Ruby File**              | Debugs the active Ruby file using either the registered `rdbg` debugger type or the `rdbg` executable. Intended for quick verification of standalone scripts, not as a replacement for a workspace [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
 | **Peek Usages**                  | Finds all [references](https://sorbet.org/docs/lsp#sorbethierarchyreferences-request) to the symbol under the cursor, including overrides. |
 | **Restart Sorbet**               | Restarts the Sorbet language server. |
 | **Send Selection to sorbet.run** | Sends the selected Ruby code to [sorbet.run](https://sorbet.run). Limited to 1MB. |
 | **Start Sorbet**                 | Starts the Sorbet language server. |
 | **Stop Sorbet**                  | Stops the Sorbet language server. |
-| **Run Ruby File**                | Executes the active Ruby file. Intended for quick verification of standalone scripts, not as a replacement for a [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
+| **Run Ruby File**                | Executes the active Ruby file. Intended for quick verification of standalone scripts, not as a replacement for a workspace [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
 | **Setup Workspace**              | Configures the workspace for Sorbet usage. |
 | **Update RBIs**                  | Updates RBI files using Tapioca. |
 

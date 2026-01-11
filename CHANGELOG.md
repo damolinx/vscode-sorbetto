@@ -6,6 +6,7 @@
    - RBS / `require_ancestor` are no longer linked to these settings (from extension perspective).
 - Add `sorbetto.enablePackageSupport` setting to enable LSP package support via `--sorbet-packages` flag.
 - Add **Sobetto: Send Selection to sorbet.run** command (1MB cap).
+- **Sorbetto: Debug Ruby File** attempts to launch the best debugger possible (executable or VSCode debugger-type).
 
 ## 0.3.15
 - New **Sorbetto: Update RBIs** command to manage RBIs using `tapioca`.
