@@ -27,19 +27,25 @@ The following features are unique to Sorbetto:
 * Diagnostics improvements:
   * Compact layout for diagnostic messages.
   * Expanded quick-fix actions, including the ability to fix all instances of a given error code across all files ([documentation](https://sorbet.org/docs/cli#limiting-autocorrect-suggestions)).
-* Other tools.
 
 From the internal implementation side, there are several improvements as well:
 
 * Minimum VS Code version raised to 1.99, enabling newer extensibility APIs while maintaining **Cursor** compatibility.
 * Language Client library upgraded to version 9.0.
-* Switched to `esbuild` for bundling and minification, significantly reducing the extension’s footprint.
+* Switched to `esbuild` for bundling and minification, significantly reducing the extension's footprint.
+
+> **Platform Support**: The extension runs wherever VS Code does, though full functionality depends on Sorbet's [supported platforms](https://sorbet.org/docs/faq#what-platforms-does-sorbet-support).
 
 ## Table of Contents
 * [Getting Started](#getting-started)
   * [Setting Up a Workspace](#setting-up-a-workspace)
   * [Verifying Everything Works](#verifying-everything-works)
-  * [Running a Ruby Script](#running-a-ruby-script)
+  * [Writing Typed Ruby](#writing-typed-ruby)
+* [Commands](#commands)
+* [Configuration](#configuration)
+  * [Sorbetto for VS Code](#main-settings)
+  * [Preferences](#preferences)
+  * [Beta & Experimental](#beta--experimental)
 * [Sorbet Configuration](#sorbet-configuration)
 * [Sorbet Language Status Item](#sorbet-language-status-item)
 * [Sorbet Snippets](#sorbet-snippets)
@@ -52,13 +58,7 @@ From the internal implementation side, there are several improvements as well:
 
 ## Getting Started
 
-Sorbetto offers several standalone features that work without any Sorbet installation, such as RBS syntax highlighting and `Gemfile` tooling. To access the full experience, like type checking, your project must be configured to use Sorbet. The [Adopting Sorbet in an Existing Codebase](https://sorbet.org/docs/adopting) guide outlines the essentials, but in practice you need Bundler, the Sorbet runtime installed locally, and a `sorbet/config` file in your project. The **Sorbetto: Setup Workspace** command automates setting up a workspace from scratch; see [Setting Up a Workspace](#setting-up-a-workspace) for details. With these pieces in place, the extension can launch the Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server) and provide the complete feature set.
-
-Sorbetto launches Sorbet in a standard mode by default, but you can configure additional flags or even custom command-lines, however. See the [Sorbet Configuration](#sorbet-configuration) section below for details.
-
-For guidance on how to write typed Ruby, define signatures, and integrate Sorbet into your codebase, refer to the [Sorbet](https://sorbet.org/docs/overview) documentation. It provides a comprehensive overview of the type system, runtime behavior, and recommended workflows for adopting Sorbet effectively.
-
-> **Platform Support**: The extension uses cross-platform practices wherever possible. Compatibility is limited only by the [platforms supported by Sorbet](https://sorbet.org/docs/faq#what-platforms-does-sorbet-support). As a result, Windows-specific code paths are rarely exercised since Sorbet does not support the platform.
+Sorbetto provides several standalone features that work even without Sorbet installed, but language services require your workspace to be configured to use Sorbet. The [Adopting Sorbet in an Existing Codebase](https://sorbet.org/docs/adopting) guide outlines the essentials; at a minimum you need Bundler, the Sorbet runtime, and a `sorbet/config` file in your project. Once these requirements are met, Sorbetto can automatically start the Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server). You can use the **Sorbetto: Setup Workspace** command to [automatically set up](#setting-up-a-workspace) the workspace for you.
 
 ### Setting Up a Workspace
 1. Open an existing workspace or create a new one from an empty folder.
@@ -108,6 +108,65 @@ A quick way to confirm that your workspace setup is functioning correctly is to 
    ```
 
 4. The missing-sig error should go away.
+
+### Writing Typed Ruby
+For guidance on writing typed Ruby, including how to define signatures, understand Sorbet's type system, and adopt typed patterns effectively, refer to the Sorbet [documentation](https://sorbet.org/docs/overview).
+
+[↑ Back to top](#table-of-contents)
+
+## Commands
+
+| Displayed Name                   | Description |
+|----------------------------------|-------------|
+| **Copy Symbol to Clipboard**     | Copies the symbol at the cursor to the clipboard. |
+| **Debug Ruby File**              | Starts an `rdbg` debug session for the active Ruby file. Intended for quick verification of standalone scripts, not as a replacement for a [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
+| **Peek Usages**                  | Finds all [references](https://sorbet.org/docs/lsp#sorbethierarchyreferences-request) to the symbol under the cursor, including overrides. |
+| **Restart Sorbet**               | Restarts the Sorbet language server. |
+| **Send Selection to sorbet.run** | Sends the selected Ruby code to [sorbet.run](https://sorbet.run). Limited to 1MB. |
+| **Start Sorbet**                 | Starts the Sorbet language server. |
+| **Stop Sorbet**                  | Stops the Sorbet language server. |
+| **Run Ruby File**                | Executes the active Ruby file. Intended for quick verification of standalone scripts, not as a replacement for a [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
+| **Setup Workspace**              | Configures the workspace for Sorbet usage. |
+| **Update RBIs**                  | Updates RBI files using Tapioca. |
+
+[↑ Back to top](#table-of-contents)
+
+## Configuration
+
+### Main Settings
+
+| Setting Key                           | Description |
+|---------------------------------------|-------------|
+| `sorbetto.enableWatchman`             | Controls whether Sorbet uses `watchman` for file‑watching performance. Defaults to `Auto`, meaning it is used is found in your system. |
+| `sorbetto.restartFilePatterns`        | Glob patterns that trigger a Sorbet restart when matching files change. |
+| `sorbetto.sorbetLspConfiguration`     | Selects which LSP [configuration](#sorbet-configuration) to use. |
+| `sorbetto.sorbetLspCustomConfiguration` | Custom command‑line arguments for launching the Sorbet LSP server when using the `Custom` configuration. |
+| `sorbetto.sorbetTypecheckCommand`     | Command used to invoke `srb typecheck`. |
+
+[↑ Back to top](#table-of-contents)
+
+### Preferences
+
+| Setting Key                                   | Description |
+|-----------------------------------------------|-------------|
+| `sorbetto.alwaysShowStatusItems`              | Keeps the [Sorbet language status item](#sorbet-language-status-item) visible whenever any editor is open. |
+| `sorbetto.compactSorbetDiagnostics`           | Reformats Sorbet diagnostic messages into a compact layout in the **Problems** pane and tooltips. |
+| `sorbetto.highlightUntypedCode`               | Enables highlighting of untyped code. |
+| `sorbetto.highlightUntypedCodeDiagnosticSeverity` | Sets the severity level used when reporting untyped code. |
+| `sorbetto.typedFalseCompletionNudges`         | Shows auto‑completion nudges in `typed: false` files. |
+| `sorbetto.updateRequireRelative`              | Updates `require_relative` statements when files are moved. |
+
+[↑ Back to top](#table-of-contents)
+
+### Beta & Experimental
+
+| Setting Key                           | Description |
+|---------------------------------------|-------------|
+| `sorbetto.enableAllBetaLspFeatures`   | Enables all Sorbet LSP features marked as **beta**. |
+| `sorbetto.enableAllExperimentalLspFeatures` | Enables all Sorbet LSP features marked as **experimental**. |
+| `sorbetto.enablePackageSupport`       | Enables support for Sorbet's experimental Ruby package system. |
+| `sorbetto.enableRequiresAncestor`     | Enables experimental `requires_ancestor` support. |
+| `sorbetto.enableRbsSupport`           | Enables experimental RBS support. |
 
 [↑ Back to top](#table-of-contents)
 
@@ -204,7 +263,7 @@ The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file,
 [↑ Back to top](#table-of-contents)
 
 ## Extension Logs
-Sorbetto uses a single output channel to log both its own exceptions and Sorbet’s. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
+Sorbetto uses a single output channel to log both its own exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
 [↑ Back to top](#table-of-contents)
 

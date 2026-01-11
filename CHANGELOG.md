@@ -4,7 +4,7 @@
  - Rename `sorbetto.enableAllBetaFeatures`/`sorbetto.enableAllExperimentalFeatures` settings to `sorbetto.enableAllBetaLspFeatures` and `sorbetto.enableAllExperimentalLspFeatures`.
    - This is a breaking change on settings but they did not represent correctly their LSP-specific connection.
    - RBS / `require_ancestor` are no longer linked to these settings (from extension perspective).
-- Add `sorbetto.enablePackageSupport` setting to enable LSP package support via `--sorbet-packages` flag. 
+- Add `sorbetto.enablePackageSupport` setting to enable LSP package support via `--sorbet-packages` flag.
 - Add **Sobetto: Send Selection to sorbet.run** command (1MB cap).
 
 ## 0.3.15
@@ -34,7 +34,7 @@
 
 ## 0.3.11
 - Add syntax highlighting for RBS signature comments, tailored for Sorbet specifics
-  - Inspired by [Shopify's](https://github.com/Shopify/ruby-lsp/blob/bb73ee69bd7a9b77d63cffcb17b644e2a8e0fff5/vscode/grammars/rbs.injection.json) but ultimately implemented from scratch with Copilot’s assistance.
+  - Inspired by [Shopify's](https://github.com/Shopify/ruby-lsp/blob/bb73ee69bd7a9b77d63cffcb17b644e2a8e0fff5/vscode/grammars/rbs.injection.json) but ultimately implemented from scratch with Copilot's assistance.
 
 ## 0.3.10
 - Improve diagnostics compaction heuristic when dealing with unexpected separators.
