@@ -52,7 +52,6 @@ From the internal implementation side, there are several improvements as well:
 * [Multi-root Workspaces](#multi-root-workspaces)
 * [RBI Tools](#rbi-tools)
 * [RBS Support](#rbs-support)
-* [Workspace Setup](#workspace-setup)
 * [Gemfile](#gemfile-tools)
 * [Extension Logs](#extension-logs)
 
@@ -61,11 +60,17 @@ From the internal implementation side, there are several improvements as well:
 Sorbetto provides several standalone features that work even without Sorbet installed, but language services require your workspace to be configured to use Sorbet. The [Adopting Sorbet in an Existing Codebase](https://sorbet.org/docs/adopting) guide outlines the essentials; at a minimum you need Bundler, the Sorbet runtime, and a `sorbet/config` file in your project. Once these requirements are met, Sorbetto can automatically start the Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server). You can use the **Sorbetto: Setup Workspace** command to [automatically set up](#setting-up-a-workspace) the workspace for you.
 
 ### Setting Up a Workspace
-1. Open an existing workspace or create a new one from an empty folder.
-2. Run the **Sorbetto: Setup Workspace** command.
-3. Once all Your workspace is ready.
 
-> **Multi-root Workspaces**: run the setup command **once per Ruby workspace folder**. While globally installed tools are detected, the command always installs all required assets under the given workspace folder.
+1. Open an existing workspace or create a new one from an empty folder.
+   * For multi-root workspaces, run the setup command once per Ruby workspace folder.
+2. Run the **Sorbetto: Setup Workspace** command.
+3. After the command completes, your workspace is ready.
+
+The **Setup Workspace** command automates the steps from [Adopting Sorbet](https://sorbet.org/docs/adopting). It configures `bundler` to install gems locally using:
+
+```
+bundle config set --local path 'vendor/bundle'
+```
 
 ### Verifying Everything Works
 
@@ -250,13 +255,6 @@ In [multi-root workspaces](#multi-root-workspaces), each workspace folder can be
 
 [↑ Back to top](#table-of-contents)
 
-## Workspace Setup
-The **Setup Workspace** command automates all steps from [Adopting Sorbet](https://sorbet.org/docs/adopting) in one convenient place. This command configures `bundler` to install gems locally via `bundle config set --local path 'vendor/bundle'`.
-
-> **Note:** Do not use this command if you prefer globally installed gems; instead, follow the linked documentation to set up your workspace.
-
-[↑ Back to top](#table-of-contents)
-
 ## Gemfile Tools
 The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file, as necessary. You can also use the **Install** and **Update** CodeLens actions to easily install dependencies using `bundler`, When editing the file, `gem` statements get autocompletion, queried in real-time from [rubygems.org](https://rubygems.org).
 
@@ -266,6 +264,7 @@ The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file,
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
 [↑ Back to top](#table-of-contents)
+
 
 
 
