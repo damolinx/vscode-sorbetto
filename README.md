@@ -167,7 +167,7 @@ The extension does not currently detect conflicts between your workspace setting
 
 ## Extension Features
 
-## Commands
+### Commands
 
 | Command                          | Description |
 |----------------------------------|-------------|
@@ -251,6 +251,7 @@ The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file,
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
 [↑ Back to top](#table-of-contents)
+
 
 
 
