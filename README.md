@@ -92,7 +92,6 @@ A quick way to confirm that your workspace setup is functioning correctly is to 
 
 [↑ Back to top](#table-of-contents)
 
-
 ## Configuration
 
 You can the [Settings Editor](https://code.visualstudio.com/docs/configure/settings#_settings-editor) to modify the **Sorbetto** configuration section, or edit them directly from the [Settings JSON file](https://code.visualstudio.com/docs/configure/settings#_settings-json-file). Consider the [settings precedence rules](https://code.visualstudio.com/docs/configure/settings#_settings-precedence) when modifying them.
@@ -133,7 +132,6 @@ You can the [Settings Editor](https://code.visualstudio.com/docs/configure/setti
 | `sorbetto.enableRbsSupport`           | Enables experimental RBS support. |
 
 [↑ Back to top](#table-of-contents)
-
 
 ## Working with Sorbet
 
@@ -182,13 +180,16 @@ The extension does not currently detect conflicts between your workspace setting
 | **Setup Workspace**              | Configures the workspace for Sorbet usage. |
 | **Update RBIs**                  | Updates RBI files using Tapioca. |
 
-
 The following commands are available in the context menu of text editors.
 
 | Command                       | Description |
 |-------------------------------|-------------|
 | **Copy Symbol**               | Copies the symbol at the cursor to the clipboard. |
 | **Peek Hierarchy References** | Finds all [references](https://sorbet.org/docs/lsp#sorbethierarchyreferences-request) to the symbol under the cursor, including overrides. |
+
+<p align=center>
+  <img width="269" alt="Text editor context menu showing Sorbetto-specific actions" src="https://github.com/user-attachments/assets/9e40d3fb-74ea-4e73-9b26-381fbcf88bb6" />
+</p>
 
 [↑ Back to top](#table-of-contents)
 
@@ -229,7 +230,6 @@ All snippets have an associated trigger word recognized by IntelliSense while ty
   <img width=400 src="https://github.com/user-attachments/assets/d03241d1-7f83-4485-a59c-be38264e18c0" alt="Sorbet snippets provided by Sorbetto" />
 </p>
 
-
 ### RBI Tools
 The set of RBI actions described in the [RBI Files](https://sorbet.org/docs/rbi) documentation is supported by the **Sorbetto: Update RBIs** command. The **DSL** option is of rticular relevance for Rails users.
 
@@ -259,15 +259,3 @@ The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file,
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
 [↑ Back to top](#table-of-contents)
-
-
-
-
-
-
-
-
-
-
-
-
