@@ -5,6 +5,8 @@ import { E_COMMAND_NOT_FOUND, ErrorInfo } from '../common/processUtils';
 import { ExtensionContext } from '../extensionContext';
 import { HIERARCHY_REFERENCES_REQUEST } from '../lsp/hierarchyReferences';
 import { InitializationOptions } from '../lsp/initializationOptions';
+import { SorbetServerCapabilities } from '../lsp/initializeResult';
+import { SorbetLanguageClient } from '../lsp/languageClient';
 import { READ_FILE_REQUEST } from '../lsp/readFileRequest';
 import {
   SHOW_OPERATION_NOTIFICATION_METHOD,
@@ -28,21 +30,20 @@ const THROTTLE_CONFIG = {
 } as const;
 
 export class SorbetClient implements vscode.Disposable {
-  private _languageClient?: {
-    client: vslcn.LanguageClient;
-    disposables: vscode.Disposable[];
-  };
-  private _languageClientInitializer?: LanguageClientCreator;
-  private _operations: SorbetShowOperationParams[];
-  private _status: SorbetClientStatus;
-
   public readonly configuration: SorbetClientConfiguration;
   private readonly context: ExtensionContext;
   private readonly disposables: vscode.Disposable[];
   public readonly id: SorbetClientId;
+  private languageClientInitializer?: LanguageClientCreator;
   private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
   private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
   private readonly restartWatcher: RestartWatcher;
+  private session?: {
+    client: SorbetLanguageClient;
+    disposables: vscode.Disposable[];
+    operations?: SorbetShowOperationParams[];
+    status?: SorbetClientStatus;
+  };
   public readonly workspaceFolder: vscode.WorkspaceFolder;
 
   constructor(
@@ -50,8 +51,6 @@ export class SorbetClient implements vscode.Disposable {
     context: ExtensionContext,
     workspaceFolder: vscode.WorkspaceFolder,
   ) {
-    this._operations = [];
-    this._status = SorbetClientStatus.Disabled;
     this.context = context;
     this.id = id;
     this.onShowOperationEmitter = new vscode.EventEmitter();
@@ -78,22 +77,36 @@ export class SorbetClient implements vscode.Disposable {
   }
 
   /**
+   * The {@link SorbetServerCapabilities capabilities} the Sorbet Language Server
+   * provides. Only available when the server has been initialized.
+   */
+  public get capabilities(): SorbetServerCapabilities | undefined {
+    return this.languageClient?.initializeResult?.capabilities;
+  }
+
+  /**
    * Raise {@link onShowOperation} event. Prefer this over calling
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified. Spurious events are filtered out.
    */
   private fireOnShowOperation(params: SorbetShowOperationParams): void {
     let changed = false;
+    if (!this.session) {
+      return;
+    }
+
     if (params.status === 'end') {
-      const filteredOps = this._operations.filter(
+      const filteredOps = this.session.operations?.filter(
         (ops) => ops.operationName !== params.operationName,
       );
-      if (filteredOps.length !== this._operations.length) {
-        this._operations = filteredOps;
+
+      if (filteredOps?.length !== this.session.operations?.length) {
+        this.session.operations = filteredOps;
         changed = true;
       }
     } else {
-      this._operations.push(params);
+      this.session.operations ??= [];
+      this.session.operations.push(params);
       changed = true;
     }
 
@@ -108,8 +121,8 @@ export class SorbetClient implements vscode.Disposable {
    * event listeners are notified.
    */
   private fireOnStatusChanged(): void {
-    if (this.status === SorbetClientStatus.Disabled) {
-      this._operations = [];
+    if (this.status === SorbetClientStatus.Disabled && this.session) {
+      this.session.operations = [];
     }
     this.onStatusChangedEmitter.fire({ client: this, status: this.status });
   }
@@ -175,26 +188,29 @@ export class SorbetClient implements vscode.Disposable {
     return this.onStatusChangedEmitter.event;
   }
 
-  public get languageClient(): vslcn.LanguageClient | undefined {
-    return this._languageClient?.client;
+  /**
+   * Current Sorbet Language Client. Only available while the server is running.
+   */
+  public get languageClient(): SorbetLanguageClient | undefined {
+    return this.session?.client;
   }
 
-  private set languageClient(value: vslcn.LanguageClient | undefined) {
-    if (this._languageClient?.client === value) {
+  private set languageClient(value: SorbetLanguageClient | undefined) {
+    if (this.session?.client === value) {
       return;
     }
 
-    if (this._languageClient) {
-      vscode.Disposable.from(...this._languageClient.disposables).dispose();
-      this._languageClient = undefined;
+    if (this.session) {
+      vscode.Disposable.from(...this.session.disposables).dispose();
+      this.session = undefined;
       this.status = SorbetClientStatus.Disabled;
     }
 
     if (value) {
-      this._languageClient = {
+      this.session = {
         client: value,
         disposables: [
-          value, // Presumes ownership of LanguageClient
+          value, // Assumes ownership of LanguageClient
           value.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, (params) =>
             this.fireOnShowOperation(params),
           ),
@@ -230,19 +246,22 @@ export class SorbetClient implements vscode.Disposable {
   }
 
   /**
-   * Sorbet client current operation stack.
+   * Sorbet Language Client operations stack.
    */
   public get operations(): readonly Readonly<SorbetShowOperationParams>[] {
-    return this._operations;
+    return this.session?.operations ?? [];
   }
 
+  /**
+   * Sorbet Language Client status.
+   */
   public get status(): SorbetClientStatus {
-    return this._status;
+    return this.session?.status ?? SorbetClientStatus.Disabled;
   }
 
-  public set status(value: SorbetClientStatus) {
-    if (this._status !== value) {
-      this._status = value;
+  private set status(value: SorbetClientStatus) {
+    if (this.session && this.session.status !== value) {
+      this.session.status = value;
       this.fireOnStatusChanged();
     }
   }
@@ -275,7 +294,7 @@ export class SorbetClient implements vscode.Disposable {
       let retry = false;
       let retryAttempt = 0;
 
-      this._languageClientInitializer = new LanguageClientCreator(
+      this.languageClientInitializer = new LanguageClientCreator(
         this.context,
         this.workspaceFolder,
         this.configuration,
@@ -288,7 +307,7 @@ export class SorbetClient implements vscode.Disposable {
         let lspProcess: InitializeProcessResult | undefined;
         try {
           this.status = SorbetClientStatus.Initializing;
-          const { client, result: lspProcess } = await this._languageClientInitializer.create();
+          const { client, result: lspProcess } = await this.languageClientInitializer.create();
           if (lspProcess.hasExited) {
             if (lspProcess.exitedWithLegacyRetryCode) {
               this.context.log.warn(
@@ -333,7 +352,7 @@ export class SorbetClient implements vscode.Disposable {
         }
       } while (retry && ++retryAttempt < Number.MAX_SAFE_INTEGER);
 
-      this._languageClientInitializer = undefined;
+      this.languageClientInitializer = undefined;
     });
 
     function isUnrecoverable(errorInfo: ErrorInfo): boolean {
@@ -398,16 +417,16 @@ export class SorbetClient implements vscode.Disposable {
         this.context.log.debug(`${logPrefix}Ignored stop request, stop not required.`);
       }
       this.languageClient = undefined;
-    } else if (this._languageClientInitializer) {
-      if (this._languageClientInitializer.lspProcess) {
-        const killed = this._languageClientInitializer.lspProcess.kill();
+    } else if (this.languageClientInitializer) {
+      if (this.languageClientInitializer.lspProcess) {
+        const killed = this.languageClientInitializer.lspProcess.kill();
         if (killed !== undefined && !killed) {
           throw new Error(
-            `Zombie initialization with pid: ${this._languageClientInitializer.lspProcess?.process.pid}`,
+            `Zombie initialization with pid: ${this.languageClientInitializer.lspProcess?.process.pid}`,
           );
         } else {
           this.context.log.debug(`${logPrefix}Zombie initializer but no associated process.`);
-          this._languageClientInitializer = undefined;
+          this.languageClientInitializer = undefined;
         }
       }
     } else {

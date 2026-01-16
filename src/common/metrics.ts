@@ -62,10 +62,10 @@ export class LogMetrics implements Metrics {
  * Shims the language client object so that all requests sent get timed.
  * @returns The instrumented language client.
  */
-export function instrumentLanguageClient(
-  client: vslcn.LanguageClient,
+export function instrumentLanguageClient<TClient extends vslcn.LanguageClient>(
+  client: TClient,
   metrics: Metrics,
-): vslcn.LanguageClient {
+): TClient {
   const originalSendRequest = client.sendRequest;
   client.sendRequest = async (
     methodOrType: string | vsjrpc.AbstractMessageSignature,

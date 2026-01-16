@@ -1,11 +1,10 @@
 import * as vscode from 'vscode';
-import * as vslcn from 'vscode-languageclient/node';
 import { Log } from '../common/log';
 import { instrumentLanguageClient } from '../common/metrics';
 import { ProcessWithExitPromise, spawnWithExitPromise } from '../common/processUtils';
 import { ExtensionContext } from '../extensionContext';
 import { InitializationOptions } from '../lsp/initializationOptions';
-import { createClient } from '../lsp/languageClient';
+import { createClient, SorbetLanguageClient } from '../lsp/languageClient';
 import { createLspConfiguration, LspConfiguration } from './configuration/lspConfiguration';
 import { SorbetClientConfiguration } from './configuration/sorbetClientConfiguration';
 import { LanguageClientErrorHandler } from './languageClientErrorHandler';
@@ -21,7 +20,7 @@ export type InitializeProcessResult = ProcessWithExitPromise & {
 export class LanguageClientCreator {
   private readonly configuration: SorbetClientConfiguration;
   private log: Log;
-  private readonly lspClient: vslcn.LanguageClient;
+  private readonly lspClient: SorbetLanguageClient;
   public lspProcess?: ProcessWithExitPromise;
   private workspaceFolder: vscode.WorkspaceFolder;
 
@@ -70,7 +69,7 @@ export class LanguageClientCreator {
   }
 
   public async create(): Promise<{
-    client?: vslcn.LanguageClient;
+    client?: SorbetLanguageClient;
     result: InitializeProcessResult;
   }> {
     await this.lspClient.start();

@@ -23,7 +23,7 @@ export function createClient(
     'workspaceFolder' | 'documentSelector' | 'outputChannel'
   >,
   serverOptions: vslcn.ServerOptions,
-): vslcn.LanguageClient {
+): SorbetLanguageClient {
   const mergedClientOptions: vslc.LanguageClientOptions = {
     documentSelector: getWorkspaceDocumentSelector(workspaceFolder),
     initializationFailedHandler: (error) => {
@@ -46,7 +46,7 @@ export function createClient(
   return new SorbetLanguageClient(serverOptions, mergedClientOptions, log);
 }
 
-class SorbetLanguageClient
+export class SorbetLanguageClient
   extends vslcn.LanguageClient
   implements
     HierarchyReferencesRequest,
