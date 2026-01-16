@@ -7,7 +7,7 @@ import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
 import { debugRubyFile } from './commands/debugRubyFile';
 import { handleRename } from './commands/handleRename';
 import { openSettings } from './commands/openSettings';
-import { peekUsages } from './commands/peekUsages';
+import { peekHierarchyReferences } from './commands/peekHierarchyReferences';
 import { restartSorbet } from './commands/restartSorbet';
 import { runRubyFile } from './commands/runRubyFile';
 import { savePackageFiles } from './commands/savePackageFiles';
@@ -76,7 +76,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     rtc(cmdIds.COPY_SYMBOL_ID, (textEditor: vscode.TextEditor) =>
       copySymbolToClipboard(context, textEditor),
     ),
-    rtc(cmdIds.PEEK_USAGES_ID, (textEditor: vscode.TextEditor) => peekUsages(context, textEditor)),
+    rtc(cmdIds.PEEK_HIERARCHY_REFS_ID, (textEditor: vscode.TextEditor) =>
+      peekHierarchyReferences(context, textEditor),
+    ),
     rtc(cmdIds.SEND_TO_SORBETRUN_ID, (textEditor: vscode.TextEditor) =>
       sendToSorbetRun(context, textEditor),
     ),

@@ -31,9 +31,9 @@ export const DEBUG_RUBY_FILE_ID = `${EXTENSION_PREFIX}.debugRubyFile`;
 export const OPEN_SETTINGS_ID = `_${EXTENSION_PREFIX}.openSettings`;
 
 /**
- * Peek usages of symbol at cursor location.
+ * Peek references of symbol at cursor location.
  */
-export const PEEK_USAGES_ID = `${EXTENSION_PREFIX}.peekUsages`;
+export const PEEK_HIERARCHY_REFS_ID = `${EXTENSION_PREFIX}.peekHierarchyReferences`;
 
 /**
  * Run a Ruby file.

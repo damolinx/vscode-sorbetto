@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.17
+- Rename **Sorbetto: Peek Usages** command to **Sorbetto: Peek Hierarchy References**.
+
 ## 0.3.16
  - Rename `sorbetto.enableAllBetaFeatures`/`sorbetto.enableAllExperimentalFeatures` settings to `sorbetto.enableAllBetaLspFeatures` and `sorbetto.enableAllExperimentalLspFeatures`.
    - This is a breaking change on settings but they did not represent correctly their LSP-specific connection.

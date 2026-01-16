@@ -49,8 +49,8 @@
         "enablement": "workbenchState != empty && !inDebugMode && editorIsOpen && (resourceScheme == file || resourceScheme == vscode-remote) && resourceExtname == .rb"
       },
       {
-        "command": "sorbetto.peekUsages",
-        "title": "Peek Usages",
+        "command": "sorbetto.peekHierarchyReferences",
+        "title": "Peek Hierarchy References",
         "category": "Sorbetto",
         "enablement": "workbenchState != empty && editorLangId == ruby && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote) && sorbetto:sorbetStatus == running"
       },
@@ -328,7 +328,7 @@
           "when": "workbenchState != empty && resourceLangId == ruby && sorbetto:sorbetStatus"
         },
         {
-          "command": "sorbetto.peekUsages",
+          "command": "sorbetto.peekHierarchyReferences",
           "group": "navigation@50",
           "when": "workbenchState != empty && resourceLangId == ruby && sorbetto:sorbetStatus"
         }

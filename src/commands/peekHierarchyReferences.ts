@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
 import { SorbetClientStatus } from '../lspClient/sorbetClientStatus';
 
-export async function peekUsages(
+export async function peekHierarchyReferences(
   context: ExtensionContext,
   { document, selection }: vscode.TextEditor,
 ): Promise<void> {
