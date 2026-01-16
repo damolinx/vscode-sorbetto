@@ -12,7 +12,7 @@
     "url": "https://github.com/damolinx/vscode-sorbetto"
   },
   "engines": {
-    "vscode": "^1.99.0"
+    "vscode": "^1.105.0"
   },
   "extensionKind": [
     "workspace"
@@ -366,7 +366,7 @@
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.18.0",
     "@types/sinon": "^17.0.0",
-    "@types/vscode": "~1.99",
+    "@types/vscode": "~1.105",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.46.0",
     "@vscode/test-electron": "^2.5.0",
@@ -384,6 +384,7 @@
     "vscode-languageserver": "^9.0.1"
   },
   "overrides": {
+    "diff": "^8.0.3",
     "glob": "^11.1.0",
     "js-yaml": "^4.1.1"
   }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.18
+- Upgrade minimum VS Code version to 1.105 (Cursor upgraded extensibility compat back in November 2025).
+
 ## 0.3.17
 - Rename **Sorbetto: Peek Usages** command to **Sorbetto: Peek Hierarchy References**.
 - Rename **Sorbetto: Copy Symbol to Clipboard** command to **Sorbetto: Copy Symbol**.
