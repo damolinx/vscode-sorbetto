@@ -182,6 +182,14 @@ The extension does not currently detect conflicts between your workspace setting
 | **Setup Workspace**              | Configures the workspace for Sorbet usage. |
 | **Update RBIs**                  | Updates RBI files using Tapioca. |
 
+
+The following commands are available in the context menu of text editors.
+
+| Command                       | Description |
+|-------------------------------|-------------|
+| **Copy Symbol**               | Copies the symbol at the cursor to the clipboard. |
+| **Peek Hierarchy References** | Finds all [references](https://sorbet.org/docs/lsp#sorbethierarchyreferences-request) to the symbol under the cursor, including overrides. |
+
 [↑ Back to top](#table-of-contents)
 
 ### Multi-root Workspaces

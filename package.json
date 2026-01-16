@@ -324,12 +324,12 @@
       "editor/context": [
         {
           "command": "sorbetto.copySymbol",
-          "group": "9_cutcopypaste",
+          "group": "0_sorbetto@1",
           "when": "workbenchState != empty && resourceLangId == ruby && sorbetto:sorbetStatus"
         },
         {
           "command": "sorbetto.peekHierarchyReferences",
-          "group": "navigation@50",
+          "group": "0_sorbetto@2",
           "when": "workbenchState != empty && resourceLangId == ruby && sorbetto:sorbetStatus"
         }
       ]
