@@ -16,9 +16,9 @@ export const BUNDLE_INSTALL_ID = `_${EXTENSION_PREFIX}.bundleInstall`;
 export const BUNDLE_UPDATE_ID = `_${EXTENSION_PREFIX}.bundleUpdate`;
 
 /**
- * Copy Symbol to Clipboard.
+ * Copy fully qualified name of symbol at cursor location to clipboard.
  */
-export const COPY_SYMBOL_ID = `${EXTENSION_PREFIX}.copySymbolToClipboard`;
+export const COPY_SYMBOL_ID = `${EXTENSION_PREFIX}.copySymbol`;
 
 /**
  * Debug a Ruby file.
@@ -26,12 +26,12 @@ export const COPY_SYMBOL_ID = `${EXTENSION_PREFIX}.copySymbolToClipboard`;
 export const DEBUG_RUBY_FILE_ID = `${EXTENSION_PREFIX}.debugRubyFile`;
 
 /**
- * Open Settings, multi-root workspace supported.
+ * Open Settings Editor appropriate for current workspace.
  */
 export const OPEN_SETTINGS_ID = `_${EXTENSION_PREFIX}.openSettings`;
 
 /**
- * Peek references of symbol at cursor location.
+ * Peek hierarchy references of symbol at cursor location.
  */
 export const PEEK_HIERARCHY_REFS_ID = `${EXTENSION_PREFIX}.peekHierarchyReferences`;
 
@@ -41,22 +41,22 @@ export const PEEK_HIERARCHY_REFS_ID = `${EXTENSION_PREFIX}.peekHierarchyReferenc
 export const RUN_RUBY_FILE_ID = `${EXTENSION_PREFIX}.runRubyFile`;
 
 /**
- * Send to sorbet.run.
+ * Send active selection to https://sorbet.run.
  */
 export const SEND_TO_SORBETRUN_ID = `${EXTENSION_PREFIX}.sendToSorbetRun`;
 
 /**
- * Setup workspace.
+ * Prepare workspace for Sorbet development.
  */
 export const SETUP_WORKSPACE_ID = `${EXTENSION_PREFIX}.setup.workspace`;
 
 /**
- * Show Sorbet Output panel.
+ * Show Sorbetto output panel.
  */
 export const SHOW_OUTPUT_ID = `_${EXTENSION_PREFIX}.showOutput`;
 
 /**
- * Save package files. This command name is required by Sorbet itself.
+ * Save package files. This specific command name is required by Sorbet itself.
  */
 export const SORBET_SAVE_PACKAGE_FILES_ID = 'sorbet.savePackageFiles';
 

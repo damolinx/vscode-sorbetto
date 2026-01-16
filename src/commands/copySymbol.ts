@@ -3,10 +3,10 @@ import { ExtensionContext } from '../extensionContext';
 import { SorbetClientStatus } from '../lspClient/sorbetClientStatus';
 
 /**
- * Copy symbol at current.
- * @param context Sorbet extension context.
+ * Copies the fully qualified name of the symbol at the current editor location.
+ * @param context Extension context.
  */
-export async function copySymbolToClipboard(
+export async function copySymbol(
   context: ExtensionContext,
   { document, selection }: vscode.TextEditor,
 ): Promise<void> {

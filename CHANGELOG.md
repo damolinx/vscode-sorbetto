@@ -2,6 +2,7 @@
 
 ## 0.3.17
 - Rename **Sorbetto: Peek Usages** command to **Sorbetto: Peek Hierarchy References**.
+- Rename **Sorbetto: Copy Symbol to Clipboard** command to **Sorbetto: Copy Symbol**.
 
 ## 0.3.16
  - Rename `sorbetto.enableAllBetaFeatures`/`sorbetto.enableAllExperimentalFeatures` settings to `sorbetto.enableAllBetaLspFeatures` and `sorbetto.enableAllExperimentalLspFeatures`.

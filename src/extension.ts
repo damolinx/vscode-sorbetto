@@ -3,7 +3,7 @@ import { createExtensionApi } from './api/extensionApiProvider';
 import * as cmdIds from './commandIds';
 import { autocorrectAll } from './commands/autocorrectAll';
 import { bundleInstall } from './commands/bundleInstall';
-import { copySymbolToClipboard } from './commands/copySymbolToClipboard';
+import { copySymbol } from './commands/copySymbol';
 import { debugRubyFile } from './commands/debugRubyFile';
 import { handleRename } from './commands/handleRename';
 import { openSettings } from './commands/openSettings';
@@ -73,9 +73,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   // Register text editor commands
   const rtc = vscode.commands.registerTextEditorCommand;
   context.disposables.push(
-    rtc(cmdIds.COPY_SYMBOL_ID, (textEditor: vscode.TextEditor) =>
-      copySymbolToClipboard(context, textEditor),
-    ),
+    rtc(cmdIds.COPY_SYMBOL_ID, (textEditor: vscode.TextEditor) => copySymbol(context, textEditor)),
     rtc(cmdIds.PEEK_HIERARCHY_REFS_ID, (textEditor: vscode.TextEditor) =>
       peekHierarchyReferences(context, textEditor),
     ),

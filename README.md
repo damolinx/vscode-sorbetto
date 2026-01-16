@@ -171,7 +171,7 @@ The extension does not currently detect conflicts between your workspace setting
 
 | Command                          | Description |
 |----------------------------------|-------------|
-| **Copy Symbol to Clipboard**     | Copies the symbol at the cursor to the clipboard. |
+| **Copy Symbol**                  | Copies the symbol at the cursor to the clipboard. |
 | **Debug Ruby File**              | Debugs the active Ruby file using either the registered `rdbg` debugger type or the `rdbg` executable. Intended for quick verification of standalone scripts, not as a replacement for a workspace [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
 | **Peek Hierarchy References**    | Finds all [references](https://sorbet.org/docs/lsp#sorbethierarchyreferences-request) to the symbol under the cursor, including overrides. |
 | **Restart Sorbet**               | Restarts the Sorbet language server. |

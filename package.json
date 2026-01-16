@@ -36,8 +36,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "sorbetto.copySymbolToClipboard",
-        "title": "Copy Symbol to Clipboard",
+        "command": "sorbetto.copySymbol",
+        "title": "Copy Symbol",
         "category": "Sorbetto",
         "enablement": "workbenchState != empty && editorLangId == ruby && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote) && sorbetto:sorbetStatus == running"
       },
@@ -323,7 +323,7 @@
     "menus": {
       "editor/context": [
         {
-          "command": "sorbetto.copySymbolToClipboard",
+          "command": "sorbetto.copySymbol",
           "group": "9_cutcopypaste",
           "when": "workbenchState != empty && resourceLangId == ruby && sorbetto:sorbetStatus"
         },
