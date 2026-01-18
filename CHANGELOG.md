@@ -2,6 +2,7 @@
 
 ## 0.3.18
 - Upgrade minimum VS Code version to 1.105 (Cursor upgraded extensibility compat back in November 2025).
+- Improve `SelectionRangeProvider` to better identify selectable blocks.
 
 ## 0.3.17
 - Rename **Sorbetto: Peek Usages** command to **Sorbetto: Peek Hierarchy References**.

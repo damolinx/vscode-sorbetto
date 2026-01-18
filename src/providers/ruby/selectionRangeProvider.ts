@@ -21,9 +21,11 @@ export class SelectionRangeProvider implements vscode.SelectionRangeProvider {
       'vscode.executeFoldingRangeProvider',
       document.uri,
     );
-    return positions.map((position) =>
+
+    const selectionRanges = positions.map((position) =>
       this.buildSelectionRangeChain(document, position, foldingRanges ?? []),
     );
+    return selectionRanges;
   }
 
   private buildSelectionRangeChain(
@@ -31,50 +33,43 @@ export class SelectionRangeProvider implements vscode.SelectionRangeProvider {
     position: vscode.Position,
     foldingRanges: vscode.FoldingRange[],
   ): vscode.SelectionRange {
-    let currentSelectionRange: vscode.SelectionRange | undefined;
+    let current: vscode.SelectionRange | undefined;
 
-    // Filter and sort to build selection tree outer to inner.
-    for (const range of foldingRanges
-      .map((fr) => new vscode.Range(fr.start, 0, fr.end, Number.MAX_SAFE_INTEGER))
-      .filter((r) => r.contains(position))
-      .sort((a, b) => a.start.line - b.start.line)) {
-      currentSelectionRange = new vscode.SelectionRange(
-        this.expandRange(document, range),
-        currentSelectionRange,
-      );
+    for (const { start, end } of foldingRanges) {
+      if (start <= position.line && end >= position.line) {
+        const { start: startLineStart } = document.lineAt(start).range;
+        const { end: endLineEnd } = document.lineAt(end).range;
+        const range = new vscode.Range(startLineStart, endLineEnd);
+        current = new vscode.SelectionRange(this.expandRange(document, range), current);
+      }
     }
 
-    // By default, the current word and line are included in the expansion,
-    // but the editor's definition of “word” is too restrictive. This code
-    // extends it to handle Ruby constants and strings, while still allowing
-    // safe backward scanning.
-    const wordRange = document.getWordRangeAtPosition(
-      position,
-      /(?:[A-Z][A-Za-z0-9_]*(?:::[A-Z][A-Za-z0-9_]*)*|"[^"]*"|'[^']*')/,
-    );
-    if (wordRange) {
-      currentSelectionRange = new vscode.SelectionRange(wordRange, currentSelectionRange);
-    }
+    [
+      /\[.*\]|\(.*\)|{.*}|do\s+.*end/, // blocks
+      /"[^"]*"|'[^']*'/, // strings
+      /[A-Z][A-Za-z0-9_]*(?:::[A-Z][A-Za-z0-9_]*)*/, // constants
+    ].forEach((regex) => {
+      const range = document.getWordRangeAtPosition(position, regex);
+      if (range) {
+        current = new vscode.SelectionRange(range, current);
+      }
+    });
 
-    return currentSelectionRange ?? new vscode.SelectionRange(new vscode.Range(position, position));
+    return current ?? new vscode.SelectionRange(new vscode.Range(position, position));
   }
 
   private expandRange(document: vscode.TextDocument, range: vscode.Range): vscode.Range {
-    const line = document.lineAt(range.start.line);
-    const { firstNonWhitespaceCharacterIndex, text } = line;
+    const extendedEnd = range.end.translate(1);
+    if (extendedEnd.line > document.lineCount) {
+      return range;
+    }
 
-    const expand = ['class ', 'def ', 'module ', 'sig '].some((prefix) =>
-      text.startsWith(prefix, firstNonWhitespaceCharacterIndex),
-    );
+    const { text, firstNonWhitespaceCharacterIndex } = document.lineAt(extendedEnd);
+    const expand = text.startsWith('end', firstNonWhitespaceCharacterIndex);
     if (!expand) {
       return range;
     }
 
-    const nextLine = range.end.line + 1;
-    if (nextLine >= document.lineCount) {
-      return range;
-    }
-
-    return new vscode.Range(range.start, document.lineAt(nextLine).range.end);
+    return new vscode.Range(range.start, extendedEnd);
   }
 }
