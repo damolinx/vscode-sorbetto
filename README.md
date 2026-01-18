@@ -237,7 +237,7 @@ Sorbetto adds quality‑of‑life improvements to Ruby editing in VS Code:
 
 * **Comment Folding**: consecutive Ruby `#` comment lines automatically become collapsible.
 * **Smart Selection Ranges**: enhances the behavior of **Expand Selection** and **Shrink Selection**, providing more intuitive structural selections.
-* **[RBS signature comment syntax highlighting](#rbs-support)**: recognizes RBS type signatures embedded in Ruby comments (e.g., `# sig { ... }`).
+* **[RBS signature comment syntax highlighting](#rbs-support)**: recognizes RBS type signatures embedded in Ruby comments.
 * **`require_relative` path support**: paths are autocompleted and become navigable links to the referenced file.
 * **`@typed` support**: provides autocompletion for Sorbet `@typed` pragmas within Ruby files.
 
