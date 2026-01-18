@@ -231,15 +231,17 @@ All snippets have an associated trigger word recognized by IntelliSense while ty
   <img width=400 src="https://github.com/user-attachments/assets/d03241d1-7f83-4485-a59c-be38264e18c0" alt="Sorbet snippets provided by Sorbetto" />
 </p>
 
+[↑ Back to top](#table-of-contents)
+
 ### Editor Enhancements
 
-Sorbetto adds quality‑of‑life improvements to Ruby editing in VS Code:
-
 * **Comment Folding**: consecutive Ruby `#` comment lines automatically become collapsible.
-* **Smart Selection Ranges**: enhances the behavior of **Expand Selection** and **Shrink Selection**, providing more intuitive structural selections.
+* **Selection Ranges**: supports **Expand Selection** and **Shrink Selection** commands via heuristics.
 * **[RBS signature comment syntax highlighting](#rbs-support)**: recognizes RBS type signatures embedded in Ruby comments.
-* **`require_relative` path support**: paths are autocompleted and become navigable links to the referenced file.
-* **`@typed` support**: provides autocompletion for Sorbet `@typed` pragmas within Ruby files.
+* **`require_relative`**: provides autocompletion for paths, paths are active links to the referenced file, paths are updated on rename whwnver possible.
+* **`@typed`**: provides autocompletion for Sorbet `@typed` pragmas within Ruby files.
+
+[↑ Back to top](#table-of-contents)
 
 ### RBI Tools
 The set of RBI actions described in the [RBI Files](https://sorbet.org/docs/rbi) documentation is supported by the **Sorbetto: Update RBIs** command. The **DSL** option is of rticular relevance for Rails users.
