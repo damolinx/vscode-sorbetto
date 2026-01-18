@@ -97,6 +97,8 @@ A quick way to confirm that your workspace setup is functioning correctly is to 
 
 You can the [Settings Editor](https://code.visualstudio.com/docs/configure/settings#_settings-editor) to modify the **Sorbetto** configuration section, or edit them directly from the [Settings JSON file](https://code.visualstudio.com/docs/configure/settings#_settings-json-file). Consider the [settings precedence rules](https://code.visualstudio.com/docs/configure/settings#_settings-precedence) when modifying them.
 
+Most settings are purely for extensions behaviors but Sorbet-related features that are relevant for LSP runs are exposed as well. Normally they can be configured from the [`sorbet/config`](#sorbetconfig) file, but some like `sorbetto.enablePackageSupport` require to be enabled in both places for a full experience.
+
 ### Main Settings
 
 | Setting Key                           | Description |
@@ -131,6 +133,8 @@ You can the [Settings Editor](https://code.visualstudio.com/docs/configure/setti
 | `sorbetto.enablePackageSupport`       | Enables support for Sorbet's experimental Ruby package system. |
 | `sorbetto.enableRequiresAncestor`     | Enables experimental `requires_ancestor` support. |
 | `sorbetto.enableRbsSupport`           | Enables experimental RBS support. |
+
+> **Formatter Support**: the extension does not provide a formatter of its own. However, if you use the `--enable-experimental-lsp-document-formatting-rubyfmt` option **and** Sorbet detects `rubyfmt` is installed, Sorbet will offer formatting capabilities. VS Code will then interpret this as the extension offering a formatter. 
 
 [↑ Back to top](#table-of-contents)
 
