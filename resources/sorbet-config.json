@@ -38,16 +38,6 @@
       "description": "Print all internal counters."
     },
     {
-      "name": "--dir",
-      "description": "Typecheck all Ruby and RBI files under the given directory.",
-      "argsHint": "path"
-    },
-    {
-      "name": "--e-rbi",
-      "description": "Treat the given string as RBI source.",
-      "argsHint": "string"
-    },
-    {
       "name": "--enable-all-beta-lsp-features",
       "description": "Enable early-access, expected-stable LSP features."
     },
@@ -103,11 +93,6 @@
     {
       "name": "--experimental-ruby3-keyword-args",
       "description": "Enforce Ruby 3-style keyword arguments (experimental)."
-    },
-    {
-      "name": "--file",
-      "description": "Typecheck the contents of the given file.",
-      "argsHint": "path"
     },
     {
       "name": "--gen-packages",
@@ -192,7 +177,7 @@
     },
     {
       "name": "--parser",
-      "description": "Select the parser implementation.",
+      "description": "Select the parser implementation. Prism support is still under active development.",
       "argsValues": "original|prism"
     },
     {
