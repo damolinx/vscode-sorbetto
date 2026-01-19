@@ -132,6 +132,7 @@ Most settings are purely for extensions behaviors but Sorbet-related features th
 | Setting Key                             | Description |
 |-----------------------------------------|-------------|
 | `sorbetto.enableWatchman`               | Controls whether Sorbet uses `watchman` for file‑watching performance. Defaults to `auto`, meaning it is used only when found in your system, `true` will always try to run it, and `false` will not use it. |
+| `sorbetto.maximumDiagnosticsCount`      | Maximum number of diagnostics Sorbet will report (**0** means no limit). High values may impact editor performance. |
 | `sorbetto.restartFilePatterns`          | Glob patterns that trigger a Sorbet restart when matching files change. |
 | `sorbetto.sorbetLspConfiguration`       | Selects which [Language Server configuration](#sorbet-language-server) to use. Accepts: `stable`, `custom` and `disabled`. |
 | `sorbetto.sorbetLspCustomConfiguration` | Custom command‑line arguments for launching the Sorbet LSP server when using the `custom` configuration. |

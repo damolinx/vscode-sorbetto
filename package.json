@@ -175,6 +175,13 @@
               "Disable `watchman`"
             ]
           },
+          "sorbetto.maximumDiagnosticsCount": {
+            "type": "number",
+            "default": 1000,
+            "minimum": 0,
+            "maximum": 10000,
+            "markdownDescription": "Maximum number of diagnostics Sorbet will report (**0** means no limit). High values may impact editor performance. Check [documentation](https://sorbet.org/docs/cli-ref#lsp-options)."
+          },
           "sorbetto.restartFilePatterns": {
             "scope": "resource",
             "type": "array",

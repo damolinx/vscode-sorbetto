@@ -10,6 +10,7 @@ const ConfigurationKeys = {
   enableWatchman: { lspOption: true },
   highlightUntypedCode: { lspOption: true },
   highlightUntypedCodeDiagnosticSeverity: { lspOption: true },
+  maximumDiagnosticsCount: { lspOption: true },
   restartFilePatterns: { lspOption: true },
   sorbetLspConfiguration: {},
   sorbetLspCustomConfiguration: {},

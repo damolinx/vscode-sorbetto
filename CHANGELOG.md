@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.3.20
+- Add `sorbetto.maximumDiagnosticsCount` setting to control number of diagnostics reported by Sorbet.
 - Add `sorbetto.trace.server` setting for LSP communication logging.
 - Group all language server settings under a dedicated Sorbet section to improve clarity.
 

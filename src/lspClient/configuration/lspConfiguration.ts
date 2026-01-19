@@ -57,6 +57,11 @@ export async function createLspConfiguration(
       lspConfig.args.push('--enable-experimental-rbs-comments');
     }
 
+    const value = configuration.getValue<number>('maximumDiagnosticsCount', 1000);
+    if (value !== 1000) {
+      lspConfig.args.push('--lsp-error-cap', value.toString());
+    }
+
     await enableWatchmanSupport(lspConfig, configuration);
   }
 
