@@ -116,26 +116,27 @@ Most settings are purely for extensions behaviors but Sorbet-related features th
 
 ### Main Settings
 
-| Setting Key                           | Description |
-|---------------------------------------|-------------|
-| `sorbetto.enableWatchman`             | Controls whether Sorbet uses `watchman` for file‑watching performance. Defaults to `auto`, meaning it is used only when found in your system, `true` will always try to run it, and `false` will not use it. |
-| `sorbetto.restartFilePatterns`        | Glob patterns that trigger a Sorbet restart when matching files change. |
-| `sorbetto.sorbetLspConfiguration`     | Selects which [Language Server configuration](#sorbet-language-server) to use. Accepts: `stable`, `custom` and `disabled`. |
+| Setting Key                             | Description |
+|-----------------------------------------|-------------|
+| `sorbetto.enableWatchman`               | Controls whether Sorbet uses `watchman` for file‑watching performance. Defaults to `auto`, meaning it is used only when found in your system, `true` will always try to run it, and `false` will not use it. |
+| `sorbetto.restartFilePatterns`          | Glob patterns that trigger a Sorbet restart when matching files change. |
+| `sorbetto.sorbetLspConfiguration`       | Selects which [Language Server configuration](#sorbet-language-server) to use. Accepts: `stable`, `custom` and `disabled`. |
 | `sorbetto.sorbetLspCustomConfiguration` | Custom command‑line arguments for launching the Sorbet LSP server when using the `custom` configuration. |
-| `sorbetto.sorbetTypecheckCommand`     | Command used to invoke `srb typecheck`. |
+| `sorbetto.sorbetTypecheckCommand`       | Command used to invoke `srb typecheck`. |
+| `sorbetto.trace.server`                 | Traces communication between VS Code and the Sorbet language server. |
 
 [↑ Back to top](#table-of-contents)
 
 ### Preferences
 
-| Setting Key                                   | Description |
-|-----------------------------------------------|-------------|
-| `sorbetto.alwaysShowStatusItems`              | Keeps the [Sorbet language status item](#sorbet-language-status-item) visible whenever any editor is open. |
-| `sorbetto.compactSorbetDiagnostics`           | Reformats Sorbet diagnostic messages into a compact layout in the **Problems** pane and tooltips. |
-| `sorbetto.highlightUntypedCode`               | Enables highlighting of untyped code. |
+| Setting Key                                       | Description |
+|---------------------------------------------------|-------------|
+| `sorbetto.alwaysShowStatusItems`                  | Keeps the [Sorbet language status item](#sorbet-language-status-item) visible whenever any editor is open. |
+| `sorbetto.compactSorbetDiagnostics`               | Reformats Sorbet diagnostic messages into a compact layout in the **Problems** pane and tooltips. |
+| `sorbetto.highlightUntypedCode`                   | Enables highlighting of untyped code. |
 | `sorbetto.highlightUntypedCodeDiagnosticSeverity` | Sets the severity level used when reporting untyped code. |
-| `sorbetto.typedFalseCompletionNudges`         | Shows auto‑completion nudges in `typed: false` files. |
-| `sorbetto.updateRequireRelative`              | Updates `require_relative` statements when files are moved. |
+| `sorbetto.typedFalseCompletionNudges`             | Shows auto‑completion nudges in `typed: false` files. |
+| `sorbetto.updateRequireRelative`                  | Updates `require_relative` statements when files are moved. |
 
 [↑ Back to top](#table-of-contents)
 
@@ -149,7 +150,7 @@ Most settings are purely for extensions behaviors but Sorbet-related features th
 | `sorbetto.enableRequiresAncestor`     | Enables experimental `requires_ancestor` support. |
 | `sorbetto.enableRbsSupport`           | Enables experimental RBS support. |
 
-> **Formatter Support**: the extension does not provide a formatter of its own. However, if you use the `--enable-experimental-lsp-document-formatting-rubyfmt` option **and** Sorbet detects `rubyfmt` is installed, Sorbet will offer formatting capabilities. VS Code will then interpret this as the extension offering a formatter. 
+> **Formatter Support**: the extension does not provide a formatter of its own. However, if you use the `--enable-experimental-lsp-document-formatting-rubyfmt` option **and** Sorbet detects `rubyfmt` is installed, Sorbet will offer formatting capabilities. VS Code will then interpret this as the extension offering a formatter.
 
 [↑ Back to top](#table-of-contents)
 
@@ -289,5 +290,7 @@ The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file,
 
 ## Logs
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
+
+If needed, you can enable detailed logging con communication between VS Code and the Sorbet Language Server using the `sorbetto.trace.server` [setting](#main-settings).
 
 [↑ Back to top](#table-of-contents)

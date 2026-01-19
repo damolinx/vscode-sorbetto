@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.20
+- Add `sorbetto.trace.server` setting for LSP communication logging.
+
 ## 0.3.19
 - Fix README.
 

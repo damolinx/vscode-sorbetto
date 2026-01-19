@@ -62,7 +62,7 @@ export class SorbetLanguageClient
     clientOptions: vslc.LanguageClientOptions,
     log: Log,
   ) {
-    super('ruby.sorbet', 'Sorbet', serverOptions, clientOptions);
+    super('sorbetto', 'Sorbet', serverOptions, clientOptions);
     this.log = log;
   }
 

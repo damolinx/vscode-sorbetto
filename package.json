@@ -177,6 +177,21 @@
               "minLength": 1
             },
             "minLength": 1
+          },
+          "sorbetto.trace.server": {
+            "type": "string",
+            "default": "off",
+            "description": "Trace communication between VS Code and the Sorbet language server.",
+            "enum": [
+              "off",
+              "messages",
+              "verbose"
+            ],
+            "enumDescriptions": [
+              "Disable all logging.",
+              "Log request and response messages.",
+              "Log all traffic, including full message bodies."
+            ]
           }
         }
       },
