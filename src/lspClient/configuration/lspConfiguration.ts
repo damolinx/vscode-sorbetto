@@ -56,6 +56,9 @@ export async function createLspConfiguration(
     if (configuration.isEnabled('enableRbsSupport')) {
       lspConfig.args.push('--enable-experimental-rbs-comments');
     }
+    if (configuration.isEnabled('enableRubyfmt')) {
+      lspConfig.args.push('--enable-experimental-lsp-document-formatting-rubyfmt');
+    }
 
     const value = configuration.getValue<number>('maximumDiagnosticsCount', 1000);
     if (value !== 1000) {

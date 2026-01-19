@@ -280,17 +280,29 @@
             "default": false,
             "markdownDescription": "Enable **experimental**  support for Sorbet's Ruby package system. Check [documentation](https://sorbet.org/docs/cli-ref#sorbet-packages-mode-options)."
           },
+          "sorbetto.enableRbsSupport": {
+            "scope": "resource",
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Enable **experimental** RBS support. Check [documentation](https://sorbet.org/docs/rbs-support)."
+          },
           "sorbetto.enableRequiresAncestor": {
             "scope": "resource",
             "type": "boolean",
             "default": false,
             "markdownDescription": "Enable **experimental** `requires_ancestor` support. Check [documentation](https://sorbet.org/docs/requires-ancestor)."
           },
-          "sorbetto.enableRbsSupport": {
+          "sorbetto.enableRubyfmt": {
             "scope": "resource",
             "type": "boolean",
             "default": false,
-            "markdownDescription": "Enable **experimental** RBS support. Check [documentation](https://sorbet.org/docs/rbs-support)."
+            "markdownDescription": "Enable **experimental** document formatting with [Rubyfmt](https://github.com/fables-tales/rubyfmt). If it is not installed or not on your PATH, this option has no effect. Check [documentation](https://sorbet.org/docs/cli-ref#lsp-feature-options)."
+          },
+          "sorbetto.rubyfmtPath": {
+            "scope": "resource",
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Enable **experimental** document formatting with [Rubyfmt](https://github.com/fables-tales/rubyfmt). If it is not installed or not on your PATH, this option has no effect. Check [documentation](https://sorbet.org/docs/cli-ref#lsp-feature-options)."
           }
         }
       }

@@ -147,11 +147,10 @@ Most settings are purely for extensions behaviors but Sorbet-related features th
 |---------------------------------------|-------------|
 | `sorbetto.enableAllBetaLspFeatures`   | Enables all Sorbet LSP features marked as **beta**. |
 | `sorbetto.enableAllExperimentalLspFeatures` | Enables all Sorbet LSP features marked as **experimental**. |
-| `sorbetto.enablePackageSupport`       | Enables support for Sorbet's experimental Ruby package system. |
-| `sorbetto.enableRequiresAncestor`     | Enables experimental `requires_ancestor` support. |
+| `sorbetto.enablePackageSupport`       | Enables experimental support for Sorbet's Ruby package system. |
 | `sorbetto.enableRbsSupport`           | Enables experimental RBS support. |
-
-> **Formatter Support**: the extension does not provide a formatter of its own. However, if you use the `--enable-experimental-lsp-document-formatting-rubyfmt` option **and** Sorbet detects `rubyfmt` is installed, Sorbet will offer formatting capabilities. VS Code will then interpret this as the extension offering a formatter.
+| `sorbetto.enableRequiresAncestor`     | Enables experimental `requires_ancestor` support. |
+| `sorbetto.enableRubyfmt`              | Enables experimental document formatting integration with [Rubyfmt](https://github.com/fables-tales/rubyfmt). If Rubyfmt is not installed or not on your `PATH`, this option has no effect. When enabled, Sorbet advertises formatting support to VS Code, and VS Code then treats the extension as providing a formatter. |
 
 [↑ Back to top](#table-of-contents)
 

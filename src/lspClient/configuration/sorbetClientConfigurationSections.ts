@@ -7,6 +7,7 @@ const ConfigurationKeys = {
   enablePackageSupport: { lspOption: true, toggle: true },
   enableRequiresAncestor: { lspOption: true, toggle: true },
   enableRbsSupport: { lspOption: true, toggle: true },
+  enableRubyfmt: { lspOption: true, toggle: true },
   enableWatchman: { lspOption: true },
   highlightUntypedCode: { lspOption: true },
   highlightUntypedCodeDiagnosticSeverity: { lspOption: true },
