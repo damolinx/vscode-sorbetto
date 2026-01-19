@@ -2,6 +2,7 @@
 
 ## 0.3.20
 - Add `sorbetto.trace.server` setting for LSP communication logging.
+- Group all language server settings under a dedicated Sorbet section to improve clarity.
 
 ## 0.3.19
 - Fix README.

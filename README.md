@@ -15,9 +15,9 @@ There are several improvements to internal implementation, like the ability to e
   * [Setting Up a Workspace](#setting-up-a-workspace)
   * [Verifying Everything Works](#verifying-everything-works)
 * [Configuration](#configuration)
-  * [Main Settings](#main-settings)
   * [Preferences](#preferences)
-  * [Beta & Experimental](#beta--experimental)
+  * [Sorbet](#sorbet)
+  * [Sorbet Beta & Experimental](#sorbet-beta--experimental)
 * [Working with Sorbet](#working-with-sorbet)
   * [Sorbet Language Server](#sorbet-language-server)
   * [sorbet/config](#sorbetconfig)
@@ -114,19 +114,6 @@ You can the [Settings Editor](https://code.visualstudio.com/docs/configure/setti
 
 Most settings are purely for extensions behaviors but Sorbet-related features that are relevant for LSP runs are exposed as well. Normally they can be configured from the [`sorbet/config`](#sorbetconfig) file, but some like `sorbetto.enablePackageSupport` require to be enabled in both places for a full experience.
 
-### Main Settings
-
-| Setting Key                             | Description |
-|-----------------------------------------|-------------|
-| `sorbetto.enableWatchman`               | Controls whether Sorbet uses `watchman` for file‑watching performance. Defaults to `auto`, meaning it is used only when found in your system, `true` will always try to run it, and `false` will not use it. |
-| `sorbetto.restartFilePatterns`          | Glob patterns that trigger a Sorbet restart when matching files change. |
-| `sorbetto.sorbetLspConfiguration`       | Selects which [Language Server configuration](#sorbet-language-server) to use. Accepts: `stable`, `custom` and `disabled`. |
-| `sorbetto.sorbetLspCustomConfiguration` | Custom command‑line arguments for launching the Sorbet LSP server when using the `custom` configuration. |
-| `sorbetto.sorbetTypecheckCommand`       | Command used to invoke `srb typecheck`. |
-| `sorbetto.trace.server`                 | Traces communication between VS Code and the Sorbet language server. |
-
-[↑ Back to top](#table-of-contents)
-
 ### Preferences
 
 | Setting Key                                       | Description |
@@ -140,7 +127,20 @@ Most settings are purely for extensions behaviors but Sorbet-related features th
 
 [↑ Back to top](#table-of-contents)
 
-### Beta & Experimental
+### Sorbet
+
+| Setting Key                             | Description |
+|-----------------------------------------|-------------|
+| `sorbetto.enableWatchman`               | Controls whether Sorbet uses `watchman` for file‑watching performance. Defaults to `auto`, meaning it is used only when found in your system, `true` will always try to run it, and `false` will not use it. |
+| `sorbetto.restartFilePatterns`          | Glob patterns that trigger a Sorbet restart when matching files change. |
+| `sorbetto.sorbetLspConfiguration`       | Selects which [Language Server configuration](#sorbet-language-server) to use. Accepts: `stable`, `custom` and `disabled`. |
+| `sorbetto.sorbetLspCustomConfiguration` | Custom command‑line arguments for launching the Sorbet LSP server when using the `custom` configuration. |
+| `sorbetto.sorbetTypecheckCommand`       | Command used to invoke `srb typecheck`. |
+| `sorbetto.trace.server`                 | Traces communication between VS Code and the Sorbet language server. |
+
+[↑ Back to top](#table-of-contents)
+
+### Sorbet Beta & Experimental
 
 | Setting Key                           | Description |
 |---------------------------------------|-------------|
@@ -166,12 +166,12 @@ This section focuses **only** on the second aspect: how the extension works with
 
 A [language server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server) is the component that normally powers editor features like type checking, diagnostics, and go‑to‑definition. Sorbet provides its own language server, and the extension communicates with it through the Language Server Protocol (LSP). As long as Sorbet is available in your environment, the extension will start the server automatically using the **Stable** configuration. If you need to launch Sorbet differently—for example, without `bundle` or through a wrapper script—you can switch to the **Custom** configuration.
 
-The language server launch mode is controlled by the **Sorbet Lsp Configuration** [setting](#main-settings), which supports the following values:
+The language server launch mode is controlled by the **Sorbet Lsp Configuration** [setting](#sorbet), which supports the following values:
 * **Stable**: runs Sorbet using `bundle exec srb typecheck`, and any other setting values you might have enabled. This is the **default** mode.
-* **Custom**: runs Sorbet using a custom command-line you provide in the **Sorbet Lsp Custom Configuration** [setting](#main-settings).
+* **Custom**: runs Sorbet using a custom command-line you provide in the **Sorbet Lsp Custom Configuration** [setting](#sorbet).
 * **Disabled**: disables Sorbet entirely. Extension features that rely on the LSP will no longer function.
 
-Several options under the [Main Settings](#main-settings) and [Beta & Experimental](#beta--experimental) add extra command‑line arguments when launching the server. Keep this in mind when editing [`sorbet/config`](#sorbetconfig), as these values may conflict.
+Several options under the [Sorbet](#sorbet) and [Srobet Beta & Experimental](#sorbet-beta--experimental) add extra command‑line arguments when launching the server. Keep this in mind when editing [`sorbet/config`](#sorbetconfig), as these values may conflict.
 
 ### sorbet/config
 Only a subset of Sorbet's configuration options are exposed as extension settings. For additional customization, you can use the `sorbet/config` file in your workspace. The extension provides syntax highlighting, autocomplete, and hover documentation for this file. These features are based on the Sorbet version available when the extension was last updated, so some details may differ from the version you are currently using. Refer to the [Sorbet: Config file](https://sorbet.org/docs/cli#config-file) documentation for the up-to-date list of supported options.
@@ -180,7 +180,7 @@ Only a subset of Sorbet's configuration options are exposed as extension setting
   <img width="400" alt="`sorbet/config` with syntax highlighting and autocomplete" src="https://github.com/user-attachments/assets/c32e6603-b116-46d1-af04-826bc155e5b0" />
 </p>
 
-The extension does not currently detect conflicts between your workspace settings and the values in `sorbet/config`, so be mindful when combining both sources of configuration. Additionally, some Sorbet features—such as package support—must be enabled both in `sorbet/config` **and** via the relevant extension [settings](#main-settings). Otherwise, the internal `srb tc` invocation will not enable the feature, as Sorbet requires both the config entry and the corresponding command‑line flag.
+The extension does not currently detect conflicts between your workspace settings and the values in `sorbet/config`, so be mindful when combining both sources of configuration. Additionally, some Sorbet features—such as package support—must be enabled both in `sorbet/config` **and** via the relevant extension [setting](#sorbet). Otherwise, the internal `srb tc` invocation will not enable the feature, as Sorbet requires both the config entry and the corresponding command‑line flag.
 
 [↑ Back to top](#table-of-contents)
 
@@ -291,6 +291,6 @@ The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file,
 ## Logs
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
-If needed, you can enable detailed logging con communication between VS Code and the Sorbet Language Server using the `sorbetto.trace.server` [setting](#main-settings).
+If needed, you can enable detailed logging con communication between VS Code and the Sorbet Language Server using the `sorbetto.trace.server` [setting](#sorbet).
 
 [↑ Back to top](#table-of-contents)
