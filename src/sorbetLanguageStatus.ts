@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { OPEN_SETTINGS_ID, SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commandIds';
 import { onMainAreaActiveTextEditorChanged, mainAreaActiveEditorUri } from './common/utils';
 import { ExtensionContext } from './extensionContext';
-import { SORBET_DOCUMENT_SELECTOR } from './lsp/documentSelectors';
+import { SORBET_CONFIG_DOCUMENT_SELECTOR, SORBET_DOCUMENT_SELECTOR } from './lsp/documentSelectors';
 import { LspConfigurationType } from './lspClient/configuration/lspConfigurationType';
 import { SorbetClient } from './lspClient/sorbetClient';
 import { SorbetClientStatus } from './lspClient/sorbetClientStatus';
@@ -86,7 +86,9 @@ export class SorbetLanguageStatus implements vscode.Disposable {
 
   private getSelector(): vscode.DocumentSelector {
     const alwaysShowStatus = vscode.workspace.getConfiguration().get(ALWAYS_SHOW_CONFIG_KEY, false);
-    return alwaysShowStatus ? '*' : SORBET_DOCUMENT_SELECTOR;
+    return alwaysShowStatus
+      ? '*'
+      : SORBET_DOCUMENT_SELECTOR.concat(SORBET_CONFIG_DOCUMENT_SELECTOR);
   }
 
   private handleEditorOrStatusChange(clientOrContextUri?: SorbetClient | vscode.Uri) {

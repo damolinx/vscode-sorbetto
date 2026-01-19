@@ -5,6 +5,7 @@
 - Add `sorbetto.enableRubyfmt` setting to enable Rubyfmt integration in Sorbet.
 - Add `sorbetto.trace.server` setting for LSP communication logging.
 - Group all language server settings under a dedicated Sorbet section to improve clarity.
+- Sorbet language status item shows when `sorbet/config` is open.
 
 ## 0.3.19
 - Fix README.

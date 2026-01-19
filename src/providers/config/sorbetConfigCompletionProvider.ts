@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
+import { SORBET_CONFIG_DOCUMENT_SELECTOR } from '../../lsp/documentSelectors';
 import { getFlag, getFlags } from './sorbetConfigFlagData';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['-', '='];
@@ -7,7 +8,7 @@ export const TRIGGER_CHARACTERS: readonly string[] = ['-', '='];
 export function registerSorbetCompletionProvider(context: ExtensionContext) {
   context.disposables.push(
     vscode.languages.registerCompletionItemProvider(
-      { language: 'sorbet-config' },
+      SORBET_CONFIG_DOCUMENT_SELECTOR,
       new SorbetConfigCompletionProvider(context),
       ...TRIGGER_CHARACTERS,
     ),

@@ -2,6 +2,10 @@ import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
 import { posix } from 'path';
 
+export const SORBET_CONFIG_DOCUMENT_SELECTOR: Readonly<vslc.TextDocumentFilter> = {
+  language: 'sorbet-config',
+};
+
 export const SORBET_FILE_DOCUMENT_SELECTOR: Readonly<vslc.TextDocumentFilter> = {
   language: 'ruby',
   scheme: 'file',

@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
+import { SORBET_CONFIG_DOCUMENT_SELECTOR } from '../../lsp/documentSelectors';
 import { getFlag } from './sorbetConfigFlagData';
 
 export function registerSorbetConfigHoverProvider(context: ExtensionContext): void {
   context.disposables.push(
     vscode.languages.registerHoverProvider(
-      { language: 'sorbet-config' },
+      SORBET_CONFIG_DOCUMENT_SELECTOR,
       new SorbetConfigHoverProvider(context),
     ),
   );
