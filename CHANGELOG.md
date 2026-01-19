@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.19
+- Fix README.
+
 ## 0.3.18
 - Upgrade minimum VS Code version to 1.105 (Cursor upgraded extensibility compat back in November 2025).
 - Add a `FoldingRangeProvider` to collapse `#` comment blocks.

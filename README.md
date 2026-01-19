@@ -112,6 +112,8 @@ If Sorbet is not working:
 
 You can the [Settings Editor](https://code.visualstudio.com/docs/configure/settings#_settings-editor) to modify the **Sorbetto** configuration section, or edit them directly from the [Settings JSON file](https://code.visualstudio.com/docs/configure/settings#_settings-json-file). Consider the [settings precedence rules](https://code.visualstudio.com/docs/configure/settings#_settings-precedence) when modifying them.
 
+Most settings are purely for extensions behaviors but Sorbet-related features that are relevant for LSP runs are exposed as well. Normally they can be configured from the [`sorbet/config`](#sorbetconfig) file, but some like `sorbetto.enablePackageSupport` require to be enabled in both places for a full experience.
+
 ### Main Settings
 
 | Setting Key                           | Description |
@@ -146,6 +148,8 @@ You can the [Settings Editor](https://code.visualstudio.com/docs/configure/setti
 | `sorbetto.enablePackageSupport`       | Enables support for Sorbet's experimental Ruby package system. |
 | `sorbetto.enableRequiresAncestor`     | Enables experimental `requires_ancestor` support. |
 | `sorbetto.enableRbsSupport`           | Enables experimental RBS support. |
+
+> **Formatter Support**: the extension does not provide a formatter of its own. However, if you use the `--enable-experimental-lsp-document-formatting-rubyfmt` option **and** Sorbet detects `rubyfmt` is installed, Sorbet will offer formatting capabilities. VS Code will then interpret this as the extension offering a formatter. 
 
 [↑ Back to top](#table-of-contents)
 
@@ -246,15 +250,17 @@ All snippets have an associated trigger word recognized by IntelliSense while ty
   <img width=400 src="https://github.com/user-attachments/assets/d03241d1-7f83-4485-a59c-be38264e18c0" alt="Sorbet snippets provided by Sorbetto" />
 </p>
 
+[↑ Back to top](#table-of-contents)
+
 ### Editor Enhancements
 
-Sorbetto adds quality‑of‑life improvements to Ruby editing in VS Code:
-
 * **Comment Folding**: consecutive Ruby `#` comment lines automatically become collapsible.
-* **Smart Selection Ranges**: enhances the behavior of **Expand Selection** and **Shrink Selection**, providing more intuitive structural selections.
-* **[RBS signature comment syntax highlighting](#rbs-support)**: recognizes RBS type signatures embedded in Ruby comments (e.g., `# sig { ... }`).
-* **`require_relative` path support**: paths are autocompleted and become navigable links to the referenced file.
-* **`@typed` support**: provides autocompletion for Sorbet `@typed` pragmas within Ruby files.
+* **Selection Ranges**: supports **Expand Selection** and **Shrink Selection** commands via heuristics.
+* **[RBS signature comment syntax highlighting](#rbs-support)**: recognizes RBS type signatures embedded in Ruby comments.
+* **`require_relative`**: provides autocompletion for paths, paths are active links to the referenced file, paths are updated on rename whwnver possible.
+* **`@typed`**: provides autocompletion for Sorbet `@typed` pragmas within Ruby files.
+
+[↑ Back to top](#table-of-contents)
 
 ### RBI Tools
 The set of RBI actions described in the [RBI Files](https://sorbet.org/docs/rbi) documentation is supported by the **Sorbetto: Update RBIs** command. The **DSL** option is of rticular relevance for Rails users.
