@@ -51,13 +51,15 @@ bundle config set --local path 'vendor/bundle'
 
 ### Verifying Everything Works
 
-Verify that the [expected folder structure](https://sorbet.org/docs/adopting#verify-initialization) has been created. If anything looks off or does not work, check the installation terminal and the [extension logs](#logs) for error messages.
+The extension provides several [features](#extension-features) that are always active in a Ruby workspace. The Sorbet Language Server, however, starts automatically **only** when your workspace is [configured](#setting-up-a-workspace) correctly.
 
-A quick way to confirm that your workspace setup is functioning correctly is to create a small Ruby file and trigger a predictable type error.
+The easiest way to confirm that Sorbet is running is to check the [language status item](#sorbet-language-status-item) when the active editor is of of `ruby` language. If Sorbet is active, you will find **Sorbet**-prefixed entries indicating the current state of the language server. As long as the status shows it as running, everything is working as expected.
 
-1. Create a new file in your workspace, for example:
+A definitve way to confirm this is functioning correctly is to create a Ruby file and trigger a predictable type error that should be reported by Sorbet:
 
-   **Example:** `example.rb` is `strict` missing signatures
+1. Create a new Ruby file in your workspace, for example:
+
+   **Example:** `example.rb` is `typed: strict` but missing signatures
    ```ruby
    # typed: strict
 
@@ -68,15 +70,11 @@ A quick way to confirm that your workspace setup is functioning correctly is to 
    end
    ```
 
-2. You should immediately see a diagnostic error like:
-   ```
-   The method 'greet' does not have a 'sig'
-   ```
-   It will appear as error squiggles on `def greet(name)` and as an entry in the **Problems** pane.
+2. You should immediately get a diagnostic error similar to `The method 'greet' does not have a 'sig'` as error squiggles on `def greet(name)` or as an entry in the **Problems** pane.
 
-3. Add the missing signature to fix the error, either manually or using the a quick fix:
+3. Add the missing signature to fix the error, either manually or using the a quick fix action:
 
-   **Example:** Updated `example.rb`
+   **Example:** Updated `example.rb` with missing `sig`
    ```ruby
    # typed: strict
 
@@ -90,6 +88,23 @@ A quick way to confirm that your workspace setup is functioning correctly is to 
    ```
 
 4. The missing-sig error should go away.
+
+If Sorbet is not working:
+
+* Verify that the required [folder structure](https://sorbet.org/docs/adopting#verify-initialization) exist.
+
+* If you used the **Sorbetto: Setup Workspace** command, check the installation terminal for permission or installation errors that you might have missed. Command only adds missing requirements, so it can be run again of needed.
+
+* Check the [extension logs](#logs) for error messages coming from Sorbet. If the language server failed to start there should be messages at the very least calling it out. A normal start will end up witn `Pausing`/`Resuming` log entries.
+
+  **Example:** Log showing a successful start of Sorbet
+  ```
+  [info] Start Sorbet LSP file:///...
+  [info] > bundle exec srb typecheck --lsp --disable-watchman
+  [info] > pid 9471
+  [info] Pausing
+  [info] Resuming
+  ```
 
 [↑ Back to top](#table-of-contents)
 
