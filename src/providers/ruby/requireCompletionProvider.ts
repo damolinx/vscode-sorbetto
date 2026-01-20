@@ -2,13 +2,14 @@ import * as vscode from 'vscode';
 import { existsSync } from 'fs';
 import { basename, dirname, extname, posix, resolve, sep } from 'path';
 import { ExtensionContext } from '../../extensionContext';
+import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../lsp/documentSelectors';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['"', "'", '/'];
 
 export function registerRequireCompletionProvider({ disposables }: ExtensionContext): void {
   disposables.push(
     vscode.languages.registerCompletionItemProvider(
-      { scheme: 'file', language: 'ruby' },
+      SORBET_FILE_DOCUMENT_SELECTOR,
       new RequireCompletionProvider(),
       ...TRIGGER_CHARACTERS,
     ),

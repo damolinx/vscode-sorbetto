@@ -8,6 +8,7 @@ import { registerRequireCompletionProvider } from './ruby/requireCompletionProvi
 import { registerRequireDefinitionProvider } from './ruby/requireDefinitionProvider';
 import { registerSelectionRangeProvider } from './ruby/selectionRangeProvider';
 import { registerTypedOptionsCompletionProvider } from './ruby/typedOptionsCompletionProvider';
+import { registerTypedOptionsHoverProvider } from './ruby/typedOptionsHoverProvider';
 import { registerSorbetContentProvider } from './sorbetContentProvider';
 
 export function registerProviders(context: ExtensionContext): void {
@@ -21,4 +22,5 @@ export function registerProviders(context: ExtensionContext): void {
   registerSorbetConfigHoverProvider(context);
   registerSorbetContentProvider(context);
   registerTypedOptionsCompletionProvider(context);
+  registerTypedOptionsHoverProvider(context);
 }

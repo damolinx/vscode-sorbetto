@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
+import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../lsp/documentSelectors';
 
 export const TRIGGER_CHARACTERS: readonly string[] = [':'];
 
 export function registerTypedOptionsCompletionProvider({ disposables }: ExtensionContext): void {
   disposables.push(
     vscode.languages.registerCompletionItemProvider(
-      { scheme: 'file', language: 'ruby' },
+      SORBET_FILE_DOCUMENT_SELECTOR,
       new TypedOptionsCompletionProvider(),
       ...TRIGGER_CHARACTERS,
     ),
@@ -23,6 +24,10 @@ export class TypedOptionsCompletionProvider implements vscode.CompletionItemProv
     _token: vscode.CancellationToken,
     _context: vscode.CompletionContext,
   ): Promise<vscode.CompletionList | undefined> {
+    if (position.line >= 10) {
+      return; // ignore lines too far down
+    }
+
     const line = document.lineAt(position).text.substring(0, position.character);
     const match = line.match(/^\s*#\s*typed:(?<directive>\s*[a-z]*)$/d);
     if (!match?.indices?.groups) {
