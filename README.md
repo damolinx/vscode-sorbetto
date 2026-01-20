@@ -256,7 +256,7 @@ All snippets have an associated trigger word recognized by IntelliSense while ty
 
 ### Editor Enhancements
 
-* **Comment Folding**: consecutive Ruby `#` comment lines automatically become collapsible.
+* **Comment regions**: multi-line `#` comments are recognized as folding ranges.
 * **Selection Ranges**: supports **Expand Selection** and **Shrink Selection** commands via heuristics.
 * **[RBS signature comment syntax highlighting](#rbs-support)**: recognizes RBS type signatures embedded in Ruby comments.
 * **`require_relative`**: provides autocompletion for paths, paths are active links to the referenced file, paths are updated on rename whwnver possible.
@@ -265,7 +265,7 @@ All snippets have an associated trigger word recognized by IntelliSense while ty
 [↑ Back to top](#table-of-contents)
 
 ### RBI Tools
-The set of RBI actions described in the [RBI Files](https://sorbet.org/docs/rbi) documentation is supported by the **Sorbetto: Update RBIs** command. The **DSL** option is of rticular relevance for Rails users.
+The set of RBI actions described in the [RBI Files](https://sorbet.org/docs/rbi) documentation is supported by the **Sorbetto: Update RBIs** command. The **DSL** option is of particular relevance for Rails users.
 
 [↑ Back to top](#table-of-contents)
 
@@ -295,3 +295,4 @@ Sorbetto uses a single output channel to log both its own exceptions and Sorbet'
 If needed, you can enable detailed logging con communication between VS Code and the Sorbet Language Server using the `sorbetto.trace.server` [setting](#sorbet).
 
 [↑ Back to top](#table-of-contents)
+
