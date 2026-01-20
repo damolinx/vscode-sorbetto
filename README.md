@@ -91,9 +91,10 @@ A definitve way to confirm this is functioning correctly is to create a Ruby fil
 
 If Sorbet is not working:
 
-* Verify that the required [folder structure](https://sorbet.org/docs/adopting#verify-initialization) exist.
+* Verify that the required [folder structure](https://sorbet.org/docs/adopting#verify-initialization) exists.
+  * Even though [multi-root workspaces](#multi-root-workspaces) are supported, Sorbet requires to be configured at the root of the workspace or specific workspace folder.
 
-* If you used the **Sorbetto: Setup Workspace** command, check the installation terminal for permission or installation errors that you might have missed. Command only adds missing requirements, so it can be run again of needed.
+* If you used the **Sorbetto: Setup Workspace** command, check the installation terminal for permissions or installation errors. The command only adds missing requirements, so it is safe to run it again of needed.
 
 * Check the [extension logs](#logs) for error messages coming from Sorbet. If the language server failed to start there should be messages at the very least calling it out. A normal start will end up witn `Pausing`/`Resuming` log entries.
 
