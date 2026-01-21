@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.21
+- Fix: Disable `FoldingRangeProvider` for `#` comment blocks as it disables VS Code's indentation-based folding logic.
+
 ## 0.3.20
 - Add `sorbetto.maximumDiagnosticsCount` setting to control number of diagnostics reported by Sorbet.
 - Add `sorbetto.enableRubyfmt` setting to enable Rubyfmt integration in Sorbet.
