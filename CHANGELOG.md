@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.22
+- Add custom `FoldingRangeProvider` that supports:
+  - line and block comments
+  - indentation-based folding ranges.
+
 ## 0.3.21
 - Fix: Disable `FoldingRangeProvider` for `#` comment blocks as it disables VS Code's indentation-based folding logic.
 

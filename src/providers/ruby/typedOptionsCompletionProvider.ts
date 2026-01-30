@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
 import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../lsp/documentSelectors';
+import { HEADER_LINES_WINDOW } from './constant';
 
 export const TRIGGER_CHARACTERS: readonly string[] = [':'];
 
@@ -24,8 +25,8 @@ export class TypedOptionsCompletionProvider implements vscode.CompletionItemProv
     _token: vscode.CancellationToken,
     _context: vscode.CompletionContext,
   ): Promise<vscode.CompletionList | undefined> {
-    if (position.line >= 10) {
-      return; // ignore lines too far down
+    if (position.line >= HEADER_LINES_WINDOW) {
+      return;
     }
 
     const line = document.lineAt(position).text.substring(0, position.character);

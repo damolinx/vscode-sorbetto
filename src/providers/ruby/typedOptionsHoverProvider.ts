@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../../extensionContext';
 import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../lsp/documentSelectors';
+import { HEADER_LINES_WINDOW } from './constant';
 
 export function registerTypedOptionsHoverProvider(context: ExtensionContext): void {
   context.disposables.push(
@@ -17,8 +18,8 @@ export class TypedOptionsHoverProvider implements vscode.HoverProvider {
     position: vscode.Position,
     _token: vscode.CancellationToken,
   ): Promise<vscode.Hover | undefined> {
-    if (position.line >= 10) {
-      return; // ignore lines too far down
+    if (position.line >= HEADER_LINES_WINDOW) {
+      return;
     }
 
     const { text } = document.lineAt(position);
