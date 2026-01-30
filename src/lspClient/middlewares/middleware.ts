@@ -1,8 +1,6 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
 
-const COMPACT_SORBET_DIAGNOSTICS_CONFIG_KEY = 'sorbetto.compactSorbetDiagnostics';
-
 /**
  * Provides `vslc._Middleware` portion only.
  */
@@ -12,7 +10,7 @@ export const Middleware: vslc.Middleware = {
     diagnostics: vscode.Diagnostic[],
     next: vslc.HandleDiagnosticsSignature,
   ): Promise<void> {
-    if (vscode.workspace.getConfiguration().get(COMPACT_SORBET_DIAGNOSTICS_CONFIG_KEY, true)) {
+    if (vscode.workspace.getConfiguration().get('sorbetto.compactSorbetDiagnostics', true)) {
       diagnostics.forEach((diagnostic) => {
         diagnostic.message = compact(diagnostic.message);
 

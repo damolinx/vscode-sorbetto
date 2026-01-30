@@ -26,8 +26,6 @@ const ShowOutputCommand: vscode.Command = {
   tooltip: 'View Sorbet Output',
 };
 
-const ALWAYS_SHOW_CONFIG_KEY = 'sorbetto.alwaysShowStatusItems';
-
 export class SorbetLanguageStatus implements vscode.Disposable {
   private readonly context: ExtensionContext;
   private currentClient?: {
@@ -61,7 +59,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
       this.context.clientManager.onShowOperation(withClientHandler),
       this.context.clientManager.onStatusChanged(withClientHandler),
       vscode.workspace.onDidChangeConfiguration((e) => {
-        if (e.affectsConfiguration(ALWAYS_SHOW_CONFIG_KEY)) {
+        if (e.affectsConfiguration('sorbetto.alwaysShowStatusItems')) {
           const selector = this.getSelector();
           this.configItem.selector = selector;
           this.statusItem.selector = selector;
@@ -84,9 +82,12 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     }
   }
 
+  private get alwaysShowStatusItem(): boolean {
+    return this.context.configuration.getValue('alwaysShowStatusItems', false);
+  }
+
   private getSelector(): vscode.DocumentSelector {
-    const alwaysShowStatus = vscode.workspace.getConfiguration().get(ALWAYS_SHOW_CONFIG_KEY, false);
-    return alwaysShowStatus
+    return this.alwaysShowStatusItem
       ? '*'
       : SORBET_DOCUMENT_SELECTOR.concat(SORBET_CONFIG_DOCUMENT_SELECTOR);
   }
