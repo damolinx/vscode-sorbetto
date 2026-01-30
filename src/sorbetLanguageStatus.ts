@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { OPEN_SETTINGS_ID, SHOW_OUTPUT_ID, SORBET_RESTART_ID } from './commandIds';
+import { CommandIds } from './commandIds';
 import { onMainAreaActiveTextEditorChanged, mainAreaActiveEditorUri } from './common/utils';
 import { ExtensionContext } from './extensionContext';
 import { SORBET_CONFIG_DOCUMENT_SELECTOR, SORBET_DOCUMENT_SELECTOR } from './lsp/documentSelectors';
@@ -9,19 +9,19 @@ import { SorbetClientStatus } from './lspClient/sorbetClientStatus';
 
 const OpenConfigurationSettings: vscode.Command = {
   arguments: [undefined, 'sorbetto.sorbetLspConfiguration'],
-  command: OPEN_SETTINGS_ID,
+  command: CommandIds.OpenSettings,
   title: 'Settings',
   tooltip: 'Open Sorbet Settings',
 };
 
 const StartCommand: vscode.Command = {
-  command: SORBET_RESTART_ID,
+  command: CommandIds.SorbetRestart,
   title: 'Start',
   tooltip: 'Start Sorbet',
 };
 
 const ShowOutputCommand: vscode.Command = {
-  command: SHOW_OUTPUT_ID,
+  command: CommandIds.ShowOutput,
   title: 'Output',
   tooltip: 'View Sorbet Output',
 };

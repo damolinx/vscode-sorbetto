@@ -1,81 +1,53 @@
 import { EXTENSION_PREFIX } from './constants';
 
-/**
- * Run `srb tc --autocorrect`
- */
-export const AUTOCORRECT_ALL_ID = `_${EXTENSION_PREFIX}.autocorrectAll`;
+export const CommandIds = {
+  /** Run `srb tc --autocorrect` */
+  AutocorrectAll: `_${EXTENSION_PREFIX}.autocorrectAll`,
 
-/**
- * Run `bundle install`.
- */
-export const BUNDLE_INSTALL_ID = `_${EXTENSION_PREFIX}.bundleInstall`;
+  /** Run `bundle install`. */
+  BundleInstall: `_${EXTENSION_PREFIX}.bundleInstall`,
 
-/**
- * Run `bundle update`.
- */
-export const BUNDLE_UPDATE_ID = `_${EXTENSION_PREFIX}.bundleUpdate`;
+  /** Run `bundle update`. */
+  BundleUpdate: `_${EXTENSION_PREFIX}.bundleUpdate`,
 
-/**
- * Copy fully qualified name of symbol at cursor location to clipboard.
- */
-export const COPY_SYMBOL_ID = `${EXTENSION_PREFIX}.copySymbol`;
+  /** Copy fully qualified name of symbol at cursor location to clipboard. */
+  CopySymbol: `${EXTENSION_PREFIX}.copySymbol`,
 
-/**
- * Debug a Ruby file.
- */
-export const DEBUG_RUBY_FILE_ID = `${EXTENSION_PREFIX}.debugRubyFile`;
+  /** Debug a Ruby file. */
+  DebugRubyFile: `${EXTENSION_PREFIX}.debugRubyFile`,
 
-/**
- * Open Settings Editor appropriate for current workspace.
- */
-export const OPEN_SETTINGS_ID = `_${EXTENSION_PREFIX}.openSettings`;
+  /** Open Settings Editor appropriate for current workspace. */
+  OpenSettings: `_${EXTENSION_PREFIX}.openSettings`,
 
-/**
- * Peek hierarchy references of symbol at cursor location.
- */
-export const PEEK_HIERARCHY_REFS_ID = `${EXTENSION_PREFIX}.peekHierarchyReferences`;
+  /** Peek hierarchy references of symbol at cursor location. */
+  PeekHierarchyReferences: `${EXTENSION_PREFIX}.peekHierarchyReferences`,
 
-/**
- * Run a Ruby file.
- */
-export const RUN_RUBY_FILE_ID = `${EXTENSION_PREFIX}.runRubyFile`;
+  /** Run a Ruby file. */
+  RunRubyFile: `${EXTENSION_PREFIX}.runRubyFile`,
 
-/**
- * Send active selection to https://sorbet.run.
- */
-export const SEND_TO_SORBETRUN_ID = `${EXTENSION_PREFIX}.sendToSorbetRun`;
+  /** Send active selection to https://sorbet.run. */
+  SendToSorbetRun: `${EXTENSION_PREFIX}.sendToSorbetRun`,
 
-/**
- * Prepare workspace for Sorbet development.
- */
-export const SETUP_WORKSPACE_ID = `${EXTENSION_PREFIX}.setup.workspace`;
+  /** Prepare workspace for Sorbet development. */
+  SetupWorkspace: `${EXTENSION_PREFIX}.setup.workspace`,
 
-/**
- * Show Sorbetto output panel.
- */
-export const SHOW_OUTPUT_ID = `_${EXTENSION_PREFIX}.showOutput`;
+  /** Show Sorbetto output panel. */
+  ShowOutput: `_${EXTENSION_PREFIX}.showOutput`,
 
-/**
- * Save package files. This specific command name is required by Sorbet itself.
- */
-export const SORBET_SAVE_PACKAGE_FILES_ID = 'sorbet.savePackageFiles';
+  /** Save package files. This specific command name is required by Sorbet itself. */
+  SorbetSavePackageFiles: 'sorbet.savePackageFiles',
 
-/**
- * Restart Sorbet.
- */
-export const SORBET_RESTART_ID = `${EXTENSION_PREFIX}.restart`;
+  /** Restart Sorbet. */
+  SorbetRestart: `${EXTENSION_PREFIX}.restart`,
 
-/**
- * Start Sorbet.
- */
-export const SORBET_START_ID = `${EXTENSION_PREFIX}.start`;
+  /** Start Sorbet. */
+  SorbetStart: `${EXTENSION_PREFIX}.start`,
 
-/**
- * Stop Sorbet.
- */
-export const SORBET_STOP_ID = `${EXTENSION_PREFIX}.stop`;
+  /** Stop Sorbet. */
+  SorbetStop: `${EXTENSION_PREFIX}.stop`,
 
-/**
- * Update RBIs.
- */
-export const UPDATE_RBIS_ID = `${EXTENSION_PREFIX}.updateRbis`;
+  /** Update RBIs. */
+  UpdataRbis: `${EXTENSION_PREFIX}.updateRbis`,
+} as const;
+
+export type CommandId = (typeof CommandIds)[keyof typeof CommandIds];

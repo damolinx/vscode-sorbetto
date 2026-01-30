@@ -12,7 +12,7 @@ export async function openSettings(
     ? contextPathOrUri instanceof vscode.Uri
       ? contextPathOrUri
       : vscode.Uri.parse(contextPathOrUri)
-    : (mainAreaActiveEditorUri() ?? (await getTargetWorkspaceUri()));
+    : (mainAreaActiveEditorUri() ?? (await getTargetWorkspaceUri(context)));
   context.log.debug(
     'Open settings',
     setting,

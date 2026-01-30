@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
-import { SETUP_WORKSPACE_ID } from '../commandIds';
 import { mainAreaActiveTextEditorUri } from '../common/utils';
 import { isSorbetWorkspace } from '../common/workspaceUtils';
+import { ExtensionContext } from '../extensionContext';
+import { setupWorkspace } from './setupWorkspace';
 
 const RUBY_ICON = new vscode.ThemeIcon('ruby');
 
@@ -42,6 +43,7 @@ export function getTargetEditorUri(pathOrUri?: string | vscode.Uri): vscode.Uri 
 }
 
 export async function getTargetWorkspaceUri(
+  context: ExtensionContext,
   contextPathOrUri?: string | vscode.Uri,
   options?: { forceSorbetWorkspace?: true },
 ): Promise<vscode.Uri | undefined> {
@@ -73,7 +75,7 @@ export async function getTargetWorkspaceUri(
         });
         if (workspaceFolder) {
           if (options?.forceSorbetWorkspace && !(await isSorbetWorkspace(workspaceFolder))) {
-            await showNotSorbetEnabledWarning(workspaceFolder);
+            await showNotSorbetEnabledWarning(context, workspaceFolder);
           } else {
             uri = workspaceFolder.uri;
           }
@@ -85,8 +87,11 @@ export async function getTargetWorkspaceUri(
   return uri;
 }
 
-export async function showNotSorbetEnabledWarning(workspaceFolder: vscode.WorkspaceFolder) {
-  const setupWorkspace: vscode.MessageItem = { title: 'Setup Workspace' };
+async function showNotSorbetEnabledWarning(
+  context: ExtensionContext,
+  workspaceFolder: vscode.WorkspaceFolder,
+) {
+  const setupWorkspaceItem: vscode.MessageItem = { title: 'Setup Workspace' };
   const option = await vscode.window.showErrorMessage(
     `${workspaceFolder.name} is not Sorbet-enabled`,
     {
@@ -94,10 +99,10 @@ export async function showNotSorbetEnabledWarning(workspaceFolder: vscode.Worksp
       detail:
         "A workspace is considered Sorbed-enabled if it contains a 'sorbet/' configuration folder.",
     },
-    setupWorkspace,
+    setupWorkspaceItem,
     { title: 'Cancel', isCloseAffordance: true },
   );
-  if (option === setupWorkspace) {
-    await vscode.commands.executeCommand(SETUP_WORKSPACE_ID, workspaceFolder.uri);
+  if (option === setupWorkspaceItem) {
+    setupWorkspace(context, workspaceFolder.uri);
   }
 }

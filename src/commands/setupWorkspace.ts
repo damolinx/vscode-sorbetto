@@ -12,7 +12,7 @@ const GEMFILE_DEPS: Readonly<Record<string, string>> = {
 };
 
 export async function setupWorkspace(context: ExtensionContext, pathOrUri?: string | vscode.Uri) {
-  const uri = await getTargetWorkspaceUri(pathOrUri);
+  const uri = await getTargetWorkspaceUri(context, pathOrUri);
   if (!uri) {
     context.log.debug('SetupWorkspace: No workspace.');
     return; // No target workspace

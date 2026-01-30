@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { BUNDLE_INSTALL_ID, BUNDLE_UPDATE_ID } from '../../commandIds';
+import { CommandIds } from '../../commandIds';
 import { ExtensionContext } from '../../extensionContext';
 
 export function registerGemfileCodeLensProvider({ disposables }: ExtensionContext): void {
@@ -16,21 +16,21 @@ export function registerGemfileCodeLensProvider({ disposables }: ExtensionContex
  */
 export class GemfileCodeLensProvider implements vscode.CodeLensProvider {
   provideCodeLenses(
-    document: vscode.TextDocument,
+    { uri }: vscode.TextDocument,
     _token: vscode.CancellationToken,
   ): vscode.CodeLens[] {
     const zeroRange = new vscode.Range(0, 0, 0, 0);
-    const cmdArgs = [document.uri];
+    const cmdArgs = [uri];
     return [
       new vscode.CodeLens(zeroRange, {
         arguments: cmdArgs,
-        command: BUNDLE_INSTALL_ID,
+        command: CommandIds.BundleInstall,
         title: 'Install',
         tooltip: "Run 'bundle install' to install missing gems based on Gemfile.lock.",
       }),
       new vscode.CodeLens(zeroRange, {
         arguments: cmdArgs,
-        command: BUNDLE_UPDATE_ID,
+        command: CommandIds.BundleUpdate,
         title: 'Update',
         tooltip: "Run 'bundle update' to refresh gems based on Gemfile constraints.",
       }),

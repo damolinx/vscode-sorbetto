@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { OPEN_SETTINGS_ID } from '../commandIds';
 import { mainAreaActiveEditorUri } from '../common/utils';
 import { ExtensionContext } from '../extensionContext';
+import { openSettings } from './openSettings';
 import { getTargetWorkspaceUri } from './utils';
 
 export async function restartSorbet(
@@ -9,7 +9,7 @@ export async function restartSorbet(
   action: 'start' | 'stop' | 'restart',
   pathOrUri?: string | vscode.Uri,
 ) {
-  const uri = await getTargetWorkspaceUri(pathOrUri ?? mainAreaActiveEditorUri(), {
+  const uri = await getTargetWorkspaceUri(context, pathOrUri ?? mainAreaActiveEditorUri(), {
     forceSorbetWorkspace: true,
   });
   if (!uri) {
@@ -25,18 +25,14 @@ export async function restartSorbet(
 
   switch (action) {
     case 'restart':
-      if (!client.isEnabledByConfiguration()) {
-        await showDisabledConfigurationNotification(uri);
-        return;
-      }
-      await client.restart();
+      await (client.isEnabledByConfiguration()
+        ? client.restart()
+        : showDisabledConfigurationNotification(uri));
       break;
     case 'start':
-      if (!client.isEnabledByConfiguration()) {
-        await showDisabledConfigurationNotification(uri);
-        return;
-      }
-      await client.start();
+      await (client.isEnabledByConfiguration()
+        ? client.start()
+        : showDisabledConfigurationNotification(uri));
       break;
     case 'stop':
       await client.stop();
@@ -44,15 +40,15 @@ export async function restartSorbet(
     default:
       throw new Error(`Unknown action: ${action}`);
   }
-}
 
-async function showDisabledConfigurationNotification(uri: vscode.Uri) {
-  const updateConfigItem: vscode.MessageItem = { title: 'Configure' };
-  const selection = await vscode.window.showWarningMessage(
-    'Sorbet is disabled by configuration.',
-    updateConfigItem,
-  );
-  if (selection === updateConfigItem) {
-    await vscode.commands.executeCommand(OPEN_SETTINGS_ID, uri, 'sorbetto.sorbetLspConfiguration');
+  async function showDisabledConfigurationNotification(uri: vscode.Uri) {
+    const updateConfigItem: vscode.MessageItem = { title: 'Configure' };
+    const selection = await vscode.window.showWarningMessage(
+      'Sorbet is disabled by configuration.',
+      updateConfigItem,
+    );
+    if (selection === updateConfigItem) {
+      await openSettings(context, uri, 'sorbetto.sorbetLspConfiguration');
+    }
   }
 }

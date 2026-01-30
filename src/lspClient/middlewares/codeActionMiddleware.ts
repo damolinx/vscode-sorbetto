@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
-import { AUTOCORRECT_ALL_ID } from '../../commandIds';
+import { CommandIds } from '../../commandIds';
 
 export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
   provideCodeActions: async (
@@ -22,7 +22,7 @@ export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
       );
       action.command = {
         title: action.title,
-        command: AUTOCORRECT_ALL_ID,
+        command: CommandIds.AutocorrectAll,
         arguments: [code, document.uri],
       };
       actions.push(action);
@@ -52,7 +52,7 @@ export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
     next: vslc.ResolveCodeActionSignature,
   ): vscode.ProviderResult<vscode.CodeAction> => {
     const commandId = item.command?.command;
-    if (commandId && [AUTOCORRECT_ALL_ID].some((prefix) => commandId === prefix)) {
+    if (commandId && [CommandIds.AutocorrectAll].some((id) => id === commandId)) {
       return item;
     }
 

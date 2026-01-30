@@ -6,10 +6,10 @@ import { executeCommandsInTerminal, getTargetWorkspaceUri } from './utils';
 export type UpdateRbiType = 'annotations' | 'dsl' | 'gems' | 'gems-all' | 'todo';
 
 export async function updateRbis(
-  _context: ExtensionContext,
+  context: ExtensionContext,
   updateType?: UpdateRbiType,
 ): Promise<void> {
-  const workspaceUri = await getTargetWorkspaceUri();
+  const workspaceUri = await getTargetWorkspaceUri(context);
   if (!workspaceUri) {
     return;
   }
