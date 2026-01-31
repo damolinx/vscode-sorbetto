@@ -8,7 +8,11 @@ import { getWorkspaceDocumentSelector } from './documentSelectors';
 import { HierarchyReferencesRequest } from './hierarchyReferences';
 import { SorbetInitializeResult } from './initializeResult';
 import { ReadFileRequest } from './readFileRequest';
-import { ShowOperationNotification } from './showOperationNotification';
+import {
+  SHOW_OPERATION_NOTIFICATION_METHOD,
+  ShowOperationNotification,
+  SorbetShowOperationParams,
+} from './showOperationNotification';
 import { ShowSymbolRequest } from './showSymbolRequest';
 import { WorkspaceDidChangeConfigurationNotification } from './workspaceDidChangeConfigurationNotification';
 
@@ -56,6 +60,7 @@ export class SorbetLanguageClient
     WorkspaceDidChangeConfigurationNotification
 {
   private readonly log: Log;
+  public operations: SorbetShowOperationParams[];
 
   constructor(
     serverOptions: vslcn.ServerOptions,
@@ -64,6 +69,20 @@ export class SorbetLanguageClient
   ) {
     super('sorbetto', 'Sorbet', serverOptions, clientOptions);
     this.log = log;
+    this.operations = [];
+
+    this.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, (params: SorbetShowOperationParams) => {
+      if (params.status === 'end') {
+        const filteredOps = this.operations.filter(
+          ({ operationName }) => operationName !== params.operationName,
+        );
+        if (filteredOps.length !== this.operations.length) {
+          this.operations = filteredOps;
+        }
+      } else {
+        this.operations.push(params);
+      }
+    });
   }
 
   override error(message: string, data?: any, _showNotification?: boolean | 'force'): void {

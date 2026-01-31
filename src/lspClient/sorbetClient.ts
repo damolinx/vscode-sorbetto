@@ -30,6 +30,12 @@ const THROTTLE_CONFIG = {
 } as const;
 
 export class SorbetClient implements vscode.Disposable {
+  private clientStatus?: SorbetClientStatus;
+  private clientSession?: {
+    client: SorbetLanguageClient;
+    disposables: vscode.Disposable[];
+  };
+
   public readonly configuration: SorbetClientConfiguration;
   private readonly context: ExtensionContext;
   private readonly disposables: vscode.Disposable[];
@@ -38,12 +44,6 @@ export class SorbetClient implements vscode.Disposable {
   private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
   private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
   private readonly restartWatcher: RestartWatcher;
-  private session?: {
-    client: SorbetLanguageClient;
-    disposables: vscode.Disposable[];
-    operations?: SorbetShowOperationParams[];
-    status?: SorbetClientStatus;
-  };
   public readonly workspaceFolder: vscode.WorkspaceFolder;
 
   constructor(
@@ -85,45 +85,11 @@ export class SorbetClient implements vscode.Disposable {
   }
 
   /**
-   * Raise {@link onShowOperation} event. Prefer this over calling
-   * {@link EventEmitter.fire} directly so known state is updated before
-   * event listeners are notified. Spurious events are filtered out.
-   */
-  private fireOnShowOperation(params: SorbetShowOperationParams): void {
-    let changed = false;
-    if (!this.session) {
-      return;
-    }
-
-    if (params.status === 'end') {
-      const filteredOps = this.session.operations?.filter(
-        (ops) => ops.operationName !== params.operationName,
-      );
-
-      if (filteredOps?.length !== this.session.operations?.length) {
-        this.session.operations = filteredOps;
-        changed = true;
-      }
-    } else {
-      this.session.operations ??= [];
-      this.session.operations.push(params);
-      changed = true;
-    }
-
-    if (changed) {
-      this.onShowOperationEmitter.fire({ client: this, params });
-    }
-  }
-
-  /**
    * Raise {@link onServerStatusChanged} event. Prefer this over calling
    * {@link EventEmitter.fire} directly so known state is updated before
    * event listeners are notified.
    */
   private fireOnStatusChanged(): void {
-    if (this.status === SorbetClientStatus.Disabled && this.session) {
-      this.session.operations = [];
-    }
     this.onStatusChangedEmitter.fire({ client: this, status: this.status });
   }
 
@@ -192,27 +158,27 @@ export class SorbetClient implements vscode.Disposable {
    * Current Sorbet Language Client. Only available while the server is running.
    */
   public get languageClient(): SorbetLanguageClient | undefined {
-    return this.session?.client;
+    return this.clientSession?.client;
   }
 
   private set languageClient(value: SorbetLanguageClient | undefined) {
-    if (this.session?.client === value) {
+    if (this.clientSession?.client === value) {
       return;
     }
 
-    if (this.session) {
-      vscode.Disposable.from(...this.session.disposables).dispose();
-      this.session = undefined;
+    if (this.clientSession) {
+      vscode.Disposable.from(...this.clientSession.disposables).dispose();
+      this.clientSession = undefined;
       this.status = SorbetClientStatus.Disabled;
     }
 
     if (value) {
-      this.session = {
+      this.clientSession = {
         client: value,
         disposables: [
           value, // Assumes ownership of LanguageClient
           value.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, (params) =>
-            this.fireOnShowOperation(params),
+            this.onShowOperationNotification(params),
           ),
           value.onDidChangeState((event) => {
             switch (event.newState) {
@@ -249,19 +215,19 @@ export class SorbetClient implements vscode.Disposable {
    * Sorbet Language Client operations stack.
    */
   public get operations(): readonly Readonly<SorbetShowOperationParams>[] {
-    return this.session?.operations ?? [];
+    return this.clientSession?.client.operations ?? [];
   }
 
   /**
    * Sorbet Language Client status.
    */
   public get status(): SorbetClientStatus {
-    return this.session?.status ?? SorbetClientStatus.Disabled;
+    return this.clientStatus ?? SorbetClientStatus.Disabled;
   }
 
   private set status(value: SorbetClientStatus) {
-    if (this.session && this.session.status !== value) {
-      this.session.status = value;
+    if (this.clientStatus !== value) {
+      this.clientStatus = value;
       this.fireOnStatusChanged();
     }
   }

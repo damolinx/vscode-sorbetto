@@ -29,7 +29,7 @@ export async function handleRename(context: ExtensionContext, renames: readonly 
   );
   if (renameMap.size === 0) {
     context.log.debug('Rename: No files to update.');
-    return; // No files to update
+    return;
   }
 
   const workspaceEdit = new vscode.WorkspaceEdit();

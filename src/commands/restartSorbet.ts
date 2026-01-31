@@ -14,7 +14,7 @@ export async function restartSorbet(
   });
   if (!uri) {
     context.log.debug('No target workspace.', action);
-    return; // No target workspace
+    return;
   }
 
   const client = context.clientManager.getClient(uri);
