@@ -42,41 +42,53 @@ export function getTargetEditorUri(pathOrUri?: string | vscode.Uri): vscode.Uri 
   return uri;
 }
 
-export async function getTargetWorkspaceUri(
+export async function getTargetWorkspace(
   context: ExtensionContext,
   pathOrUri?: string | vscode.Uri,
   options?: { forceSorbetWorkspace?: true },
-): Promise<vscode.Uri | undefined> {
-  let uri: vscode.Uri | undefined;
+): Promise<vscode.WorkspaceFolder | undefined> {
+  let workspaceFolder: vscode.WorkspaceFolder | undefined;
   if (pathOrUri) {
     const contextUri = pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.parse(pathOrUri);
-    const workspaceFolder = vscode.workspace.getWorkspaceFolder(contextUri);
-    if (workspaceFolder && (await isSorbetWorkspace(workspaceFolder))) {
-      uri = workspaceFolder.uri;
+    const candidateWorkspaceFolder = vscode.workspace.getWorkspaceFolder(contextUri);
+    if (candidateWorkspaceFolder && (await isSorbetWorkspace(candidateWorkspaceFolder))) {
+      workspaceFolder = candidateWorkspaceFolder;
     }
   }
 
-  if (!uri) {
+  if (!workspaceFolder) {
     const { workspaceFolders } = vscode.workspace;
     if (workspaceFolders?.length) {
       if (workspaceFolders.length === 1) {
-        uri = workspaceFolders[0].uri;
+        workspaceFolder = workspaceFolders[0];
       } else {
-        const workspaceFolder = await vscode.window.showWorkspaceFolderPick({
+        const candidateWorkspaceFolder = await vscode.window.showWorkspaceFolderPick({
           placeHolder: 'Select a workspace folder',
         });
-        if (workspaceFolder) {
-          if (options?.forceSorbetWorkspace && !(await isSorbetWorkspace(workspaceFolder))) {
-            await showNotSorbetEnabledWarning(context, workspaceFolder);
+        if (candidateWorkspaceFolder) {
+          if (
+            options?.forceSorbetWorkspace &&
+            !(await isSorbetWorkspace(candidateWorkspaceFolder))
+          ) {
+            await showNotSorbetEnabledWarning(context, candidateWorkspaceFolder);
           } else {
-            uri = workspaceFolder.uri;
+            workspaceFolder = candidateWorkspaceFolder;
           }
         }
       }
     }
   }
 
-  return uri;
+  return workspaceFolder;
+}
+
+export async function getTargetWorkspaceUri(
+  context: ExtensionContext,
+  pathOrUri?: string | vscode.Uri,
+  options?: { forceSorbetWorkspace?: true },
+): Promise<vscode.Uri | undefined> {
+  const workspaceFolder = await getTargetWorkspace(context, pathOrUri, options);
+  return workspaceFolder?.uri;
 }
 
 async function showNotSorbetEnabledWarning(
