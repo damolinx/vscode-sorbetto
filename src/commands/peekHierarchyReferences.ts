@@ -24,7 +24,7 @@ export async function peekHierarchyReferences(
     return;
   }
 
-  const vsLocations = locations?.map(
+  const vsLocations = locations.map(
     ({ uri, range: { start, end } }) =>
       new vscode.Location(
         vscode.Uri.parse(uri),

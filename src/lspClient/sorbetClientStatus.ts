@@ -1,4 +1,5 @@
 export const enum SorbetClientStatus {
+  // The language client is disabled.
   Disabled = 'Disabled',
   // The language client is initializing.
   Initializing = 'Initializing',

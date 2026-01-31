@@ -79,7 +79,7 @@ export async function createLspConfiguration(
     if (additionalArgs.length) {
       args.push(...additionalArgs);
     }
-    if (cmd === undefined) {
+    if (!cmd) {
       throw new Error(`Missing LSP command for '${type}' configuration.`);
     }
     return { cmd, args, type: configuration.lspConfigurationType };

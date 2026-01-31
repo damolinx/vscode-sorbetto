@@ -21,11 +21,11 @@ export async function executeCommandsInTerminal(options: {
     name: options.name,
   };
   if (process.platform === 'win32') {
-    terminalOptions.shellPath = 'cmd.exe';
     terminalOptions.shellArgs = ['/K', `${cmd} && pause`];
+    terminalOptions.shellPath = 'cmd.exe';
   } else {
-    terminalOptions.shellPath = '/bin/bash';
     terminalOptions.shellArgs = ['-c', `${cmd}; read -n1 -rsp "Press any key to continue ..."`];
+    terminalOptions.shellPath = '/bin/bash';
   }
 
   const terminal = vscode.window.createTerminal(terminalOptions);
@@ -44,15 +44,12 @@ export function getTargetEditorUri(pathOrUri?: string | vscode.Uri): vscode.Uri 
 
 export async function getTargetWorkspaceUri(
   context: ExtensionContext,
-  contextPathOrUri?: string | vscode.Uri,
+  pathOrUri?: string | vscode.Uri,
   options?: { forceSorbetWorkspace?: true },
 ): Promise<vscode.Uri | undefined> {
   let uri: vscode.Uri | undefined;
-  if (contextPathOrUri) {
-    const contextUri =
-      contextPathOrUri instanceof vscode.Uri
-        ? contextPathOrUri
-        : vscode.Uri.parse(contextPathOrUri);
+  if (pathOrUri) {
+    const contextUri = pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.parse(pathOrUri);
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(contextUri);
     if (workspaceFolder && (await isSorbetWorkspace(workspaceFolder))) {
       uri = workspaceFolder.uri;
@@ -60,16 +57,11 @@ export async function getTargetWorkspaceUri(
   }
 
   if (!uri) {
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-    switch (workspaceFolders?.length) {
-      case 0:
-      case undefined:
-        break;
-      case 1:
+    const { workspaceFolders } = vscode.workspace;
+    if (workspaceFolders?.length) {
+      if (workspaceFolders.length === 1) {
         uri = workspaceFolders[0].uri;
-        break;
-      default:
-        // eslint-disable-next-line no-case-declarations
+      } else {
         const workspaceFolder = await vscode.window.showWorkspaceFolderPick({
           placeHolder: 'Select a workspace folder',
         });
@@ -80,7 +72,7 @@ export async function getTargetWorkspaceUri(
             uri = workspaceFolder.uri;
           }
         }
-        break;
+      }
     }
   }
 

@@ -19,5 +19,7 @@ export async function savePackageFiles(context: ExtensionContext): Promise<void>
   }
 
   context.log.trace('SavePackageFiles: Saving package files', documents.length);
-  await Promise.allSettled(documents.map((document) => document.save()));
+  for (const document of documents) {
+    await document.save();
+  }
 }

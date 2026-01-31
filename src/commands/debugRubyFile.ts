@@ -37,14 +37,14 @@ export async function debugRubyFile(context: ExtensionContext, pathOrUri?: strin
       type: 'rdbg',
       name: `Debug ${basename(document.fileName)}`,
       request: 'launch',
-      cwd: workspaceFolder?.uri.fsPath,
+      cwd: workspaceFolder?.uri,
       script: document.fileName,
     });
   } else if (await verifyEnvironment(context, ['ruby', 'bundle', 'rdbg'])) {
     context.log.info('DebugRuby: Using `rdbg` executable');
     await executeCommandsInTerminal({
       commands: [`bundle exec rdbg ${targetPath}`],
-      cwd: workspaceFolder?.uri.fsPath,
+      cwd: workspaceFolder?.uri,
       name: `Debug ${basename(targetPath)}`,
     });
   } else {
@@ -57,8 +57,7 @@ export async function debugRubyFile(context: ExtensionContext, pathOrUri?: strin
 
 function isDebuggerTypeAvailable(type: string): boolean {
   return vscode.extensions.all.some((ext) => {
-    const contributes = ext.packageJSON?.contributes;
-    const debuggers = contributes?.debuggers as any[] | undefined;
+    const debuggers = ext.packageJSON?.contributes?.debuggers as any[] | undefined;
     return !!debuggers?.some((d) => d.type === type);
   });
 }

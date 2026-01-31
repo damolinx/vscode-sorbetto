@@ -31,7 +31,7 @@ export async function verifyEnvironment(
   return false;
 }
 
-export function getDocumentationLinks(missingCommands: string[]): Map<string, vscode.Uri> {
+function getDocumentationLinks(missingCommands: string[]): Map<string, vscode.Uri> {
   const links = new Map<string, vscode.Uri>();
   for (const missingCommand of missingCommands) {
     if (SORBET_COMMANDS.includes(missingCommand)) {

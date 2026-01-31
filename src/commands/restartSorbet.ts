@@ -48,7 +48,7 @@ export async function restartSorbet(
       updateConfigItem,
     );
     if (selection === updateConfigItem) {
-      await openSettings(context, uri, 'sorbetto.sorbetLspConfiguration');
+      await openSettings(context, uri, 'sorbetto.sorbetLsp');
     }
   }
 }

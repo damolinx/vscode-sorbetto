@@ -8,7 +8,7 @@ import { SorbetClient } from './lspClient/sorbetClient';
 import { SorbetClientStatus } from './lspClient/sorbetClientStatus';
 
 const OpenConfigurationSettings: vscode.Command = {
-  arguments: [undefined, 'sorbetto.sorbetLspConfiguration'],
+  arguments: [undefined, 'sorbetto.sorbetLsp'],
   command: CommandIds.OpenSettings,
   title: 'Settings',
   tooltip: 'Open Sorbet Settings',

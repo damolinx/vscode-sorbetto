@@ -34,7 +34,7 @@ export async function runRubyFile(context: ExtensionContext, pathOrUri?: string 
   if (await verifyEnvironment(context, ['ruby', 'bundle'])) {
     return executeCommandsInTerminal({
       commands: [`bundle exec ruby ${targetPath}`],
-      cwd: workspaceFolder?.uri.fsPath,
+      cwd: workspaceFolder?.uri,
       name: `Run ${basename(targetPath)}`,
     });
   }

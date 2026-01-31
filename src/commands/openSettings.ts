@@ -19,16 +19,16 @@ export async function openSettings(
     contextUri ? vscode.workspace.asRelativePath(contextUri) : '',
   );
 
-  let command: string | undefined;
+  await vscode.commands.executeCommand(getCommand(), setting);
 
-  const workspaceCount = vscode.workspace.workspaceFolders?.length ?? 0;
-  if (workspaceCount === 1) {
-    command = 'workbench.action.openWorkspaceSettings';
-  } else if (workspaceCount > 1) {
-    command = 'workbench.action.openFolderSettings';
-  } else {
-    command = 'workbench.action.openSettings';
+  function getCommand() {
+    const workspaceCount = vscode.workspace.workspaceFolders?.length;
+    if (!workspaceCount) {
+      return 'workbench.action.openSettings';
+    } else if (workspaceCount === 1) {
+      return 'workbench.action.openWorkspaceSettings';
+    } else {
+      return 'workbench.action.openFolderSettings';
+    }
   }
-
-  await vscode.commands.executeCommand(command, setting);
 }

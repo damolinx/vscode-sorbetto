@@ -7,13 +7,13 @@ export async function sendToSorbetRun(
 ): Promise<void> {
   const content = document.getText(selection).trim();
   if (!content) {
-    log.warn('SendToSorbetRun: Cannot send an empty selection');
-    vscode.window.showWarningMessage('Cannot send empty selection');
+    log.warn('SendToSorbetRun: Cannot send empty selection');
+    vscode.window.showWarningMessage('Cannot send an empty selection');
     return;
   }
 
   if (content.length > 1024 * 1024) {
-    log.warn('SendToSorbetRun: Cannot send more than 1MB of code', content.length);
+    log.warn('SendToSorbetRun: Cannot send more than 1MB', content.length);
     vscode.window.showWarningMessage('Cannot send more than 1MB');
     return;
   }

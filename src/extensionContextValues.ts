@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { mapStatus, SorbetStatus } from './api/status';
+import { mapStatus } from './api/status';
 import { onMainAreaActiveTextEditorChanged, mainAreaActiveEditorUri } from './common/utils';
 import { ExtensionContext } from './extensionContext';
 
@@ -10,19 +10,19 @@ export function registerContextValueHandlers(context: ExtensionContext): void {
 
 function registerSorbetStatus({ clientManager, disposables }: ExtensionContext): void {
   const contextKey = 'sorbetto:sorbetStatus';
-  setContext<SorbetStatus | undefined>(contextKey, undefined);
+  setContext(contextKey, undefined);
 
   disposables.push(
     clientManager.onStatusChanged(({ client }) => {
       const editor = mainAreaActiveEditorUri();
       if (editor && client.inScope(editor)) {
-        setContext<SorbetStatus | undefined>(contextKey, mapStatus(client.status));
+        setContext(contextKey, mapStatus(client.status));
       }
     }),
     onMainAreaActiveTextEditorChanged((editor) => {
       const client = editor && clientManager.getClient(editor.document.uri);
       if (client) {
-        setContext<SorbetStatus | undefined>(contextKey, mapStatus(client.status));
+        setContext(contextKey, mapStatus(client.status));
       }
     }),
   );
@@ -30,12 +30,12 @@ function registerSorbetStatus({ clientManager, disposables }: ExtensionContext):
 
 function registerSorbettoActive({ clientManager, disposables }: ExtensionContext): void {
   const contextKey = 'sorbetto:active';
-  setContext<boolean>(contextKey, Boolean(clientManager.clientCount));
+  setContext(contextKey, Boolean(clientManager.clientCount));
 
   disposables.push(
-    clientManager.onClientAdded(() => setContext<boolean>(contextKey, true)),
+    clientManager.onClientAdded(() => setContext(contextKey, true)),
     clientManager.onClientRemoved(
-      () => !clientManager.clientCount && setContext<boolean>(contextKey, false),
+      () => !clientManager.clientCount && setContext(contextKey, false),
     ),
   );
 }

@@ -11,13 +11,14 @@ interface FileRename {
   readonly oldUri: vscode.Uri;
   readonly newUri: vscode.Uri;
 }
+
 interface RequireMatch {
   readonly range: vscode.Range;
   readonly path: string;
 }
 
 /**
- * Update `require_relative` statements after a file rename.  Currently, only
+ * Update `require_relative` statements after a file rename. Currently, only
  * files being renamed are updated, not files referencing them.
  */
 export async function handleRename(context: ExtensionContext, renames: readonly FileRename[]) {
@@ -32,7 +33,7 @@ export async function handleRename(context: ExtensionContext, renames: readonly 
   }
 
   const workspaceEdit = new vscode.WorkspaceEdit();
-  const docsToSave: vscode.TextDocument[] = [];
+  const documentsToSave: vscode.TextDocument[] = [];
 
   for (const { oldUri, newUri } of renameMap.values()) {
     const document = await vscode.workspace.openTextDocument(newUri);
@@ -43,14 +44,14 @@ export async function handleRename(context: ExtensionContext, renames: readonly 
 
     const updated = await updateRequires(workspaceEdit, oldUri, newUri, matches, renameMap);
     if (updated && !document.isDirty) {
-      docsToSave.push(document);
+      documentsToSave.push(document);
     }
   }
 
   const succeeded = await vscode.workspace.applyEdit(workspaceEdit);
   if (succeeded) {
-    for (const doc of docsToSave) {
-      await doc.save();
+    for (const document of documentsToSave) {
+      await document.save();
     }
   }
 }

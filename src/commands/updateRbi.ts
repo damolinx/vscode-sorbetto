@@ -5,18 +5,15 @@ import { executeCommandsInTerminal, getTargetWorkspaceUri } from './utils';
 
 export type UpdateRbiType = 'annotations' | 'dsl' | 'gems' | 'gems-all' | 'todo';
 
-export async function updateRbis(
-  context: ExtensionContext,
-  updateType?: UpdateRbiType,
-): Promise<void> {
+export async function updateRbis(context: ExtensionContext, type?: UpdateRbiType): Promise<void> {
   const workspaceUri = await getTargetWorkspaceUri(context);
   if (!workspaceUri) {
     return;
   }
 
   let command: string | undefined;
-  if (updateType) {
-    command = buildRbiTypeCommand(updateType);
+  if (type) {
+    command = buildRbiTypeCommand(type);
   } else {
     command = await showRbiTypeCommandQuickPick();
     if (!command) {
@@ -26,17 +23,18 @@ export async function updateRbis(
 
   await executeCommandsInTerminal({
     commands: [command],
-    cwd: workspaceUri.fsPath,
+    cwd: workspaceUri,
     name: 'update',
   });
 }
 
-function buildRbiTypeCommand(updateType: UpdateRbiType): string {
-  switch (updateType) {
+function buildRbiTypeCommand(type: UpdateRbiType): string {
+  const tapioca = join('bin', 'tapioca');
+  switch (type) {
     case 'gems-all':
-      return `${join('bin', 'tapioca')} gems --all`;
+      return `${tapioca} gems --all`;
     default:
-      return `${join('bin', 'tapioca')} ${updateType}`;
+      return `${tapioca} ${type}`;
   }
 }
 

@@ -3,19 +3,19 @@ import { ExtensionContext } from '../extensionContext';
 import { executeCommandsInTerminal, getTargetWorkspaceUri } from './utils';
 import { verifyEnvironment } from './verifyEnvironment';
 
-const GEMFILE_HEADER: readonly string[] = ["source 'https://rubygems.org'", ''];
+const GEMFILE_HEADER = ["source 'https://rubygems.org'", ''] as const;
 
-const GEMFILE_DEPS: Readonly<Record<string, string>> = {
+const GEMFILE_DEPS = {
   sorbet: "gem 'sorbet', group: :development",
   'sorbet-runtime': "gem 'sorbet-runtime'",
   tapioca: "gem 'tapioca', require: false, group: %i[development test]",
-};
+} as const;
 
 export async function setupWorkspace(context: ExtensionContext, pathOrUri?: string | vscode.Uri) {
   const uri = await getTargetWorkspaceUri(context, pathOrUri);
   if (!uri) {
     context.log.debug('SetupWorkspace: No workspace.');
-    return; // No target workspace
+    return;
   }
 
   const edit = new vscode.WorkspaceEdit();
@@ -25,11 +25,10 @@ export async function setupWorkspace(context: ExtensionContext, pathOrUri?: stri
     // When files are only being created (not edited), `applyEdit` returns `false`
     // even on success so return value is useless to detect failures.
     await vscode.workspace.applyEdit(edit);
-    await Promise.all(
-      edit
-        .entries()
-        .map(([uri]) => vscode.workspace.openTextDocument(uri).then((doc) => doc.save())),
-    );
+    for (const entry of edit.entries()) {
+      const document = await vscode.workspace.openTextDocument(entry[0]);
+      await document.save();
+    }
     context.log.info('SetupWorkspace: Added Gemfile and Sorbet config.');
   } else {
     context.log.info('SetupWorkspace: No files were added.');
@@ -42,7 +41,7 @@ export async function setupWorkspace(context: ExtensionContext, pathOrUri?: stri
         'bundle install',
         'bundle exec tapioca init',
       ],
-      cwd: uri.fsPath,
+      cwd: uri,
       name: 'setup',
     });
     if (terminal) {

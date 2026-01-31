@@ -20,6 +20,9 @@ class FoldingFrame extends vscode.FoldingRange {
   }
 }
 
+/**
+ * Provides indent-based ranges, with custom processing for comment blocks.
+ */
 export class FoldingRangeProvider implements vscode.FoldingRangeProvider {
   provideFoldingRanges(document: vscode.TextDocument): vscode.FoldingRange[] {
     const ranges: vscode.FoldingRange[] = [];
