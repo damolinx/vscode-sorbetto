@@ -277,13 +277,13 @@ export class SorbetClient implements vscode.Disposable {
           if (lspProcess.hasExited) {
             if (lspProcess.exitedWithLegacyRetryCode) {
               this.context.log.warn(
-                `${logPrefix}Sorbet LSP exited after startup with a retryable exit code:`,
+                `${logPrefix}Sorbet language server exited on startup with retryable exit code:`,
                 lspProcess.process.exitCode,
               );
               retry = true;
             } else {
               this.context.log.error(
-                `${logPrefix}Sorbet LSP exited after startup. Check configuration:`,
+                `${logPrefix}Sorbet language server exited on startup. Check configuration:`,
                 this.configuration.lspConfigurationType,
               );
               retry = false;

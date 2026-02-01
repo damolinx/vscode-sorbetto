@@ -102,7 +102,7 @@ export class SorbetLanguageClient
     function data2String(data: any) {
       if (data instanceof vslc.ResponseError) {
         const responseError = data;
-        return `Message: ${responseError.message} - Code: ${responseError.code}\n ${responseError.data ? '\n' + responseError.data.toString() : ''}`;
+        return `${responseError.message}${responseError.message.endsWith('.') ? ' ' : '. '}Code: ${responseError.code}${responseError.data ? `\n${responseError.data}` : ''}`;
       }
       if (data instanceof Error) {
         if (typeof data.stack === 'string') {
