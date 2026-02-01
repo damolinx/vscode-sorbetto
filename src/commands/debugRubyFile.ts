@@ -12,36 +12,32 @@ export async function debugRubyFile(context: ExtensionContext, pathOrUri?: strin
   }
 
   if (uri.scheme !== 'file') {
-    context.log.info(
-      'DebugRuby: File must be saved locally to be debugged.',
-      vscode.workspace.asRelativePath(uri),
-    );
+    context.log.info('DebugRuby: File must be local to be debugged.', uri.toString(true));
     return;
   }
 
-  const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-  const targetPath = workspaceFolder ? vscode.workspace.asRelativePath(uri, false) : uri.fsPath;
-
   const document = await vscode.workspace.openTextDocument(uri);
   if (document.isDirty) {
-    context.log.info(
+    context.log.debug(
       'DebugRuby: Saving file before debugging.',
       vscode.workspace.asRelativePath(document.uri),
     );
     await document.save();
   }
 
+  const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
   if (isDebuggerTypeAvailable('rdbg')) {
-    context.log.info('DebugRuby: Using registered `rdbg` debugger type');
+    context.log.debug('DebugRuby: Using registered `rdbg` debugger type');
     await vscode.debug.startDebugging(workspaceFolder, {
-      type: 'rdbg',
+      cwd: workspaceFolder?.uri,
       name: `Debug ${basename(document.fileName)}`,
       request: 'launch',
-      cwd: workspaceFolder?.uri,
       script: document.fileName,
+      type: 'rdbg',
     });
   } else if (await verifyEnvironment(context, ['ruby', 'bundle', 'rdbg'])) {
-    context.log.info('DebugRuby: Using `rdbg` executable');
+    context.log.debug('DebugRuby: Using `rdbg` executable');
+    const targetPath = vscode.workspace.asRelativePath(uri, false);
     await executeCommandsInTerminal({
       commands: [`bundle exec rdbg ${targetPath}`],
       cwd: workspaceFolder?.uri,
@@ -50,7 +46,7 @@ export async function debugRubyFile(context: ExtensionContext, pathOrUri?: strin
   } else {
     context.log.error('DebugRuby: No registered `rdbg` debugger-type or executable found');
     vscode.window.showErrorMessage(
-      'No `rdbg` debugger detected. Install a Ruby debug extension or ensure `rdbg` is available in your environment.',
+      '`rdbg` debugger not found. Install a Ruby debugger extension or ensure `rdbg` is available in your environment.',
     );
   }
 }
