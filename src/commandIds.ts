@@ -2,7 +2,7 @@ import { EXTENSION_PREFIX } from './constants';
 
 export const CommandIds = {
   /** Run `srb tc --autocorrect` */
-  AutocorrectAll: `_${EXTENSION_PREFIX}.autocorrectAll`,
+  AutocorrectAll: `${EXTENSION_PREFIX}.autocorrectAll`,
 
   /** Run `bundle install`. */
   BundleInstall: `_${EXTENSION_PREFIX}.bundleInstall`,

@@ -33,8 +33,8 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   // Register commands
   const rc = vscode.commands.registerCommand;
   context.disposables.push(
-    rc(CommandIds.AutocorrectAll, (code: string | number, contextUri: vscode.Uri) =>
-      autocorrectAll(context, contextUri, code),
+    rc(CommandIds.AutocorrectAll, (pathOrUri?: string | vscode.Uri, codes?: number[]) =>
+      autocorrectAll(context, pathOrUri, codes),
     ),
     rc(CommandIds.BundleInstall, (gemfile: string | vscode.Uri) =>
       bundleInstall(context, gemfile, 'install'),

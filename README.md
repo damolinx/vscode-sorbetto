@@ -191,22 +191,23 @@ The extension does not currently detect conflicts between your workspace setting
 
 | Command                          | Description |
 |----------------------------------|-------------|
-| **Copy Symbol**                  | Copies the symbol at the cursor to the clipboard. |
-| **Debug Ruby File**              | Debugs the active Ruby file using either the registered `rdbg` debugger type or the `rdbg` executable. Intended for quick verification of standalone scripts, not as a replacement for a workspace [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
-| **Peek Hierarchy References**    | Finds all [references](https://sorbet.org/docs/lsp#sorbethierarchyreferences-request) to the symbol under the cursor, including overrides. |
-| **Restart Sorbet**               | Restarts the Sorbet language server. |
+| **Autocorrect Error Codes (All Files)** | Applies Sorbet autocorrects for error codes using `srb --autocorrect --isolate-error-code`. Note that not every error has an autofix, and some offer multiple so Sorbet will decide which one to apply. |
+| **Copy Symbol** | Copies the symbol at the cursor to the clipboard. |
+| **Debug Ruby File** | Debugs the active Ruby file using either the registered `rdbg` debugger type or the `rdbg` executable. Intended for quick verification of standalone scripts, not as a replacement for a workspace [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
+| **Peek Hierarchy References** | Finds all [references](https://sorbet.org/docs/lsp#sorbethierarchyreferences-request) to the symbol under the cursor, including overrides. |
+| **Restart Sorbet** | Restarts the Sorbet language server. |
 | **Send Selection to sorbet.run** | Sends the selected Ruby code to [sorbet.run](https://sorbet.run). Limited to 1MB. |
-| **Start Sorbet**                 | Starts the Sorbet language server. |
-| **Stop Sorbet**                  | Stops the Sorbet language server. |
-| **Run Ruby File**                | Executes the active Ruby file. Intended for quick verification of standalone scripts, not as a replacement for a workspace [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
-| **Setup Workspace**              | Configures the workspace for Sorbet usage. |
-| **Update RBIs**                  | Updates RBI files using Tapioca. |
+| **Start Sorbet** | Starts the Sorbet language server. |
+| **Stop Sorbet** | Stops the Sorbet language server. |
+| **Run Ruby File** | Executes the active Ruby file. Intended for quick verification of standalone scripts, not as a replacement for a workspace [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
+| **Setup Workspace** | Configures the workspace for Sorbet usage. |
+| **Update RBIs** | Updates RBI files using Tapioca. |
 
 The following commands are available in the context menu of text editors.
 
 | Command                       | Description |
 |-------------------------------|-------------|
-| **Copy Symbol**               | Copies the symbol at the cursor to the clipboard. |
+| **Copy Symbol** | Copies the symbol at the cursor to the clipboard. |
 | **Peek Hierarchy References** | Finds all [references](https://sorbet.org/docs/lsp#sorbethierarchyreferences-request) to the symbol under the cursor, including overrides. |
 
 <p align=center>

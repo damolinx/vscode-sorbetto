@@ -7,6 +7,8 @@
 - Add `sorbetto.rubyFmtPath` setting to configure `rubyfmt` path.
 - Improve `sorbetto.restartFilePatterns` restart-listener now remain active after error, allowing on-disk changes to `sorbet/config` to take effect immediately.
 - Reduced number of method snippets.
+- Add **Autocorrect Error Codes (All Files)** command to fix multiple error codes across all files.
+- Remove custom **Apply Sorbet fixes for error _code_ to all files** quick fix.
 - Fix: Missing **Initializing** message in language status item in some scenarios, making it unclear whether the language server is starting up.
 - Fix: `--sorbet-package` must be last argument or other arguments are reported as file errors.
 

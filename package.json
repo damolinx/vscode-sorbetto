@@ -36,6 +36,12 @@
   "contributes": {
     "commands": [
       {
+        "command": "sorbetto.autocorrectAll",
+        "title": "Autocorrect Error Codes (All Files)",
+        "category": "Sorbetto",
+        "enablement": "workbenchState != empty && sorbetto:active"
+      },
+      {
         "command": "sorbetto.copySymbol",
         "title": "Copy Symbol",
         "category": "Sorbetto",
