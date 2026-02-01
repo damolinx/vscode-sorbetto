@@ -4,7 +4,10 @@ import { ExtensionContext } from '../extensionContext';
 import { executeCommandsInTerminal, getTargetEditorUri } from './utils';
 import { verifyEnvironment } from './verifyEnvironment';
 
-export async function debugRubyFile(context: ExtensionContext, pathOrUri?: string | vscode.Uri) {
+export async function debugRubyFile(
+  context: ExtensionContext,
+  pathOrUri?: string | vscode.Uri,
+): Promise<void> {
   const uri = getTargetEditorUri(pathOrUri);
   if (!uri) {
     context.log.info('DebugRuby: No target file.');

@@ -4,7 +4,10 @@ import { ExtensionContext } from '../extensionContext';
 import { executeCommandsInTerminal, getTargetEditorUri } from './utils';
 import { verifyEnvironment } from './verifyEnvironment';
 
-export async function runRubyFile(context: ExtensionContext, pathOrUri?: string | vscode.Uri) {
+export async function runRubyFile(
+  context: ExtensionContext,
+  pathOrUri?: string | vscode.Uri,
+): Promise<void> {
   const uri = getTargetEditorUri(pathOrUri);
   if (!uri) {
     context.log.info('RunRuby: No file to run.');
@@ -12,15 +15,9 @@ export async function runRubyFile(context: ExtensionContext, pathOrUri?: string 
   }
 
   if (uri.scheme !== 'file') {
-    context.log.info(
-      'RunRuby: File must be saved locally to be run.',
-      vscode.workspace.asRelativePath(uri),
-    );
+    context.log.info('RunRuby: File must be saved locally to be run.', uri.toString(true));
     return;
   }
-
-  const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-  const targetPath = workspaceFolder ? vscode.workspace.asRelativePath(uri, false) : uri.fsPath;
 
   const document = await vscode.workspace.openTextDocument(uri);
   if (document.isDirty) {
@@ -32,12 +29,12 @@ export async function runRubyFile(context: ExtensionContext, pathOrUri?: string 
   }
 
   if (await verifyEnvironment(context, ['ruby', 'bundle'])) {
-    return executeCommandsInTerminal({
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+    const targetPath = vscode.workspace.asRelativePath(uri, false);
+    await executeCommandsInTerminal({
       commands: [`bundle exec ruby ${targetPath}`],
       cwd: workspaceFolder?.uri,
       name: `Run ${basename(targetPath)}`,
     });
   }
-
-  return;
 }
