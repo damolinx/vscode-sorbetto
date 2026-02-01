@@ -7,12 +7,12 @@
       "request": "launch",
       "runtimeExecutable": "${execPath}",
       "args": [
-        "--extensionDevelopmentPath=${workspaceRoot}"
+        "--extensionDevelopmentPath=${workspaceFolder}"
       ],
       "outFiles": [
-        "${workspaceRoot}/out/**/*.js"
+        "${workspaceFolder}/out/**/*.js"
       ],
-      "preLaunchTask": "watch",
+      "preLaunchTask": "npm: watch",
       "resolveSourceMapLocations": [
         "${workspaceFolder}/out/**",
         "!**/node_modules/**"
@@ -25,10 +25,13 @@
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
+        "--extensionTestsPath=${workspaceFolder}/out/test/suite/index",
+        "--disable-extensions"
       ],
-      "outFiles": [],
-      "preLaunchTask": "watch",
+      "outFiles": [
+        "${workspaceFolder}/out/**/*.js"
+      ],
+      "preLaunchTask": "npm: compile",
       "resolveSourceMapLocations": [
         "${workspaceFolder}/out/**",
         "!**/node_modules/**"
