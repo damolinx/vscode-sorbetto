@@ -1,27 +1,9 @@
 {
-  "Abstract Method": {
-    "description": "Sorbet abstract method",
-    "prefix": ["abstract_method"],
-    "body": [
-      "sig { abstract.void }",
-      "def ${1:method_name}",
-      "  $0",
-      "end",
-    ]
-  },
-  "Final Method": {
-    "description": "Sorbet final method",
-    "prefix": ["final_method"],
-    "body": [
-      "sig (:final) { void }",
-      "def ${1:method_name}",
-      "  $0",
-      "end",
-    ]
-  },
-  "Generic Method": {
+  "Simple generic method": {
     "description": "Sorbet generic method",
-    "prefix": ["generic_method"],
+    "prefix": [
+      "generic_method"
+    ],
     "body": [
       "sig do",
       "  type_parameters(:${2:U})",
@@ -33,23 +15,14 @@
       "end",
     ]
   },
-  "Overridable Method": {
-    "description": "Sorbet overridable method",
-    "prefix": ["overridable_method"],
+  "Simple method with sig": {
+    "description": "Ruby method with Sorbet sig annotation and optional modifiers",
+    "prefix": [
+      "method"
+    ],
     "body": [
-      "sig { overridable.void }",
+      "sig {${2| , abstract., overridable., override.|}void }",
       "def ${1:method_name}",
-      "  $0",
-      "end",
-    ]
-  },
-  "Override Method": {
-    "description": "Override method",
-    "prefix": ["override_method"],
-    "body": [
-      "sig { override.void }",
-      "def ${1:method_name}",
-      "  super",
       "  $0",
       "end",
     ]

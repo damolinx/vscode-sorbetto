@@ -246,7 +246,7 @@ When using [multi-root workspaces](#multi-root-workspaces), the currently focuse
 
 ### Sorbet Snippets
 Sorbetto provides [snippets](https://code.visualstudio.com/docs/editing/userdefinedsnippets) for standard Sorbet constructs on top of the ones offered by Sorbet already. These are available from the **Snippet: Fill File with Snippet** and **Snippet: Insert Snippet** commands.
-All snippets have an associated trigger word recognized by IntelliSense while typing, making them easily accessible. For example, typing `abstract` will display the snippets for an abstract class, module, or method, allowing for quick and intuitive code insertion.
+All snippets have an associated trigger word recognized by IntelliSense while typing, making them easily accessible. For example, typing `method` will display the snippet for a method with a `sig`.
 
 <p align=center>
   <img width=400 src="https://github.com/user-attachments/assets/d03241d1-7f83-4485-a59c-be38264e18c0" alt="Sorbet snippets provided by Sorbetto" />

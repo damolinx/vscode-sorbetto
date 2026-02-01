@@ -6,6 +6,7 @@
   - indentation-based folding ranges.
 - Add `sorbetto.rubyFmtPath` setting to configure `rubyfmt` path.
 - Improve `sorbetto.restartFilePatterns` restart-listener now remain active after error, allowing on-disk changes to `sorbet/config` to take effect immediately.
+- Reduced number of method snippets.
 - Fix: Missing **Initializing** message in language status item in some scenarios, making it unclear whether the language server is starting up.
 
 ## 0.3.21
