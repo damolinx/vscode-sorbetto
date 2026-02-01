@@ -4,8 +4,8 @@
 - Add custom `FoldingRangeProvider` that supports:
   - line and block comments
   - indentation-based folding ranges.
+- Add `sorbetto.rubyFmtPath` setting to configure `rubyfmt` path.
 - Fix: Missing `Initializing` status in some cases, making it unclear whether the language server is starting up.
-
 
 ## 0.3.21
 - Fix: Disable `FoldingRangeProvider` for `#` comment blocks as it disables VS Code's indentation-based folding logic.

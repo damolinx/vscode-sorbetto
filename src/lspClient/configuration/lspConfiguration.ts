@@ -58,11 +58,15 @@ export async function createLspConfiguration(
     }
     if (configuration.isEnabled('enableRubyfmt')) {
       lspConfig.args.push('--enable-experimental-lsp-document-formatting-rubyfmt');
+      const rubyfmtPath = configuration.getValue<string>('rubyfmtPath')?.trim();
+      if (rubyfmtPath) {
+        lspConfig.args.push('--rubyfmt-path', rubyfmtPath);
+      }
     }
 
-    const value = configuration.getValue<number>('maximumDiagnosticsCount', 1000);
-    if (value !== 1000) {
-      lspConfig.args.push('--lsp-error-cap', value.toString());
+    const maxDiagCount = configuration.getValue<number>('maximumDiagnosticsCount', 1000);
+    if (maxDiagCount !== 1000) {
+      lspConfig.args.push('--lsp-error-cap', maxDiagCount.toString());
     }
 
     await enableWatchmanSupport(lspConfig, configuration);

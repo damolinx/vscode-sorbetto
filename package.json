@@ -296,13 +296,14 @@
             "scope": "resource",
             "type": "boolean",
             "default": false,
-            "markdownDescription": "Enable **experimental** document formatting with [Rubyfmt](https://github.com/fables-tales/rubyfmt). If it is not installed or not on your PATH, this option has no effect. Check [documentation](https://sorbet.org/docs/cli-ref#lsp-feature-options)."
+            "markdownDescription": "Path to the [Rubyfmt](https://github.com/fables-tales/rubyfmt) executable used for document formatting. If it is not installed or not on your PATH, this option has no effect. Check [documentation](https://sorbet.org/docs/cli-ref#lsp-feature-options)."
           },
           "sorbetto.rubyfmtPath": {
             "scope": "resource",
-            "type": "boolean",
-            "default": false,
-            "markdownDescription": "Enable **experimental** document formatting with [Rubyfmt](https://github.com/fables-tales/rubyfmt). If it is not installed or not on your PATH, this option has no effect. Check [documentation](https://sorbet.org/docs/cli-ref#lsp-feature-options)."
+            "type": "string",
+            "markdownDescription": "Enable **experimental** document formatting with [Rubyfmt](https://github.com/fables-tales/rubyfmt). Used when [`enableRubyfmt`](#sorbetto.enableRubyfmt) is active. Check [documentation](https://sorbet.org/docs/cli-ref#lsp-feature-options).",
+            "pattern": "^(|\\S+)$",
+            "patternErrorMessage": "Value must be empty, or a path"
           }
         }
       }

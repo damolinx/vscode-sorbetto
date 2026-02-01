@@ -13,6 +13,7 @@ const ConfigurationKeys = {
   highlightUntypedCodeDiagnosticSeverity: { lspOption: true },
   maximumDiagnosticsCount: { lspOption: true },
   restartFilePatterns: { lspOption: true },
+  rubyfmtPath: { lspOption: true },
   sorbetLspConfiguration: {},
   sorbetLspCustomConfiguration: {},
   sorbetTypecheckCommand: {},
