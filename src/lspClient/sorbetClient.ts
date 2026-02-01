@@ -202,7 +202,6 @@ export class SorbetClient implements vscode.Disposable {
                   this.workspaceFolder.uri.toString(true),
                 );
                 this.status = SorbetClientStatus.Disabled;
-                this.restartWatcher.disable();
                 break;
             }
           }),
@@ -237,7 +236,7 @@ export class SorbetClient implements vscode.Disposable {
    */
   public async restart() {
     this.context.metrics.increment('restart', 1);
-    await this.stop(true);
+    await this.stop();
     await this.start();
   }
 
@@ -293,7 +292,6 @@ export class SorbetClient implements vscode.Disposable {
           } else {
             this.languageClient = client;
             this.status = SorbetClientStatus.Running;
-            this.restartWatcher.enable();
             this.context.metrics.increment('start', 1);
             retry = false;
           }
@@ -364,10 +362,8 @@ export class SorbetClient implements vscode.Disposable {
 
   /**
    * Stops the Sorbet LSP client if it is running.
-   * @param restarting Stop is part of a restart operation. This allows to
-   * selectively clean-up resources.
    */
-  public async stop(restarting?: true) {
+  public async stop() {
     const logPrefix =
       this.context.clientManager.clientCount > 1 ? `[${this.workspaceFolder.name}] ` : '';
     if (this.languageClient) {
@@ -400,9 +396,6 @@ export class SorbetClient implements vscode.Disposable {
     }
 
     this.status = SorbetClientStatus.Disabled;
-    if (!restarting) {
-      this.restartWatcher.disable();
-    }
     this.context.metrics.increment('stop', 1);
   }
 
