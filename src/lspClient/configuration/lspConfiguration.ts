@@ -47,9 +47,6 @@ export async function createLspConfiguration(
     if (configuration.isEnabled('enableAllExperimentalLspFeatures')) {
       lspConfig.args.push('--enable-all-experimental-lsp-features');
     }
-    if (configuration.isEnabled('enablePackageSupport')) {
-      lspConfig.args.push('--sorbet-packages');
-    }
     if (configuration.isEnabled('enableRequiresAncestor')) {
       lspConfig.args.push('--enable-experimental-requires-ancestor');
     }
@@ -63,13 +60,17 @@ export async function createLspConfiguration(
         lspConfig.args.push('--rubyfmt-path', rubyfmtPath);
       }
     }
-
     const maxDiagCount = configuration.getValue<number>('maximumDiagnosticsCount', 1000);
     if (maxDiagCount !== 1000) {
       lspConfig.args.push('--lsp-error-cap', maxDiagCount.toString());
     }
 
     await enableWatchmanSupport(lspConfig, configuration);
+
+    // MUST be last argument
+    if (configuration.isEnabled('enablePackageSupport')) {
+      lspConfig.args.push('--sorbet-packages');
+    }
   }
 
   return lspConfig;

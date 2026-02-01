@@ -8,6 +8,7 @@
 - Improve `sorbetto.restartFilePatterns` restart-listener now remain active after error, allowing on-disk changes to `sorbet/config` to take effect immediately.
 - Reduced number of method snippets.
 - Fix: Missing **Initializing** message in language status item in some scenarios, making it unclear whether the language server is starting up.
+- Fix: `--sorbet-package` must be last argument or other arguments are reported as file errors.
 
 ## 0.3.21
 - Fix: Disable `FoldingRangeProvider` for `#` comment blocks as it disables VS Code's indentation-based folding logic.
