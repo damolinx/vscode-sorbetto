@@ -8,27 +8,25 @@ export async function openSettings(
   contextPathOrUri?: string | vscode.Uri,
   setting = 'sorbetto',
 ) {
-  const contextUri = contextPathOrUri
-    ? contextPathOrUri instanceof vscode.Uri
-      ? contextPathOrUri
-      : vscode.Uri.parse(contextPathOrUri)
-    : (mainAreaActiveEditorUri() ?? (await getTargetWorkspaceUri(context)));
-  context.log.debug(
-    'Open settings',
-    setting,
-    contextUri ? vscode.workspace.asRelativePath(contextUri) : '',
+  const workspaceUri = await getTargetWorkspaceUri(
+    context,
+    contextPathOrUri ?? mainAreaActiveEditorUri(),
   );
+  if (!workspaceUri) {
+    return;
+  }
 
+  context.log.debug('Open settings', setting, workspaceUri.toString(true));
   await vscode.commands.executeCommand(getCommand(), setting);
+}
 
-  function getCommand() {
-    const workspaceCount = vscode.workspace.workspaceFolders?.length;
-    if (!workspaceCount) {
-      return 'workbench.action.openSettings';
-    } else if (workspaceCount === 1) {
-      return 'workbench.action.openWorkspaceSettings';
-    } else {
-      return 'workbench.action.openFolderSettings';
-    }
+function getCommand() {
+  const workspaceCount = vscode.workspace.workspaceFolders?.length;
+  if (!workspaceCount) {
+    return 'workbench.action.openSettings';
+  } else if (workspaceCount === 1) {
+    return 'workbench.action.openWorkspaceSettings';
+  } else {
+    return 'workbench.action.openFolderSettings';
   }
 }

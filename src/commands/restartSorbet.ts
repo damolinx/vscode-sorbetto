@@ -7,19 +7,23 @@ import { getTargetWorkspaceUri } from './utils';
 export async function restartSorbet(
   context: ExtensionContext,
   action: 'start' | 'stop' | 'restart',
-  pathOrUri?: string | vscode.Uri,
+  contextPathOrUri?: string | vscode.Uri,
 ) {
-  const uri = await getTargetWorkspaceUri(context, pathOrUri ?? mainAreaActiveEditorUri(), {
-    forceSorbetWorkspace: true,
-  });
-  if (!uri) {
-    context.log.debug('No target workspace.', action);
+  const workspaceUri = await getTargetWorkspaceUri(
+    context,
+    contextPathOrUri ?? mainAreaActiveEditorUri(),
+  );
+  if (!workspaceUri) {
     return;
   }
 
-  const client = context.clientManager.getClient(uri);
+  const client = context.clientManager.getClient(workspaceUri);
   if (!client) {
-    context.log.info('No Sorbet client for selected workspace.', action, uri.toString(true));
+    context.log.info(
+      'No Sorbet client for selected workspace.',
+      action,
+      workspaceUri.toString(true),
+    );
     return;
   }
 
@@ -27,12 +31,12 @@ export async function restartSorbet(
     case 'restart':
       await (client.isEnabledByConfiguration()
         ? client.restart()
-        : showDisabledConfigurationNotification(uri));
+        : showDisabledConfigurationNotification(workspaceUri));
       break;
     case 'start':
       await (client.isEnabledByConfiguration()
         ? client.start()
-        : showDisabledConfigurationNotification(uri));
+        : showDisabledConfigurationNotification(workspaceUri));
       break;
     case 'stop':
       await client.stop();

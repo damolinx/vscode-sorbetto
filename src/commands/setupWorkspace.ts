@@ -11,15 +11,23 @@ const GEMFILE_DEPS = {
   tapioca: "gem 'tapioca', require: false, group: %i[development test]",
 } as const;
 
-export async function setupWorkspace(context: ExtensionContext, pathOrUri?: string | vscode.Uri) {
-  const uri = await getTargetWorkspaceUri(context, pathOrUri);
-  if (!uri) {
+export async function setupWorkspace(
+  context: ExtensionContext,
+  contextPathOrUri?: string | vscode.Uri,
+): Promise<void> {
+  const workspaceUri = await getTargetWorkspaceUri(context, contextPathOrUri, {
+    skipSorbetWorkspaceVerification: true,
+  });
+  if (!workspaceUri) {
     context.log.debug('SetupWorkspace: No workspace.');
     return;
   }
 
   const edit = new vscode.WorkspaceEdit();
-  const changes = await Promise.all([verifyGemfile(uri, edit), verifySorbetConfig(uri, edit)]);
+  const changes = await Promise.all([
+    verifyGemfile(workspaceUri, edit),
+    verifySorbetConfig(workspaceUri, edit),
+  ]);
 
   if (changes.some((changed) => changed)) {
     // When files are only being created (not edited), `applyEdit` returns `false`
@@ -41,14 +49,14 @@ export async function setupWorkspace(context: ExtensionContext, pathOrUri?: stri
         'bundle install',
         'bundle exec tapioca init',
       ],
-      cwd: uri,
+      cwd: workspaceUri,
       name: 'setup',
     });
     if (terminal) {
       const disposable = vscode.window.onDidCloseTerminal(async (closedTerminal) => {
         if (closedTerminal === terminal) {
           disposable.dispose();
-          const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+          const workspaceFolder = vscode.workspace.getWorkspaceFolder(workspaceUri);
           if (workspaceFolder) {
             await context.clientManager.addWorkspace(workspaceFolder);
           }

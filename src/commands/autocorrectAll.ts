@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { mainAreaActiveEditorUri } from '../common/utils';
 import { ExtensionContext } from '../extensionContext';
 import { executeCommandsInTerminal, getTargetWorkspaceUri } from './utils';
 
@@ -7,21 +8,17 @@ export async function autocorrectAll(
   contextPathOrUri?: string | vscode.Uri,
   codes?: number[],
 ) {
-  const workspaceUri = await getTargetWorkspaceUri(context, contextPathOrUri, {
-    forceSorbetWorkspace: true,
-  });
+  const workspaceUri = await getTargetWorkspaceUri(
+    context,
+    contextPathOrUri ?? mainAreaActiveEditorUri(),
+  );
   if (!workspaceUri) {
     return;
   }
 
   const client = context.clientManager.getClient(workspaceUri);
   if (!client) {
-    context.log.error(
-      'AutocorrectAll: No Sorbet client.',
-      contextPathOrUri
-        ? vscode.workspace.asRelativePath(contextPathOrUri)
-        : workspaceUri.toString(true),
-    );
+    context.log.error('AutocorrectAll: No Sorbet client.', workspaceUri.toString(true));
     return;
   }
 
@@ -46,7 +43,7 @@ async function getErrorCodes(): Promise<number[] | undefined> {
     title: 'Autocorrect (All Files)',
     placeHolder: 'Sorbet error codes, comma-separated (e.g. 3717,3718)',
     prompt:
-      'Apply Sorbet autocorrects for one or more error codes across all files. Note: some codes have no fixes, and others may offer multiple fixes—only the first will be applied.',
+      'Apply Sorbet autocorrects for one or more error codes across all files. Note: some codes have no fixes, and other have multiple fixes so Sorbet picks one to apply.',
     validateInput: (value) => {
       const values = parse(value);
       if (values.length === 0) {

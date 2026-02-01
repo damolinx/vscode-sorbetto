@@ -45,7 +45,7 @@ export function getTargetEditorUri(pathOrUri?: string | vscode.Uri): vscode.Uri 
 export async function getTargetWorkspace(
   context: ExtensionContext,
   pathOrUri?: string | vscode.Uri,
-  options?: { forceSorbetWorkspace?: true },
+  options?: { skipSorbetWorkspaceVerification?: true },
 ): Promise<vscode.WorkspaceFolder | undefined> {
   let workspaceFolder: vscode.WorkspaceFolder | undefined;
   if (pathOrUri) {
@@ -67,7 +67,7 @@ export async function getTargetWorkspace(
         });
         if (candidateWorkspaceFolder) {
           if (
-            options?.forceSorbetWorkspace &&
+            !options?.skipSorbetWorkspaceVerification &&
             !(await isSorbetWorkspace(candidateWorkspaceFolder))
           ) {
             await showNotSorbetEnabledWarning(context, candidateWorkspaceFolder);
@@ -85,7 +85,7 @@ export async function getTargetWorkspace(
 export async function getTargetWorkspaceUri(
   context: ExtensionContext,
   pathOrUri?: string | vscode.Uri,
-  options?: { forceSorbetWorkspace?: true },
+  options?: { skipSorbetWorkspaceVerification?: true },
 ): Promise<vscode.Uri | undefined> {
   const workspaceFolder = await getTargetWorkspace(context, pathOrUri, options);
   return workspaceFolder?.uri;
