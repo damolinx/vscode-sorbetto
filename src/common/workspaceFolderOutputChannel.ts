@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-export class WorkspaceFolderOutputChannel implements vscode.OutputChannel {
+export class WorkspaceFolderOutputChannel implements vscode.LogOutputChannel {
   public static normalizedLogValue(
     value: string,
     workspaceName: string,
@@ -14,49 +14,77 @@ export class WorkspaceFolderOutputChannel implements vscode.OutputChannel {
     return single ? normalizedValue : `${workspaceName} ${normalizedValue}`;
   }
 
-  private readonly outputChannel: vscode.OutputChannel;
+  private readonly channel: vscode.LogOutputChannel;
   private readonly workspaceName: string;
 
-  constructor(outputChannel: vscode.OutputChannel, workspaceFolder: vscode.WorkspaceFolder) {
-    this.outputChannel = outputChannel;
-    this.workspaceName = `[${workspaceFolder.name}]`;
+  constructor(channel: vscode.LogOutputChannel, { name }: vscode.WorkspaceFolder) {
+    this.channel = channel;
+    this.workspaceName = `[${name}]`;
   }
 
   dispose(): void {}
 
-  append(value: string): void {
-    this.outputChannel.append(
+  public get logLevel(): vscode.LogLevel {
+    return this.channel.logLevel;
+  }
+
+  public append(value: string): void {
+    this.channel.append(
       WorkspaceFolderOutputChannel.normalizedLogValue(value, this.workspaceName, true),
     );
   }
 
-  appendLine(value: string): void {
-    this.outputChannel.appendLine(
+  public appendLine(value: string): void {
+    this.channel.appendLine(
       WorkspaceFolderOutputChannel.normalizedLogValue(value, this.workspaceName),
     );
   }
 
-  clear(): void {
-    this.outputChannel.clear();
+  public clear(): void {
+    this.channel.clear();
   }
 
-  hide(): void {
-    this.outputChannel.hide();
+  public debug(message: string, ...args: any[]): void {
+    this.channel.debug(message, ...args);
   }
 
-  get name(): string {
-    return this.outputChannel.name;
+  public error(error: string | Error, ...args: any[]): void {
+    this.channel.error(error, ...args);
   }
 
-  replace(value: string): void {
-    this.outputChannel.replace(value);
+  public hide(): void {
+    this.channel.hide();
   }
 
-  show(preserveFocus?: boolean): void;
-  show(column?: vscode.ViewColumn, preserveFocus?: boolean): void;
-  show(columnOrPreserveFocus?: boolean | vscode.ViewColumn, preserveFocus?: boolean): void {
-    this.outputChannel.show(
+  public info(message: string, ...args: any[]): void {
+    this.channel.info(message, ...args);
+  }
+
+  public get name(): string {
+    return this.channel.name;
+  }
+
+  public get onDidChangeLogLevel(): vscode.Event<vscode.LogLevel> {
+    return this.channel.onDidChangeLogLevel;
+  }
+
+  public replace(value: string): void {
+    this.channel.replace(value);
+  }
+
+  public show(preserveFocus?: boolean): void;
+  public show(column?: vscode.ViewColumn, preserveFocus?: boolean): void;
+  public show(columnOrPreserveFocus?: boolean | vscode.ViewColumn, preserveFocus?: boolean): void {
+    this.channel.show(
       typeof columnOrPreserveFocus === 'boolean' ? columnOrPreserveFocus : preserveFocus,
     );
+  }
+
+  public trace(message: string, ...args: any[]): void {
+    this.channel.trace(message, ...args);
+  }
+
+  public warn(message: string, ...args: any[]): void {
+    this.channel.warn(message, ...args);
   }
 }
