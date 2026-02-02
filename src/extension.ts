@@ -6,6 +6,7 @@ import { bundleInstall } from './commands/bundleInstall';
 import { copySymbol } from './commands/copySymbol';
 import { debugRubyFile } from './commands/debugRubyFile';
 import { handleRename } from './commands/handleRename';
+import { openPackage } from './commands/openPackage';
 import { openSettings } from './commands/openSettings';
 import { peekHierarchyReferences } from './commands/peekHierarchyReferences';
 import { restartSorbet } from './commands/restartSorbet';
@@ -45,6 +46,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     rc(CommandIds.DebugRubyFile, (pathOrUri?: string | vscode.Uri) =>
       debugRubyFile(context, pathOrUri),
     ),
+    rc(CommandIds.OpenPackage, (pathOrUri: string | vscode.Uri) => openPackage(context, pathOrUri)),
     rc(CommandIds.OpenSettings, (pathOrUri: string | vscode.Uri, setting?: string) =>
       openSettings(context, pathOrUri, setting),
     ),

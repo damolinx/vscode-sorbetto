@@ -194,6 +194,7 @@ The extension does not currently detect conflicts between your workspace setting
 | **Autocorrect Error Codes (All Files)** | Applies Sorbet autocorrects for error codes using `srb --autocorrect --isolate-error-code`. Note that not every error has an autofix, and some offer multiple so Sorbet will decide which one to apply. |
 | **Copy Symbol** | Copies the symbol at the cursor to the clipboard. |
 | **Debug Ruby File** | Debugs the active Ruby file using either the registered `rdbg` debugger type or the `rdbg` executable. Intended for quick verification of standalone scripts, not as a replacement for a workspace [launch configuration](https://code.visualstudio.com/docs/debugtest/debugging-configuration#_launch-configurations). |
+| **Open Package** | Open associated `__package.rb` for a given Ruby file, or offer to create one if none is found. |
 | **Peek Hierarchy References** | Finds all [references](https://sorbet.org/docs/lsp#sorbethierarchyreferences-request) to the symbol under the cursor, including overrides. |
 | **Restart Sorbet** | Restarts the Sorbet language server. |
 | **Send Selection to sorbet.run** | Sends the selected Ruby code to [sorbet.run](https://sorbet.run). Limited to 1MB. |

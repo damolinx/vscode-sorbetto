@@ -16,6 +16,9 @@ export const CommandIds = {
   /** Debug a Ruby file. */
   DebugRubyFile: `${EXTENSION_PREFIX}.debugRubyFile`,
 
+  /** Open __package.rb appropriate for current file. */
+  OpenPackage: `${EXTENSION_PREFIX}.openPackage`,
+
   /** Open Settings Editor appropriate for current workspace. */
   OpenSettings: `_${EXTENSION_PREFIX}.openSettings`,
 

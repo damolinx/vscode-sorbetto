@@ -55,6 +55,12 @@
         "enablement": "workbenchState != empty && !inDebugMode && editorIsOpen && (resourceScheme == file || resourceScheme == vscode-remote) && resourceExtname == .rb"
       },
       {
+        "command": "sorbetto.openPackage",
+        "title": "Open Package File",
+        "category": "Sorbetto",
+        "enablement": "workbenchState != empty && editorLangId == ruby"
+      },
+      {
         "command": "sorbetto.peekHierarchyReferences",
         "title": "Peek Hierarchy References",
         "category": "Sorbetto",
