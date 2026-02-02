@@ -53,12 +53,11 @@ export function createClient(
 export class SorbetLanguageClient
   extends vslcn.LanguageClient
   implements
-    HierarchyReferencesRequest,
-    ReadFileRequest,
-    ShowOperationNotification,
-    ShowSymbolRequest,
-    WorkspaceDidChangeConfigurationNotification
-{
+  HierarchyReferencesRequest,
+  ReadFileRequest,
+  ShowOperationNotification,
+  ShowSymbolRequest,
+  WorkspaceDidChangeConfigurationNotification {
   private readonly log: Log;
   public operations: SorbetShowOperationParams[];
 
@@ -70,19 +69,6 @@ export class SorbetLanguageClient
     super('sorbetto', 'Sorbet', serverOptions, clientOptions);
     this.log = log;
     this.operations = [];
-
-    this.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, (params: SorbetShowOperationParams) => {
-      if (params.status === 'end') {
-        const filteredOps = this.operations.filter(
-          ({ operationName }) => operationName !== params.operationName,
-        );
-        if (filteredOps.length !== this.operations.length) {
-          this.operations = filteredOps;
-        }
-      } else {
-        this.operations.push(params);
-      }
-    });
   }
 
   override error(message: string, data?: any, _showNotification?: boolean | 'force'): void {
@@ -119,5 +105,21 @@ export class SorbetLanguageClient
 
   override get initializeResult(): SorbetInitializeResult | undefined {
     return super.initializeResult as SorbetInitializeResult | undefined;
+  }
+
+  override async start(): Promise<void> {
+    await super.start();
+    this.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, (params: SorbetShowOperationParams) => {
+      if (params.status === 'end') {
+        const filteredOps = this.operations.filter(
+          ({ operationName }) => operationName !== params.operationName,
+        );
+        if (filteredOps.length !== this.operations.length) {
+          this.operations = filteredOps;
+        }
+      } else {
+        this.operations.push(params);
+      }
+    });
   }
 }

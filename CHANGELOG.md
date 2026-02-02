@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.23
+- Fix: Operations stack not showing as notification was hooked up before `start`.
+
 ## 0.3.22
 - Add custom `FoldingRangeProvider` that supports:
   - line and block comments

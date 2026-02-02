@@ -28,7 +28,7 @@ export class SorbetClientManager implements vscode.Disposable {
       this.onClientAddedEmitter,
       this.onClientRemovedEmitter,
       this.onClientAdded((client) => {
-        client.onShowOperationNotification((e) => this.onShowOperationEmitter.fire(e));
+        client.onShowOperation((e) => this.onShowOperationEmitter.fire(e));
         client.onStatusChanged((e) => this.onStatusChangedEmitter.fire(e));
       }),
       onMainAreaActiveTextEditorChanged(async (editor) => {
