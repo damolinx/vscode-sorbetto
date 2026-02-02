@@ -3,16 +3,16 @@
 ## 0.3.22
 - Add custom `FoldingRangeProvider` that supports:
   - line and block comments
-  - indentation-based folding ranges.
+  - indentation-based folding ranges
 - Add `sorbetto.rubyFmtPath` setting to configure `rubyfmt` path.
 - Add **Open Package** command to open the associated `__package.rb` for a given file, or create one if needed.
 - Add **Create package file** quick action on error 3705.
-- Improve `sorbetto.restartFilePatterns` restart-listener now remain active after error, allowing on-disk changes to `sorbet/config` to take effect immediately.
-- Reduced number of method snippets.
+- Improve `sorbetto.restartFilePatterns` restart-listener so it remains active after error, allowing on-disk changes to `sorbet/config` to take effect immediately.
+- Reduce number of method snippets.
 - Add **Autocorrect Error Codes (All Files)** command to fix multiple error codes across all files.
 - Remove custom **Apply Sorbet fixes for error _code_ to all files** quick fix.
 - Fix: Missing **Initializing** message in language status item in some scenarios, making it unclear whether the language server is starting up.
-- Fix: `--sorbet-package` must be last argument or other arguments are reported as file errors.
+- Fix: `--sorbet-package` must be the last argument or other arguments are reported as file errors.
 
 ## 0.3.21
 - Fix: Disable `FoldingRangeProvider` for `#` comment blocks as it disables VS Code's indentation-based folding logic.
@@ -307,4 +307,5 @@
   - Changing configuration via the **Settings** UI now automatically restarts the Sorbet Language Server when necessary. As a result, **Toggle \*** commands are removed to simplify UX.
 
 - Initial version, forked from official 0.3.41.
+
 
