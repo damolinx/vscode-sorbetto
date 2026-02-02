@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
 import { mainAreaActiveEditorUri } from '../common/utils';
+import { PACKAGE_FILENAME } from '../constants';
 import { ExtensionContext } from '../extensionContext';
+import { createPackage } from './createPackage';
 import { getTargetWorkspaceUri } from './utils';
 
-const PACKAGE_NAME = '__package.rb';
 export async function openPackage(
   context: ExtensionContext,
   contextPathOrUri: string | vscode.Uri,
@@ -35,7 +36,7 @@ export async function openPackage(
 
   let currentDir = uriDir;
   do {
-    const candidate = vscode.Uri.joinPath(currentDir, PACKAGE_NAME);
+    const candidate = vscode.Uri.joinPath(currentDir, PACKAGE_FILENAME);
     if (
       await vscode.workspace.fs.stat(candidate).then(
         (s) => s.type === vscode.FileType.File || s.type === vscode.FileType.SymbolicLink,
@@ -54,35 +55,9 @@ export async function openPackage(
     'Create Package',
   );
   if (option) {
-    const editor = await createPackage(uriDir);
+    const editor = await createPackage(context, uriDir);
     return editor;
   }
 
   return;
-}
-
-async function createPackage(dir: vscode.Uri, packageName = 'PackageName') {
-  const packageSnippet = [
-    '# typed: strict',
-    '',
-    "require 'sorbet-runtime'",
-    '',
-    `class \${1:${packageName}} < PackageSpec`,
-    '  $0',
-    'end',
-  ].join('\n');
-
-  const selection = await vscode.window.showOpenDialog({
-    canSelectFiles: false,
-    canSelectFolders: true,
-    defaultUri: dir,
-  });
-  if (!selection) {
-    return;
-  }
-
-  const packageUri = vscode.Uri.joinPath(selection[0], PACKAGE_NAME).with({ scheme: 'untitled' });
-  const editor = await vscode.window.showTextDocument(packageUri);
-  await editor.insertSnippet(new vscode.SnippetString(packageSnippet));
-  return editor;
 }

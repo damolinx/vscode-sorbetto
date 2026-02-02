@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { basename } from 'path';
+import { PACKAGE_FILENAME } from '../constants';
 import { ExtensionContext } from '../extensionContext';
-
-export const PACKAGE_FILENAME = '__package.rb';
 
 /**
  * Save all modified __package.rb files.

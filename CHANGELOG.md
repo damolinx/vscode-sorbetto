@@ -6,6 +6,7 @@
   - indentation-based folding ranges.
 - Add `sorbetto.rubyFmtPath` setting to configure `rubyfmt` path.
 - Add **Open Package** command to open the associated `__package.rb` for a given file, or create one if needed.
+- Add **Create package file** quick action on error 3705.
 - Improve `sorbetto.restartFilePatterns` restart-listener now remain active after error, allowing on-disk changes to `sorbet/config` to take effect immediately.
 - Reduced number of method snippets.
 - Add **Autocorrect Error Codes (All Files)** command to fix multiple error codes across all files.

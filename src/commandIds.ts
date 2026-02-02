@@ -13,6 +13,9 @@ export const CommandIds = {
   /** Copy fully qualified name of symbol at cursor location to clipboard. */
   CopySymbol: `${EXTENSION_PREFIX}.copySymbol`,
 
+  /** Create a __package.rb file. */
+  CreatePackage: `_${EXTENSION_PREFIX}.createPackage`,
+
   /** Debug a Ruby file. */
   DebugRubyFile: `${EXTENSION_PREFIX}.debugRubyFile`,
 

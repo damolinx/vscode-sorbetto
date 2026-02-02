@@ -4,6 +4,7 @@ import { CommandIds } from './commandIds';
 import { autocorrectAll } from './commands/autocorrectAll';
 import { bundleInstall } from './commands/bundleInstall';
 import { copySymbol } from './commands/copySymbol';
+import { createPackage } from './commands/createPackage';
 import { debugRubyFile } from './commands/debugRubyFile';
 import { handleRename } from './commands/handleRename';
 import { openPackage } from './commands/openPackage';
@@ -42,6 +43,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     ),
     rc(CommandIds.BundleUpdate, (gemfile: string | vscode.Uri) =>
       bundleInstall(context, gemfile, 'update'),
+    ),
+    rc(CommandIds.CreatePackage, (pathOrUri: string | vscode.Uri) =>
+      createPackage(context, pathOrUri),
     ),
     rc(CommandIds.DebugRubyFile, (pathOrUri?: string | vscode.Uri) =>
       debugRubyFile(context, pathOrUri),
