@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "node16",
     "target": "es2024",
     "outDir": "out",
     "rootDir": "src",
