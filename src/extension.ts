@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { createExtensionApi } from './api/extensionApiProvider';
 import { CommandIds } from './commandIds';
 import { autocorrectAll } from './commands/autocorrectAll';
 import { bundleInstall } from './commands/bundleInstall';
@@ -99,7 +98,4 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   vscode.workspace.workspaceFolders?.forEach((folder) =>
     context.clientManager.addWorkspace(folder),
   );
-
-  // Extension API
-  return createExtensionApi(context);
 }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.24
+- Remove extension API.
+
 ## 0.3.23
 - Fix: Operations stack not showing as notification was hooked up before `start`.
 

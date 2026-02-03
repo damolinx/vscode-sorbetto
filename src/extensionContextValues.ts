@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { mapStatus } from './api/status';
 import { onMainAreaActiveTextEditorChanged, mainAreaActiveEditorUri } from './common/utils';
 import { ExtensionContext } from './extensionContext';
 
@@ -16,13 +15,13 @@ function registerSorbetStatus({ clientManager, disposables }: ExtensionContext):
     clientManager.onStatusChanged(({ client }) => {
       const editor = mainAreaActiveEditorUri();
       if (editor && client.inScope(editor)) {
-        setContext(contextKey, mapStatus(client.status));
+        setContext(contextKey, client.status);
       }
     }),
     onMainAreaActiveTextEditorChanged((editor) => {
       const client = editor && clientManager.getClient(editor.document.uri);
       if (client) {
-        setContext(contextKey, mapStatus(client.status));
+        setContext(contextKey, client.status);
       }
     }),
   );
