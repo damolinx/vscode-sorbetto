@@ -5,7 +5,7 @@
   "author": "damolinx",
   "publisher": "damolinx",
   "license": "Apache-2.0",
-  "version": "0.3.23",
+  "version": "0.4.0",
   "icon": "icon.png",
   "repository": {
     "type": "git",
@@ -404,7 +404,7 @@
     "watch": "npm run ts:watch"
   },
   "dependencies": {
-    "vscode-languageclient": "^9.0.1"
+    "vscode-languageclient": "^10.0.0-next.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.37.0",
