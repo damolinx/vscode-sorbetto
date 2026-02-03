@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
+import { SORBET_SCHEME } from '../constants';
 import { ExtensionContext } from '../extensionContext';
-import { SORBET_SCHEME } from '../lsp/documentSelectors';
 
 /**
  * Register a content provider for the {@link SORBET_SCHEME sorbet:} scheme.

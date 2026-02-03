@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
+import { SORBET_CONFIG_DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
-import { SORBET_CONFIG_DOCUMENT_SELECTOR } from '../../lsp/documentSelectors';
 import { getFlag } from './sorbetConfigFlagData';
 
 export function registerSorbetConfigHoverProvider(context: ExtensionContext): void {

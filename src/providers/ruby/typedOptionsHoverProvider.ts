@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
+import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
-import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../lsp/documentSelectors';
-import { HEADER_LINES_WINDOW } from './constant';
+import { HEADER_LINES_WINDOW } from './constants';
 
 export function registerTypedOptionsHoverProvider(context: ExtensionContext): void {
   context.disposables.push(

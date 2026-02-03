@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { CommandIds } from './commandIds';
 import { onMainAreaActiveTextEditorChanged, mainAreaActiveEditorUri } from './common/utils';
+import { SORBET_CONFIG_DOCUMENT_SELECTOR, SORBET_DOCUMENT_SELECTOR } from './constants';
 import { ExtensionContext } from './extensionContext';
-import { SORBET_CONFIG_DOCUMENT_SELECTOR, SORBET_DOCUMENT_SELECTOR } from './lsp/documentSelectors';
 import { LspConfigurationType } from './lspClient/configuration/lspConfigurationType';
 import { SorbetClient } from './lspClient/sorbetClient';
 import { SorbetClientStatus } from './lspClient/sorbetClientStatus';

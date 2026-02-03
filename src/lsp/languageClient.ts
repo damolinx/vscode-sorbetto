@@ -53,11 +53,12 @@ export function createClient(
 export class SorbetLanguageClient
   extends vslcn.LanguageClient
   implements
-  HierarchyReferencesRequest,
-  ReadFileRequest,
-  ShowOperationNotification,
-  ShowSymbolRequest,
-  WorkspaceDidChangeConfigurationNotification {
+    HierarchyReferencesRequest,
+    ReadFileRequest,
+    ShowOperationNotification,
+    ShowSymbolRequest,
+    WorkspaceDidChangeConfigurationNotification
+{
   private readonly log: Log;
   public operations: SorbetShowOperationParams[];
 

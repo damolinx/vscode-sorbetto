@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { existsSync } from 'fs';
 import { basename, dirname, extname, posix, resolve, sep } from 'path';
+import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
-import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../lsp/documentSelectors';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['"', "'", '/'];
 

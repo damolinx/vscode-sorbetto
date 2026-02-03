@@ -169,7 +169,7 @@ export class SorbetClient implements vscode.Disposable {
         disposables: [
           value, // Assumes ownership of LanguageClient
           value.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, (params) =>
-            this.onShowOperationEmitter.fire({ client: this, params })
+            this.onShowOperationEmitter.fire({ client: this, params }),
           ),
           value.onDidChangeState((event) => {
             switch (event.newState) {
