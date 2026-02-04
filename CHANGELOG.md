@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.3.25
+- Improve `require_relative` autocomplete: better commit behavior (`/` continues on folders), Ruby file icons, filtered `__package.rb`, self and dot paths, and sort folders first.
 - Bypass Sorbet's requirement for `sorbet.savePackageFiles` command Id to improve compatibility when the official extension is installed.
 - Fix: Context menu commands never activate.
 
