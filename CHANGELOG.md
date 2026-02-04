@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.25
+- Fix: Context menu commands never activate.
+
 ## 0.3.24
 - Remove extension API.
 
