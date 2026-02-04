@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.3.25
+- Bypass Sorbet's requirement for `sorbet.savePackageFiles` command Id to improve compatibility when the official extension is installed.
 - Fix: Context menu commands never activate.
 
 ## 0.3.24

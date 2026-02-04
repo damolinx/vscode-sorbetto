@@ -31,6 +31,9 @@ export const CommandIds = {
   /** Run a Ruby file. */
   RunRubyFile: `${EXTENSION_PREFIX}.runRubyFile`,
 
+  /** Save package files. */
+  SavePackageFiles: `${EXTENSION_PREFIX}.savePackageFiles`,
+
   /** Send active selection to https://sorbet.run. */
   SendToSorbetRun: `${EXTENSION_PREFIX}.sendToSorbetRun`,
 
@@ -39,9 +42,6 @@ export const CommandIds = {
 
   /** Show Sorbetto output panel. */
   ShowOutput: `_${EXTENSION_PREFIX}.showOutput`,
-
-  /** Save package files. This specific command name is required by Sorbet itself. */
-  SorbetSavePackageFiles: 'sorbet.savePackageFiles',
 
   /** Restart Sorbet. */
   SorbetRestart: `${EXTENSION_PREFIX}.restart`,

@@ -56,6 +56,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     rc(CommandIds.RunRubyFile, (pathOrUri?: string | vscode.Uri) =>
       runRubyFile(context, pathOrUri),
     ),
+    rc(CommandIds.SavePackageFiles, () => savePackageFiles(context)),
     rc(CommandIds.SetupWorkspace, (pathOrUri?: string | vscode.Uri) =>
       setupWorkspace(context, pathOrUri),
     ),
@@ -71,7 +72,6 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     rc(CommandIds.SorbetStop, (pathOrUri?: string | vscode.Uri) =>
       restartSorbet(context, 'stop', pathOrUri),
     ),
-    rc(CommandIds.SorbetSavePackageFiles, () => savePackageFiles(context)),
     rc(CommandIds.UpdataRbis, (updateType?: UpdateRbiType) => updateRbis(context, updateType)),
   );
 
