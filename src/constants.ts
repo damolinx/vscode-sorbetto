@@ -2,6 +2,10 @@ import * as vscode from 'vscode';
 
 export const EXTENSION_PREFIX = 'sorbetto';
 
+export const GEMFILE_FILENAME = 'Gemfile';
+
+export const GEMFILE_LOCK_FILENAME = 'Gemfile.lock';
+
 export const PACKAGE_FILENAME = '__package.rb';
 
 export const SORBET_CONFIG_DOCUMENT_SELECTOR: Readonly<vscode.DocumentFilter> = {

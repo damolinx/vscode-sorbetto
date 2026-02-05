@@ -258,10 +258,11 @@ All snippets have an associated trigger word recognized by IntelliSense while ty
 
 ### Editor Enhancements
 
-<!-- * **Comment regions**: multi-line `#` comments are recognized as folding ranges. -->
-* **Selection Ranges**: supports **Expand Selection** and **Shrink Selection** commands via heuristics.
+* **Folding Range Provider**: indentation‑based folding enriched with block and multi‑line comment detection.
+* **Selection Range Provider**: context‑sensitive selection ranges for more intuitive Expand Selection and Shrink Selection behavior.
 * **[RBS signature comment syntax highlighting](#rbs-support)**: recognizes RBS type signatures embedded in Ruby comments.
-* **`require_relative`**: provides autocompletion for paths, paths are active links to the referenced file, paths are updated on rename whwnver possible.
+* **`require`**: gem autocompletion using `Gemfile` and `Gemfile.lock` as data source.
+* **`require_relative`**: autocompletion for paths, paths are active links to the referenced file, paths are updated on file rename.
 * **`typed`**: hover and autocompletion for `typed` sigils in Ruby files.
 
 [↑ Back to top](#table-of-contents)

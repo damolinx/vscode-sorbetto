@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { GEMFILE_FILENAME } from '../constants';
 import { ExtensionContext } from '../extensionContext';
 import { executeCommandsInTerminal, getTargetWorkspaceUri } from './utils';
 import { verifyEnvironment } from './verifyEnvironment';
@@ -73,7 +74,7 @@ async function verifyGemfile(
   edit: vscode.WorkspaceEdit,
 ): Promise<boolean> {
   let changed = false;
-  const gemFile = vscode.Uri.joinPath(workspaceUri, 'Gemfile');
+  const gemFile = vscode.Uri.joinPath(workspaceUri, GEMFILE_FILENAME);
 
   if (
     !(await vscode.workspace.fs.stat(gemFile).then(
