@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
 import * as vslcn from 'vscode-languageclient/node';
+import { DecoratedOutputChannel } from '../common/decoratedOutputChannel';
 import { Log } from '../common/log';
-import { WorkspaceFolderOutputChannel } from '../common/workspaceFolderOutputChannel';
 import { ExtensionContext } from '../extensionContext';
 import { getWorkspaceDocumentSelector } from './documentSelectors';
 import { HierarchyReferencesRequest } from './hierarchyReferences';
@@ -32,7 +32,7 @@ export function createClient(
     documentSelector: getWorkspaceDocumentSelector(workspaceFolder),
     initializationFailedHandler: (error) => {
       log.error(
-        WorkspaceFolderOutputChannel.normalizedLogValue(
+        DecoratedOutputChannel.normalizedLogValue(
           'Failed to initialize Sorbet.',
           workspaceFolder.name,
         ),
@@ -40,7 +40,7 @@ export function createClient(
       );
       return false;
     },
-    outputChannel: new WorkspaceFolderOutputChannel(logOutputChannel, workspaceFolder),
+    outputChannel: new DecoratedOutputChannel(logOutputChannel, workspaceFolder.name),
     progressOnInitialization: true,
     revealOutputChannelOn: vslc.RevealOutputChannelOn.Never,
     workspaceFolder,

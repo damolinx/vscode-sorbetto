@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-export class WorkspaceFolderOutputChannel implements vscode.LogOutputChannel {
+export class DecoratedOutputChannel implements vscode.LogOutputChannel {
   public static normalizedLogValue(
     value: string,
     workspaceName: string,
@@ -15,11 +15,11 @@ export class WorkspaceFolderOutputChannel implements vscode.LogOutputChannel {
   }
 
   private readonly channel: vscode.LogOutputChannel;
-  private readonly workspaceName: string;
+  private readonly prefix: string;
 
-  constructor(channel: vscode.LogOutputChannel, { name }: vscode.WorkspaceFolder) {
+  constructor(channel: vscode.LogOutputChannel, prefix: string) {
     this.channel = channel;
-    this.workspaceName = `[${name}]`;
+    this.prefix = `[${prefix}]`;
   }
 
   dispose(): void {}
@@ -29,15 +29,11 @@ export class WorkspaceFolderOutputChannel implements vscode.LogOutputChannel {
   }
 
   public append(value: string): void {
-    this.channel.append(
-      WorkspaceFolderOutputChannel.normalizedLogValue(value, this.workspaceName, true),
-    );
+    this.channel.append(DecoratedOutputChannel.normalizedLogValue(value, this.prefix, true));
   }
 
   public appendLine(value: string): void {
-    this.channel.appendLine(
-      WorkspaceFolderOutputChannel.normalizedLogValue(value, this.workspaceName),
-    );
+    this.channel.appendLine(DecoratedOutputChannel.normalizedLogValue(value, this.prefix));
   }
 
   public clear(): void {
