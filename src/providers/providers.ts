@@ -4,8 +4,8 @@ import { registerSorbetConfigHoverProvider } from './config/sorbetConfigHoverPro
 import { registerGemfileCodeLensProvider } from './gemfile/gemfileCodeLensProvider';
 import { registerGemfileCompletionProvider } from './gemfile/gemfileCompletionProvider';
 import { registerFoldingRangeProvider } from './ruby/foldingRangeProvider';
-import { registerRequireCompletionProvider } from './ruby/requireCompletionProvider';
-import { registerRequireDefinitionProvider } from './ruby/requireDefinitionProvider';
+import { registerRequireRelativeCompletionProvider } from './ruby/requireRelativeCompletionProvider';
+import { registerRequireRelativeDefinitionProvider } from './ruby/requireRelativeDefinitionProvider';
 import { registerSelectionRangeProvider } from './ruby/selectionRangeProvider';
 import { registerTypedOptionsCompletionProvider } from './ruby/typedOptionsCompletionProvider';
 import { registerTypedOptionsHoverProvider } from './ruby/typedOptionsHoverProvider';
@@ -15,8 +15,8 @@ export function registerProviders(context: ExtensionContext): void {
   registerFoldingRangeProvider(context);
   registerGemfileCodeLensProvider(context);
   registerGemfileCompletionProvider(context);
-  registerRequireCompletionProvider(context);
-  registerRequireDefinitionProvider(context);
+  registerRequireRelativeCompletionProvider(context);
+  registerRequireRelativeDefinitionProvider(context);
   registerSelectionRangeProvider(context);
   registerSorbetCompletionProvider(context);
   registerSorbetConfigHoverProvider(context);

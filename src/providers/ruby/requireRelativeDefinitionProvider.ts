@@ -3,16 +3,16 @@ import * as path from 'path';
 import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
 
-export function registerRequireDefinitionProvider({ disposables }: ExtensionContext): void {
+export function registerRequireRelativeDefinitionProvider({ disposables }: ExtensionContext): void {
   disposables.push(
     vscode.languages.registerDefinitionProvider(
       SORBET_FILE_DOCUMENT_SELECTOR,
-      new RequireDefinitionProvider(),
+      new RequireRelativeDefinitionProvider(),
     ),
   );
 }
 
-export class RequireDefinitionProvider implements vscode.DefinitionProvider {
+export class RequireRelativeDefinitionProvider implements vscode.DefinitionProvider {
   provideDefinition(
     document: vscode.TextDocument,
     position: vscode.Position,

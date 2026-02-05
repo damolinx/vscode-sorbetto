@@ -6,11 +6,11 @@ import { ExtensionContext } from '../../extensionContext';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['"', "'", posix.sep];
 
-export function registerRequireCompletionProvider({ disposables }: ExtensionContext): void {
+export function registerRequireRelativeCompletionProvider({ disposables }: ExtensionContext): void {
   disposables.push(
     vscode.languages.registerCompletionItemProvider(
       SORBET_FILE_DOCUMENT_SELECTOR,
-      new RequireCompletionProvider(),
+      new RequireRelativeCompletionProvider(),
       ...TRIGGER_CHARACTERS,
     ),
   );
@@ -19,7 +19,7 @@ export function registerRequireCompletionProvider({ disposables }: ExtensionCont
 /**
  * Completion provider for `require_relative` entries.
  */
-export class RequireCompletionProvider implements vscode.CompletionItemProvider {
+export class RequireRelativeCompletionProvider implements vscode.CompletionItemProvider {
   async provideCompletionItems(
     document: vscode.TextDocument,
     position: vscode.Position,
