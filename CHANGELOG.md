@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.27
+- Fix: `Gemfile.lock` parsin should ignore version numbers, if present.
+
 ## 0.3.26
 - Autocomplete `require` using gems from the workspace `Gemfile`.
 

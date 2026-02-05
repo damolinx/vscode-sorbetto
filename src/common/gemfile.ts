@@ -88,12 +88,15 @@ export class Gemfile implements vscode.Disposable {
       if (text === 'DEPENDENCIES') {
         let j = i;
         while (++j < document.lineCount) {
-          const { text, firstNonWhitespaceCharacterIndex } = document.lineAt(j);
-          if (firstNonWhitespaceCharacterIndex !== 0) {
-            gems.add({ name: text.slice(firstNonWhitespaceCharacterIndex) });
-          } else {
+          const line = document.lineAt(j);
+          if (line.isEmptyOrWhitespace || line.firstNonWhitespaceCharacterIndex === 0) {
             break;
           }
+          const match = line.text.match(/^\s*([^\s(]+)/);
+          if (!match) {
+            break;
+          }
+          gems.add({ name: match[1] });
         }
         break;
       }
