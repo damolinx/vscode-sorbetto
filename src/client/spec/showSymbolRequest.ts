@@ -11,8 +11,8 @@ export const SHOW_SYMBOL_REQUEST = new vslc.RequestType<
  */
 export interface ShowSymbolRequest {
   sendRequest(
-    method: typeof SHOW_SYMBOL_REQUEST,
-    param: vslc.TextDocumentPositionParams,
+    requestType: typeof SHOW_SYMBOL_REQUEST,
+    params: vslc.TextDocumentPositionParams,
     token?: vslc.CancellationToken,
-  ): Promise<vslc.SymbolInformation>;
+  ): Promise<vslc.SymbolInformation | null>;
 }

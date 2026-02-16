@@ -1,6 +1,6 @@
 import * as vslcn from 'vscode-languageclient/node';
 
-export type SorbetInitializeResult = vslcn.InitializeResult<any> & {
+export type SorbetInitializeResult = vslcn.InitializeResult & {
   capabilities: SorbetServerCapabilities;
 };
 

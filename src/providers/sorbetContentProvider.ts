@@ -16,11 +16,7 @@ export function registerSorbetContentProvider(context: ExtensionContext): vscode
  * Content provider for URIs with {@link SORBET_SCHEME sorbet:} scheme.
  */
 export class SorbetContentProvider implements vscode.TextDocumentContentProvider {
-  private readonly context: ExtensionContext;
-
-  constructor(context: ExtensionContext) {
-    this.context = context;
-  }
+  constructor(private readonly context: ExtensionContext) {}
 
   public async provideTextDocumentContent(
     uri: vscode.Uri,

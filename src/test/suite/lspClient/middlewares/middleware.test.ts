@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import { basename } from 'path';
-import { compact } from '../../../../lspClient/middlewares/middleware';
+import { compact } from '../../../../client/middlewares/middleware';
 
 suite(`Suite: ${basename(__filename, '.test.js')}`, () => {
   test('`compact` helper', () => {

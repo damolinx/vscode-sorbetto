@@ -8,6 +8,7 @@ export class LanguageClientErrorHandler implements vslc.ErrorHandler {
       handled: true,
     };
   }
+
   error() {
     return {
       action: vslc.ErrorAction.Shutdown,

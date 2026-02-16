@@ -12,7 +12,7 @@ export const READ_FILE_REQUEST = new vslc.RequestType<
 export interface ReadFileRequest {
   sendRequest(
     requestType: typeof READ_FILE_REQUEST,
-    param: vslc.TextDocumentIdentifier,
+    params: vslc.TextDocumentIdentifier,
     token?: vslc.CancellationToken,
   ): Promise<vslc.TextDocumentItem>;
 }

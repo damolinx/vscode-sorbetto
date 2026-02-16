@@ -2,50 +2,51 @@ import * as vscode from 'vscode';
 import { mainAreaActiveEditorUri } from '../common/utils';
 import { ExtensionContext } from '../extensionContext';
 import { openSettings } from './openSettings';
-import { getTargetWorkspaceUri } from './utils';
+import { getTargetWorkspaceFolder } from './utils';
 
 export async function restartSorbet(
   context: ExtensionContext,
   action: 'start' | 'stop' | 'restart',
   contextPathOrUri?: string | vscode.Uri,
 ) {
-  const workspaceUri = await getTargetWorkspaceUri(
-    context,
-    contextPathOrUri ?? mainAreaActiveEditorUri(),
-  );
-  if (!workspaceUri) {
+  const targetContextPathOrUri = contextPathOrUri ?? mainAreaActiveEditorUri();
+  const workspaceFolder = await getTargetWorkspaceFolder(context, targetContextPathOrUri);
+  if (!workspaceFolder) {
+    context.log.debug(
+      'Restart: No workspace found for context',
+      targetContextPathOrUri?.toString(true),
+    );
     return;
   }
 
-  const client = context.clientManager.getClient(workspaceUri);
-  if (!client) {
-    context.log.info(
-      'No Sorbet client for selected workspace.',
-      action,
-      workspaceUri.toString(true),
+  const clientHost = context.clientManager.getClientHost(workspaceFolder);
+  if (!clientHost) {
+    context.log.warn(
+      'Restart: No Sorbet client is available for workspace.',
+      workspaceFolder.uri.toString(true),
     );
     return;
   }
 
   switch (action) {
     case 'restart':
-      await (client.isEnabledByConfiguration()
-        ? client.restart()
-        : showDisabledConfigurationNotification(workspaceUri));
+      await (clientHost.isEnabledByConfiguration()
+        ? clientHost.restart()
+        : showDisabledConfigurationNotification(workspaceFolder));
       break;
     case 'start':
-      await (client.isEnabledByConfiguration()
-        ? client.start()
-        : showDisabledConfigurationNotification(workspaceUri));
+      await (clientHost.isEnabledByConfiguration()
+        ? clientHost.start()
+        : showDisabledConfigurationNotification(workspaceFolder));
       break;
     case 'stop':
-      await client.stop();
+      await clientHost.stop();
       break;
     default:
       throw new Error(`Unknown action: ${action}`);
   }
 
-  async function showDisabledConfigurationNotification(uri: vscode.Uri) {
+  async function showDisabledConfigurationNotification({ uri }: vscode.WorkspaceFolder) {
     const updateConfigItem: vscode.MessageItem = { title: 'Configure' };
     const selection = await vscode.window.showWarningMessage(
       'Sorbet is disabled by configuration.',

@@ -42,7 +42,7 @@ export function getTargetEditorUri(pathOrUri?: string | vscode.Uri): vscode.Uri 
   return uri;
 }
 
-export async function getTargetWorkspace(
+export async function getTargetWorkspaceFolder(
   context: ExtensionContext,
   pathOrUri?: string | vscode.Uri,
   options?: { skipSorbetWorkspaceVerification?: true },
@@ -87,7 +87,7 @@ export async function getTargetWorkspaceUri(
   pathOrUri?: string | vscode.Uri,
   options?: { skipSorbetWorkspaceVerification?: true },
 ): Promise<vscode.Uri | undefined> {
-  const workspaceFolder = await getTargetWorkspace(context, pathOrUri, options);
+  const workspaceFolder = await getTargetWorkspaceFolder(context, pathOrUri, options);
   return workspaceFolder?.uri;
 }
 

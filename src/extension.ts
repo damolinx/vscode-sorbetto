@@ -60,9 +60,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     rc(CommandIds.SetupWorkspace, (pathOrUri?: string | vscode.Uri) =>
       setupWorkspace(context, pathOrUri),
     ),
-    rc(CommandIds.ShowOutput, (preserveFocus?: boolean) =>
-      context.logOutputChannel.show(preserveFocus ?? true),
-    ),
+    rc(CommandIds.ShowOutput, (preserveFocus?: boolean) => context.log.show(preserveFocus ?? true)),
     rc(CommandIds.SorbetRestart, (pathOrUri?: string | vscode.Uri) =>
       restartSorbet(context, 'restart', pathOrUri),
     ),

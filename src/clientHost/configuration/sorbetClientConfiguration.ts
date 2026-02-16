@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
+import { HighlightType } from '../../client/spec/highlightType';
+import { InitializationOptions } from '../../client/spec/initializationOptions';
 import { Configuration } from '../../common/configuration';
 import { EXTENSION_PREFIX } from '../../constants';
-import { HighlightType } from '../../lsp/highlightType';
 import { LspConfigurationType } from './lspConfigurationType';
 import {
   ToggleConfigurationKey,
@@ -15,11 +16,9 @@ import { WatchmanMode } from './watchmanMode';
 export class SorbetClientConfiguration extends Configuration {
   private readonly onDidChangeLspConfigurationEmitter: vscode.EventEmitter<void>;
   private readonly onDidChangeLspOptionsEmitter: vscode.EventEmitter<LspOptionConfigurationKey>;
-  private readonly scope?: vscode.WorkspaceFolder;
 
-  constructor(scope?: vscode.WorkspaceFolder) {
+  constructor(private readonly scope?: vscode.WorkspaceFolder) {
     super();
-    this.scope = scope;
     this.disposables.push(
       (this.onDidChangeLspConfigurationEmitter = new vscode.EventEmitter()),
       (this.onDidChangeLspOptionsEmitter = new vscode.EventEmitter()),
@@ -131,5 +130,15 @@ export class SorbetClientConfiguration extends Configuration {
    */
   public get sorbetTypecheckCommand(): string[] {
     return this.getValue('sorbetTypecheckCommand', ['bundle', 'exec', 'srb', 'typecheck']);
+  }
+
+  public toInitializationOptions(): InitializationOptions {
+    return {
+      enableTypedFalseCompletionNudges: this.isEnabled('typedFalseCompletionNudges', true),
+      highlightUntyped: this.highlightUntypedCode,
+      highlightUntypedDiagnosticSeverity: this.highlightUntypedCodeDiagnosticSeverity,
+      supportsOperationNotifications: true,
+      supportsSorbetURIs: true,
+    };
   }
 }

@@ -1,21 +1,25 @@
 import * as vscode from 'vscode';
+import { SorbetClientStatus } from '../clientHost/sorbetClientStatus';
 import { ExtensionContext } from '../extensionContext';
-import { SorbetClientStatus } from '../lspClient/sorbetClientStatus';
 
 export async function peekHierarchyReferences(
   context: ExtensionContext,
   { document, selection }: vscode.TextEditor,
 ): Promise<void> {
-  const client = context.clientManager.getClient(document.uri);
-  if (client?.status !== SorbetClientStatus.Running) {
+  const clientHost = context.clientManager.getClientHost(document.uri);
+  if (!clientHost?.languageClient || clientHost.status !== SorbetClientStatus.Running) {
     context.log.warn(
-      'FindAllUsages: No Sorbet client for editor.',
+      'HierarchyReferences: No Sorbet client is available. Status:',
+      clientHost?.status,
       vscode.workspace.asRelativePath(document.uri),
     );
     return;
   }
 
-  const locations = await client.sendHierarchyReferences(document, selection.start);
+  const locations = await clientHost.languageClient.sendHierarchyReferencesRequest(
+    document,
+    selection.start,
+  );
   if (!locations?.length) {
     context.log.debug(
       'FindAllUsages: Found no reference(s).',

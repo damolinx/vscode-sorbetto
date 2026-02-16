@@ -1,24 +1,31 @@
 import * as vscode from 'vscode';
+import { SorbetClientStatus } from '../clientHost/sorbetClientStatus';
 import { mainAreaActiveEditorUri } from '../common/utils';
 import { ExtensionContext } from '../extensionContext';
-import { executeCommandsInTerminal, getTargetWorkspaceUri } from './utils';
+import { executeCommandsInTerminal, getTargetWorkspaceFolder } from './utils';
 
 export async function autocorrectAll(
   context: ExtensionContext,
   contextPathOrUri?: string | vscode.Uri,
   codes?: number[],
 ) {
-  const workspaceUri = await getTargetWorkspaceUri(
-    context,
-    contextPathOrUri ?? mainAreaActiveEditorUri(),
-  );
-  if (!workspaceUri) {
+  const targetContextPathOrUri = contextPathOrUri ?? mainAreaActiveEditorUri();
+  const workspaceFolder = await getTargetWorkspaceFolder(context, targetContextPathOrUri);
+  if (!workspaceFolder) {
+    context.log.debug(
+      'AutocorrectAll: No workspace found for context',
+      targetContextPathOrUri?.toString(true),
+    );
     return;
   }
 
-  const client = context.clientManager.getClient(workspaceUri);
-  if (!client) {
-    context.log.error('AutocorrectAll: No Sorbet client.', workspaceUri.toString(true));
+  const clientHost = context.clientManager.getClientHost(workspaceFolder);
+  if (clientHost?.status !== SorbetClientStatus.Running) {
+    context.log.warn(
+      'AutocorrectAll: No Sorbet client is available. Status:',
+      clientHost?.status,
+      workspaceFolder.uri.toString(true),
+    );
     return;
   }
 
@@ -27,12 +34,12 @@ export async function autocorrectAll(
     return;
   }
 
-  const sorbetCommand = client.configuration.sorbetTypecheckCommand.join(' ').trim();
+  const sorbetCommand = clientHost.configuration.sorbetTypecheckCommand.join(' ').trim();
   await executeCommandsInTerminal({
     commands: [
       `${sorbetCommand} --autocorrect ${targetErrorCodes.map((c) => `--isolate-error-code=${c}`).join(' ')}`,
     ],
-    cwd: client.workspaceFolder.uri,
+    cwd: clientHost.workspaceFolder.uri,
     name: 'autocorrect',
     preserveFocus: true,
   });

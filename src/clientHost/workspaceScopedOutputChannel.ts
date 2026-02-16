@@ -1,6 +1,10 @@
 import * as vscode from 'vscode';
 
-export class DecoratedOutputChannel implements vscode.LogOutputChannel {
+/**
+ * Wraps a {@link vscode.LogOutputChannel} and prefixes all output with the
+ * workspace folder name when running in a multi‑root workspace.
+ */
+export class WorkspaceScopedOutputChannel implements vscode.LogOutputChannel {
   public static normalizedLogValue(
     value: string,
     workspaceName: string,
@@ -17,9 +21,9 @@ export class DecoratedOutputChannel implements vscode.LogOutputChannel {
   private readonly channel: vscode.LogOutputChannel;
   private readonly prefix: string;
 
-  constructor(channel: vscode.LogOutputChannel, prefix: string) {
+  constructor(channel: vscode.LogOutputChannel, { name }: vscode.WorkspaceFolder) {
     this.channel = channel;
-    this.prefix = `[${prefix}]`;
+    this.prefix = `[${name}]`;
   }
 
   dispose(): void {}
@@ -29,11 +33,11 @@ export class DecoratedOutputChannel implements vscode.LogOutputChannel {
   }
 
   public append(value: string): void {
-    this.channel.append(DecoratedOutputChannel.normalizedLogValue(value, this.prefix, true));
+    this.channel.append(WorkspaceScopedOutputChannel.normalizedLogValue(value, this.prefix, true));
   }
 
   public appendLine(value: string): void {
-    this.channel.appendLine(DecoratedOutputChannel.normalizedLogValue(value, this.prefix));
+    this.channel.appendLine(WorkspaceScopedOutputChannel.normalizedLogValue(value, this.prefix));
   }
 
   public clear(): void {

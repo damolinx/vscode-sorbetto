@@ -6,8 +6,8 @@ import { CommandIds } from '../../commandIds';
  * Sorbet specifically requires this command Id which leads to compatibility
  * complexities when multiple extensions want to host Sorbet as they need to
  * offer the command. To workaround this, this middleware remaps the command
- * to extension-owned command.
- * https://sorbet.org/docs/lsp#sorbetsavepackagefiles-command
+ * to an extension-owned command.
+ * See https://sorbet.org/docs/lsp#sorbetsavepackagefiles-command
  */
 const SORBET_SAVE_PACKAGE_FILES = 'sorbet.savePackageFiles';
 

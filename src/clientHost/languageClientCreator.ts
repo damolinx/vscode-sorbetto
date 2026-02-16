@@ -1,14 +1,12 @@
 import * as vscode from 'vscode';
-import { Log } from '../common/log';
+import { SorbetClient } from '../client/sorbetClient';
+import { createClient } from '../client/sorbetClientFactory';
 import { instrumentLanguageClient } from '../common/metrics';
 import { ProcessWithExitPromise, spawnWithExitPromise } from '../common/processUtils';
 import { ExtensionContext } from '../extensionContext';
-import { InitializationOptions } from '../lsp/initializationOptions';
-import { createClient, SorbetLanguageClient } from '../lsp/languageClient';
 import { createLspConfiguration, LspConfiguration } from './configuration/lspConfiguration';
 import { SorbetClientConfiguration } from './configuration/sorbetClientConfiguration';
 import { LanguageClientErrorHandler } from './languageClientErrorHandler';
-import { LanguageClientMiddleware } from './languageClientMiddleware';
 
 export const LEGACY_RETRY_EXITCODE = 11;
 
@@ -18,28 +16,23 @@ export type InitializeProcessResult = ProcessWithExitPromise & {
 };
 
 export class LanguageClientCreator {
-  private readonly configuration: SorbetClientConfiguration;
-  private log: Log;
-  private readonly lspClient: SorbetLanguageClient;
+  private readonly lspClient: SorbetClient;
   public lspProcess?: ProcessWithExitPromise;
-  private workspaceFolder: vscode.WorkspaceFolder;
 
   constructor(
-    context: ExtensionContext,
-    workspaceFolder: vscode.WorkspaceFolder,
-    configuration: SorbetClientConfiguration,
+    private readonly context: ExtensionContext,
+    private readonly workspaceFolder: vscode.WorkspaceFolder,
+    private readonly configuration: SorbetClientConfiguration,
+    outputChannel: vscode.LogOutputChannel,
   ) {
-    this.configuration = configuration;
-    this.log = context.log;
     this.workspaceFolder = workspaceFolder;
     this.lspClient = instrumentLanguageClient(
       createClient(
-        context,
-        this.workspaceFolder,
         {
           errorHandler: new LanguageClientErrorHandler(),
-          initializationOptions: this.createInitializationOptions(),
-          middleware: LanguageClientMiddleware,
+          initializationOptions: configuration.toInitializationOptions(),
+          outputChannel,
+          workspaceFolder: this.workspaceFolder,
         },
         async () => {
           const lspConfiguration = await createLspConfiguration(this.configuration);
@@ -55,21 +48,8 @@ export class LanguageClientCreator {
     );
   }
 
-  private createInitializationOptions(): InitializationOptions | undefined {
-    return {
-      enableTypedFalseCompletionNudges: this.configuration.isEnabled(
-        'typedFalseCompletionNudges',
-        true,
-      ),
-      highlightUntyped: this.configuration.highlightUntypedCode,
-      highlightUntypedDiagnosticSeverity: this.configuration.highlightUntypedCodeDiagnosticSeverity,
-      supportsOperationNotifications: true,
-      supportsSorbetURIs: true,
-    };
-  }
-
   public async create(): Promise<{
-    client?: SorbetLanguageClient;
+    client?: SorbetClient;
     result: InitializeProcessResult;
   }> {
     await this.lspClient.start();
@@ -85,8 +65,8 @@ export class LanguageClientCreator {
   }
 
   private async startLspClient(configuration: LspConfiguration): Promise<ProcessWithExitPromise> {
-    this.log.info('Start Sorbet LSP', this.workspaceFolder.uri.toString(true));
-    this.log.info('>', configuration.cmd, ...configuration.args);
+    this.context.log.info('Start Sorbet LSP', this.workspaceFolder.uri.toString(true));
+    this.context.log.info('>', configuration.cmd, ...configuration.args);
 
     const lspProcess = spawnWithExitPromise(configuration.cmd, configuration.args, {
       cwd: this.workspaceFolder.uri.fsPath,
@@ -95,16 +75,16 @@ export class LanguageClientCreator {
 
     const { process: childProcess } = lspProcess;
     if (childProcess.pid !== undefined) {
-      this.log.info('> pid', childProcess.pid);
+      this.context.log.info('> pid', childProcess.pid);
     }
 
     lspProcess.exit = lspProcess.exit.then((errorInfo) => {
       const pid = childProcess.pid ?? '«no pid»';
       if (errorInfo) {
-        this.log.debug('Sorbet LSP process failed.', pid, errorInfo);
+        this.context.log.debug('Sorbet LSP process failed.', pid, errorInfo);
       } else {
         const exitCode = childProcess.exitCode ?? '«no exitCode»';
-        this.log.debug('Sorbet LSP process exited.', pid, exitCode);
+        this.context.log.debug('Sorbet LSP process exited.', pid, exitCode);
       }
       return errorInfo;
     });

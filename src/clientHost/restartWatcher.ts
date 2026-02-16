@@ -1,26 +1,25 @@
 import * as vscode from 'vscode';
 import { Log } from '../common/log';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
-import { SorbetClient } from './sorbetClient';
+import { SorbetClientHost } from './sorbetClientHost';
 
 export class RestartWatcher implements vscode.Disposable {
-  private readonly client: SorbetClient;
   private readonly disposables: vscode.Disposable[];
   private fsWatchers?: vscode.FileSystemWatcher[];
-  private readonly log: Log;
 
-  constructor(client: SorbetClient, log: Log) {
-    this.client = client;
-    this.log = log;
+  constructor(
+    private readonly clientHost: SorbetClientHost,
+    private readonly log: Log,
+  ) {
     this.disposables = [
-      this.client.configuration.onDidChangeLspConfig(() => {
-        if (this.client.configuration.lspConfigurationType !== LspConfigurationType.Disabled) {
+      this.clientHost.configuration.onDidChangeLspConfig(() => {
+        if (this.clientHost.configuration.lspConfigurationType !== LspConfigurationType.Disabled) {
           this.enable();
         } else {
           this.disable();
         }
       }),
-      this.client.configuration.onDidChangeLspOptions((option) => {
+      this.clientHost.configuration.onDidChangeLspOptions((option) => {
         if (option === 'restartFilePatterns') {
           this.disable();
           this.enable();
@@ -28,7 +27,7 @@ export class RestartWatcher implements vscode.Disposable {
       }),
     ];
 
-    if (this.client.configuration.lspConfigurationType !== LspConfigurationType.Disabled) {
+    if (this.clientHost.configuration.lspConfigurationType !== LspConfigurationType.Disabled) {
       this.enable();
     }
   }
@@ -50,19 +49,22 @@ export class RestartWatcher implements vscode.Disposable {
       this.log.debug(
         'Ignored restart-watcher creation request, already exists',
         this.fsWatchers.length,
-        this.client.workspaceFolder.uri.toString(true),
+        this.clientHost.workspaceFolder.uri.toString(true),
       );
       return;
     }
 
-    const onChangeListener = () => this.client.restart();
-    this.fsWatchers = this.client.configuration.restartFilePatterns.map((pattern) => {
+    const onChangeListener = () => this.clientHost.restart();
+    this.fsWatchers = this.clientHost.configuration.restartFilePatterns.map((pattern) => {
       const watcher = vscode.workspace.createFileSystemWatcher(pattern);
       watcher.onDidChange(onChangeListener);
       watcher.onDidCreate(onChangeListener);
       watcher.onDidDelete(onChangeListener);
       return watcher;
     });
-    this.log.debug('Created restart FS watchers', this.client.workspaceFolder.uri.toString(true));
+    this.log.debug(
+      'Created restart FS watchers',
+      this.clientHost.workspaceFolder.uri.toString(true),
+    );
   }
 }

@@ -12,7 +12,7 @@ export const HIERARCHY_REFERENCES_REQUEST = new vslc.RequestType<
 export interface HierarchyReferencesRequest {
   sendRequest(
     requestType: typeof HIERARCHY_REFERENCES_REQUEST,
-    param: vslc.ReferenceParams,
+    params: vslc.ReferenceParams,
     token?: vslc.CancellationToken,
-  ): Promise<vslc.Location[]>;
+  ): Promise<vslc.Location[] | null>;
 }

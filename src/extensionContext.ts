@@ -1,25 +1,26 @@
 import * as vscode from 'vscode';
+import { SorbetClientManager } from './clientManager/sorbetClientManager';
 import { Configuration } from './common/configuration';
 import { Log } from './common/log';
 import { LogMetrics, Metrics } from './common/metrics';
-import { SorbetClientManager } from './lspClient/sorbetClientManager';
 
 export class ExtensionContext {
   public readonly clientManager: SorbetClientManager;
   public readonly configuration: Configuration;
   public readonly extensionContext: vscode.ExtensionContext;
-  public readonly logOutputChannel: vscode.LogOutputChannel;
+  public readonly log: vscode.LogOutputChannel & Log;
   public readonly metrics: Metrics;
 
   constructor(context: vscode.ExtensionContext) {
+    const log = vscode.window.createOutputChannel('Sorbetto', { log: true });
     this.configuration = new Configuration();
     this.extensionContext = context;
-    this.logOutputChannel = vscode.window.createOutputChannel('Sorbetto', { log: true });
-    this.metrics = new LogMetrics(this.logOutputChannel);
+    this.log = log;
+    this.metrics = new LogMetrics(log);
 
     this.clientManager = new SorbetClientManager(this);
 
-    this.disposables.push(this.clientManager, this.configuration, this.logOutputChannel);
+    this.disposables.push(this.clientManager, this.configuration, this.log);
   }
 
   /**
@@ -30,12 +31,5 @@ export class ExtensionContext {
    */
   public get disposables(): vscode.Disposable[] {
     return this.extensionContext.subscriptions;
-  }
-
-  /**
-   * Logger.
-   */
-  public get log(): Log {
-    return this.logOutputChannel;
   }
 }

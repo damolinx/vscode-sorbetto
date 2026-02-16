@@ -1,24 +1,23 @@
 import * as vscode from 'vscode';
+import { SorbetClient } from '../client/sorbetClient';
+import { ShowOperationEvent } from '../clientHost/events/showOperationEvent';
+import { StatusChangedEvent } from '../clientHost/events/statusChangedEvent';
+import { SorbetClientHost } from '../clientHost/sorbetClientHost';
+import { createClientHostId, SorbetClientHostId } from '../clientHost/sorbetClientHostId';
 import { onMainAreaActiveTextEditorChanged } from '../common/utils';
 import { isSorbetWorkspace } from '../common/workspaceUtils';
 import { ExtensionContext } from '../extensionContext';
-import { ShowOperationEvent } from './showOperationEvent';
-import { SorbetClient } from './sorbetClient';
-import { createClientId, SorbetClientId } from './sorbetClientId';
-import { StatusChangedEvent } from './statusChangedEvent';
 
 export class SorbetClientManager implements vscode.Disposable {
-  private readonly clients: Map<SorbetClientId, SorbetClient>;
-  private readonly context: ExtensionContext;
+  private readonly clientHosts: Map<SorbetClientHostId, SorbetClientHost>;
   private readonly disposables: vscode.Disposable[];
-  private readonly onClientAddedEmitter: vscode.EventEmitter<SorbetClient>;
-  private readonly onClientRemovedEmitter: vscode.EventEmitter<SorbetClient>;
+  private readonly onClientAddedEmitter: vscode.EventEmitter<SorbetClientHost>;
+  private readonly onClientRemovedEmitter: vscode.EventEmitter<SorbetClientHost>;
   private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
   private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
 
-  constructor(context: ExtensionContext) {
-    this.clients = new Map();
-    this.context = context;
+  constructor(private readonly context: ExtensionContext) {
+    this.clientHosts = new Map();
     this.onClientAddedEmitter = new vscode.EventEmitter();
     this.onClientRemovedEmitter = new vscode.EventEmitter();
     this.onShowOperationEmitter = new vscode.EventEmitter();
@@ -49,23 +48,23 @@ export class SorbetClientManager implements vscode.Disposable {
   }
 
   dispose(): void {
-    vscode.Disposable.from(...this.disposables, ...this.clients.values()).dispose();
-    this.clients.clear();
+    vscode.Disposable.from(...this.disposables, ...this.clientHosts.values()).dispose();
+    this.clientHosts.clear();
   }
 
   public async addWorkspace(
     workspaceFolder: vscode.WorkspaceFolder,
-    clientId = createClientId(workspaceFolder),
+    clientId = createClientHostId(workspaceFolder),
     start = true,
-  ): Promise<SorbetClient | undefined> {
-    let sorbetClient = this.clients.get(clientId);
+  ): Promise<SorbetClientHost | undefined> {
+    let sorbetClient = this.clientHosts.get(clientId);
     if (!sorbetClient) {
       if (!(await isSorbetWorkspace(workspaceFolder))) {
         return sorbetClient;
       }
 
-      sorbetClient = new SorbetClient(clientId, this.context, workspaceFolder);
-      this.clients.set(clientId, sorbetClient);
+      sorbetClient = new SorbetClientHost(this.context, workspaceFolder, clientId);
+      this.clientHosts.set(clientId, sorbetClient);
       this.onClientAddedEmitter.fire(sorbetClient);
     }
 
@@ -77,32 +76,41 @@ export class SorbetClientManager implements vscode.Disposable {
   }
 
   public get clientCount(): number {
-    return this.clients.size;
+    return this.clientHosts.size;
   }
 
-  public getClient(uri: vscode.Uri): SorbetClient | undefined {
-    const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-    if (!workspaceFolder) {
-      return undefined;
+  public getClientHost(
+    workspaceFolderOrUri: vscode.Uri | vscode.WorkspaceFolder,
+  ): SorbetClientHost | undefined {
+    let workspaceFolder: vscode.WorkspaceFolder | undefined;
+    if (workspaceFolderOrUri instanceof vscode.Uri) {
+      workspaceFolder = vscode.workspace.getWorkspaceFolder(workspaceFolderOrUri);
+      if (!workspaceFolder) {
+        return undefined;
+      }
+    } else {
+      workspaceFolder = workspaceFolderOrUri;
     }
 
-    const clientId = createClientId(workspaceFolder);
-    return this.getClientById(clientId);
-  }
-
-  public getClientById(clientId: SorbetClientId) {
-    return this.clients.get(clientId);
+    const hostId = createClientHostId(workspaceFolder);
+    return this.clientHosts.get(hostId);
   }
 
   public getClients(): SorbetClient[] {
-    return [...this.clients.values()];
+    return this.getClientHosts()
+      .map((host) => host.languageClient)
+      .filter((client) => !!client);
   }
 
-  public get onClientAdded(): vscode.Event<SorbetClient> {
+  public getClientHosts(): SorbetClientHost[] {
+    return [...this.clientHosts.values()];
+  }
+
+  public get onClientAdded(): vscode.Event<SorbetClientHost> {
     return this.onClientAddedEmitter.event;
   }
 
-  public get onClientRemoved(): vscode.Event<SorbetClient> {
+  public get onClientRemoved(): vscode.Event<SorbetClientHost> {
     return this.onClientRemovedEmitter.event;
   }
 
@@ -122,12 +130,12 @@ export class SorbetClientManager implements vscode.Disposable {
 
   public removeWorkspace(
     workspaceFolder: vscode.WorkspaceFolder,
-    clientId = createClientId(workspaceFolder),
+    clientId = createClientHostId(workspaceFolder),
   ): boolean {
-    const client = this.clients.get(clientId);
+    const client = this.clientHosts.get(clientId);
     if (client) {
       client.dispose();
-      this.clients.delete(clientId);
+      this.clientHosts.delete(clientId);
       this.onClientRemovedEmitter.fire(client);
       return true;
     }

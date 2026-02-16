@@ -12,14 +12,14 @@ function registerSorbetStatus({ clientManager, disposables }: ExtensionContext):
   setContext(contextKey, undefined);
 
   disposables.push(
-    clientManager.onStatusChanged(({ client }) => {
-      const editor = mainAreaActiveEditorUri();
-      if (editor && client.inScope(editor)) {
-        setContext(contextKey, client.status.toLowerCase());
+    clientManager.onStatusChanged(({ clientHost }) => {
+      const uri = mainAreaActiveEditorUri();
+      if (uri && clientHost.inScope(uri)) {
+        setContext(contextKey, clientHost.status.toLowerCase());
       }
     }),
     onMainAreaActiveTextEditorChanged((editor) => {
-      const client = editor && clientManager.getClient(editor.document.uri);
+      const client = editor && clientManager.getClientHost(editor.document.uri);
       if (client) {
         setContext(contextKey, client.status.toLowerCase());
       }

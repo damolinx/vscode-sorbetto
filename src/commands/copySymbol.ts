@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
+import { SorbetClientStatus } from '../clientHost/sorbetClientStatus';
 import { ExtensionContext } from '../extensionContext';
-import { SorbetClientStatus } from '../lspClient/sorbetClientStatus';
 
 /**
  * Copies the fully qualified name of the symbol at the current editor location.
@@ -10,10 +10,11 @@ export async function copySymbol(
   context: ExtensionContext,
   { document, selection }: vscode.TextEditor,
 ): Promise<void> {
-  const client = context.clientManager.getClient(document.uri);
-  if (client?.status !== SorbetClientStatus.Running) {
+  const clientHost = context.clientManager.getClientHost(document.uri);
+  if (!clientHost?.languageClient || clientHost.status !== SorbetClientStatus.Running) {
     context.log.warn(
-      'CopySymbol: No Sorbet client for editor.',
+      'CopySymbol: No Sorbet client is available. Status:',
+      clientHost?.status,
       vscode.workspace.asRelativePath(document.uri),
     );
     return;
@@ -23,7 +24,7 @@ export async function copySymbol(
   // To prevent a long operation from unexpectedly writing to the clipboard,
   // a cancelable progress notification is shown after 2s.
   const symbolInfo = await withProgress(
-    (token) => client.sendShowSymbolRequest(document, selection.start, token),
+    (token) => clientHost.languageClient!.sendShowSymbolRequest(document, selection.start, token),
     2000,
     context,
   );
