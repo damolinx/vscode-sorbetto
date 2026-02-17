@@ -11,11 +11,19 @@ export async function copySymbol(
   { document, selection }: vscode.TextEditor,
 ): Promise<void> {
   const clientHost = context.clientManager.getClientHost(document.uri);
-  if (!clientHost?.languageClient || clientHost.status !== SorbetClientStatus.Running) {
+  if (!clientHost) {
     context.log.warn(
-      'CopySymbol: No Sorbet client is available. Status:',
-      clientHost?.status,
+      'CopySymbol: No Sorbet client available.',
       vscode.workspace.asRelativePath(document.uri),
+    );
+    return;
+  }
+
+  if (clientHost.status !== SorbetClientStatus.Running) {
+    context.log.warn(
+      'CopySymbol: Sorbet client is not ready. Status:',
+      clientHost.status,
+      clientHost.workspaceFolder.uri.toString(true),
     );
     return;
   }

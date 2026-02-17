@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import { join } from 'path';
 import { ExtensionContext } from '../extensionContext';
-import { executeCommandsInTerminal, getTargetWorkspaceUri } from './utils';
+import { executeCommandsInTerminal, getTargetWorkspaceFolder } from './utils';
 
 export type UpdateRbiType = 'annotations' | 'dsl' | 'gems' | 'gems-all' | 'todo';
 
 export async function updateRbis(context: ExtensionContext, type?: UpdateRbiType): Promise<void> {
-  const workspaceUri = await getTargetWorkspaceUri(context);
-  if (!workspaceUri) {
+  const workspaceFolder = await getTargetWorkspaceFolder(context);
+  if (!workspaceFolder) {
     return;
   }
 
@@ -23,7 +23,7 @@ export async function updateRbis(context: ExtensionContext, type?: UpdateRbiType
 
   await executeCommandsInTerminal({
     commands: [command],
-    cwd: workspaceUri,
+    cwd: workspaceFolder.uri,
     name: 'update',
   });
 }

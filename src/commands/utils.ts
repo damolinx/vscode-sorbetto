@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { SorbetClientHost } from '../clientHost/sorbetClientHost';
-import { mainAreaActiveEditorUri, mainAreaActiveTextEditorUri } from '../common/utils';
+import { mainAreaActiveEditorUri } from '../common/utils';
 import { isSorbetWorkspace } from '../common/workspaceUtils';
 import { ExtensionContext } from '../extensionContext';
 import { setupWorkspace } from './setupWorkspace';
@@ -36,12 +36,12 @@ export async function executeCommandsInTerminal(options: {
 
 export async function getClientHost(
   context: ExtensionContext,
-  pathOrUri?: string | vscode.Uri,
+  contextUri?: vscode.Uri,
 ): Promise<SorbetClientHost | undefined> {
-  const targetPathOrUri = pathOrUri ?? mainAreaActiveEditorUri();
-  const workspaceFolder = await getTargetWorkspaceFolder(context, targetPathOrUri);
+  const targetUri = contextUri ?? mainAreaActiveEditorUri();
+  const workspaceFolder = await getTargetWorkspaceFolder(context, targetUri);
   if (!workspaceFolder) {
-    context.log.debug('Restart: No workspace found for context', targetPathOrUri?.toString(true));
+    context.log.debug('Restart: No workspace found for context', targetUri?.toString(true));
     return;
   }
 
@@ -49,23 +49,13 @@ export async function getClientHost(
   return clientHost;
 }
 
-export function getTargetEditorUri(pathOrUri?: string | vscode.Uri): vscode.Uri | undefined {
-  const uri = pathOrUri
-    ? pathOrUri instanceof vscode.Uri
-      ? pathOrUri
-      : vscode.Uri.parse(pathOrUri)
-    : mainAreaActiveTextEditorUri();
-  return uri;
-}
-
 export async function getTargetWorkspaceFolder(
   context: ExtensionContext,
-  pathOrUri?: string | vscode.Uri,
+  contextUri?: vscode.Uri,
   options?: { skipSorbetWorkspaceVerification?: true },
 ): Promise<vscode.WorkspaceFolder | undefined> {
   let workspaceFolder: vscode.WorkspaceFolder | undefined;
-  if (pathOrUri) {
-    const contextUri = pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.parse(pathOrUri);
+  if (contextUri) {
     const candidateWorkspaceFolder = vscode.workspace.getWorkspaceFolder(contextUri);
     if (candidateWorkspaceFolder && (await isSorbetWorkspace(candidateWorkspaceFolder))) {
       workspaceFolder = candidateWorkspaceFolder;
@@ -96,15 +86,6 @@ export async function getTargetWorkspaceFolder(
   }
 
   return workspaceFolder;
-}
-
-export async function getTargetWorkspaceUri(
-  context: ExtensionContext,
-  pathOrUri?: string | vscode.Uri,
-  options?: { skipSorbetWorkspaceVerification?: true },
-): Promise<vscode.Uri | undefined> {
-  const workspaceFolder = await getTargetWorkspaceFolder(context, pathOrUri, options);
-  return workspaceFolder?.uri;
 }
 
 async function showNotSorbetEnabledWarning(

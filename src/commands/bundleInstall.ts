@@ -1,12 +1,11 @@
 import * as vscode from 'vscode';
-import { dirname } from 'path';
 import { ExtensionContext } from '../extensionContext';
 import { executeCommandsInTerminal } from './utils';
 import { verifyEnvironment } from './verifyEnvironment';
 
 export async function bundleInstall(
   context: ExtensionContext,
-  gemfile: string | vscode.Uri,
+  gemfile: vscode.Uri,
   action: 'install' | 'update',
 ) {
   if (!(await verifyEnvironment(context, ['bundle']))) {
@@ -16,7 +15,7 @@ export async function bundleInstall(
 
   return executeCommandsInTerminal({
     commands: ["bundle config set --local path 'vendor/bundle'", `bundle ${action}`],
-    cwd: dirname(gemfile instanceof vscode.Uri ? gemfile.fsPath : gemfile),
+    cwd: vscode.Uri.joinPath(gemfile, '..'),
     name: 'bundler',
   });
 }

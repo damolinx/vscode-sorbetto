@@ -7,11 +7,19 @@ export async function peekHierarchyReferences(
   { document, selection }: vscode.TextEditor,
 ): Promise<void> {
   const clientHost = context.clientManager.getClientHost(document.uri);
-  if (!clientHost?.languageClient || clientHost.status !== SorbetClientStatus.Running) {
+  if (!clientHost?.languageClient) {
     context.log.warn(
-      'HierarchyReferences: No Sorbet client is available. Status:',
-      clientHost?.status,
+      'PeekHierarchyReferences: No Sorbet client available.',
       vscode.workspace.asRelativePath(document.uri),
+    );
+    return;
+  }
+
+  if (clientHost.status !== SorbetClientStatus.Running) {
+    context.log.warn(
+      'PeekHierarchyReferences: Sorbet client is not ready. Status:',
+      clientHost.status,
+      clientHost.workspaceFolder.uri.toString(true),
     );
     return;
   }
@@ -22,7 +30,7 @@ export async function peekHierarchyReferences(
   );
   if (!locations?.length) {
     context.log.debug(
-      'FindAllUsages: Found no reference(s).',
+      'PeekHierarchyReferences: Found no reference(s).',
       vscode.workspace.asRelativePath(document.uri),
     );
     return;
@@ -36,7 +44,7 @@ export async function peekHierarchyReferences(
       ),
   );
   context.log.debug(
-    'FindAllUsages: Found',
+    'PeekHierarchyReferences: Found',
     vsLocations?.length,
     'reference(s).',
     vscode.workspace.asRelativePath(document.uri),

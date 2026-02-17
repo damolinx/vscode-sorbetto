@@ -5,28 +5,40 @@ import { executeCommandsInTerminal, getClientHost } from './utils';
 
 export async function autocorrectAll(
   context: ExtensionContext,
-  contextPathOrUri?: string | vscode.Uri,
+  contextUri?: vscode.Uri,
   codes?: number[],
 ) {
-  const clientHost = await getClientHost(context, contextPathOrUri);
-  if (clientHost?.status !== SorbetClientStatus.Running) {
+  const clientHost = await getClientHost(context, contextUri);
+  if (!clientHost) {
     context.log.warn(
-      'AutocorrectAll: No Sorbet client is available. Status:',
-      clientHost?.status,
-      contextPathOrUri instanceof vscode.Uri ? contextPathOrUri.toString(true) : contextPathOrUri,
+      'AutocorrectAll: No Sorbet client available.',
+      contextUri ? vscode.workspace.asRelativePath(contextUri) : '',
     );
     return;
   }
 
-  const targetErrorCodes = codes || (await getErrorCodes());
-  if (!targetErrorCodes) {
+  if (clientHost.status !== SorbetClientStatus.Running) {
+    context.log.warn(
+      'AutocorrectAll: Sorbet client is not ready. Status:',
+      clientHost.status,
+      clientHost.workspaceFolder.uri.toString(true),
+    );
+    return;
+  }
+
+  const targetCodes = codes || (await getErrorCodes());
+  if (!targetCodes?.length) {
+    context.log.warn(
+      'AutocorrectAll: No errors to correct',
+      clientHost.workspaceFolder.uri.toString(true),
+    );
     return;
   }
 
   const sorbetCommand = clientHost.configuration.sorbetTypecheckCommand.join(' ').trim();
   await executeCommandsInTerminal({
     commands: [
-      `${sorbetCommand} --autocorrect ${targetErrorCodes.map((c) => `--isolate-error-code=${c}`).join(' ')}`,
+      `${sorbetCommand} --autocorrect ${targetCodes.map((c) => `--isolate-error-code=${c}`).join(' ')}`,
     ],
     cwd: clientHost.workspaceFolder.uri,
     name: 'autocorrect',
@@ -45,7 +57,7 @@ async function getErrorCodes(): Promise<number[] | undefined> {
       if (values.length === 0) {
         return 'Enter at least one error code';
       }
-      if (values.some((v) => Number.isNaN(v) || !Number.isInteger(v))) {
+      if (values.some((v) => !Number.isInteger(v))) {
         return 'Error codes must be integer numbers';
       }
       if (values.some((v) => v < 1000)) {
@@ -60,8 +72,7 @@ async function getErrorCodes(): Promise<number[] | undefined> {
   function parse(value: string) {
     return value
       .split(',')
-      .map((v) => v.trim())
-      .filter((v) => v)
+      .filter((v) => v.trim())
       .map((v) => Number(v));
   }
 }

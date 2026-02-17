@@ -6,13 +6,13 @@ import { getClientHost } from './utils';
 export async function runClientAction(
   context: ExtensionContext,
   action: 'start' | 'stop' | 'restart',
-  contextPathOrUri?: string | vscode.Uri,
+  contextUri?: vscode.Uri,
 ) {
-  const clientHost = await getClientHost(context, contextPathOrUri);
+  const clientHost = await getClientHost(context, contextUri);
   if (!clientHost) {
     context.log.warn(
       'Restart: No Sorbet client is available.',
-      contextPathOrUri instanceof vscode.Uri ? contextPathOrUri.toString(true) : contextPathOrUri,
+      contextUri ? vscode.workspace.asRelativePath(contextUri) : '',
     );
     return;
   }

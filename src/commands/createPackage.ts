@@ -4,16 +4,15 @@ import { ExtensionContext } from '../extensionContext';
 
 export async function createPackage(
   context: ExtensionContext,
-  pathOrUri: string | vscode.Uri,
+  contextUri: vscode.Uri,
   packageNamespace = 'PackageName',
 ): Promise<vscode.TextEditor | undefined> {
-  const uri = pathOrUri instanceof vscode.Uri ? pathOrUri : vscode.Uri.file(pathOrUri);
   const uriDir = await vscode.workspace.fs
-    .stat(uri)
+    .stat(contextUri)
     .then(({ type }) =>
-      type === vscode.FileType.Directory ? uri : vscode.Uri.joinPath(uri, '..'),
+      type === vscode.FileType.Directory ? contextUri : vscode.Uri.joinPath(contextUri, '..'),
     );
-  context.log.debug('CreatePackage: Target directory', uriDir.toString(true));
+  context.log.debug('CreatePackage: Target directory', vscode.workspace.asRelativePath(uriDir));
 
   const selection = await vscode.window.showOpenDialog({
     canSelectFiles: false,

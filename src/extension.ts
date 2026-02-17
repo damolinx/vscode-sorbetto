@@ -35,44 +35,34 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   // Register commands
   const rc = vscode.commands.registerCommand;
   context.disposables.push(
-    rc(CommandIds.AutocorrectAll, (pathOrUri?: string | vscode.Uri, codes?: number[]) =>
-      autocorrectAll(context, pathOrUri, codes),
+    rc(CommandIds.AutocorrectAll, (contextUri?: vscode.Uri, codes?: number[]) =>
+      autocorrectAll(context, contextUri, codes),
     ),
-    rc(CommandIds.BundleInstall, (gemfile: string | vscode.Uri) =>
+    rc(CommandIds.BundleInstall, (gemfile: vscode.Uri) =>
       bundleInstall(context, gemfile, 'install'),
     ),
-    rc(CommandIds.BundleUpdate, (gemfile: string | vscode.Uri) =>
-      bundleInstall(context, gemfile, 'update'),
+    rc(CommandIds.BundleUpdate, (gemfile: vscode.Uri) => bundleInstall(context, gemfile, 'update')),
+    rc(CommandIds.CreatePackage, (contextUri: vscode.Uri) => createPackage(context, contextUri)),
+    rc(CommandIds.DebugRubyFile, (uri?: vscode.Uri) => debugRubyFile(context, uri)),
+    rc(CommandIds.OpenPackage, (contextUri?: vscode.Uri) => openPackage(context, contextUri)),
+    rc(CommandIds.OpenSettings, (contextUri?: vscode.Uri, setting?: string) =>
+      openSettings(context, contextUri, setting),
     ),
-    rc(CommandIds.CreatePackage, (pathOrUri: string | vscode.Uri) =>
-      createPackage(context, pathOrUri),
-    ),
-    rc(CommandIds.DebugRubyFile, (pathOrUri?: string | vscode.Uri) =>
-      debugRubyFile(context, pathOrUri),
-    ),
-    rc(CommandIds.OpenPackage, (pathOrUri: string | vscode.Uri) => openPackage(context, pathOrUri)),
-    rc(CommandIds.OpenSettings, (pathOrUri: string | vscode.Uri, setting?: string) =>
-      openSettings(context, pathOrUri, setting),
-    ),
-    rc(CommandIds.RunRubyFile, (pathOrUri?: string | vscode.Uri) =>
-      runRubyFile(context, pathOrUri),
-    ),
+    rc(CommandIds.RunRubyFile, (uri?: vscode.Uri) => runRubyFile(context, uri)),
     rc(CommandIds.SavePackageFiles, () => savePackageFiles(context)),
-    rc(CommandIds.SetupWorkspace, (pathOrUri?: string | vscode.Uri) =>
-      setupWorkspace(context, pathOrUri),
-    ),
-    rc(CommandIds.ShowClientActions, (contextPathOrUri?: string | vscode.Uri) =>
-      showClientActions(context, contextPathOrUri),
+    rc(CommandIds.SetupWorkspace, (uri?: vscode.Uri) => setupWorkspace(context, uri)),
+    rc(CommandIds.ShowClientActions, (contextUri?: vscode.Uri) =>
+      showClientActions(context, contextUri),
     ),
     rc(CommandIds.ShowOutput, (preserveFocus?: boolean) => context.log.show(preserveFocus ?? true)),
-    rc(CommandIds.SorbetRestart, (pathOrUri?: string | vscode.Uri) =>
-      runClientAction(context, 'restart', pathOrUri),
+    rc(CommandIds.SorbetRestart, (contextUri?: vscode.Uri) =>
+      runClientAction(context, 'restart', contextUri),
     ),
-    rc(CommandIds.SorbetStart, (pathOrUri?: string | vscode.Uri) =>
-      runClientAction(context, 'start', pathOrUri),
+    rc(CommandIds.SorbetStart, (contextUri?: vscode.Uri) =>
+      runClientAction(context, 'start', contextUri),
     ),
-    rc(CommandIds.SorbetStop, (pathOrUri?: string | vscode.Uri) =>
-      runClientAction(context, 'stop', pathOrUri),
+    rc(CommandIds.SorbetStop, (contextUri?: vscode.Uri) =>
+      runClientAction(context, 'stop', contextUri),
     ),
     rc(CommandIds.UpdataRbis, (updateType?: UpdateRbiType) => updateRbis(context, updateType)),
   );

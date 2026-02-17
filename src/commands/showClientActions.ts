@@ -10,9 +10,9 @@ type CommandQuickPickItem = vscode.QuickPickItem & {
 
 export async function showClientActions(
   context: ExtensionContext,
-  contextPathOrUri?: string | vscode.Uri,
+  contextUri?: vscode.Uri,
 ): Promise<void> {
-  const items = await getContextualItems(context, contextPathOrUri);
+  const items = await getContextualItems(context, contextUri);
   if (!items) {
     await vscode.window.showWarningMessage('No Sorbet actions are available');
     return;
@@ -30,10 +30,14 @@ export async function showClientActions(
 
 async function getContextualItems(
   context: ExtensionContext,
-  contextPathOrUri?: string | vscode.Uri,
+  contextUri?: vscode.Uri,
 ): Promise<CommandQuickPickItem[] | undefined> {
-  const clientHost = await getClientHost(context, contextPathOrUri);
+  const clientHost = await getClientHost(context, contextUri);
   if (!clientHost) {
+    context.log.warn(
+      'ShowActions: No Sorbet client is available.',
+      contextUri ? vscode.workspace.asRelativePath(contextUri) : '',
+    );
     return undefined;
   }
 
@@ -66,6 +70,7 @@ async function getContextualItems(
     items.unshift({
       command: () => openSettings(context, uri, 'sorbetto.sorbetLspConfiguration'),
       label: 'Open Sorbet Settings',
+      description: 'Sorbet is disabled by setting',
     });
   }
 

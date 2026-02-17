@@ -3,35 +3,31 @@ import { mainAreaActiveEditorUri } from '../common/utils';
 import { PACKAGE_FILENAME } from '../constants';
 import { ExtensionContext } from '../extensionContext';
 import { createPackage } from './createPackage';
-import { getTargetWorkspaceUri } from './utils';
+import { getTargetWorkspaceFolder } from './utils';
 
 export async function openPackage(
   context: ExtensionContext,
-  contextPathOrUri: string | vscode.Uri,
+  contextUri?: vscode.Uri,
 ): Promise<vscode.TextEditor | undefined> {
-  const uri = contextPathOrUri
-    ? contextPathOrUri instanceof vscode.Uri
-      ? contextPathOrUri
-      : vscode.Uri.file(contextPathOrUri)
-    : mainAreaActiveEditorUri();
-  if (!uri) {
+  const targetUri = contextUri ?? mainAreaActiveEditorUri();
+  if (!targetUri) {
     context.log.debug('OpenPackage: No context URI to open package for');
     return;
   }
 
-  const workspaceUri = await getTargetWorkspaceUri(context, uri);
-  if (!workspaceUri) {
+  const workspaceFolder = await getTargetWorkspaceFolder(context, targetUri);
+  if (!workspaceFolder) {
     context.log.debug(
       'OpenPackage: No workspace associated with received URI to open package for',
-      uri.toString(true),
+      targetUri.toString(true),
     );
     return;
   }
 
-  let uriDir = uri;
-  const stat = await vscode.workspace.fs.stat(uri);
+  let uriDir = targetUri;
+  const stat = await vscode.workspace.fs.stat(targetUri);
   if (stat.type === vscode.FileType.File) {
-    uriDir = vscode.Uri.joinPath(uri, '..');
+    uriDir = vscode.Uri.joinPath(targetUri, '..');
   }
 
   let currentDir = uriDir;
@@ -47,8 +43,8 @@ export async function openPackage(
       const editor = await vscode.window.showTextDocument(candidate);
       return editor;
     }
-    currentDir = vscode.Uri.joinPath(uri, '..');
-  } while (currentDir.path.length > workspaceUri.path.length);
+    currentDir = vscode.Uri.joinPath(targetUri, '..');
+  } while (currentDir.path.length > workspaceFolder.uri.path.length);
 
   const option = await vscode.window.showInformationMessage(
     'No __package.rb file found alongside this file or in any parent directory up to the workspace root.',
