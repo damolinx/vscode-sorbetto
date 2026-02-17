@@ -9,7 +9,7 @@ import { handleRename } from './commands/handleRename';
 import { openPackage } from './commands/openPackage';
 import { openSettings } from './commands/openSettings';
 import { peekHierarchyReferences } from './commands/peekHierarchyReferences';
-import { restartSorbet } from './commands/restartSorbet';
+import { runClientAction } from './commands/runClientAction';
 import { runRubyFile } from './commands/runRubyFile';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { sendToSorbetRun } from './commands/sendToSorbetRun';
@@ -66,13 +66,13 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     ),
     rc(CommandIds.ShowOutput, (preserveFocus?: boolean) => context.log.show(preserveFocus ?? true)),
     rc(CommandIds.SorbetRestart, (pathOrUri?: string | vscode.Uri) =>
-      restartSorbet(context, 'restart', pathOrUri),
+      runClientAction(context, 'restart', pathOrUri),
     ),
     rc(CommandIds.SorbetStart, (pathOrUri?: string | vscode.Uri) =>
-      restartSorbet(context, 'start', pathOrUri),
+      runClientAction(context, 'start', pathOrUri),
     ),
     rc(CommandIds.SorbetStop, (pathOrUri?: string | vscode.Uri) =>
-      restartSorbet(context, 'stop', pathOrUri),
+      runClientAction(context, 'stop', pathOrUri),
     ),
     rc(CommandIds.UpdataRbis, (updateType?: UpdateRbiType) => updateRbis(context, updateType)),
   );

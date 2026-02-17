@@ -3,7 +3,7 @@ import { ExtensionContext } from '../extensionContext';
 import { openSettings } from './openSettings';
 import { getClientHost } from './utils';
 
-export async function restartSorbet(
+export async function runClientAction(
   context: ExtensionContext,
   action: 'start' | 'stop' | 'restart',
   contextPathOrUri?: string | vscode.Uri,

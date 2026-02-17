@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { ExtensionContext } from '../extensionContext';
 import { openSettings } from './openSettings';
-import { restartSorbet } from './restartSorbet';
+import { runClientAction } from './runClientAction';
 import { getClientHost } from './utils';
 
 type CommandQuickPickItem = vscode.QuickPickItem & {
@@ -49,17 +49,17 @@ async function getContextualItems(
   if (clientHost.isActive()) {
     items.unshift(
       {
-        command: () => restartSorbet(context, 'restart', uri),
+        command: () => runClientAction(context, 'restart', uri),
         label: 'Restart Sorbet',
       },
       {
-        command: () => restartSorbet(context, 'stop', uri),
+        command: () => runClientAction(context, 'stop', uri),
         label: 'Stop Sorbet',
       },
     );
   } else if (clientHost.isEnabledByConfiguration()) {
     items.unshift({
-      command: () => restartSorbet(context, 'start', uri),
+      command: () => runClientAction(context, 'start', uri),
       label: 'Start Sorbet',
     });
   } else {
