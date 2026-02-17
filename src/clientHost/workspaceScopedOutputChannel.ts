@@ -13,7 +13,7 @@ export class WorkspaceScopedOutputChannel implements vscode.LogOutputChannel {
     const single = vscode.workspace.workspaceFolders?.length === 1;
     let normalizedValue = value.trim();
     if (forceSingleLine) {
-      normalizedValue = normalizedValue.replaceAll(/\.?\s*\n/g, '. ');
+      normalizedValue = normalizedValue.replaceAll(/\s*\n\s*/g, ' ');
     }
     return single ? normalizedValue : `${workspaceName} ${normalizedValue}`;
   }
