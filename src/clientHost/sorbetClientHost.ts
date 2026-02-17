@@ -183,6 +183,7 @@ export class SorbetClientHost implements vscode.Disposable {
                   this.workspaceFolder.uri.toString(true),
                 );
                 this.status = SorbetClientStatus.Disabled;
+                this.languageClient = undefined;
                 break;
             }
           }),
@@ -229,7 +230,7 @@ export class SorbetClientHost implements vscode.Disposable {
    */
   public async start() {
     if (this.languageClient) {
-      this.log.debug('Ignored start request, already running.');
+      this.log.info('Ignored start request, already running.');
       return;
     } else if (this.configuration.lspConfigurationType === LspConfigurationType.Disabled) {
       this.log.info('Ignored start request, disabled by configuration.');
@@ -357,7 +358,7 @@ export class SorbetClientHost implements vscode.Disposable {
           },
         );
       } else {
-        this.log.debug('Ignored stop request, stop not required.');
+        this.log.info('Ignored stop request, stop not required.');
       }
       this.languageClient = undefined;
     } else if (this.languageClientInitializer) {
