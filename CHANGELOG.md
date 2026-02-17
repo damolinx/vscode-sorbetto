@@ -1,7 +1,7 @@
 # Changelog
 
-## Next
-- Restructure the language client management code.
+## 0.3.28
+- Restructure language client management code.
 - Replace the **Start**/**Output** commands in the language status item with a **Actions** command to reduce confusion in some scenarios.
 - Fix: Sorbet client cannot be restarted from UI if process exited/crashed.
 
