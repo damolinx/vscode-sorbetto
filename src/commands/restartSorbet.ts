@@ -1,29 +1,18 @@
 import * as vscode from 'vscode';
-import { mainAreaActiveEditorUri } from '../common/utils';
 import { ExtensionContext } from '../extensionContext';
 import { openSettings } from './openSettings';
-import { getTargetWorkspaceFolder } from './utils';
+import { getClientHost } from './utils';
 
 export async function restartSorbet(
   context: ExtensionContext,
   action: 'start' | 'stop' | 'restart',
   contextPathOrUri?: string | vscode.Uri,
 ) {
-  const targetContextPathOrUri = contextPathOrUri ?? mainAreaActiveEditorUri();
-  const workspaceFolder = await getTargetWorkspaceFolder(context, targetContextPathOrUri);
-  if (!workspaceFolder) {
-    context.log.debug(
-      'Restart: No workspace found for context',
-      targetContextPathOrUri?.toString(true),
-    );
-    return;
-  }
-
-  const clientHost = context.clientManager.getClientHost(workspaceFolder);
+  const clientHost = await getClientHost(context, contextPathOrUri);
   if (!clientHost) {
     context.log.warn(
-      'Restart: No Sorbet client is available for workspace.',
-      workspaceFolder.uri.toString(true),
+      'Restart: No Sorbet client is available.',
+      contextPathOrUri instanceof vscode.Uri ? contextPathOrUri.toString(true) : contextPathOrUri,
     );
     return;
   }
@@ -32,12 +21,12 @@ export async function restartSorbet(
     case 'restart':
       await (clientHost.isEnabledByConfiguration()
         ? clientHost.restart()
-        : showDisabledConfigurationNotification(workspaceFolder));
+        : showDisabledConfigurationNotification(clientHost.workspaceFolder));
       break;
     case 'start':
       await (clientHost.isEnabledByConfiguration()
         ? clientHost.start()
-        : showDisabledConfigurationNotification(workspaceFolder));
+        : showDisabledConfigurationNotification(clientHost.workspaceFolder));
       break;
     case 'stop':
       await clientHost.stop();

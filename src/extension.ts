@@ -14,6 +14,7 @@ import { runRubyFile } from './commands/runRubyFile';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { sendToSorbetRun } from './commands/sendToSorbetRun';
 import { setupWorkspace } from './commands/setupWorkspace';
+import { showClientActions } from './commands/showClientActions';
 import { updateRbis, UpdateRbiType } from './commands/updateRbi';
 import { ExtensionContext } from './extensionContext';
 import { registerContextValueHandlers } from './extensionContextValues';
@@ -59,6 +60,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     rc(CommandIds.SavePackageFiles, () => savePackageFiles(context)),
     rc(CommandIds.SetupWorkspace, (pathOrUri?: string | vscode.Uri) =>
       setupWorkspace(context, pathOrUri),
+    ),
+    rc(CommandIds.ShowClientActions, (contextPathOrUri?: string | vscode.Uri) =>
+      showClientActions(context, contextPathOrUri),
     ),
     rc(CommandIds.ShowOutput, (preserveFocus?: boolean) => context.log.show(preserveFocus ?? true)),
     rc(CommandIds.SorbetRestart, (pathOrUri?: string | vscode.Uri) =>

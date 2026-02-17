@@ -2,6 +2,7 @@
 
 ## Next
 - Restructure the language client management code.
+- Replace the **Start**/**Output** commands in the language status item with a  **Actions** command to reduce confusion in some scenarios.
 
 ## 0.3.27
 - Fix: `Gemfile.lock` parsing should ignore version numbers, if present.

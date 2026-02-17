@@ -14,16 +14,10 @@ const OpenConfigurationSettings: vscode.Command = {
   tooltip: 'Open Sorbet Settings',
 };
 
-const StartCommand: vscode.Command = {
-  command: CommandIds.SorbetRestart,
-  title: 'Start',
-  tooltip: 'Start Sorbet',
-};
-
-const ShowOutputCommand: vscode.Command = {
-  command: CommandIds.ShowOutput,
-  title: 'Output',
-  tooltip: 'View Sorbet Output',
+const ShowClientActions: vscode.Command = {
+  command: CommandIds.ShowClientActions,
+  title: 'Actions',
+  tooltip: 'Show Sorbet actions',
 };
 
 export class SorbetLanguageStatus implements vscode.Disposable {
@@ -42,8 +36,11 @@ export class SorbetLanguageStatus implements vscode.Disposable {
 
     const selector = this.getSelector();
     this.configItem = vscode.languages.createLanguageStatusItem('ruby-sorbet-config', selector);
+    this.configItem.command = OpenConfigurationSettings;
     this.setConfig({ configType: LspConfigurationType.Disabled });
+
     this.statusItem = vscode.languages.createLanguageStatusItem('ruby-sorbet-status', selector);
+    this.statusItem.command = ShowClientActions;
     this.setStatus({ status: 'Disabled' });
 
     const clientHandler = (clientHost: SorbetClientHost) =>
@@ -180,7 +177,6 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     const titleCasedConfig = options.configType
       ? options.configType.charAt(0).toUpperCase() + options.configType.slice(1)
       : '';
-    this.configItem.command = OpenConfigurationSettings;
     this.configItem.detail = this.getWorkspaceAwareDetail(
       'Sorbet Configuration',
       options.clientHost,
@@ -203,16 +199,11 @@ export class SorbetLanguageStatus implements vscode.Disposable {
       status = 'Unknown',
     } = options;
     this.statusItem.busy = busy;
+    this.statusItem.detail = clientHost?.isEnabledByConfiguration()
+      ? detail
+      : 'Sorbet is disabled in settings';
     this.statusItem.severity = severity;
     this.statusItem.text = `$(ruby) ${status}`;
-
-    if (clientHost?.isEnabledByConfiguration()) {
-      this.statusItem.command = clientHost.isActive() ? ShowOutputCommand : StartCommand;
-      this.statusItem.detail = detail;
-    } else {
-      this.statusItem.command = undefined;
-      this.statusItem.detail = 'Sorbet is disabled by configuration';
-    }
   }
 
   private getWorkspaceAwareDetail(

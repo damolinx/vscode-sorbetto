@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import { mainAreaActiveTextEditorUri } from '../common/utils';
+import { SorbetClientHost } from '../clientHost/sorbetClientHost';
+import { mainAreaActiveEditorUri, mainAreaActiveTextEditorUri } from '../common/utils';
 import { isSorbetWorkspace } from '../common/workspaceUtils';
 import { ExtensionContext } from '../extensionContext';
 import { setupWorkspace } from './setupWorkspace';
@@ -31,6 +32,21 @@ export async function executeCommandsInTerminal(options: {
   const terminal = vscode.window.createTerminal(terminalOptions);
   terminal.show(options.preserveFocus);
   return terminal;
+}
+
+export async function getClientHost(
+  context: ExtensionContext,
+  pathOrUri?: string | vscode.Uri,
+): Promise<SorbetClientHost | undefined> {
+  const targetPathOrUri = pathOrUri ?? mainAreaActiveEditorUri();
+  const workspaceFolder = await getTargetWorkspaceFolder(context, targetPathOrUri);
+  if (!workspaceFolder) {
+    context.log.debug('Restart: No workspace found for context', targetPathOrUri?.toString(true));
+    return;
+  }
+
+  const clientHost = context.clientManager.getClientHost(workspaceFolder);
+  return clientHost;
 }
 
 export function getTargetEditorUri(pathOrUri?: string | vscode.Uri): vscode.Uri | undefined {

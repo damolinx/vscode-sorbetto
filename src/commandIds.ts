@@ -40,7 +40,10 @@ export const CommandIds = {
   /** Prepare workspace for Sorbet development. */
   SetupWorkspace: `${EXTENSION_PREFIX}.setup.workspace`,
 
-  /** Show Sorbetto output panel. */
+  /** Show Sorbet Client actions . */
+  ShowClientActions: `_${EXTENSION_PREFIX}.showClientActions`,
+
+  /** Show log output panel. */
   ShowOutput: `_${EXTENSION_PREFIX}.showOutput`,
 
   /** Restart Sorbet. */

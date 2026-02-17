@@ -1,30 +1,19 @@
 import * as vscode from 'vscode';
 import { SorbetClientStatus } from '../clientHost/sorbetClientStatus';
-import { mainAreaActiveEditorUri } from '../common/utils';
 import { ExtensionContext } from '../extensionContext';
-import { executeCommandsInTerminal, getTargetWorkspaceFolder } from './utils';
+import { executeCommandsInTerminal, getClientHost } from './utils';
 
 export async function autocorrectAll(
   context: ExtensionContext,
   contextPathOrUri?: string | vscode.Uri,
   codes?: number[],
 ) {
-  const targetContextPathOrUri = contextPathOrUri ?? mainAreaActiveEditorUri();
-  const workspaceFolder = await getTargetWorkspaceFolder(context, targetContextPathOrUri);
-  if (!workspaceFolder) {
-    context.log.debug(
-      'AutocorrectAll: No workspace found for context',
-      targetContextPathOrUri?.toString(true),
-    );
-    return;
-  }
-
-  const clientHost = context.clientManager.getClientHost(workspaceFolder);
+  const clientHost = await getClientHost(context, contextPathOrUri);
   if (clientHost?.status !== SorbetClientStatus.Running) {
     context.log.warn(
       'AutocorrectAll: No Sorbet client is available. Status:',
       clientHost?.status,
-      workspaceFolder.uri.toString(true),
+      contextPathOrUri instanceof vscode.Uri ? contextPathOrUri.toString(true) : contextPathOrUri,
     );
     return;
   }
