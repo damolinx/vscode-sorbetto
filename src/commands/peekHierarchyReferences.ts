@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
 import { SorbetClientStatus } from '../clientHost/sorbetClientStatus';
 import { ExtensionContext } from '../extensionContext';
+import { getClientHost } from './utils';
 
 export async function peekHierarchyReferences(
   context: ExtensionContext,
   { document, selection }: vscode.TextEditor,
 ): Promise<void> {
-  const clientHost = context.clientManager.getClientHost(document.uri);
+  const clientHost = await getClientHost(context, document.uri);
   if (!clientHost?.languageClient) {
     context.log.warn(
       'PeekHierarchyReferences: No Sorbet client available.',

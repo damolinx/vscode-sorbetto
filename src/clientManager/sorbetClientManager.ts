@@ -38,11 +38,11 @@ export class SorbetClientManager implements vscode.Disposable {
         if (!workspaceFolder) {
           return;
         }
-        await this.addWorkspace(workspaceFolder);
+        await this.ensureClientHost(workspaceFolder);
       }),
       vscode.workspace.onDidChangeWorkspaceFolders(async (event) => {
         event.removed.forEach((folder) => this.removeWorkspace(folder));
-        await Promise.allSettled(event.added.map((folder) => this.addWorkspace(folder)));
+        await Promise.allSettled(event.added.map((folder) => this.ensureClientHost(folder)));
       }),
     ];
   }
@@ -52,7 +52,11 @@ export class SorbetClientManager implements vscode.Disposable {
     this.clientHosts.clear();
   }
 
-  public async addWorkspace(
+  public get clientCount(): number {
+    return this.clientHosts.size;
+  }
+
+  public async ensureClientHost(
     workspaceFolder: vscode.WorkspaceFolder,
     clientId = createClientHostId(workspaceFolder),
     start = true,
@@ -60,7 +64,7 @@ export class SorbetClientManager implements vscode.Disposable {
     let sorbetClient = this.clientHosts.get(clientId);
     if (!sorbetClient) {
       if (!(await isSorbetWorkspace(workspaceFolder))) {
-        return sorbetClient;
+        return undefined;
       }
 
       sorbetClient = new SorbetClientHost(this.context, workspaceFolder, clientId);
@@ -73,10 +77,6 @@ export class SorbetClientManager implements vscode.Disposable {
     }
 
     return sorbetClient;
-  }
-
-  public get clientCount(): number {
-    return this.clientHosts.size;
   }
 
   public getClientHost(

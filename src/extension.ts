@@ -88,6 +88,6 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
 
   // Initialize client manager with existing workspace folders.
   vscode.workspace.workspaceFolders?.forEach((folder) =>
-    context.clientManager.addWorkspace(folder),
+    context.clientManager.ensureClientHost(folder),
   );
 }

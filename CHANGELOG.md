@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.29
+- Fix: Improve client–host management to prevent a rare failure after a remote‑session disconnect.
+
 ## 0.3.28
 - Restructure language client management code.
 - Replace the **Start**/**Output** commands in the language status item with a **Actions** command to reduce confusion in some scenarios.
