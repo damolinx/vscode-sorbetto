@@ -45,6 +45,7 @@ async function getContextualItems(
     {
       command: () => context.log.show(true),
       label: 'View Output',
+      description: 'Open the Sorbet output channel'
     },
   ];
 
@@ -55,22 +56,25 @@ async function getContextualItems(
       {
         command: () => runClientAction(context, 'restart', uri),
         label: 'Restart Sorbet',
+        description: 'Stop and relaunch the language server',
       },
       {
         command: () => runClientAction(context, 'stop', uri),
         label: 'Stop Sorbet',
+        description: 'Stop the language server',
       },
     );
   } else if (clientHost.isEnabledByConfiguration()) {
     items.unshift({
       command: () => runClientAction(context, 'start', uri),
       label: 'Start Sorbet',
+      description: 'Start the language server',
     });
   } else {
     items.unshift({
       command: () => openSettings(context, uri, 'sorbetto.sorbetLspConfiguration'),
       label: 'Open Sorbet Settings',
-      description: 'Sorbet is disabled by setting',
+      description: 'Sorbet is disabled in settings',
     });
   }
 
