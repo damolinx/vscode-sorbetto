@@ -7,7 +7,7 @@ export async function getSorbetWorkspaceFolders(): Promise<vscode.WorkspaceFolde
 }
 
 export function isSorbetWorkspace(workspaceFolder: vscode.WorkspaceFolder): Promise<boolean> {
-  return uriExists(vscode.Uri.joinPath(workspaceFolder.uri, 'sorbet/'), vscode.FileType.Directory);
+  return uriExists(vscode.Uri.joinPath(workspaceFolder.uri, 'sorbet'), vscode.FileType.Directory);
 }
 
 export function uriEquals(a: vscode.Uri, b: vscode.Uri): boolean {
