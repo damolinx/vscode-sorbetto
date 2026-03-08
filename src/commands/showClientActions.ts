@@ -45,7 +45,7 @@ async function getContextualItems(
     {
       command: () => context.log.show(true),
       label: 'View Output',
-      description: 'Open the Sorbet output channel'
+      description: 'Open the Sorbet output channel',
     },
   ];
 

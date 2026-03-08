@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { dirname, extname, relative, sep } from 'path';
+import { uriExists } from '../common/workspaceUtils';
 import { ExtensionContext } from '../extensionContext';
 
 /**
@@ -112,9 +113,6 @@ async function updateRequires(
     const requireUriWithRb = requireUri.path.endsWith('.rb')
       ? requireUri
       : requireUri.with({ path: requireUri.path + '.rb' });
-    return vscode.workspace.fs.stat(requireUriWithRb).then(
-      ({ type }) => type === vscode.FileType.File || type === vscode.FileType.SymbolicLink,
-      () => false,
-    );
+    return uriExists(requireUriWithRb, vscode.FileType.File);
   }
 }

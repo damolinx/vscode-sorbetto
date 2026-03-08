@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.30
+- Improve `require_relative` autocomplete: show only name in dropdown and handle `./` in any segment.
+
 ## 0.3.29
 - Fix: Improve client–host management to prevent a rare failure after a remote‑session disconnect.
 

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { existsSync } from 'fs';
-import { basename, dirname, extname, posix, resolve, sep } from 'path';
+import { posix } from 'path';
+import { uriEquals, uriExists } from '../../common/workspaceUtils';
 import { PACKAGE_FILENAME, SORBET_FILE_DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
 
@@ -28,18 +28,18 @@ export class RequireRelativeCompletionProvider implements vscode.CompletionItemP
   ): Promise<vscode.CompletionItem[] | undefined> {
     const line = document.lineAt(position).text.substring(0, position.character);
 
-    const match = line.match(/^\s*require_relative\s*(?<startQuote>['"])(?<path>(?:[^"']+|$))/d);
-    if (!match?.groups || !match?.indices) {
+    const match = line.match(/^\s*require_relative\s*(?<startQuote>['"])(?<path>[^'"]*)/d);
+    if (!match?.groups || !match.indices) {
       return;
     }
 
-    const documentDirPath = dirname(document.fileName);
-    const hintPath = determineHintPath(documentDirPath, match.groups.path);
+    const documentDir = vscode.Uri.joinPath(document.uri, '..');
+    const hintPath = await determineHintPath(documentDir, match.groups.path);
     if (!hintPath) {
       return;
     }
 
-    const suggestions = await getPaths(documentDirPath, hintPath.path);
+    const suggestions = await getPaths(documentDir, hintPath.path);
     if (suggestions.length === 0) {
       return;
     }
@@ -51,71 +51,70 @@ export class RequireRelativeCompletionProvider implements vscode.CompletionItemP
 
     const dirCommitChars = [match.groups!.startQuote, posix.sep];
     const fileCommitChars = [match.groups!.startQuote];
-    return suggestions.map(([path, type]) => {
-      const item = new vscode.CompletionItem(path, type);
+    return suggestions.map(([suggestionPath, type]) => {
+      const item = new vscode.CompletionItem(posix.basename(suggestionPath), type);
+      item.filterText = hintPath.path + suggestionPath;
       item.range = replaceRange;
 
       if (type === vscode.CompletionItemKind.Folder) {
         item.commitCharacters = dirCommitChars;
-        item.insertText = path;
+        item.insertText = suggestionPath;
         item.sortText = '0';
       } else {
         item.commitCharacters = fileCommitChars;
-        item.insertText = posix.join(hintPath.path, basename(path, '.rb'));
+        item.documentation = suggestionPath;
+        item.insertText = posix.join(hintPath.path, posix.basename(suggestionPath, '.rb'));
         item.sortText = '1';
       }
 
       return item;
     });
 
-    function determineHintPath(
-      baseDir: string,
+    async function determineHintPath(
+      baseDir: vscode.Uri,
       initialHint: string,
-    ): { path: string; filter?: string } | undefined {
-      let testPath = resolve(baseDir, initialHint);
-      if (existsSync(testPath)) {
+    ): Promise<{ path: string; filter?: string } | undefined> {
+      const resolvedHintUri = vscode.Uri.joinPath(baseDir, initialHint);
+      if (await uriExists(resolvedHintUri)) {
         return { path: initialHint };
       }
 
-      const initialHintDir = dirname(initialHint);
-      testPath = resolve(baseDir, initialHintDir);
-      if (existsSync(testPath)) {
-        return { path: `${initialHintDir}/`, filter: basename(initialHint) };
+      const resolvedHintDirUri = vscode.Uri.joinPath(resolvedHintUri, '..');
+      if (await uriExists(resolvedHintDirUri, vscode.FileType.Directory)) {
+        return { path: `${posix.dirname(initialHint)}/`, filter: posix.basename(initialHint) };
       }
 
       return undefined;
     }
 
     async function getPaths(
-      baseDir: string,
+      baseDir: vscode.Uri,
       hintPath: string,
     ): Promise<[string, vscode.CompletionItemKind][]> {
-      const resolvedHintPath = resolve(baseDir, normalizeToRequire(hintPath));
-      let entries = await vscode.workspace.fs.readDirectory(vscode.Uri.file(resolvedHintPath));
-      if (baseDir === resolvedHintPath) {
-        const selfName = basename(document.fileName);
-        entries = entries.filter((entry) => entry[0] !== selfName);
+      const resolvedHintUri = vscode.Uri.joinPath(baseDir, hintPath);
+      let entries = await vscode.workspace.fs.readDirectory(resolvedHintUri);
+      if (uriEquals(baseDir, resolvedHintUri)) {
+        const selfName = posix.basename(document.uri.path);
+        entries = entries.filter(([name]) => name !== selfName);
       }
+
       const paths = entries
         .map(([path, type]) => {
           let result: [string, vscode.CompletionItemKind] | undefined;
           if (!path.startsWith('.')) {
-            if (type === vscode.FileType.Directory) {
+            if (type & vscode.FileType.Directory) {
               result = [posix.join(hintPath, path), vscode.CompletionItemKind.Folder];
-            } else if (extname(path) === '.rb' && !path.endsWith(PACKAGE_FILENAME)) {
-              result = [posix.join(hintPath, path), vscode.CompletionItemKind.File];
+            } else if (type & vscode.FileType.File) {
+              if (path.endsWith('.rb') && path !== PACKAGE_FILENAME) {
+                result = [posix.join(hintPath, path), vscode.CompletionItemKind.File];
+              }
             }
           }
           return result;
         })
         .filter((e) => e !== undefined);
 
-      paths.unshift(['..', vscode.CompletionItemKind.Folder]);
       return paths;
-
-      function normalizeToRequire(path: string): string {
-        return sep !== posix.sep ? path.replaceAll(sep, posix.sep) : path;
-      }
     }
   }
 }

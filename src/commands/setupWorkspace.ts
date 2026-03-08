@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { uriExists } from '../common/workspaceUtils';
 import { GEMFILE_FILENAME } from '../constants';
 import { ExtensionContext } from '../extensionContext';
 import { executeCommandsInTerminal, getTargetWorkspaceFolder } from './utils';
@@ -73,12 +74,7 @@ async function verifyGemfile(
   let changed = false;
   const gemFile = vscode.Uri.joinPath(workspaceFolder.uri, GEMFILE_FILENAME);
 
-  if (
-    !(await vscode.workspace.fs.stat(gemFile).then(
-      () => true,
-      () => false,
-    ))
-  ) {
+  if (!(await uriExists(gemFile, vscode.FileType.File))) {
     const contents = [
       '# frozen_string_literal: true',
       '',
@@ -127,12 +123,7 @@ async function verifySorbetConfig(
   let changed = false;
   const configFile = vscode.Uri.joinPath(workspaceFolder.uri, 'sorbet', 'config');
 
-  if (
-    !(await vscode.workspace.fs.stat(configFile).then(
-      () => true,
-      () => false,
-    ))
-  ) {
+  if (!(await uriExists(configFile, vscode.FileType.File))) {
     edit.createFile(configFile, { contents: Buffer.from('--dir=.\n--ignore=vendor/') });
     changed = true;
   }

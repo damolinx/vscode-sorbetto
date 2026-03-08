@@ -10,7 +10,7 @@ export async function createPackage(
   const uriDir = await vscode.workspace.fs
     .stat(contextUri)
     .then(({ type }) =>
-      type === vscode.FileType.Directory ? contextUri : vscode.Uri.joinPath(contextUri, '..'),
+      type & vscode.FileType.Directory ? contextUri : vscode.Uri.joinPath(contextUri, '..'),
     );
   context.log.debug('CreatePackage: Target directory', vscode.workspace.asRelativePath(uriDir));
 

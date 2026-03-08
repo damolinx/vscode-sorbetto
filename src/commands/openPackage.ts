@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { mainAreaActiveEditorUri } from '../common/utils';
+import { uriExists } from '../common/workspaceUtils';
 import { PACKAGE_FILENAME } from '../constants';
 import { ExtensionContext } from '../extensionContext';
 import { createPackage } from './createPackage';
@@ -25,20 +26,14 @@ export async function openPackage(
   }
 
   let uriDir = targetUri;
-  const stat = await vscode.workspace.fs.stat(targetUri);
-  if (stat.type === vscode.FileType.File) {
+  if (await uriExists(targetUri, vscode.FileType.File)) {
     uriDir = vscode.Uri.joinPath(targetUri, '..');
   }
 
   let currentDir = uriDir;
   do {
     const candidate = vscode.Uri.joinPath(currentDir, PACKAGE_FILENAME);
-    if (
-      await vscode.workspace.fs.stat(candidate).then(
-        (s) => s.type === vscode.FileType.File || s.type === vscode.FileType.SymbolicLink,
-        () => false,
-      )
-    ) {
+    if (await uriExists(candidate, vscode.FileType.File)) {
       context.log.debug('OpenPackage: Found package', vscode.workspace.asRelativePath(candidate));
       const editor = await vscode.window.showTextDocument(candidate);
       return editor;
