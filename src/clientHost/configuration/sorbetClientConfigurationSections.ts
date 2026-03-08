@@ -1,5 +1,5 @@
 /**
- *  All {@link SorbetClient client} configuration names (`sorbetto.«name»`).
+ *  All {@link SorbetClient client} configuration setting names (`sorbetto.«name»`).
  */
 const ConfigurationKeys = {
   enableAllBetaLspFeatures: { lspOption: true, toggle: true },
@@ -21,27 +21,29 @@ const ConfigurationKeys = {
 } as const;
 
 /**
- * {@link SorbetClient Client} configuration name (`sorbetto.«name»`).
+ * {@link SorbetClient Client} configuration setting name (`sorbetto.«name»`).
  */
 export type ConfigurationKey = keyof typeof ConfigurationKeys;
 
 /**
- * {@link SorbetClient Client} configuration name (`sorbetto.«name»`) with a `true` or `false` value.
+ *  Name of a configuration setting (`sorbetto.«name»`) with boolean state.
  */
 export type ToggleConfigurationKey = {
   [K in ConfigurationKey]: (typeof ConfigurationKeys)[K] extends { toggle: true } ? K : never;
 }[ConfigurationKey];
 
 /**
- * {@link SorbetClient Client} configuration name (`sorbetto.«name»`) that is a Sorbet LSP option.
- * These lead to restart the client on change.
+ * Name of a configuration setting (`sorbetto.«name»`) that maps directly to
+ * a Sorbet Language Server option.
  */
 export type LspOptionConfigurationKey = {
   [K in ConfigurationKey]: (typeof ConfigurationKeys)[K] extends { lspOption: true } ? K : never;
 }[ConfigurationKey];
 
 /**
- * {@link SorbetClient Client} configuration names (`sorbetto.«name»`) that are Sorbet LSP options.
+ * Names of configuration settings (`sorbetto.«name»`) that map directly to
+ * Sorbet Language Server options. Changing any of these requires restarting
+ * the {@link SorbetClient client}.
  */
 export const LspOptionConfigurationKeys = Object.entries(ConfigurationKeys)
   .filter(([, value]) => (value as any).lspOption === true)

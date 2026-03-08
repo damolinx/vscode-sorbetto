@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { Log } from '../common/log';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
 import { SorbetClientHost } from './sorbetClientHost';
+import { WorkspaceScopedOutputChannel } from './workspaceScopedOutputChannel';
 
 export class RestartWatcher implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[];
@@ -9,7 +9,7 @@ export class RestartWatcher implements vscode.Disposable {
 
   constructor(
     private readonly clientHost: SorbetClientHost,
-    private readonly log: Log,
+    private readonly log: WorkspaceScopedOutputChannel,
   ) {
     this.disposables = [
       this.clientHost.configuration.onDidChangeLspConfig(() => {
@@ -46,11 +46,7 @@ export class RestartWatcher implements vscode.Disposable {
 
   private enable(): void {
     if (this.fsWatchers) {
-      this.log.debug(
-        'Ignored restart-watcher creation request, already exists',
-        this.fsWatchers.length,
-        this.clientHost.workspaceFolder.uri.toString(true),
-      );
+      this.log.debug('Create restart-watcher request ignored; already exists');
       return;
     }
 
@@ -62,9 +58,6 @@ export class RestartWatcher implements vscode.Disposable {
       watcher.onDidDelete(onChangeListener);
       return watcher;
     });
-    this.log.debug(
-      'Created restart FS watchers',
-      this.clientHost.workspaceFolder.uri.toString(true),
-    );
+    this.log.debug('Created restart-watchers');
   }
 }

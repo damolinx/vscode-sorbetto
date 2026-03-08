@@ -100,7 +100,7 @@ If Sorbet is not working:
 
   **Example:** Log showing a successful start of Sorbet
   ```
-  [info] Start Sorbet LSP file:///...
+  [info] Start Sorbet file:///...
   [info] > bundle exec srb typecheck --lsp --disable-watchman
   [info] > pid 9471
   [info] Pausing

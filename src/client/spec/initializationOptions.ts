@@ -2,7 +2,7 @@ import * as vslc from 'vscode-languageclient';
 import { HighlightType } from './highlightType';
 
 /**
- * Sorbet LSP initialization options.
+ * Sorbet Language Server initialization options.
  * https://sorbet.org/docs/lsp#initialize-request
  */
 export interface InitializationOptions {

@@ -41,7 +41,7 @@ export async function getClientHost(
   const targetUri = contextUri ?? mainAreaActiveEditorUri();
   const workspaceFolder = await getTargetWorkspaceFolder(context, targetUri);
   if (!workspaceFolder) {
-    context.log.debug('No workspace found for context', targetUri?.toString(true));
+    context.log.debug('Found no workspace.', targetUri ? vscode.workspace.asRelativePath(targetUri) : '');
     return;
   }
 

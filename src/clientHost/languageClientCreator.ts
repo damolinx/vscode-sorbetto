@@ -7,6 +7,7 @@ import { ExtensionContext } from '../extensionContext';
 import { createLspConfiguration, LspConfiguration } from './configuration/lspConfiguration';
 import { SorbetClientConfiguration } from './configuration/sorbetClientConfiguration';
 import { LanguageClientErrorHandler } from './languageClientErrorHandler';
+import { WorkspaceScopedOutputChannel } from './workspaceScopedOutputChannel';
 
 export const LEGACY_RETRY_EXITCODE = 11;
 
@@ -23,7 +24,7 @@ export class LanguageClientCreator {
     private readonly context: ExtensionContext,
     private readonly workspaceFolder: vscode.WorkspaceFolder,
     private readonly configuration: SorbetClientConfiguration,
-    outputChannel: vscode.LogOutputChannel,
+    outputChannel: WorkspaceScopedOutputChannel,
   ) {
     this.workspaceFolder = workspaceFolder;
     this.lspClient = instrumentLanguageClient(
@@ -65,7 +66,7 @@ export class LanguageClientCreator {
   }
 
   private async startLspClient(configuration: LspConfiguration): Promise<ProcessWithExitPromise> {
-    this.context.log.info('Start Sorbet LSP', this.workspaceFolder.uri.toString(true));
+    this.context.log.info('Start Sorbet server');
     this.context.log.info('>', configuration.cmd, ...configuration.args);
 
     const lspProcess = spawnWithExitPromise(configuration.cmd, configuration.args, {
@@ -81,10 +82,10 @@ export class LanguageClientCreator {
     lspProcess.exit = lspProcess.exit.then((errorInfo) => {
       const pid = childProcess.pid ?? '«no pid»';
       if (errorInfo) {
-        this.context.log.debug('Sorbet LSP process failed.', pid, errorInfo);
+        this.context.log.debug('Server process failed.', pid, errorInfo);
       } else {
         const exitCode = childProcess.exitCode ?? '«no exitCode»';
-        this.context.log.debug('Sorbet LSP process exited.', pid, exitCode);
+        this.context.log.debug('Server process exited.', pid, exitCode);
       }
       return errorInfo;
     });

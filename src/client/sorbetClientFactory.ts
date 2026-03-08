@@ -15,13 +15,11 @@ export function createClient(
   clientOptions: SorbetLanguageClientOptions & { middleware?: never },
   serverOptions: vslcn.ServerOptions,
 ): SorbetClient {
-  const { outputChannel, workspaceFolder } = clientOptions;
+  const { workspaceFolder } = clientOptions;
   const mergedClientOptions: SorbetLanguageClientOptions = {
     documentSelector: getWorkspaceDocumentSelector(workspaceFolder),
-    initializationFailedHandler: (error) => {
-      outputChannel.error('Failed to initialize Sorbet.', error);
-      return false;
-    },
+    // The LanguageClient logs this as a `Sorbet client:` error
+    initializationFailedHandler: (_error) => false,
     progressOnInitialization: true,
     middleware: SorbetClientMiddleware,
     revealOutputChannelOn: vslc.RevealOutputChannelOn.Never,

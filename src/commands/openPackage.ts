@@ -12,15 +12,15 @@ export async function openPackage(
 ): Promise<vscode.TextEditor | undefined> {
   const targetUri = contextUri ?? mainAreaActiveEditorUri();
   if (!targetUri) {
-    context.log.debug('OpenPackage: No context URI to open package for');
+    context.log.debug('OpenPackage: No context URI');
     return;
   }
 
   const workspaceFolder = await getTargetWorkspaceFolder(context, targetUri);
   if (!workspaceFolder) {
     context.log.debug(
-      'OpenPackage: No workspace associated with received URI to open package for',
-      targetUri.toString(true),
+      'OpenPackage: No workspace found for context URI',
+      targetUri ? vscode.workspace.asRelativePath(targetUri) : ''
     );
     return;
   }

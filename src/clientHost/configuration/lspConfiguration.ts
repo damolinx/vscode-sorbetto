@@ -11,8 +11,8 @@ export interface LspConfiguration {
 }
 
 /**
- * Creates a {@link LspConfiguration LSP configuration} from the given {@link SorbetClientConfiguration client configuration}.
- * @returns A {@link LspConfiguration} instance, or `undefined` if the LSP is disabled.
+ * Creates a {@link LspConfiguration server configuration} from the given {@link SorbetClientConfiguration configuration}.
+ * @returns A {@link LspConfiguration} instance, or `undefined` if disabled by `configuration`.
  */
 export async function createLspConfiguration(
   configuration: SorbetClientConfiguration,
@@ -85,7 +85,7 @@ export async function createLspConfiguration(
       args.push(...additionalArgs);
     }
     if (!cmd) {
-      throw new Error(`Missing LSP command for '${type}' configuration.`);
+      throw new Error(`Missing command-line cmd for '${type}' configuration.`);
     }
     return { cmd, args, type: configuration.lspConfigurationType };
   }

@@ -42,9 +42,7 @@ export class SorbetContentProvider implements vscode.TextDocumentContentProvider
         this.context.log.debug(
           'ContentProvider: Resolved',
           uri.toString(true),
-          'with Sorbet client for',
-          client.workspaceFolder.name,
-          'workspace',
+          client.workspaceFolder.uri.toString(true),
         );
         break;
       }

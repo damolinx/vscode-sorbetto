@@ -90,21 +90,21 @@ export class SorbetClientConfiguration extends Configuration {
   }
 
   /**
-   * Sorbet LSP launch {@link LspConfigurationType configuration type}.
+   * Sorbet Language Server {@link LspConfigurationType configuration type}.
    */
   public get lspConfigurationType(): LspConfigurationType {
     return this.getValue('sorbetLspConfiguration', LspConfigurationType.Stable);
   }
 
   /**
-   * Event fired when the LSP launch configuration type changes.
+   * Event fired when {@link lspConfigurationType} type changes.
    */
   public get onDidChangeLspConfig(): vscode.Event<void> {
     return this.onDidChangeLspConfigurationEmitter.event;
   }
 
   /**
-   * Event fired when the LSP options change.
+   * Event fired when the configuration options change.
    */
   public get onDidChangeLspOptions(): vscode.Event<LspOptionConfigurationKey> {
     return this.onDidChangeLspOptionsEmitter.event;
@@ -118,7 +118,7 @@ export class SorbetClientConfiguration extends Configuration {
   }
 
   /**
-   * Custom Sorbet LSP launch configuration.
+   * Custom Sorbet Language Server launch configuration.
    */
   public get sorbetLspCustomConfiguration(): string[] {
     const configuration = this.getValue<string[]>('sorbetLspCustomConfiguration', []);
@@ -126,7 +126,7 @@ export class SorbetClientConfiguration extends Configuration {
   }
 
   /**
-   * Sorbet LSP launch configuration for typechecking..
+   * Sorbet Language Server launch configuration for typechecking.
    */
   public get sorbetTypecheckCommand(): string[] {
     return this.getValue('sorbetTypecheckCommand', ['bundle', 'exec', 'srb', 'typecheck']);

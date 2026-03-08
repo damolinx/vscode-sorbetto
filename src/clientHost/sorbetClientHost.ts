@@ -39,7 +39,7 @@ export class SorbetClientHost implements vscode.Disposable {
   public readonly configuration: SorbetClientConfiguration;
   private readonly disposables: vscode.Disposable[];
   private languageClientInitializer?: LanguageClientCreator;
-  private readonly log: vscode.LogOutputChannel & Log;
+  private readonly log: WorkspaceScopedOutputChannel;
   private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
   private readonly onStatusChangedEmitter: vscode.EventEmitter<StatusChangedEvent>;
   private readonly restartWatcher: RestartWatcher;
@@ -164,24 +164,15 @@ export class SorbetClientHost implements vscode.Disposable {
           value.onDidChangeState((event) => {
             switch (event.newState) {
               case vslcn.State.Running:
-                this.log.trace(
-                  'LSP client state changed to Running',
-                  this.workspaceFolder.uri.toString(true),
-                );
+                this.log.trace('Client state changed: Running');
                 this.status = SorbetClientStatus.Running;
                 break;
               case vslcn.State.Starting:
-                this.log.trace(
-                  'LSP client state changed to Starting',
-                  this.workspaceFolder.uri.toString(true),
-                );
+                this.log.trace('Client state changed: Starting');
                 this.status = SorbetClientStatus.Initializing;
                 break;
               case vslcn.State.Stopped:
-                this.log.trace(
-                  'LSP client state changed to Stopped',
-                  this.workspaceFolder.uri.toString(true),
-                );
+                this.log.trace('Client state changed: Stopped');
                 this.status = SorbetClientStatus.Disabled;
                 this.languageClient = undefined;
                 break;
@@ -217,7 +208,7 @@ export class SorbetClientHost implements vscode.Disposable {
   }
 
   /**
-   * Restarts the Sorbet LSP client if running, or starts it if not.
+   * Restarts the Sorbet client if running, or starts it if not.
    */
   public async restart() {
     this.context.metrics.increment('restart', 1);
@@ -226,14 +217,14 @@ export class SorbetClientHost implements vscode.Disposable {
   }
 
   /**
-   * Starts the Sorbet LSP client if it is not already running, or disabled.
+   * Starts the Sorbet client if it is not already running, or disabled.
    */
   public async start() {
     if (this.languageClient) {
-      this.log.info('Ignored start request, already running.');
+      this.log.info('Client start request ignored; already running');
       return;
     } else if (this.configuration.lspConfigurationType === LspConfigurationType.Disabled) {
-      this.log.info('Ignored start request, disabled by configuration.');
+      this.log.info('Client started request ignored; disabled by configuration');
       return;
     }
 
@@ -251,7 +242,7 @@ export class SorbetClientHost implements vscode.Disposable {
 
       do {
         retryTimestamp = await throttle(retryAttempt, retryTimestamp, this.log);
-        this.log.debug('Start attempt', 1 + retryAttempt);
+        this.log.debug('Start attempt:', 1 + retryAttempt);
 
         let lspProcess: InitializeProcessResult | undefined;
         try {
@@ -260,13 +251,13 @@ export class SorbetClientHost implements vscode.Disposable {
           if (lspProcess.hasExited) {
             if (lspProcess.exitedWithLegacyRetryCode) {
               this.log.warn(
-                'Sorbet language server exited on startup with retryable exit code:',
+                'Server exited on startup; retryable. ExitCode:',
                 lspProcess.process.exitCode,
               );
               retry = true;
             } else {
               this.log.error(
-                'Sorbet language server exited on startup. Check configuration:',
+                'Server exited on startup; non-retryable. Configuration:',
                 this.configuration.lspConfigurationType,
               );
               retry = false;
@@ -284,14 +275,14 @@ export class SorbetClientHost implements vscode.Disposable {
           if (errorInfo && isUnrecoverable(errorInfo)) {
             this.status = SorbetClientStatus.Disabled;
             this.log.error(
-              'Sorbet LSP failed to start with unrecoverable error.',
+              'Server failed to start; unrecoverable. Error:',
               errorInfo.code || errorInfo.errno,
             );
             retry = false;
           } else {
             this.status = SorbetClientStatus.Error;
             this.log.error(
-              'Sorbet LSP failed to start but will retry.',
+              'Server failed to start; retrying. Error:',
               (errorInfo && (errorInfo.code || errorInfo.errno)) || err,
             );
             retry = true;
@@ -324,7 +315,7 @@ export class SorbetClientHost implements vscode.Disposable {
         );
         const sleepMS = delay - (Date.now() - previous);
         if (sleepMS > 0) {
-          log.debug('Start throttled —', sleepMS, 'ms');
+          log.debug('Client start retry in (ms):', sleepMS);
           await new Promise((res) => setTimeout(res, sleepMS));
         }
       }
@@ -345,20 +336,20 @@ export class SorbetClientHost implements vscode.Disposable {
   }
 
   /**
-   * Stops the Sorbet LSP client if it is running.
+   * Stops the Sorbet client if it is running.
    */
   public async stop() {
     if (this.languageClient) {
       if (this.languageClient.needsStop()) {
         await this.languageClient.stop().then(
-          () => this.log.info('Stopped client'),
+          () => this.log.info('Client stopped'),
           (reason) => {
             this.context.metrics.increment('stop.failed', 1);
             throw reason;
           },
         );
       } else {
-        this.log.info('Ignored stop request, stop not required.');
+        this.log.info('Client stop request ignored; not required');
       }
       this.languageClient = undefined;
     } else if (this.languageClientInitializer) {
@@ -366,15 +357,15 @@ export class SorbetClientHost implements vscode.Disposable {
         const killed = this.languageClientInitializer.lspProcess.kill();
         if (killed !== undefined && !killed) {
           throw new Error(
-            `Zombie initialization with pid: ${this.languageClientInitializer.lspProcess?.process.pid}`,
+            `Zombie initialization. Pid: ${this.languageClientInitializer.lspProcess?.process.pid}`,
           );
         } else {
-          this.log.debug('Zombie initializer but no associated process.');
+          this.log.debug('Zombie initialization; no pid');
           this.languageClientInitializer = undefined;
         }
       }
     } else {
-      this.log.info('Ignored stop request, not running.');
+      this.log.info('Client stop request ignored; not running');
     }
 
     this.status = SorbetClientStatus.Disabled;
