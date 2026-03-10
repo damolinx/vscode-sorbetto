@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
-import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../constants';
+import { RUBY_FILE_DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
 import { HEADER_LINES_WINDOW } from './constants';
 
 export function registerTypedOptionsHoverProvider(context: ExtensionContext): void {
   context.disposables.push(
     vscode.languages.registerHoverProvider(
-      SORBET_FILE_DOCUMENT_SELECTOR,
+      RUBY_FILE_DOCUMENT_SELECTOR,
       new TypedOptionsHoverProvider(),
     ),
   );

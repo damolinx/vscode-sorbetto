@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { SORBET_DOCUMENT_SELECTOR } from '../../constants';
+import { DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
 
 export function registerSelectionRangeProvider(context: ExtensionContext) {
   context.disposables.push(
     vscode.languages.registerSelectionRangeProvider(
-      SORBET_DOCUMENT_SELECTOR,
+      DOCUMENT_SELECTOR,
       new SelectionRangeProvider(),
     ),
   );

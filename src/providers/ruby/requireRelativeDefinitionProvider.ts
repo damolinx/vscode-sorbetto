@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../constants';
+import { RUBY_FILE_DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
 
 export function registerRequireRelativeDefinitionProvider({ disposables }: ExtensionContext): void {
   disposables.push(
     vscode.languages.registerDefinitionProvider(
-      SORBET_FILE_DOCUMENT_SELECTOR,
+      RUBY_FILE_DOCUMENT_SELECTOR,
       new RequireRelativeDefinitionProvider(),
     ),
   );

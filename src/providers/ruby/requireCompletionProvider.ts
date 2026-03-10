@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { Gemfile } from '../../common/gemfile';
-import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../constants';
+import { RUBY_FILE_DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['"', "'"];
@@ -10,7 +10,7 @@ export function registerRequireCompletionProvider({ disposables }: ExtensionCont
   disposables.push(
     provider,
     vscode.languages.registerCompletionItemProvider(
-      SORBET_FILE_DOCUMENT_SELECTOR,
+      RUBY_FILE_DOCUMENT_SELECTOR,
       provider,
       ...TRIGGER_CHARACTERS,
     ),

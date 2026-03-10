@@ -1,14 +1,11 @@
 import * as vscode from 'vscode';
-import { SORBET_DOCUMENT_SELECTOR } from '../../constants';
+import { DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
 import { HEADER_LINES_WINDOW } from './constants';
 
 export function registerFoldingRangeProvider(context: ExtensionContext) {
   context.disposables.push(
-    vscode.languages.registerFoldingRangeProvider(
-      SORBET_DOCUMENT_SELECTOR,
-      new FoldingRangeProvider(),
-    ),
+    vscode.languages.registerFoldingRangeProvider(DOCUMENT_SELECTOR, new FoldingRangeProvider()),
   );
 }
 

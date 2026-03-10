@@ -4,7 +4,7 @@ import { SorbetClientHost } from './clientHost/sorbetClientHost';
 import { SorbetClientStatus } from './clientHost/sorbetClientStatus';
 import { CommandIds } from './commandIds';
 import { onMainAreaActiveTextEditorChanged, mainAreaActiveEditorUri } from './common/utils';
-import { SORBET_CONFIG_DOCUMENT_SELECTOR, SORBET_DOCUMENT_SELECTOR } from './constants';
+import { SORBET_CONFIG_DOCUMENT_SELECTOR, DOCUMENT_SELECTOR } from './constants';
 import { ExtensionContext } from './extensionContext';
 
 const OpenConfigurationSettings: vscode.Command = {
@@ -87,7 +87,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
   private getSelector(): vscode.DocumentSelector {
     return this.alwaysShowStatusItem
       ? '*'
-      : SORBET_DOCUMENT_SELECTOR.concat(SORBET_CONFIG_DOCUMENT_SELECTOR);
+      : DOCUMENT_SELECTOR.concat(SORBET_CONFIG_DOCUMENT_SELECTOR);
   }
 
   private handleEditorOrStatusChange(clientOrContextUri?: SorbetClientHost | vscode.Uri) {

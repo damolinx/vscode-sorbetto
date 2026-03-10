@@ -20,7 +20,7 @@ export async function openPackage(
   if (!workspaceFolder) {
     context.log.debug(
       'OpenPackage: No workspace found for context URI',
-      targetUri ? vscode.workspace.asRelativePath(targetUri) : ''
+      targetUri ? vscode.workspace.asRelativePath(targetUri) : '',
     );
     return;
   }

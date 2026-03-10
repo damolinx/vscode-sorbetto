@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { posix } from 'path';
 import { uriEquals, uriExists } from '../../common/workspaceUtils';
-import { PACKAGE_FILENAME, SORBET_FILE_DOCUMENT_SELECTOR } from '../../constants';
+import { PACKAGE_FILENAME, RUBY_FILE_DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
 
 export const TRIGGER_CHARACTERS: readonly string[] = ['"', "'", posix.sep];
@@ -9,7 +9,7 @@ export const TRIGGER_CHARACTERS: readonly string[] = ['"', "'", posix.sep];
 export function registerRequireRelativeCompletionProvider({ disposables }: ExtensionContext): void {
   disposables.push(
     vscode.languages.registerCompletionItemProvider(
-      SORBET_FILE_DOCUMENT_SELECTOR,
+      RUBY_FILE_DOCUMENT_SELECTOR,
       new RequireRelativeCompletionProvider(),
       ...TRIGGER_CHARACTERS,
     ),

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SORBET_FILE_DOCUMENT_SELECTOR } from '../../constants';
+import { RUBY_FILE_DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
 import { HEADER_LINES_WINDOW } from './constants';
 
@@ -8,7 +8,7 @@ export const TRIGGER_CHARACTERS: readonly string[] = [':'];
 export function registerTypedOptionsCompletionProvider({ disposables }: ExtensionContext): void {
   disposables.push(
     vscode.languages.registerCompletionItemProvider(
-      SORBET_FILE_DOCUMENT_SELECTOR,
+      RUBY_FILE_DOCUMENT_SELECTOR,
       new TypedOptionsCompletionProvider(),
       ...TRIGGER_CHARACTERS,
     ),
