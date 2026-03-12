@@ -314,8 +314,8 @@
             "scope": "resource",
             "type": "string",
             "markdownDescription": "Enable **experimental** document formatting with [Rubyfmt](https://github.com/fables-tales/rubyfmt). Used when [`enableRubyfmt`](#sorbetto.enableRubyfmt) is active. Check [documentation](https://sorbet.org/docs/cli-ref#lsp-feature-options).",
-            "pattern": "^(|\\S+)$",
-            "patternErrorMessage": "Value must be empty, or a path"
+            "pattern": "^\\S*$",
+            "patternErrorMessage": "Value must be empty, or a valid path"
           }
         }
       }
