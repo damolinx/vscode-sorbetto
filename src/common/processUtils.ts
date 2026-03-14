@@ -57,4 +57,3 @@ export async function isAvailable(command: string, cwd?: string): Promise<boolea
     execFile(whereOrWhich, [command], { cwd }, (error) => resolve(!error));
   });
 }
-  

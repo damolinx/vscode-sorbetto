@@ -89,39 +89,42 @@ export async function createLspConfiguration(
     }
     return { cmd, args, type: configuration.lspConfigurationType };
   }
+}
 
-  async function enableWatchmanSupport(
-    lspConfig: LspConfiguration,
-    config: SorbetClientConfiguration,
-  ) {
-    const DISABLE_WATCHMAN_OPT = '--disable-watchman';
+let cachedWatchmanAvailable: boolean | undefined;
 
-    switch (config.enableWatchman) {
-      case WatchmanMode.Auto:
-        if (await isAvailable('watchman')) {
-          enable();
-        } else {
-          disable();
-        }
-        break;
-      case WatchmanMode.Enabled:
+async function enableWatchmanSupport(
+  lspConfig: LspConfiguration,
+  config: SorbetClientConfiguration,
+) {
+  const DISABLE_WATCHMAN_OPT = '--disable-watchman';
+
+  switch (config.enableWatchman) {
+    case WatchmanMode.Auto:
+      cachedWatchmanAvailable ??= await isAvailable('watchman');
+      if (cachedWatchmanAvailable) {
         enable();
-        break;
-      case WatchmanMode.Disabled:
+      } else {
         disable();
-        break;
-    }
-
-    function enable() {
-      if (lspConfig.args.includes(DISABLE_WATCHMAN_OPT)) {
-        lspConfig.args = lspConfig.args.filter((arg) => arg === DISABLE_WATCHMAN_OPT);
       }
-    }
+      break;
+    case WatchmanMode.Enabled:
+      enable();
+      break;
+    case WatchmanMode.Disabled:
+      disable();
+      break;
+  }
 
-    function disable() {
-      if (!lspConfig.args.includes(DISABLE_WATCHMAN_OPT)) {
-        lspConfig.args.push(DISABLE_WATCHMAN_OPT);
-      }
+  function enable() {
+    if (lspConfig.args.includes(DISABLE_WATCHMAN_OPT)) {
+      lspConfig.args = lspConfig.args.filter((arg) => arg === DISABLE_WATCHMAN_OPT);
+    }
+  }
+
+  function disable() {
+    if (!lspConfig.args.includes(DISABLE_WATCHMAN_OPT)) {
+      lspConfig.args.push(DISABLE_WATCHMAN_OPT);
     }
   }
 }

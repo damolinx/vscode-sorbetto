@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.31
+- Check `watchman` once per-session when in `Auto` mode (requires restart after installing it).
+
 ## 0.3.30
 - Improve `require_relative` autocomplete: show only name in dropdown and handle `./` in any segment.
 
