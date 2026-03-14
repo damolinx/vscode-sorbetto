@@ -1,4 +1,4 @@
-import { ChildProcess, exec, spawn, SpawnOptionsWithoutStdio } from 'child_process';
+import { ChildProcess, execFile, spawn, SpawnOptionsWithoutStdio } from 'child_process';
 import { constants } from 'os';
 
 export const E_COMMAND_NOT_FOUND = 127;
@@ -37,9 +37,9 @@ export function spawnWithExitPromise(
           code === 0
             ? undefined
             : {
-              errno: code ?? undefined,
-              message: signal ?? undefined,
-            },
+                errno: code ?? undefined,
+                message: signal ?? undefined,
+              },
         );
       });
   });
@@ -53,7 +53,8 @@ export function spawnWithExitPromise(
 
 export async function isAvailable(command: string, cwd?: string): Promise<boolean> {
   const whereOrWhich = process.platform === 'win32' ? 'where' : 'which';
-  return new Promise((resolve, _reject) =>
-    exec(`${whereOrWhich} ${command}`, { cwd }, (error) => resolve(!error)),
-  );
+  return new Promise((resolve) => {
+    execFile(whereOrWhich, [command], { cwd }, (error) => resolve(!error));
+  });
 }
+  

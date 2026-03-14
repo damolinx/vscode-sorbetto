@@ -17,7 +17,7 @@ export class SorbetClientConfiguration extends Configuration {
   private readonly onDidChangeLspConfigurationEmitter: vscode.EventEmitter<void>;
   private readonly onDidChangeLspOptionsEmitter: vscode.EventEmitter<LspOptionConfigurationKey>;
 
-  constructor(private readonly scope?: vscode.WorkspaceFolder) {
+  constructor(private readonly scope?: vscode.ConfigurationScope) {
     super();
     this.disposables.push(
       (this.onDidChangeLspConfigurationEmitter = new vscode.EventEmitter()),
