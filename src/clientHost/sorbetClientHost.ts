@@ -354,7 +354,7 @@ export class SorbetClientHost implements vscode.Disposable {
       this.languageClient = undefined;
     } else if (this.languageClientInitializer) {
       if (this.languageClientInitializer.lspProcess) {
-        const killed = this.languageClientInitializer.lspProcess.kill();
+        const killed = this.languageClientInitializer.lspProcess.tryKill();
         if (killed !== undefined && !killed) {
           throw new Error(
             `Zombie initialization. Pid: ${this.languageClientInitializer.lspProcess?.process.pid}`,

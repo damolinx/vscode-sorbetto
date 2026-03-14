@@ -13,8 +13,8 @@ export interface ErrorInfo {
 
 export interface ProcessWithExitPromise {
   exit: Promise<ErrorInfo | undefined>;
-  kill: (signa?: NodeJS.Signals | number) => boolean;
   process: ChildProcess;
+  tryKill: (signa?: NodeJS.Signals | number) => boolean;
 }
 
 export function spawnWithExitPromise(
@@ -45,8 +45,12 @@ export function spawnWithExitPromise(
   });
   return {
     exit: exitPromise,
-    kill: (signal: NodeJS.Signals | number = constants.signals.SIGKILL) =>
-      childProcess.kill(signal),
+    tryKill: (signal: NodeJS.Signals | number = constants.signals.SIGKILL) => {
+      if (childProcess.exitCode !== null || childProcess.killed) {
+        return true; // already exited, or kill already underway
+      }
+      return childProcess.kill(signal);
+    },
     process: childProcess,
   };
 }
