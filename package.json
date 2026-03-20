@@ -21,11 +21,11 @@
     "Programming Languages"
   ],
   "keywords": [
+    "language-server",
+    "multi-root",
     "rbs",
     "ruby",
-    "sorbet",
-    "sorbetto",
-    "language-server"
+    "sorbet"
   ],
   "activationEvents": [
     "onLanguage:ruby",
