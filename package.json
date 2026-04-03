@@ -11,6 +11,9 @@
     "type": "git",
     "url": "https://github.com/damolinx/vscode-sorbetto"
   },
+  "bugs": {
+    "url": "https://github.com/damolinx/vscode-sorbetto/issues"
+  },
   "engines": {
     "vscode": "^1.105.0"
   },
