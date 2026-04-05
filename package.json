@@ -1,6 +1,6 @@
 {
   "name": "damolinx-sorbetto",
-  "displayName": "Sorbetto for VS Code",
+  "displayName": "Sorbetto",
   "description": "Ruby language features using Sorbet, a type checker for Ruby.",
   "author": "damolinx",
   "publisher": "damolinx",

@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.0
+- Simplify extension name to **Sorbetto**
+
 ## 0.3.31
 - Add **Apply all package import/export fixes for this file** CodeAction.
 - Check `watchman` once per-session when in `Auto` mode (requires restart after installing it).

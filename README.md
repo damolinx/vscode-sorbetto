@@ -1,4 +1,4 @@
-# Sorbetto for VS Code
+# Sorbetto
 
 Sorbetto provides language support for Ruby by leveraging [Sorbet](https://github.com/sorbet/sorbet), a type checker developed by Stripe, while adding tools to enhance your Ruby development experience.
 
@@ -296,7 +296,7 @@ The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file,
 [↑ Back to top](#table-of-contents)
 
 ### Rubyfmt Support
-Rubyfmt is support exists in the Sorbet language server itself (via `--enable-experimental-lsp-document-formatting-rubyfmt`), but Sorbetto no longer provides any integration beyond IntelliSense in `sorbet/config`. For Rubyfmt-based formatting, use the **Formatto for VS Code** extension ([VS Code](https://marketplace.visualstudio.com/items?itemName=damolinx.formatto) · [Cursor](https://open-vsx.org/extension/damolinx/formatto)), which offers stable, dedicated support for **rubyfmt** and other formatters.
+Rubyfmt is support exists in the Sorbet language server itself (via `--enable-experimental-lsp-document-formatting-rubyfmt`), but Sorbetto no longer provides any integration beyond IntelliSense in `sorbet/config`. For Rubyfmt-based formatting, use the **Formatto** extension ([VS Code](https://marketplace.visualstudio.com/items?itemName=damolinx.formatto) · [Cursor](https://open-vsx.org/extension/damolinx/formatto)), which offers stable, dedicated support for **rubyfmt** and other formatters.
 
 ## Logs
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
