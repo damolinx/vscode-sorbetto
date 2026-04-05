@@ -1,6 +1,9 @@
 import { EXTENSION_PREFIX } from './constants';
 
 export const CommandIds = {
+  /** Apply all package import/export fixes */
+  ApplyImportExportFixes: `${EXTENSION_PREFIX}.applyImportExportFixes`,
+
   /** Run `srb tc --autocorrect` */
   AutocorrectAll: `${EXTENSION_PREFIX}.autocorrectAll`,
 

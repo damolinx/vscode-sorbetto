@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.3.31
+- Add **Apply all package import/export fixes for this file** CodeAction.
 - Check `watchman` once per-session when in `Auto` mode (requires restart after installing it).
 - Prevent incorrect `Zombie initialization` error when running **Sorbetto: Stop Sorbet** but Sorbet is not installed.
 

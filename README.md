@@ -264,6 +264,9 @@ All snippets have an associated trigger word recognized by IntelliSense while ty
 * **`require`**: gem autocompletion using `Gemfile` and `Gemfile.lock` as data source.
 * **`require_relative`**: autocompletion for paths, paths are active links to the referenced file, paths are updated on file rename.
 * **`typed`**: hover and autocompletion for `typed` sigils in Ruby files.
+* QuickFix CodeActions:
+  * **Apply all package import/export fixes for this file**: when working with Sorbet packages applies all package-related fixes whiel avoiding the overeach, and entry duplication, cause by the Sorbet Language Server's **Apply all fixes for file**.
+  * **Create a package file**: helps to easily create a `__package.rb` file, from a template, when required. 
 
 [↑ Back to top](#table-of-contents)
 

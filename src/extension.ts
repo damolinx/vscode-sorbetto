@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { CommandIds } from './commandIds';
+import { applyImportExportFixes } from './commands/applyImportExportFixes';
 import { autocorrectAll } from './commands/autocorrectAll';
 import { bundleInstall } from './commands/bundleInstall';
 import { copySymbol } from './commands/copySymbol';
@@ -35,6 +36,9 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
   // Register commands
   const rc = vscode.commands.registerCommand;
   context.disposables.push(
+    rc(CommandIds.ApplyImportExportFixes, (uri: vscode.Uri) =>
+      applyImportExportFixes(context, uri),
+    ),
     rc(CommandIds.AutocorrectAll, (contextUri?: vscode.Uri, codes?: number[]) =>
       autocorrectAll(context, contextUri, codes),
     ),

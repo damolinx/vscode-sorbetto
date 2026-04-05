@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
 import { CommandIds } from '../../commandIds';
+import { groupDiagnosticsByCode } from '../../common/diagnostics';
 
 /**
  * Sorbet specifically requires this command Id which leads to compatibility
@@ -10,6 +11,11 @@ import { CommandIds } from '../../commandIds';
  * See https://sorbet.org/docs/lsp#sorbetsavepackagefiles-command
  */
 const SORBET_SAVE_PACKAGE_FILES = 'sorbet.savePackageFiles';
+
+const CUSTOM_CODEACTION_COMMANDS = [
+  CommandIds.CreatePackage,
+  CommandIds.ApplyImportExportFixes,
+] as readonly string[];
 
 export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
   provideCodeActions: async (
@@ -26,18 +32,30 @@ export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
       }
     });
 
-    const diagnostic = context.diagnostics.find(
-      (d) =>
-        (typeof d.code === 'object' ? d.code.value : d.code) === 3705 && d.range.isEqual(range),
-    );
-    if (diagnostic) {
+    const diagsByCode = groupDiagnosticsByCode(context.diagnostics, 3705, 3718);
+    const diags3705 = diagsByCode[3705];
+    if (diags3705) {
       const action = new vscode.CodeAction('Create a package file', vscode.CodeActionKind.QuickFix);
       action.command = {
         title: action.title,
         command: CommandIds.CreatePackage,
         arguments: [document.uri],
       };
-      action.diagnostics = [diagnostic];
+      action.diagnostics = diags3705;
+      actions.push(action);
+    }
+
+    const diags3718 = diagsByCode[3718];
+    if (diags3718) {
+      const action = new vscode.CodeAction(
+        'Apply all package import/export fixes for this file',
+        vscode.CodeActionKind.QuickFix,
+      );
+      action.command = {
+        title: action.title,
+        command: CommandIds.ApplyImportExportFixes,
+        arguments: [document.uri],
+      };
       actions.push(action);
     }
 
@@ -49,7 +67,7 @@ export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
     next: vslc.ResolveCodeActionSignature,
   ): vscode.ProviderResult<vscode.CodeAction> => {
     const commandId = item.command?.command;
-    if (commandId && [CommandIds.OpenPackage].some((id) => id === commandId)) {
+    if (commandId && CUSTOM_CODEACTION_COMMANDS.includes(commandId)) {
       return item;
     }
 
