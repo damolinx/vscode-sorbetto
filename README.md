@@ -30,6 +30,7 @@ There are several improvements to internal implementation, like the ability to e
   * [RBI Tools](#rbi-tools)
   * [RBS Support](#rbs-support)
   * [Gemfile Tools](#gemfile-tools)
+  * [Rubyfmt Support](#rubyfmt-support)
 * [Logs](#logs)
 
 ## Getting Started
@@ -151,7 +152,6 @@ Most settings are purely for extensions behaviors but Sorbet-related features th
 | `sorbetto.enablePackageSupport`       | Enables experimental support for Sorbet's Ruby package system. |
 | `sorbetto.enableRbsSupport`           | Enables experimental RBS support. |
 | `sorbetto.enableRequiresAncestor`     | Enables experimental `requires_ancestor` support. |
-| `sorbetto.enableRubyfmt`              | Enables experimental document formatting integration with [Rubyfmt](https://github.com/fables-tales/rubyfmt). If Rubyfmt is not installed or not on your `PATH`, this option has no effect. When enabled, Sorbet advertises formatting support to VS Code, and VS Code then treats the extension as providing a formatter. |
 
 [↑ Back to top](#table-of-contents)
 
@@ -294,6 +294,9 @@ In [multi-root workspaces](#multi-root-workspaces), each workspace folder can be
 The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file, as necessary. You can also use the **Install** and **Update** CodeLens actions to easily install dependencies using `bundler`, When editing the file, `gem` statements get autocompletion, queried in real-time from [rubygems.org](https://rubygems.org).
 
 [↑ Back to top](#table-of-contents)
+
+### Rubyfmt Support
+Rubyfmt is support exists in the Sorbet language server itself (via `--enable-experimental-lsp-document-formatting-rubyfmt`), but Sorbetto no longer provides any integration beyond IntelliSense in `sorbet/config`. For Rubyfmt-based formatting, use the **Formatto for VS Code** extension ([VS Code](https://marketplace.visualstudio.com/items?itemName=damolinx.formatto) · [Cursor](https://open-vsx.org/extension/damolinx/formatto)), which offers stable, dedicated support for **rubyfmt** and other formatters.
 
 ## Logs
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.

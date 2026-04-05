@@ -53,13 +53,6 @@ export async function createLspConfiguration(
     if (configuration.isEnabled('enableRbsSupport')) {
       lspConfig.args.push('--enable-experimental-rbs-comments');
     }
-    if (configuration.isEnabled('enableRubyfmt')) {
-      lspConfig.args.push('--enable-experimental-lsp-document-formatting-rubyfmt');
-      const rubyfmtPath = configuration.getValue<string>('rubyfmtPath')?.trim();
-      if (rubyfmtPath) {
-        lspConfig.args.push('--rubyfmt-path', rubyfmtPath);
-      }
-    }
     const maxDiagCount = configuration.getValue<number>('maximumDiagnosticsCount', 1000);
     if (maxDiagCount !== 1000) {
       lspConfig.args.push('--lsp-error-cap', maxDiagCount.toString());
