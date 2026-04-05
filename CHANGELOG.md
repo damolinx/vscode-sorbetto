@@ -4,7 +4,7 @@
 - Add **Apply all package import/export fixes for this file** CodeAction.
 - Check `watchman` once per-session when in `Auto` mode (requires restart after installing it).
 - Prevent incorrect `Zombie initialization` error when running **Sorbetto: Stop Sorbet** but Sorbet is not installed.
-- Remove `rubyfmt` configuration support. Recommended path is to use the `Formatto for VS Code` extension. 
+- Remove `rubyfmt` configuration support. Recommended path is to use the **Formatto for VS Code** extension. 
 
 ## 0.3.30
 - Improve `require_relative` autocomplete: show only name in dropdown and handle `./` in any segment.
