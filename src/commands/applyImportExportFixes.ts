@@ -14,8 +14,8 @@ export async function applyImportExportFixes(
     return;
   }
 
-  const uniqueDiagnostics = new Map(diagnostics.map((d) => [d.message, d]));
-  const allActions = [] as vscode.CodeAction[];
+  const uniqueDiagnostics = deduplicateDiagnostics(diagnostics);
+  const allActions: vscode.CodeAction[] = [];
   for (const diagnostic of uniqueDiagnostics.values()) {
     const actions = await vscode.commands.executeCommand<vscode.CodeAction[]>(
       'vscode.executeCodeActionProvider',
@@ -39,11 +39,30 @@ export async function applyImportExportFixes(
   );
 
   if (allActions.length) {
-    for (const action of allActions) {
+    for (const action of deduplicateActions(allActions)) {
       if (action.edit) {
         await vscode.workspace.applyEdit(action.edit);
       }
     }
     await savePackageFiles(context);
   }
+}
+
+function deduplicateDiagnostics(diagnostics: vscode.Diagnostic[]) {
+  const uniqueDiagnostics = new Map(diagnostics.map((d) => [d.message, d]));
+  return uniqueDiagnostics;
+}
+
+function deduplicateActions(actions: vscode.CodeAction[]): vscode.CodeAction[] {
+  // Deduplicate by title - this could be improved by analyzing edits
+  const sortedActions = [...actions].sort((a, b) => b.title.length - a.title.length);
+  const result: vscode.CodeAction[] = [];
+
+  for (const action of sortedActions) {
+    if (!result.some((k) => k.title.includes(action.title))) {
+      result.push(action);
+    }
+  }
+
+  return result;
 }

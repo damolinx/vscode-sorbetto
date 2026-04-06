@@ -2,6 +2,7 @@
 
 ## 0.4.0
 - Simplify extension name to **Sorbetto**
+- Fix: **Apply all package import/export fixes for this file** does not deduplicate combined import-and-export actions.
 
 ## 0.3.31
 - Add **Apply all package import/export fixes for this file** CodeAction.
