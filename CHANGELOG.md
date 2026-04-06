@@ -1,7 +1,6 @@
 # Changelog
 
-## 0.4.0
-- Simplify extension name to **Sorbetto**
+## 0.3.32
 - Fix: **Apply all package import/export fixes for this file** does not deduplicate combined import-and-export actions.
 
 ## 0.3.31

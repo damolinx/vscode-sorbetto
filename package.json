@@ -1,11 +1,11 @@
 {
   "name": "damolinx-sorbetto",
-  "displayName": "Sorbetto",
+  "displayName": "Sorbetto for VS Code",
   "description": "Ruby language features using Sorbet, a type checker for Ruby.",
   "author": "damolinx",
   "publisher": "damolinx",
   "license": "Apache-2.0",
-  "version": "0.3.31",
+  "version": "0.3.32",
   "icon": "icon.png",
   "repository": {
     "type": "git",
