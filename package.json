@@ -51,13 +51,6 @@
         "enablement": "workbenchState != empty && editorLangId == ruby && (resourceScheme == file || resourceScheme == sorbet || resourceScheme == vscode-remote) && sorbetto:sorbetStatus == running"
       },
       {
-        "command": "sorbetto.debugRubyFile",
-        "title": "Debug Ruby File",
-        "category": "Sorbetto",
-        "icon": "$(debug)",
-        "enablement": "workbenchState != empty && !inDebugMode && editorIsOpen && (resourceScheme == file || resourceScheme == vscode-remote) && resourceExtname == .rb"
-      },
-      {
         "command": "sorbetto.openPackage",
         "title": "Open Package File",
         "category": "Sorbetto",
@@ -92,13 +85,6 @@
         "title": "Stop Sorbet",
         "category": "Sorbetto",
         "enablement": "sorbetto:active && sorbetto:sorbetStatus != disabled"
-      },
-      {
-        "command": "sorbetto.runRubyFile",
-        "title": "Run Ruby File",
-        "category": "Sorbetto",
-        "icon": "$(run)",
-        "enablement": "workbenchState != empty && editorIsOpen && (resourceScheme == file || resourceScheme == vscode-remote) && resourceExtname == .rb"
       },
       {
         "command": "sorbetto.setup.workspace",

@@ -2,43 +2,32 @@ import * as vscode from 'vscode';
 import { isAvailable } from '../common/processUtils';
 import { ExtensionContext } from '../extensionContext';
 
-export const SORBET_COMMANDS: readonly string[] = ['bundle', 'ruby'];
+const Commands = new Map<string, { title: string; url: string }>([
+  ['bundle', { title: 'Bundler', url: 'https://bundler.io/' }],
+  ['ruby', { title: 'Sorbet', url: 'https://sorbet.org/docs/adopting' }],
+]);
 
 export async function verifyEnvironment(
   context: ExtensionContext,
-  commandsToCheck: readonly string[] = SORBET_COMMANDS,
+  cmds: string[] = Array.from(Commands.keys()),
 ): Promise<boolean> {
-  const results = await Promise.all(commandsToCheck.map((cmd) => isAvailable(cmd)));
-  const missingCommands = commandsToCheck.filter((_, i) => !results[i]);
-  if (missingCommands.length === 0) {
-    context.log.debug('VerifyEnvironment: Found all commands', commandsToCheck);
+  const results = await Promise.all(
+    cmds.map(async (cmd) => [cmd, await isAvailable(cmd)] as const),
+  );
+  const missingCmds = results.filter(([, ok]) => !ok).map(([cmd]) => cmd);
+  if (missingCmds.length === 0) {
+    context.log.debug('VerifyEnvironment: Found all commands', cmds);
     return true;
   }
 
-  const docs = getDocumentationLinks(missingCommands);
   const option = await vscode.window.showErrorMessage(
-    `The following expected dependencies are missing: ${missingCommands.join(', ')}. Install them manually, refer to documentation.`,
-    ...docs.keys(),
+    `Missing dependencies: ${missingCmds.join(', ')}. Refer to documentation.`,
+    ...missingCmds.map((cmd) => Commands.get(cmd)).filter((cmd) => !!cmd),
   );
 
   if (option) {
-    const uri = docs.get(option);
-    if (uri) {
-      vscode.env.openExternal(uri);
-    }
+    vscode.env.openExternal(vscode.Uri.parse(option.url));
   }
 
   return false;
-}
-
-function getDocumentationLinks(missingCommands: string[]): Map<string, vscode.Uri> {
-  const links = new Map<string, vscode.Uri>();
-  for (const missingCommand of missingCommands) {
-    if (SORBET_COMMANDS.includes(missingCommand)) {
-      links.set('Sorbet documentation', vscode.Uri.parse('https://sorbet.org/docs/adopting'));
-    } else if (missingCommand === 'rdbg') {
-      links.set('rdbg documentation', vscode.Uri.parse('https://github.com/ruby/debug'));
-    }
-  }
-  return links;
 }

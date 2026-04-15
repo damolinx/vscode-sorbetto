@@ -5,13 +5,11 @@ import { autocorrectAll } from './commands/autocorrectAll';
 import { bundleInstall } from './commands/bundleInstall';
 import { copySymbol } from './commands/copySymbol';
 import { createPackage } from './commands/createPackage';
-import { debugRubyFile } from './commands/debugRubyFile';
 import { handleRename } from './commands/handleRename';
 import { openPackage } from './commands/openPackage';
 import { openSettings } from './commands/openSettings';
 import { peekHierarchyReferences } from './commands/peekHierarchyReferences';
 import { runClientAction } from './commands/runClientAction';
-import { runRubyFile } from './commands/runRubyFile';
 import { savePackageFiles } from './commands/savePackageFiles';
 import { sendToSorbetRun } from './commands/sendToSorbetRun';
 import { setupWorkspace } from './commands/setupWorkspace';
@@ -47,12 +45,10 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     ),
     rc(CommandIds.BundleUpdate, (gemfile: vscode.Uri) => bundleInstall(context, gemfile, 'update')),
     rc(CommandIds.CreatePackage, (contextUri: vscode.Uri) => createPackage(context, contextUri)),
-    rc(CommandIds.DebugRubyFile, (uri?: vscode.Uri) => debugRubyFile(context, uri)),
     rc(CommandIds.OpenPackage, (contextUri?: vscode.Uri) => openPackage(context, contextUri)),
     rc(CommandIds.OpenSettings, (contextUri?: vscode.Uri, setting?: string) =>
       openSettings(context, contextUri, setting),
     ),
-    rc(CommandIds.RunRubyFile, (uri?: vscode.Uri) => runRubyFile(context, uri)),
     rc(CommandIds.SavePackageFiles, () => savePackageFiles(context)),
     rc(CommandIds.SetupWorkspace, (uri?: vscode.Uri) => setupWorkspace(context, uri)),
     rc(CommandIds.ShowClientActions, (contextUri?: vscode.Uri) =>

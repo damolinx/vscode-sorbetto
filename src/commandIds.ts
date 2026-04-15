@@ -19,9 +19,6 @@ export const CommandIds = {
   /** Create a __package.rb file. */
   CreatePackage: `_${EXTENSION_PREFIX}.createPackage`,
 
-  /** Debug a Ruby file. */
-  DebugRubyFile: `${EXTENSION_PREFIX}.debugRubyFile`,
-
   /** Open __package.rb appropriate for current file. */
   OpenPackage: `${EXTENSION_PREFIX}.openPackage`,
 
@@ -30,9 +27,6 @@ export const CommandIds = {
 
   /** Peek hierarchy references of symbol at cursor location. */
   PeekHierarchyReferences: `${EXTENSION_PREFIX}.peekHierarchyReferences`,
-
-  /** Run a Ruby file. */
-  RunRubyFile: `${EXTENSION_PREFIX}.runRubyFile`,
 
   /** Save package files. */
   SavePackageFiles: `${EXTENSION_PREFIX}.savePackageFiles`,
