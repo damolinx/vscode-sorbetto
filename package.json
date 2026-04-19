@@ -30,6 +30,10 @@
     "ruby",
     "sorbet"
   ],
+  "extensionPack": [
+    "damolinx.formatto",
+    "damolinx.tracciatto"
+  ],
   "activationEvents": [
     "onLanguage:ruby",
     "onLanguage:sorbet-config",
