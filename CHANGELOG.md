@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.34
+- Maintenance release.
+
 ## 0.3.33
 - Remove **Debug Ruby File** and **Run Ruby File** commands. Recommended path is to use the **Tracciatto** extension.
 
