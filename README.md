@@ -263,7 +263,7 @@ All snippets have an associated trigger word recognized by IntelliSense while ty
 * **`require_relative`**: autocompletion for paths, paths are active links to the referenced file, paths are updated on file rename.
 * **`typed`**: hover and autocompletion for `typed` sigils in Ruby files.
 * QuickFix CodeActions:
-  * **Apply all package import/export fixes for this file**: applies all package-related fixes for current file.
+  * **Apply all package import/export fixes for this file**: applies all unique package-related fixes for current file from s single action - related to errors: [3717](https://sorbet.org/docs/error-reference#3717), [3178](https://sorbet.org/docs/error-reference#3718).
   * **Create a package file**: Creates a `__package.rb` file in the directory of the current file.
 
 [↑ Back to top](#table-of-contents)

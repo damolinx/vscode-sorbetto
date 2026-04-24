@@ -32,7 +32,7 @@ export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
       }
     });
 
-    const diagsByCode = groupDiagnosticsByCode(context.diagnostics, 3705, 3718);
+    const diagsByCode = groupDiagnosticsByCode(context.diagnostics, 3705, 3717, 3718);
     const diags3705 = diagsByCode[3705];
     if (diags3705) {
       const action = new vscode.CodeAction('Create a package file', vscode.CodeActionKind.QuickFix);
@@ -45,8 +45,7 @@ export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
       actions.push(action);
     }
 
-    const diags3718 = diagsByCode[3718];
-    if (diags3718) {
+    if (diagsByCode[3717] || diagsByCode[3718]) {
       const action = new vscode.CodeAction(
         'Apply all package import/export fixes for this file',
         vscode.CodeActionKind.QuickFix,
