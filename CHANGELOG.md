@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.36
+- Rename **Apply all package import/export fixes for this file** to **Apply all package import/export fixes for file**  to match Sorbet's actions.
+- Fix: Process [error 3717](https://sorbet.org/docs/error-reference#3717) autofixes from **Apply all package import/export fixes for file**  autofix.
+
 ## 0.3.35
 - Custom **Apply all package import/export fixes for this file** now includes [error 3717](https://sorbet.org/docs/error-reference#3717) in addition to [error 3178](https://sorbet.org/docs/error-reference#3718)
 

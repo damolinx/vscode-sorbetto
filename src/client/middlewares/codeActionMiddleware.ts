@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
 import { CommandIds } from '../../commandIds';
-import { groupDiagnosticsByCode } from '../../common/diagnostics';
+import { groupDiagnosticsByCode, hasDiagnosticWithCode } from '../../common/diagnostics';
 
 /**
  * Sorbet specifically requires this command Id which leads to compatibility
@@ -32,9 +32,8 @@ export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
       }
     });
 
-    const diagsByCode = groupDiagnosticsByCode(context.diagnostics, 3705, 3717, 3718);
-    const diags3705 = diagsByCode[3705];
-    if (diags3705) {
+    const diags3705 = groupDiagnosticsByCode(context.diagnostics, 3705)[3705];
+    if (diags3705?.length) {
       const action = new vscode.CodeAction('Create a package file', vscode.CodeActionKind.QuickFix);
       action.command = {
         title: action.title,
@@ -45,9 +44,9 @@ export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
       actions.push(action);
     }
 
-    if (diagsByCode[3717] || diagsByCode[3718]) {
+    if (hasDiagnosticWithCode(context.diagnostics, 3717, 3718)) {
       const action = new vscode.CodeAction(
-        'Apply all package import/export fixes for this file',
+        'Apply all package import/export fixes for file',
         vscode.CodeActionKind.QuickFix,
       );
       action.command = {
