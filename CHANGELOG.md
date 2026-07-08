@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.0
+- Upgrade to [Language Client 10](https://github.com/Microsoft/vscode-languageserver-node)
+
 ## 0.3.36
 - Rename **Apply all package import/export fixes for this file** to **Apply all package import/export fixes for file** to match Sorbet's actions.
 - Fix: Process [error 3717](https://sorbet.org/docs/error-reference#3717) autofixes from **Apply all package import/export fixes for file** autofix.

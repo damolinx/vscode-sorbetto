@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as vslcn from 'vscode-languageclient/node';
-import * as vsjrpc from 'vscode-jsonrpc/lib/common/messages';
+import * as vsjrpc from 'vscode-jsonrpc';
 import { Log } from './log';
 
 export type Tags = Record<string, string>;
@@ -68,7 +68,7 @@ export function instrumentLanguageClient<TClient extends vslcn.LanguageClient>(
 ): TClient {
   const originalSendRequest = client.sendRequest;
   client.sendRequest = async (
-    methodOrType: string | vsjrpc.AbstractMessageSignature,
+    methodOrType: string | vsjrpc.MessageSignature,
     ...args: any[]
   ) => {
     const metric = `latency.${getRequestName(methodOrType)}_ms`;
@@ -89,7 +89,7 @@ export function instrumentLanguageClient<TClient extends vslcn.LanguageClient>(
 
   return client;
 
-  function getRequestName(methodOrType: string | vsjrpc.AbstractMessageSignature): string {
+  function getRequestName(methodOrType: string | vsjrpc.MessageSignature): string {
     const requestName = typeof methodOrType === 'string' ? methodOrType : methodOrType.method;
     return requestName.replace(/[/$]/g, '_');
   }

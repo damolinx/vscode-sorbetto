@@ -6,7 +6,7 @@ It began as a fork of the [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/ma
 
 Some of the features are unique to Sorbetto: [multi-root workspace](#multi-root-workspaces) support, [language status item](#sorbet-language-status-item) support, new [configuration model](#working-with-sorbet), a simpler [getting started](#setting-up-a-workspace) experience, [editor enhancements](#editor-enhancements), editor support for [RBS signature comments](#rbs-support), [`sorbet/config`](#sorbetconfig) and [`Gemfile`](#gemfile-tools), and much more.
 
-There are several improvements to internal implementation, like the ability to easily upgrade the [Language Client library](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#implementing-a-language-server) (currently targeting 9.0), and use of `esbuild` for bundling and minification which has significantly reduced the extension's footprint.
+There are several improvements to internal implementation, like the ability to easily upgrade the [Language Client library](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#implementing-a-language-server) (currently targeting 10), and use of `esbuild` for bundling and minification which has significantly reduced the extension's footprint.
 
 > **Platform Support**: The extension runs wherever VS Code does, though full functionality depends on Sorbet's [supported platforms](https://sorbet.org/docs/faq#what-platforms-does-sorbet-support).
 
