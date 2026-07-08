@@ -67,10 +67,7 @@ export function instrumentLanguageClient<TClient extends vslcn.LanguageClient>(
   metrics: Metrics,
 ): TClient {
   const originalSendRequest = client.sendRequest;
-  client.sendRequest = async (
-    methodOrType: string | vsjrpc.MessageSignature,
-    ...args: any[]
-  ) => {
+  client.sendRequest = async (methodOrType: string | vsjrpc.MessageSignature, ...args: any[]) => {
     const metric = `latency.${getRequestName(methodOrType)}_ms`;
     args.unshift(methodOrType);
 
