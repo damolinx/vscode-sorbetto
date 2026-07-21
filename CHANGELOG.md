@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.1
+- Upgrade minimum VS Code version to 1.125.
+
 ## 0.4.0
 - Upgrade to [Language Client 10](https://github.com/Microsoft/vscode-languageserver-node)
 

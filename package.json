@@ -15,7 +15,7 @@
     "url": "https://github.com/damolinx/vscode-sorbetto/issues"
   },
   "engines": {
-    "vscode": "^1.105.0"
+    "vscode": "^1.125.0"
   },
   "extensionKind": [
     "workspace"
@@ -392,7 +392,7 @@
     "@types/mocha": "^10",
     "@types/node": "^22",
     "@types/sinon": "^21",
-    "@types/vscode": "~1.105",
+    "@types/vscode": "~1.125.0",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
     "@vscode/test-electron": "^2.5",
