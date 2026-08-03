@@ -37,7 +37,7 @@
   "activationEvents": [
     "onLanguage:ruby",
     "onLanguage:sorbet-config",
-    "workspaceContains:sorbet/*"
+    "workspaceContains:sorbet/config"
   ],
   "main": "./out/extension.js",
   "contributes": {
