@@ -34,7 +34,7 @@ export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
 
     const diags3705 = groupDiagnosticsByCode(context.diagnostics, 3705)[3705];
     if (diags3705?.length) {
-      const action = new vscode.CodeAction('Create a package file', vscode.CodeActionKind.QuickFix);
+      const action = new vscode.CodeAction('Create package file', vscode.CodeActionKind.QuickFix);
       action.command = {
         title: action.title,
         command: CommandIds.CreatePackage,
