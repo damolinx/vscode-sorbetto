@@ -1,7 +1,11 @@
 import * as vscode from 'vscode';
 import * as vslc from 'vscode-languageclient';
 import { CommandIds } from '../../commandIds';
-import { groupDiagnosticsByCode, hasDiagnosticWithCode } from '../../common/diagnostics';
+import {
+  groupDiagnosticsByCode,
+  hasDiagnosticWithCode,
+  PACKAGE_DIAGNOSTIC_CODES,
+} from '../../common/diagnostics';
 
 /**
  * Sorbet specifically requires this command Id which leads to compatibility
@@ -44,9 +48,9 @@ export const CodeActionMiddleware: vslc.CodeActionMiddleware = {
       actions.push(action);
     }
 
-    if (hasDiagnosticWithCode(context.diagnostics, 3717, 3718)) {
+    if (hasDiagnosticWithCode(context.diagnostics, ...PACKAGE_DIAGNOSTIC_CODES)) {
       const action = new vscode.CodeAction(
-        'Apply all package import/export fixes for file',
+        'Apply all Sorbet package fixes for file',
         vscode.CodeActionKind.QuickFix,
       );
       action.command = {

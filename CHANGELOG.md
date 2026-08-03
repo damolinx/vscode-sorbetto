@@ -1,8 +1,11 @@
 # Changelog
 
 ## 0.4.2
-- Update workspace activation event to require a `sorbet/config` file specifically (behavior equivalance). 
-- Improve **Create package file** quickfix for Sorbet 3705.
+- Update workspace activation event to require a `sorbet/config` file specifically (behavior equivalance).
+- Quickfix actions:
+  - Improve **Create package file** for Sorbet 3705.
+  - Rename **Apply all package import/export fixes for file** to **Apply all Sorbet package fixes for file** to match expanded scope.
+    - Sorbet 3720 is now included in this quickfix.
 
 ## 0.4.1
 - Upgrade minimum VS Code version to 1.125.

@@ -35,10 +35,9 @@ export async function applyImportExportFixes(
       if (actions?.length) {
         allActions.push(
           ...actions.filter(
-            ({ kind, command, title }) =>
+            ({ kind, command }) =>
               kind?.value === vscode.CodeActionKind.QuickFix.value &&
-              command?.command === CommandIds.SavePackageFiles &&
-              (title.includes('Import') || title.includes('Export')),
+              command?.command === CommandIds.SavePackageFiles,
           ),
         );
       }
