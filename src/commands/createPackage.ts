@@ -32,8 +32,8 @@ function camelize(segment: string): string {
 }
 
 function createPackageName(packageDirUri: vscode.Uri): string {
-  // TODO: Within Stripe, suggestion should prepend `Opus`, ignore `lib` 
-  // and maybe follow PBAL rules but for a general implementation, this 
+  // TODO: Within Stripe, suggestion should prepend `Opus`, ignore `lib`
+  // and maybe follow PBAL rules but for a general implementation, this
   // should be supported by allowed via configured script.
   const packageNamespace = vscode.workspace
     .asRelativePath(packageDirUri, false)
