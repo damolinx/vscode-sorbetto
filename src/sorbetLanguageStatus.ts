@@ -125,7 +125,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
 
     if (clientHost.status !== SorbetClientStatus.Error && operations.length > 0) {
       this.setStatus({
-        clientHost: clientHost,
+        clientHost,
         busy: true,
         status: operations.at(-1)?.description,
       });
@@ -133,14 +133,14 @@ export class SorbetLanguageStatus implements vscode.Disposable {
       switch (clientHost.status) {
         case SorbetClientStatus.Disabled:
           this.setStatus({
-            clientHost: clientHost,
+            clientHost,
             severity: vscode.LanguageStatusSeverity.Warning,
             status: 'Disabled',
           });
           break;
         case SorbetClientStatus.Error:
           this.setStatus({
-            clientHost: clientHost,
+            clientHost,
             detail:
               'Sorbet language server encountered an error. See the Output panel for details.',
             severity: vscode.LanguageStatusSeverity.Error,
@@ -149,19 +149,19 @@ export class SorbetLanguageStatus implements vscode.Disposable {
           break;
         case SorbetClientStatus.Initializing:
           this.setStatus({
-            clientHost: clientHost,
+            clientHost,
             busy: true,
             detail: 'Starting up Sorbet language server …',
             status: 'Initializing',
           });
           break;
         case SorbetClientStatus.Running:
-          this.setStatus({ clientHost: clientHost, status: 'Idle' });
+          this.setStatus({ clientHost, status: 'Idle' });
           break;
         default:
           this.context.log.error('Invalid ServerStatus', clientHost.status);
           this.setStatus({
-            clientHost: clientHost,
+            clientHost,
             detail: `Unknown Status: ${clientHost.status}`,
             severity: vscode.LanguageStatusSeverity.Error,
             status: 'Unknown',

@@ -21,15 +21,17 @@ export function registerRequireCompletionProvider({ disposables }: ExtensionCont
  * Completion provider for `require` entries.
  */
 export class RequireCompletionProvider implements vscode.CompletionItemProvider, vscode.Disposable {
-  private readonly cache: Map<string, Gemfile>;
+  private readonly gemfileCache: Map<string, Gemfile>;
 
   constructor() {
-    this.cache = new Map();
+    this.gemfileCache = new Map();
   }
 
-  dispose() {
-    vscode.Disposable.from(...this.cache.values()).dispose();
-    this.cache.clear();
+  public dispose(): void {
+    for (const gemfile of this.gemfileCache.values()) {
+      gemfile.dispose();
+    }
+    this.gemfileCache.clear();
   }
 
   async provideCompletionItems(
@@ -61,10 +63,10 @@ export class RequireCompletionProvider implements vscode.CompletionItemProvider,
     if (!workspaceFolder) {
       return;
     }
-    let gemfile = this.cache.get(workspaceFolder.uri.fsPath);
+    let gemfile = this.gemfileCache.get(workspaceFolder.uri.fsPath);
     if (!gemfile) {
       gemfile = new Gemfile(workspaceFolder);
-      this.cache.set(workspaceFolder.uri.fsPath, gemfile);
+      this.gemfileCache.set(workspaceFolder.uri.fsPath, gemfile);
     }
     return gemfile;
   }

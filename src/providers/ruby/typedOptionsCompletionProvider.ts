@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { RUBY_FILE_DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
-import { HEADER_LINES_WINDOW } from './constants';
+import { HEADER_LINES_WINDOW, RUBY_TYPED_DIRECTIVES_HELP, RubyTypedDirective } from './constants';
 
 export const TRIGGER_CHARACTERS: readonly string[] = [':'];
 
@@ -43,37 +43,9 @@ export class TypedOptionsCompletionProvider implements vscode.CompletionItemProv
     );
 
     return new vscode.CompletionList(
-      (
-        [
-          ['ignore', new vscode.MarkdownString('Sorbet completely ignores file.')],
-          [
-            'false',
-            new vscode.MarkdownString(
-              'Sorbet only reports errors related to syntax, constant resolution and `sig`s.',
-            ),
-          ],
-          [
-            'true',
-            new vscode.MarkdownString(
-              'Sorbet reports type error in addition to `false`-level rules.',
-            ),
-          ],
-          [
-            'strict',
-            new vscode.MarkdownString(
-              'Sorbet requires all methods to have `sig`s in addition to `true`-level rules.',
-            ),
-          ],
-          [
-            'strong',
-            new vscode.MarkdownString(
-              'Sorbet no longer allows `T.untyped` in addition to `strict`-level rules.',
-            ),
-          ],
-        ] as [string, vscode.MarkdownString][]
-      ).map(([name, documentation]) => {
+      (['ignore', 'false', 'true', 'strict', 'strong'] as RubyTypedDirective[]).map((name) => {
         const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Snippet);
-        item.documentation = documentation;
+        item.documentation = RUBY_TYPED_DIRECTIVES_HELP[name];
         item.insertText = ` ${name}`;
         item.range = replaceRange;
         return item;

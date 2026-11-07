@@ -50,12 +50,21 @@ export class FoldingRangeProvider implements vscode.FoldingRangeProvider {
 
       consumeOpenRanges(indent, i);
 
-      const start = nextNonEmptyLine(i);
-      if (start < lineCount) {
-        const nextIndent = FoldingRangeProvider.getIndent(document.lineAt(start));
+      const nextLine = nextNonEmptyLine(i);
+      if (nextLine < lineCount) {
+        const nextIndent = FoldingRangeProvider.getIndent(document.lineAt(nextLine));
         if (nextIndent !== undefined && nextIndent > indent) {
           stack.push(new FoldingFrame(i, i, indent));
         }
+      }
+    }
+
+    while (stack.length) {
+      const range = stack.pop()!;
+      range.end = lineCount - 1;
+
+      if (range.end > range.start) {
+        ranges.push(range);
       }
     }
 

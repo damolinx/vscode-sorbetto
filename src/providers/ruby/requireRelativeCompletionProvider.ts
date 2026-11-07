@@ -73,7 +73,7 @@ export class RequireRelativeCompletionProvider implements vscode.CompletionItemP
     async function determineHintPath(
       baseDir: vscode.Uri,
       initialHint: string,
-    ): Promise<{ path: string; filter?: string } | undefined> {
+    ): Promise<{ path: string } | undefined> {
       const resolvedHintUri = vscode.Uri.joinPath(baseDir, initialHint);
       if (await uriExists(resolvedHintUri)) {
         return { path: initialHint };
@@ -81,7 +81,7 @@ export class RequireRelativeCompletionProvider implements vscode.CompletionItemP
 
       const resolvedHintDirUri = vscode.Uri.joinPath(resolvedHintUri, '..');
       if (await uriExists(resolvedHintDirUri, vscode.FileType.Directory)) {
-        return { path: `${posix.dirname(initialHint)}/`, filter: posix.basename(initialHint) };
+        return { path: `${posix.dirname(initialHint)}/` };
       }
 
       return undefined;
@@ -92,7 +92,9 @@ export class RequireRelativeCompletionProvider implements vscode.CompletionItemP
       hintPath: string,
     ): Promise<[string, vscode.CompletionItemKind][]> {
       const resolvedHintUri = vscode.Uri.joinPath(baseDir, hintPath);
-      let entries = await vscode.workspace.fs.readDirectory(resolvedHintUri);
+      let entries = await vscode.workspace.fs
+        .readDirectory(resolvedHintUri)
+        .then(undefined, () => []);
       if (uriEquals(baseDir, resolvedHintUri)) {
         const selfName = posix.basename(document.uri.path);
         entries = entries.filter(([name]) => name !== selfName);

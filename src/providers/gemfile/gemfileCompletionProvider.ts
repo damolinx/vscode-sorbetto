@@ -58,10 +58,17 @@ export class GemfileCompletionProvider implements vscode.CompletionItemProvider 
             let data = '';
             res
               .on('data', (chunk) => (data += chunk))
-              .on('end', () => resolve(data.slice(1, -1).replace(/"/g, '').split(',')))
+              .on('end', () => {
+                try {
+                  resolve(JSON.parse(data));
+                } catch {
+                  resolve([]);
+                }
+              })
               .on('error', (_err) => resolve([]));
           },
         );
+        request.on('error', () => resolve([]));
         token.onCancellationRequested(() => request.destroy(new Error('Request canceled')));
       });
     }

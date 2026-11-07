@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { RUBY_FILE_DOCUMENT_SELECTOR } from '../../constants';
 import { ExtensionContext } from '../../extensionContext';
-import { HEADER_LINES_WINDOW } from './constants';
+import { HEADER_LINES_WINDOW, RUBY_TYPED_DIRECTIVES_HELP, RubyTypedDirective } from './constants';
 
 export function registerTypedOptionsHoverProvider(context: ExtensionContext): void {
   context.disposables.push(
@@ -28,31 +28,14 @@ export class TypedOptionsHoverProvider implements vscode.HoverProvider {
       return;
     }
 
-    const hoverValue = this.getDirectiveHelp(match.groups!.directive);
-    if (!hoverValue) {
+    const directive = match.groups.directive;
+    if (!(directive in RUBY_TYPED_DIRECTIVES_HELP)) {
       return;
     }
 
     return new vscode.Hover(
-      new vscode.MarkdownString(hoverValue),
+      RUBY_TYPED_DIRECTIVES_HELP[directive as RubyTypedDirective],
       document.getWordRangeAtPosition(position),
     );
-  }
-
-  private getDirectiveHelp(directive: string): string | undefined {
-    switch (directive) {
-      case 'ignore':
-        return 'This file is not typechecked.';
-      case 'false':
-        return 'This file is parsed, but typechecking is disabled.';
-      case 'true':
-        return 'This file is typechecked with basic rules; signatures are optional.';
-      case 'strict':
-        return 'This file is fully typechecked; method signatures are required.';
-      case 'strong':
-        return 'This file is fully typechecked with stricter rules; `T.untyped` is not allowed.';
-      default:
-        return; // Sorbet will surface its own message for unknown values
-    }
   }
 }
