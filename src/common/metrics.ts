@@ -71,17 +71,15 @@ export function instrumentLanguageClient<TClient extends vslcn.LanguageClient>(
     const metric = `latency.${getRequestName(methodOrType)}_ms`;
     args.unshift(methodOrType);
 
-    let response: any;
     let success = false;
     const now = Date.now();
     try {
-      response = await originalSendRequest.apply(client, args as any);
+      const response = await originalSendRequest.apply(client, args as any);
       success = true;
+      return response;
     } finally {
       metrics.timing(metric, now, { success: success.toString() });
     }
-
-    return response;
   };
 
   return client;

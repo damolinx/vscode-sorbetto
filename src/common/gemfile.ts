@@ -37,8 +37,11 @@ export class Gemfile implements vscode.Disposable {
     ];
   }
 
-  dispose() {
-    vscode.Disposable.from(...this.disposables).dispose();
+  public dispose(): void {
+    for (const disposable of this.disposables) {
+      disposable.dispose();
+    }
+    this.disposables.length = 0;
   }
 
   public async getGems(): Promise<GemInfo[]> {
@@ -67,21 +70,21 @@ export class Gemfile implements vscode.Disposable {
   }
 
   private parseGemfile(document: vscode.TextDocument): GemInfo[] {
-    const gems = new Set<GemInfo>();
+    const gems = new Map<string, GemInfo>();
 
     for (let i = 0; i < document.lineCount; i++) {
       const { text } = document.lineAt(i);
       const match = text.match(/^\s*gem\s+(['"])([^'"]+)\1/);
       if (match) {
-        gems.add({ name: match[2] });
+        gems.set(match[2], { name: match[2] });
       }
     }
 
-    return Array.from(gems);
+    return Array.from(gems.values());
   }
 
   private parseGemfileLock(document: vscode.TextDocument): GemInfo[] {
-    const gems = new Set<GemInfo>();
+    const gems = new Map<string, GemInfo>();
 
     for (let i = 0; i < document.lineCount; i++) {
       const { text } = document.lineAt(i);
@@ -96,12 +99,12 @@ export class Gemfile implements vscode.Disposable {
           if (!match) {
             break;
           }
-          gems.add({ name: match[1] });
+          gems.set(match[1], { name: match[1] });
         }
         break;
       }
     }
 
-    return Array.from(gems);
+    return Array.from(gems.values());
   }
 }

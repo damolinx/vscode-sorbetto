@@ -313,14 +313,14 @@ export class SorbetClientHost implements vscode.Disposable {
           opts.maxDelayMs,
           opts.baseDelayMs * Math.pow(2, Math.floor(attempt / opts.attemptsPerTier)),
         );
-        const sleepMS = delay - (Date.now() - previous);
+        const sleepMS = delay - (performance.now() - previous);
         if (sleepMS > 0) {
           log.debug('Client start retry in (ms):', sleepMS);
           await new Promise((res) => setTimeout(res, sleepMS));
         }
       }
 
-      return Date.now();
+      return performance.now();
     }
 
     async function withLock(context: any, task: () => Promise<void>): Promise<void> {
