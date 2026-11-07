@@ -1,12 +1,16 @@
 # Sorbetto
 
-Sorbetto provides language support for Ruby by leveraging [Sorbet](https://github.com/sorbet/sorbet), a type checker developed by Stripe, while adding tools to enhance your Ruby development experience.
+Sorbetto provides Ruby language support by leveraging [Sorbet](https://github.com/sorbet/sorbet), a type checker developed by Stripe, while adding a richer VS Code experience through workspace tooling, editor enhancements, and IDE integrations.
 
-It began as a fork of the [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension to explore improvements, but its internals have since been rewritten. While it still serves as an experimentation platform, it now follows its own path. Both extensions rely on the same Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server), and neither ship with an embedded version of Sorbet, so any differences in behavior occur exclusively in the VS Code layer.
+Originally started as a fork of the [Ruby Sorbet](https://github.com/sorbet/sorbet/tree/master/vscode_extension) extension, Sorbetto has since evolved into a separate project with a largely rewritten implementation. Both extensions use the same Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server), and neither ships with an embedded version of Sorbet. As a result, any differences in behavior originate from the VS Code integration rather than from Sorbet itself.
 
-Some of the features are unique to Sorbetto: [multi-root workspace](#multi-root-workspaces) support, [language status item](#sorbet-language-status-item) support, new [configuration model](#working-with-sorbet), a simpler [getting started](#setting-up-a-workspace) experience, [editor enhancements](#editor-enhancements), editor support for [RBS signature comments](#rbs-support), [`sorbet/config`](#sorbetconfig) and [`Gemfile`](#gemfile-tools), and much more.
+## Why Sorbetto?
 
-There are several improvements to internal implementation, like the ability to easily upgrade the [Language Client library](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#implementing-a-language-server) (currently targeting 10), and use of `esbuild` for bundling and minification which has significantly reduced the extension's footprint.
+Sorbetto focuses on improving the day-to-day VS Code experience around Sorbet while remaining fully compatible with the upstream language server. 
+
+Highlights include: [multi-root workspace](#multi-root-workspaces) support, [language status item](#sorbet-language-status-item) support, new [configuration model](#working-with-sorbet), a simpler [getting started](#setting-up-a-workspace) experience, [editor enhancements](#editor-enhancements), editor support for [RBS signature comments](#rbs-support), [`sorbet/config`](#sorbetconfig), [`Gemfile`](#gemfile-tools), and many other productivity enhancements. Many of these capabilities work independently of the Sorbet language server and remain available even when Sorbet is not running.
+
+Beyond user-facing features, Sorbetto modernizes several aspects of the original extension's implementation. The project targets recent versions of the [Language Client library](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#implementing-a-language-server) and uses esbuild for bundling and minification, significantly reducing the extension's footprint while making future maintenance and upgrades easier.
 
 > **Platform Support**: The extension runs wherever VS Code does, though full functionality depends on Sorbet's [supported platforms](https://sorbet.org/docs/faq#what-platforms-does-sorbet-support).
 
@@ -30,7 +34,6 @@ There are several improvements to internal implementation, like the ability to e
   * [RBI Tools](#rbi-tools)
   * [RBS Support](#rbs-support)
   * [Gemfile Tools](#gemfile-tools)
-  * [Rubyfmt Support](#rubyfmt-support)
 * [Logs](#logs)
 
 ## Getting Started
@@ -54,9 +57,9 @@ bundle config set --local path 'vendor/bundle'
 
 The extension provides several [features](#extension-features) that are always active in a Ruby workspace. The Sorbet Language Server, however, starts automatically **only** when your workspace is [configured](#setting-up-a-workspace) correctly.
 
-The easiest way to confirm that Sorbet is running is to check the [language status item](#sorbet-language-status-item) when the active editor is of of `ruby` language. If Sorbet is active, you will find **Sorbet**-prefixed entries indicating the current state of the language server. As long as the status shows it as running, everything is working as expected.
+The easiest way to confirm that Sorbet is running is to check the [language status item](#sorbet-language-status-item) when the active editor is of `ruby` language. If Sorbet is active, you will find **Sorbet**-prefixed entries indicating the current state of the language server. As long as the status shows it as running, everything is working as expected.
 
-A definitve way to confirm this is functioning correctly is to create a Ruby file and trigger a predictable type error that should be reported by Sorbet:
+A reliable way to verify that Sorbet is functioning correctly is to create a Ruby file and trigger a known type error:
 
 1. Create a new Ruby file in your workspace, for example:
 
@@ -73,7 +76,7 @@ A definitve way to confirm this is functioning correctly is to create a Ruby fil
 
 2. You should immediately get a diagnostic error similar to `The method 'greet' does not have a 'sig'` as error squiggles on `def greet(name)` or as an entry in the **Problems** pane.
 
-3. Add the missing signature to fix the error, either manually or using the a quick fix action:
+3. Add the missing signature to fix the error, either manually or using a quick fix action:
 
    **Example:** Updated `example.rb` with missing `sig`
    ```ruby
@@ -93,11 +96,11 @@ A definitve way to confirm this is functioning correctly is to create a Ruby fil
 If Sorbet is not working:
 
 * Verify that the required [folder structure](https://sorbet.org/docs/adopting#verify-initialization) exists.
-  * Even though [multi-root workspaces](#multi-root-workspaces) are supported, Sorbet requires to be configured at the root of the workspace or specific workspace folder.
+  * Even though [multi-root workspaces](#multi-root-workspaces) are supported, Sorbet must be configured at the root of the workspace or specific workspace folder.
 
-* If you used the **Sorbetto: Setup Workspace** command, check the installation terminal for permissions or installation errors. The command only adds missing requirements, so it is safe to run it again of needed.
+* If you used the **Sorbetto: Setup Workspace** command, check the installation terminal for permissions or installation errors. The command only adds missing requirements, so it is safe to run it again if needed.
 
-* Check the [extension logs](#logs) for error messages coming from Sorbet. If the language server failed to start there should be messages at the very least calling it out. A normal start will end up witn `Pausing`/`Resuming` log entries.
+* Check the [extension logs](#logs) for error messages coming from Sorbet. If the language server failed to start there should be messages at the very least calling it out. A normal start will end up with `Pausing`/`Resuming` log entries.
 
   **Example:** Log showing a successful start of Sorbet
   ```
@@ -112,7 +115,7 @@ If Sorbet is not working:
 
 ## Configuration
 
-You can the [Settings Editor](https://code.visualstudio.com/docs/configure/settings#_settings-editor) to modify the **Sorbetto** configuration section, or edit them directly from the [Settings JSON file](https://code.visualstudio.com/docs/configure/settings#_settings-json-file). Consider the [settings precedence rules](https://code.visualstudio.com/docs/configure/settings#_settings-precedence) when modifying them.
+You can use the [Settings Editor](https://code.visualstudio.com/docs/configure/settings#_settings-editor) to modify the **Sorbetto** configuration section, or edit them directly from the [Settings JSON file](https://code.visualstudio.com/docs/configure/settings#_settings-json-file). Consider the [settings precedence rules](https://code.visualstudio.com/docs/configure/settings#_settings-precedence) when modifying them.
 
 Most settings are purely for extensions behaviors but Sorbet-related features that are relevant for LSP runs are exposed as well. Normally they can be configured from the [`sorbet/config`](#sorbetconfig) file, but some like `sorbetto.enablePackageSupport` require to be enabled in both places for a full experience.
 
@@ -172,7 +175,7 @@ The language server launch mode is controlled by the **Sorbet Lsp Configuration*
 * **Custom**: runs Sorbet using a custom command-line you provide in the **Sorbet Lsp Custom Configuration** [setting](#sorbet).
 * **Disabled**: disables Sorbet entirely. Extension features that rely on the LSP will no longer function.
 
-Several options under the [Sorbet](#sorbet) and [Srobet Beta & Experimental](#sorbet-beta--experimental) add extra command‑line arguments when launching the server. Keep this in mind when editing [`sorbet/config`](#sorbetconfig), as these values may conflict.
+Several options under the [Sorbet](#sorbet) and [Sorbet Beta & Experimental](#sorbet-beta--experimental) add extra command‑line arguments when launching the server. Keep this in mind when editing [`sorbet/config`](#sorbetconfig), as these values may conflict.
 
 ### sorbet/config
 Only a subset of Sorbet's configuration options are exposed as extension settings. For additional customization, you can use the `sorbet/config` file in your workspace. The extension provides syntax highlighting, autocomplete, and hover documentation for this file. These features are based on the Sorbet version available when the extension was last updated, so some details may differ from the version you are currently using. Refer to the [Sorbet: Config file](https://sorbet.org/docs/cli#config-file) documentation for the up-to-date list of supported options.
@@ -289,17 +292,14 @@ In [multi-root workspaces](#multi-root-workspaces), each workspace folder can be
 [↑ Back to top](#table-of-contents)
 
 ### Gemfile Tools
-The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file, as necessary. You can also use the **Install** and **Update** CodeLens actions to easily install dependencies using `bundler`, When editing the file, `gem` statements get autocompletion, queried in real-time from [rubygems.org](https://rubygems.org).
+The **Sorbetto: Setup Workspace** command creates or updates the `Gemfile` file, as necessary. You can also use the **Install** and **Update** CodeLens actions to easily install dependencies using `bundler`. When editing the file, `gem` statements get autocompletion, queried in real-time from [rubygems.org](https://rubygems.org).
 
 [↑ Back to top](#table-of-contents)
-
-### Rubyfmt Support
-Rubyfmt is support exists in the Sorbet language server itself (via `--enable-experimental-lsp-document-formatting-rubyfmt`), but Sorbetto no longer provides any integration beyond IntelliSense in `sorbet/config`. For Rubyfmt-based formatting, use the **Formatto** extension ([VS Code](https://marketplace.visualstudio.com/items?itemName=damolinx.formatto) · [Cursor](https://open-vsx.org/extension/damolinx/formatto)), which offers stable, dedicated support for **rubyfmt** and other formatters.
 
 ## Logs
 Sorbetto uses a single output channel to log both its own exceptions and Sorbet's. The log level can be controlled via the standard **Developer: Set Log Level** command, selecting **Sorbetto** from the dropdown. See [documentation](https://code.visualstudio.com/updates/v1_73#_setting-log-level-per-output-channel) for details.
 
-If needed, you can enable detailed logging con communication between VS Code and the Sorbet Language Server using the `sorbetto.trace.server` [setting](#sorbet).
+If needed, you can enable detailed logging of communication between VS Code and the Sorbet Language Server using the `sorbetto.trace.server` [setting](#sorbet).
 
 [↑ Back to top](#table-of-contents)
 
