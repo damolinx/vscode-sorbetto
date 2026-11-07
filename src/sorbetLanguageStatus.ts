@@ -105,7 +105,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
       if (this.currentClientHost?.clientHost !== clientHost) {
         this.cleanupClientHost();
         this.currentClientHost = {
-          clientHost: clientHost,
+          clientHost,
           disposables: [clientHost.onStatusChanged(({ clientHost }) => this.render(clientHost))],
         };
       }
@@ -121,7 +121,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
       configuration: { lspConfigurationType },
       operations,
     } = clientHost;
-    this.setConfig({ clientHost: clientHost, configType: lspConfigurationType });
+    this.setConfig({ clientHost, configType: lspConfigurationType });
 
     if (clientHost.status !== SorbetClientStatus.Error && operations.length > 0) {
       this.setStatus({

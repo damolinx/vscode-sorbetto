@@ -20,9 +20,7 @@ function registerSorbetStatus({ clientManager, disposables }: ExtensionContext):
     }),
     onMainAreaActiveTextEditorChanged((editor) => {
       const client = editor && clientManager.getClientHost(editor.document.uri);
-      if (client) {
-        setContext(contextKey, client.status.toLowerCase());
-      }
+      setContext(contextKey, client?.status.toLowerCase());
     }),
   );
 }
@@ -39,6 +37,6 @@ function registerSorbettoActive({ clientManager, disposables }: ExtensionContext
   );
 }
 
-function setContext<T>(contextKey: string, arg: T) {
-  vscode.commands.executeCommand('setContext', contextKey, arg);
+function setContext<T>(contextKey: string, arg: T): void {
+  void vscode.commands.executeCommand('setContext', contextKey, arg);
 }

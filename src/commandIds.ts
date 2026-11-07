@@ -53,7 +53,7 @@ export const CommandIds = {
   SorbetStop: `${EXTENSION_PREFIX}.stop`,
 
   /** Update RBIs. */
-  UpdataRbis: `${EXTENSION_PREFIX}.updateRbis`,
+  UpdateRbis: `${EXTENSION_PREFIX}.updateRbis`,
 } as const;
 
 export type CommandId = (typeof CommandIds)[keyof typeof CommandIds];

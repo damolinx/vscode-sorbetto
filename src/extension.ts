@@ -23,7 +23,7 @@ import { SorbetLanguageStatus } from './sorbetLanguageStatus';
 /**
  * Extension entrypoint.
  */
-export async function activate(extensionContext: vscode.ExtensionContext) {
+export function activate(extensionContext: vscode.ExtensionContext) {
   const context = new ExtensionContext(extensionContext);
   context.log.info('Activating extension', extensionContext.extension.packageJSON.version);
 
@@ -64,7 +64,7 @@ export async function activate(extensionContext: vscode.ExtensionContext) {
     rc(CommandIds.SorbetStop, (contextUri?: vscode.Uri) =>
       runClientAction(context, 'stop', contextUri),
     ),
-    rc(CommandIds.UpdataRbis, (updateType?: UpdateRbiType) => updateRbis(context, updateType)),
+    rc(CommandIds.UpdateRbis, (updateType?: UpdateRbiType) => updateRbis(context, updateType)),
   );
 
   // Register text editor commands

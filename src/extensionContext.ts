@@ -12,23 +12,16 @@ export class ExtensionContext {
   public readonly metrics: Metrics;
 
   constructor(context: vscode.ExtensionContext) {
-    const log = vscode.window.createOutputChannel('Sorbetto', { log: true });
     this.configuration = new Configuration();
     this.extensionContext = context;
-    this.log = log;
-    this.metrics = new LogMetrics(log);
+    this.log = vscode.window.createOutputChannel('Sorbetto', { log: true });
 
+    this.metrics = new LogMetrics(this.log);
     this.clientManager = new SorbetClientManager(this);
 
     this.disposables.push(this.clientManager, this.configuration, this.log);
   }
 
-  /**
-   * An array to which disposables can be added. When this
-   * extension is deactivated the disposables will be disposed.
-   *
-   * *Note* that asynchronous dispose-functions aren't awaited.
-   */
   public get disposables(): vscode.Disposable[] {
     return this.extensionContext.subscriptions;
   }
