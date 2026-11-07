@@ -46,10 +46,6 @@
       "description": "Enable all experimental LSP features (may be unstable)."
     },
     {
-      "name": "--enable-experimental-lsp-document-formatting-rubyfmt",
-      "description": "Enable experimental LSP document formatting via Rubyfmt."
-    },
-    {
       "name": "--enable-experimental-lsp-document-highlight",
       "description": "Enable experimental LSP document highlight."
     },
@@ -232,11 +228,6 @@
       "name": "--reserve-utf8-name-table-capacity",
       "description": "Preallocate UTF8 name table slots.",
       "argsHint": "n"
-    },
-    {
-      "name": "--rubyfmt-path",
-      "description": "Path to the rubyfmt executable.",
-      "argsHint": "path"
     },
     {
       "name": "--sorbet-packages",

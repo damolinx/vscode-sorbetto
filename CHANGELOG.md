@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.2
+- Remove leftover support for `rubyfmt` (check [Formatto](https://marketplace.visualstudio.com/items?itemName=damolinx.formatto)).
+
 ## 0.4.1
 - Update workspace activation event to require a `sorbet/config` file specifically (behavior equivalance).
 - Quickfix actions:
