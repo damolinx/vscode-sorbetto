@@ -25,6 +25,7 @@
   ],
   "keywords": [
     "language-server",
+    "lsp",
     "multi-root",
     "rbs",
     "ruby",

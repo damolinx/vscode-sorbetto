@@ -38,7 +38,7 @@ Beyond user-facing features, Sorbetto modernizes several aspects of the original
 
 ## Getting Started
 
-Sorbetto provides several standalone features that work even without Sorbet installed, but language services require your workspace to be configured to use Sorbet. The [Adopting Sorbet in an Existing Codebase](https://sorbet.org/docs/adopting) guide outlines the essentials; at a minimum you need Bundler, the Sorbet runtime, and a `sorbet/config` file in your project. Once these requirements are met, Sorbetto can automatically start the Sorbet [Language Server](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#why-language-server). You can use the **Sorbetto: Setup Workspace** command to [automatically set up](#setting-up-a-workspace) the workspace for you.
+Sorbetto provides several standalone features that work even without Sorbet installed, but language services require your workspace to be configured to use Sorbet. The [Adopting Sorbet in an Existing Codebase](https://sorbet.org/docs/adopting) guide outlines the essentials; at a minimum you need Bundler, the Sorbet runtime, and a `sorbet/config` file in your project. Once these requirements are met, Sorbetto can automatically start the Sorbet Language Server. You can use the **Sorbetto: Setup Workspace** command to [automatically set up](#setting-up-a-workspace) the workspace for you.
 
 ### Setting Up a Workspace
 
@@ -47,7 +47,7 @@ Sorbetto provides several standalone features that work even without Sorbet inst
 2. Run the **Sorbetto: Setup Workspace** command.
 3. After the command completes, your workspace is ready.
 
-The **Setup Workspace** command automates the steps from [Adopting Sorbet](https://sorbet.org/docs/adopting). It configures `bundler` to install gems locally using:
+The **Sorbetto: Setup Workspace** command automates the steps from [Adopting Sorbet](https://sorbet.org/docs/adopting). It configures `bundler` to install gems locally using:
 
 ```
 bundle config set --local path 'vendor/bundle'
@@ -117,8 +117,6 @@ If Sorbet is not working:
 
 You can use the [Settings Editor](https://code.visualstudio.com/docs/configure/settings#_settings-editor) to modify the **Sorbetto** configuration section, or edit them directly from the [Settings JSON file](https://code.visualstudio.com/docs/configure/settings#_settings-json-file). Consider the [settings precedence rules](https://code.visualstudio.com/docs/configure/settings#_settings-precedence) when modifying them.
 
-Most settings are purely for extensions behaviors but Sorbet-related features that are relevant for LSP runs are exposed as well. Normally they can be configured from the [`sorbet/config`](#sorbetconfig) file, but some like `sorbetto.enablePackageSupport` require to be enabled in both places for a full experience.
-
 ### Preferences
 
 | Setting Key                                       | Description |
@@ -136,11 +134,11 @@ Most settings are purely for extensions behaviors but Sorbet-related features th
 
 | Setting Key                             | Description |
 |-----------------------------------------|-------------|
-| `sorbetto.enableWatchman`               | Controls whether Sorbet uses `watchman` for file‑watching performance. Defaults to `auto`, meaning it is used only when found in your system, `true` will always try to run it, and `false` will not use it. |
+| `sorbetto.enableWatchman`               | Controls whether Sorbet uses `watchman` for file‑watching performance. Defaults to `Auto`, meaning it is used when available, `Enabled` will always try to run it, and `Disable` never uses it. |
 | `sorbetto.maximumDiagnosticsCount`      | Maximum number of diagnostics Sorbet will report (**0** means no limit). High values may impact editor performance. |
 | `sorbetto.restartFilePatterns`          | Glob patterns that trigger a Sorbet restart when matching files change. |
 | `sorbetto.sorbetLspConfiguration`       | Selects which [Language Server configuration](#sorbet-language-server) to use. Accepts: `stable`, `custom` and `disabled`. |
-| `sorbetto.sorbetLspCustomConfiguration` | Custom command‑line arguments for launching the Sorbet LSP server when using the `custom` configuration. |
+| `sorbetto.sorbetLspCustomConfiguration` | Custom command‑line arguments for launching the Sorbet Language Server server when using the `custom` configuration. |
 | `sorbetto.sorbetTypecheckCommand`       | Command used to invoke `srb typecheck`. |
 | `sorbetto.trace.server`                 | Traces communication between VS Code and the Sorbet language server. |
 
@@ -150,8 +148,8 @@ Most settings are purely for extensions behaviors but Sorbet-related features th
 
 | Setting Key                           | Description |
 |---------------------------------------|-------------|
-| `sorbetto.enableAllBetaLspFeatures`   | Enables all Sorbet LSP features marked as **beta**. |
-| `sorbetto.enableAllExperimentalLspFeatures` | Enables all Sorbet LSP features marked as **experimental**. |
+| `sorbetto.enableAllBetaLspFeatures`   | Enables all Sorbet Language Server features marked as **beta**. |
+| `sorbetto.enableAllExperimentalLspFeatures` | Enables all Sorbet Language Server features marked as **experimental**. |
 | `sorbetto.enablePackageSupport`       | Enables experimental support for Sorbet's Ruby package system. |
 | `sorbetto.enableRbsSupport`           | Enables experimental RBS support. |
 | `sorbetto.enableRequiresAncestor`     | Enables experimental `requires_ancestor` support. |
@@ -201,7 +199,7 @@ The extension does not currently detect conflicts between your workspace setting
 | **Restart Sorbet** | Restarts the Sorbet language server. |
 | **Send Selection to sorbet.run** | Sends the selected Ruby code to [sorbet.run](https://sorbet.run). Limited to 1MB. |
 | **Start Sorbet** | Starts the Sorbet language server. |
-| **Stop Sorbet** | Stops the Sorbet language server. |
+| **Stop Sorbet** | Stops the Sorbet language server. This prevents automatic restarts until Sorbet is started again manually. |
 | **Setup Workspace** | Configures the workspace for Sorbet usage. |
 | **Update RBIs** | Updates RBI files using Tapioca. |
 
@@ -220,7 +218,7 @@ The following commands are available in the context menu of text editors.
 
 ### Multi-root Workspaces
 [Multi-root workspaces](https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces) let developers work with multiple workspace folders within a single VS Code window. This model requires extensions to resolve all references relative to the correct project root, and to follow specific workspace-aware behaviors.
-Starting with version 0.3.0, Sorbetto creates a dedicated Sorbet LSP client for each configured workspace folder. This is especially useful when working on multiple projects with distinct dependencies, or when those dependencies need to be isolated—such as separating frontend and backend environments.
+Starting with version 0.3.0, Sorbetto creates a dedicated Sorbet Language Server client for each configured workspace folder. This is especially useful when working on multiple projects with distinct dependencies, or when those dependencies need to be isolated—such as separating frontend and backend environments.
 
 There are two key aspects to be aware of:
 
@@ -238,12 +236,12 @@ Sorbetto uses a [Language Status Item](https://code.visualstudio.com/api/referen
 </p>
 
 The following entries are available on the language status item:
-* **Sorbet Configuration**: shows the active Sorbet LSP configuration name as set via `sorbetto.sorbetLspConfiguration`, along with a quick **Configure** action to modify it.
-* **Sorbet Status**: displays the status of the Sorbet LSP, including a busy indicator. The **Output** action brings the **Sorbetto** Output pane into view for checking log entries.
+* **Sorbet Configuration**: shows the active Sorbet Language Server configuration name as set via `sorbetto.sorbetLspConfiguration`, along with a quick **Configure** action to modify it.
+* **Sorbet Status**: displays the status of the Sorbet Language Server, including a busy indicator. The **Output** action brings the **Sorbetto** Output pane into view for checking log entries.
 
 VS Code displays the language status item only when an editor for the matching language is open. You can extend this behavior to editors of any language by enabling the **Sorbetto: Always Show Status Items** setting. However, at least one editor must still be open for the item to appear.
 
-When using [multi-root workspaces](#multi-root-workspaces), the currently focused editor determines which LSP instance's status is shown. At present, there is no mechanism to display status across all instances simultaneously.
+When using [multi-root workspaces](#multi-root-workspaces), the currently focused editor determines which LSP instance's status is shown. There is currently no way to display the status of all workspace folders simultaneously.
 
 [↑ Back to top](#table-of-contents)
 
@@ -266,7 +264,7 @@ All snippets have an associated trigger word recognized by IntelliSense while ty
 * **`require_relative`**: autocompletion for paths, paths are active links to the referenced file, paths are updated on file rename.
 * **`typed`**: hover and autocompletion for `typed` sigils in Ruby files.
 * QuickFix CodeActions:
-  * **Apply all Sorbet package fixes for file**: applies all unique package-related fixes for current file from s single action - related to errors: [3717](https://sorbet.org/docs/error-reference#3717), [3178](https://sorbet.org/docs/error-reference#3718), [3720](https://sorbet.org/docs/error-reference#3720).
+  * **Apply all Sorbet package fixes for file**: applies all unique package-related fixes for current file from a single action - related to errors: [3717](https://sorbet.org/docs/error-reference#3717), [3178](https://sorbet.org/docs/error-reference#3718), [3720](https://sorbet.org/docs/error-reference#3720).
   * **Create a package file**: Creates a `__package.rb` file in the directory of the current file.
 
 [↑ Back to top](#table-of-contents)
