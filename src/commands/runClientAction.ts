@@ -20,16 +20,16 @@ export async function runClientAction(
   switch (action) {
     case 'restart':
       await (clientHost.isEnabledByConfiguration()
-        ? clientHost.restart()
+        ? clientHost.userRestart()
         : showDisabledConfigurationNotification(clientHost.workspaceFolder));
       break;
     case 'start':
       await (clientHost.isEnabledByConfiguration()
-        ? clientHost.start()
+        ? clientHost.userStart()
         : showDisabledConfigurationNotification(clientHost.workspaceFolder));
       break;
     case 'stop':
-      await clientHost.stop();
+      await clientHost.userStop();
       break;
     default:
       throw new Error(`Unknown action: ${action}`);

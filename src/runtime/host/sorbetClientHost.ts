@@ -28,6 +28,7 @@ const THROTTLE_CONFIG = {
  * a stable, long‑lived façade that extension code can interact with.
  */
 export class SorbetClientHost implements vscode.Disposable {
+  private autoStart: boolean;
   private clientSession?: SorbetClientSession;
   public readonly configuration: SorbetClientConfiguration;
   private readonly disposables: vscode.Disposable[];
@@ -43,27 +44,30 @@ export class SorbetClientHost implements vscode.Disposable {
     public readonly workspaceFolder: vscode.WorkspaceFolder,
     public readonly id = createClientHostId(workspaceFolder),
   ) {
+    this.autoStart = true;
     this.hostStatus = SorbetClientHostStatus.Disabled;
     this.log = new WorkspaceScopedOutputChannel(this.context.log, this.workspaceFolder);
     this.onShowOperationEmitter = new vscode.EventEmitter();
     this.onStatusChangedEmitter = new vscode.EventEmitter();
 
     this.configuration = new SorbetClientConfiguration(workspaceFolder);
-    this.configuration.onDidChangeLspConfig(() => this.handleLspConfigurationChanged());
-    this.configuration.onDidChangeLspOptions((option) => this.handleLspOptionChanged(option));
-
     this.restartWatcher = new RestartWatcher(this, this.log);
 
     this.disposables = [
       this.configuration,
+      this.configuration.onDidChangeLspConfig(() => this.handleLspConfigurationChanged()),
+      this.configuration.onDidChangeLspOptions((option) => this.handleLspOptionChanged(option)),
       this.onShowOperationEmitter,
       this.onStatusChangedEmitter,
       this.restartWatcher,
-      { dispose: () => (this.languageClient = undefined) },
     ];
   }
 
   public dispose(): void {
+    if (this.languageClient) {
+      this.languageClient.dispose();
+      this.languageClient = undefined;
+    }
     for (const disposable of this.disposables) {
       disposable.dispose();
     }
@@ -162,6 +166,10 @@ export class SorbetClientHost implements vscode.Disposable {
           status: convertToClientHostStatus(event.status),
         });
       });
+      this.onStatusChangedEmitter.fire({
+        clientHost: this,
+        status: convertToClientHostStatus(this.clientSession.status),
+      });
     }
   }
 
@@ -209,10 +217,13 @@ export class SorbetClientHost implements vscode.Disposable {
    */
   public async start() {
     if (this.languageClient) {
-      this.log.info('Client start request ignored; already running');
+      this.log.info('Client start ignored; client is already running');
       return;
     } else if (this.configuration.lspConfigurationType === LspConfigurationType.Disabled) {
-      this.log.info('Client started request ignored; disabled by configuration');
+      this.log.info('Client start ignored; disabled by configuration');
+      return;
+    } else if (!this.autoStart) {
+      this.log.info('Client start ignored; auto-start disabled by user');
       return;
     }
 
@@ -325,7 +336,7 @@ export class SorbetClientHost implements vscode.Disposable {
   /**
    * Stops the Sorbet client if it is running.
    */
-  public async stop() {
+  public async stop(): Promise<void> {
     if (this.languageClient) {
       if (this.languageClient.needsStop()) {
         await this.languageClient.stop().then(
@@ -336,7 +347,7 @@ export class SorbetClientHost implements vscode.Disposable {
           },
         );
       } else {
-        this.log.info('Client stop request ignored; not required');
+        this.log.info('Client stop ignored; client reported is not required');
       }
       this.languageClient = undefined;
     } else if (this.languageClientInitializer) {
@@ -352,10 +363,25 @@ export class SorbetClientHost implements vscode.Disposable {
         }
       }
     } else {
-      this.log.info('Client stop request ignored; not running');
+      this.log.info('Client stop ignored; client is not running');
     }
 
     this.status = SorbetClientHostStatus.Disabled;
     this.context.metrics.increment('stop', 1);
+  }
+
+  public async userRestart(): Promise<void> {
+    this.autoStart = true;
+    await this.restart();
+  }
+
+  public async userStart(): Promise<void> {
+    this.autoStart = true;
+    await this.start();
+  }
+
+  public async userStop(): Promise<void> {
+    this.autoStart = false;
+    await this.stop();
   }
 }

@@ -2,7 +2,8 @@
 
 ## 0.4.2
 - Remove leftover support for `rubyfmt` (check [Formatto](https://marketplace.visualstudio.com/items?itemName=damolinx.formatto)).
-- Fix: handle folding regions that extend to end-of-file.
+- Fix: Handle folding regions that extend to end-of-file.
+- Fix: Sorbet no longer restarts automatically after being explicitly stopped by the user.
 
 ## 0.4.1
 - Update workspace activation event to require a `sorbet/config` file specifically (behavior equivalance).
