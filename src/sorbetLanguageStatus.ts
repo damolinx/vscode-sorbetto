@@ -136,7 +136,7 @@ export class SorbetLanguageStatus implements vscode.Disposable {
       });
     } else {
       switch (clientHost.status) {
-        case undefined:
+        case SorbetClientHostStatus.Disabled:
           this.setStatus({
             clientHost,
             severity: vscode.LanguageStatusSeverity.Warning,
