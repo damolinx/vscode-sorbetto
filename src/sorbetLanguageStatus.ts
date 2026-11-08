@@ -68,9 +68,12 @@ export class SorbetLanguageStatus implements vscode.Disposable {
     ];
   }
 
-  dispose(): void {
+  public dispose(): void {
     this.cleanupClientHost();
-    vscode.Disposable.from(...this.disposables).dispose();
+    for (const disposable of this.disposables) {
+      disposable.dispose();
+    }
+    this.disposables.length = 0;
   }
 
   private get alwaysShowStatusItem(): boolean {
@@ -79,7 +82,9 @@ export class SorbetLanguageStatus implements vscode.Disposable {
 
   private cleanupClientHost(): void {
     if (this.currentClientHost) {
-      vscode.Disposable.from(...this.currentClientHost.disposables).dispose();
+      for (const disposable of this.currentClientHost.disposables) {
+        disposable.dispose();
+      }
       this.currentClientHost = undefined;
     }
   }

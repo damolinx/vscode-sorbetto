@@ -32,14 +32,19 @@ export class RestartWatcher implements vscode.Disposable {
     }
   }
 
-  dispose(): void {
-    vscode.Disposable.from(...this.disposables).dispose();
+  public dispose(): void {
+    for (const disposable of this.disposables) {
+      disposable.dispose();
+    }
+    this.disposables.length = 0;
     this.disable();
   }
 
   private disable(): void {
     if (this.fsWatchers) {
-      vscode.Disposable.from(...this.fsWatchers).dispose();
+      for (const watcher of this.fsWatchers) {
+        watcher.dispose();
+      }
       this.fsWatchers = undefined;
     }
   }

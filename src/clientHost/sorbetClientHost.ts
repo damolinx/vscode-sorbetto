@@ -68,8 +68,11 @@ export class SorbetClientHost implements vscode.Disposable {
     ];
   }
 
-  dispose(): void {
-    vscode.Disposable.from(...this.disposables).dispose();
+  public dispose(): void {
+    for (const disposable of this.disposables) {
+      disposable.dispose();
+    }
+    this.disposables.length = 0;
   }
 
   private async handleLspConfigurationChanged(): Promise<void> {
@@ -145,7 +148,10 @@ export class SorbetClientHost implements vscode.Disposable {
     }
 
     if (this.clientSession) {
-      vscode.Disposable.from(...this.clientSession.disposables).dispose();
+      for (const disposable of this.clientSession.disposables) {
+        disposable.dispose();
+      }
+      this.clientSession.disposables.length = 0;
       this.clientSession = undefined;
       this.status = SorbetClientStatus.Disabled;
     }

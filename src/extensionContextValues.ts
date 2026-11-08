@@ -27,13 +27,11 @@ function registerSorbetStatus({ clientManager, disposables }: ExtensionContext):
 
 function registerSorbettoActive({ clientManager, disposables }: ExtensionContext): void {
   const contextKey = 'sorbetto:active';
-  setContext(contextKey, Boolean(clientManager.clientCount));
+  setContext(contextKey, clientManager.clientCount > 0);
 
   disposables.push(
     clientManager.onClientAdded(() => setContext(contextKey, true)),
-    clientManager.onClientRemoved(
-      () => !clientManager.clientCount && setContext(contextKey, false),
-    ),
+    clientManager.onClientRemoved(() => setContext(contextKey, clientManager.clientCount > 0)),
   );
 }
 

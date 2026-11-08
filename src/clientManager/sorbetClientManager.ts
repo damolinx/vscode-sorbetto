@@ -47,9 +47,15 @@ export class SorbetClientManager implements vscode.Disposable {
     ];
   }
 
-  dispose(): void {
-    vscode.Disposable.from(...this.disposables, ...this.clientHosts.values()).dispose();
+  public dispose(): void {
+    for (const client of this.clientHosts.values()) {
+      client.dispose();
+    }
     this.clientHosts.clear();
+    for (const disposable of this.disposables) {
+      disposable.dispose();
+    }
+    this.disposables.length = 0;
   }
 
   public get clientCount(): number {
