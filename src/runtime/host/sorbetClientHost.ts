@@ -1,22 +1,20 @@
 import * as vscode from 'vscode';
-import * as vslcn from 'vscode-languageclient/node';
-import { SorbetClient } from '../client/sorbetClient';
-import {
-  SHOW_OPERATION_NOTIFICATION_METHOD,
-  SorbetShowOperationParams,
-} from '../client/spec/showOperationNotification';
-import { Log } from '../common/log';
-import { E_COMMAND_NOT_FOUND, ErrorInfo } from '../common/processUtils';
-import { ExtensionContext } from '../extensionContext';
-import { LspConfigurationType } from './configuration/lspConfigurationType';
-import { SorbetClientConfiguration } from './configuration/sorbetClientConfiguration';
+import { SorbetClient } from '../../client/sorbetClient';
+import { SorbetShowOperationParams } from '../../client/spec/showOperationNotification';
+import { Log } from '../../common/log';
+import { E_COMMAND_NOT_FOUND, ErrorInfo } from '../../common/processUtils';
+import { ExtensionContext } from '../../extensionContext';
+import { LspConfigurationType } from '../configuration/lspConfigurationType';
+import { SorbetClientConfiguration } from '../configuration/sorbetClientConfiguration';
+import { InitializeProcessResult, LanguageClientCreator } from '../languageClientCreator';
+import { RestartWatcher } from '../restartWatcher';
+import { SorbetClientSession } from '../session/sorbetClientSession';
+import { SorbetClientSessionStatus } from '../session/sorbetClientSessionStatus';
+import { WorkspaceScopedOutputChannel } from '../workspaceScopedOutputChannel';
 import { ShowOperationEvent } from './events/showOperationEvent';
 import { StatusChangedEvent } from './events/statusChangedEvent';
-import { InitializeProcessResult, LanguageClientCreator } from './languageClientCreator';
-import { RestartWatcher } from './restartWatcher';
 import { createClientHostId } from './sorbetClientHostId';
-import { SorbetClientStatus } from './sorbetClientStatus';
-import { WorkspaceScopedOutputChannel } from './workspaceScopedOutputChannel';
+import { convertToClientHostStatus, SorbetClientHostStatus } from './sorbetClientHostStatus';
 
 const THROTTLE_CONFIG = {
   baseDelayMs: 10000, // 10 seconds
@@ -30,14 +28,10 @@ const THROTTLE_CONFIG = {
  * a stable, long‑lived façade that extension code can interact with.
  */
 export class SorbetClientHost implements vscode.Disposable {
-  private clientStatus?: SorbetClientStatus;
-  private clientSession?: {
-    client: SorbetClient;
-    disposables: vscode.Disposable[];
-  };
-
+  private clientSession?: SorbetClientSession;
   public readonly configuration: SorbetClientConfiguration;
   private readonly disposables: vscode.Disposable[];
+  private hostStatus: SorbetClientHostStatus;
   private languageClientInitializer?: LanguageClientCreator;
   private readonly log: WorkspaceScopedOutputChannel;
   private readonly onShowOperationEmitter: vscode.EventEmitter<ShowOperationEvent>;
@@ -49,6 +43,7 @@ export class SorbetClientHost implements vscode.Disposable {
     public readonly workspaceFolder: vscode.WorkspaceFolder,
     public readonly id = createClientHostId(workspaceFolder),
   ) {
+    this.hostStatus = SorbetClientHostStatus.Disabled;
     this.log = new WorkspaceScopedOutputChannel(this.context.log, this.workspaceFolder);
     this.onShowOperationEmitter = new vscode.EventEmitter();
     this.onStatusChangedEmitter = new vscode.EventEmitter();
@@ -106,7 +101,7 @@ export class SorbetClientHost implements vscode.Disposable {
   }
 
   public isActive(): boolean {
-    return this.status !== SorbetClientStatus.Disabled;
+    return !!this.clientSession && this.clientSession.status !== SorbetClientSessionStatus.Stopped;
   }
 
   public isEnabledByConfiguration(): boolean {
@@ -148,44 +143,25 @@ export class SorbetClientHost implements vscode.Disposable {
     }
 
     if (this.clientSession) {
-      for (const disposable of this.clientSession.disposables) {
-        disposable.dispose();
-      }
-      this.clientSession.disposables.length = 0;
+      this.clientSession.dispose();
       this.clientSession = undefined;
-      this.status = SorbetClientStatus.Disabled;
+      this.onStatusChangedEmitter.fire({ clientHost: this });
     }
 
     if (value) {
-      this.clientSession = {
-        client: value,
-        disposables: [
-          value, // Assumes ownership of LanguageClient
-          value.onNotification(SHOW_OPERATION_NOTIFICATION_METHOD, (params) =>
-            this.onShowOperationEmitter.fire({
-              clientHost: this,
-              operation: params,
-            }),
-          ),
-          value.onDidChangeState((event) => {
-            switch (event.newState) {
-              case vslcn.State.Running:
-                this.log.trace('Client state changed: Running');
-                this.status = SorbetClientStatus.Running;
-                break;
-              case vslcn.State.Starting:
-                this.log.trace('Client state changed: Starting');
-                this.status = SorbetClientStatus.Initializing;
-                break;
-              case vslcn.State.Stopped:
-                this.log.trace('Client state changed: Stopped');
-                this.status = SorbetClientStatus.Disabled;
-                this.languageClient = undefined;
-                break;
-            }
-          }),
-        ],
-      };
+      this.clientSession = new SorbetClientSession(value, this.log);
+      this.clientSession.onShowOperation((operation) =>
+        this.onShowOperationEmitter.fire({
+          clientHost: this,
+          operation,
+        }),
+      );
+      this.clientSession.onStatusChanged((event) => {
+        this.onStatusChangedEmitter.fire({
+          clientHost: this,
+          status: convertToClientHostStatus(event.status),
+        });
+      });
     }
   }
 
@@ -199,17 +175,23 @@ export class SorbetClientHost implements vscode.Disposable {
   /**
    * Sorbet Language Client status.
    */
-  public get status(): SorbetClientStatus {
-    return this.clientStatus ?? SorbetClientStatus.Disabled;
+  public get status(): SorbetClientHostStatus {
+    if (this.clientSession) {
+      return convertToClientHostStatus(this.clientSession.status);
+    }
+
+    return this.hostStatus;
   }
 
-  private set status(value: SorbetClientStatus) {
-    if (this.clientStatus !== value) {
-      this.clientStatus = value;
-      this.onStatusChangedEmitter.fire({
-        clientHost: this,
-        status: value,
-      });
+  private set status(value: SorbetClientHostStatus) {
+    if (this.hostStatus !== value) {
+      this.hostStatus = value;
+      if (!this.clientSession) {
+        this.onStatusChangedEmitter.fire({
+          clientHost: this,
+          status: value,
+        });
+      }
     }
   }
 
@@ -252,7 +234,7 @@ export class SorbetClientHost implements vscode.Disposable {
 
         let lspProcess: InitializeProcessResult | undefined;
         try {
-          this.status = SorbetClientStatus.Initializing;
+          this.status = SorbetClientHostStatus.Initializing;
           const { client, result: lspProcess } = await this.languageClientInitializer.create();
           if (lspProcess.hasExited) {
             if (lspProcess.exitedWithLegacyRetryCode) {
@@ -268,25 +250,24 @@ export class SorbetClientHost implements vscode.Disposable {
               );
               retry = false;
             }
-            this.status = SorbetClientStatus.Error;
+            this.status = SorbetClientHostStatus.Error;
             this.languageClient = undefined;
           } else {
             this.languageClient = client;
-            this.status = SorbetClientStatus.Running;
             this.context.metrics.increment('start', 1);
             retry = false;
           }
         } catch (err) {
           const errorInfo = await lspProcess?.exit;
           if (errorInfo && isUnrecoverable(errorInfo)) {
-            this.status = SorbetClientStatus.Disabled;
+            this.status = SorbetClientHostStatus.Disabled;
             this.log.error(
               'Server failed to start; unrecoverable. Error:',
               errorInfo.code || errorInfo.errno,
             );
             retry = false;
           } else {
-            this.status = SorbetClientStatus.Error;
+            this.status = SorbetClientHostStatus.Error;
             this.log.error(
               'Server failed to start; retrying. Error:',
               (errorInfo && (errorInfo.code || errorInfo.errno)) || err,
@@ -374,7 +355,7 @@ export class SorbetClientHost implements vscode.Disposable {
       this.log.info('Client stop request ignored; not running');
     }
 
-    this.status = SorbetClientStatus.Disabled;
+    this.status = SorbetClientHostStatus.Disabled;
     this.context.metrics.increment('stop', 1);
   }
 }

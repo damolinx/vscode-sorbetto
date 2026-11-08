@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { SorbetClientStatus } from '../clientHost/sorbetClientStatus';
 import { ExtensionContext } from '../extensionContext';
+import { SorbetClientHostStatus } from '../runtime/host/sorbetClientHostStatus';
 import { executeCommandsInTerminal, getClientHost } from './utils';
 
 export async function autocorrectAll(
@@ -17,7 +17,7 @@ export async function autocorrectAll(
     return;
   }
 
-  if (clientHost.status !== SorbetClientStatus.Running) {
+  if (clientHost.status !== SorbetClientHostStatus.Running) {
     context.log.warn(
       'AutocorrectAll: Sorbet client is not ready. Status:',
       clientHost.status,

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { SorbetClientStatus } from '../clientHost/sorbetClientStatus';
 import { ExtensionContext } from '../extensionContext';
+import { SorbetClientHostStatus } from '../runtime/host/sorbetClientHostStatus';
 import { getClientHost } from './utils';
 
 export async function peekHierarchyReferences(
@@ -16,7 +16,7 @@ export async function peekHierarchyReferences(
     return;
   }
 
-  if (clientHost.status !== SorbetClientStatus.Running) {
+  if (clientHost.status !== SorbetClientHostStatus.Running) {
     context.log.warn(
       'PeekHierarchyReferences: Sorbet client is not ready. Status:',
       clientHost.status,

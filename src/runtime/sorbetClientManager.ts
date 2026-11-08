@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import { SorbetClient } from '../client/sorbetClient';
-import { ShowOperationEvent } from '../clientHost/events/showOperationEvent';
-import { StatusChangedEvent } from '../clientHost/events/statusChangedEvent';
-import { SorbetClientHost } from '../clientHost/sorbetClientHost';
-import { createClientHostId, SorbetClientHostId } from '../clientHost/sorbetClientHostId';
 import { onMainAreaActiveTextEditorChanged } from '../common/utils';
 import { isSorbetWorkspace } from '../common/workspaceUtils';
 import { ExtensionContext } from '../extensionContext';
+import { SorbetClientHost } from '../runtime/host/sorbetClientHost';
+import { createClientHostId, SorbetClientHostId } from '../runtime/host/sorbetClientHostId';
+import { ShowOperationEvent } from './host/events/showOperationEvent';
+import { StatusChangedEvent } from './host/events/statusChangedEvent';
 
 export class SorbetClientManager implements vscode.Disposable {
   private readonly clientHosts: Map<SorbetClientHostId, SorbetClientHost>;

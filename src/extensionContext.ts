@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { SorbetClientManager } from './clientManager/sorbetClientManager';
 import { Configuration } from './common/configuration';
 import { Log } from './common/log';
 import { LogMetrics, Metrics } from './common/metrics';
+import { SorbetClientManager } from './runtime/sorbetClientManager';
 
 export class ExtensionContext {
   public readonly clientManager: SorbetClientManager;

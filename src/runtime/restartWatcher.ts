@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { LspConfigurationType } from './configuration/lspConfigurationType';
-import { SorbetClientHost } from './sorbetClientHost';
+import { SorbetClientHost } from './host/sorbetClientHost';
 import { WorkspaceScopedOutputChannel } from './workspaceScopedOutputChannel';
 
 export class RestartWatcher implements vscode.Disposable {

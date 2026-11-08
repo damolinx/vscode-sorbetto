@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { SorbetClientHost } from '../clientHost/sorbetClientHost';
 import { mainAreaActiveEditorUri } from '../common/utils';
 import { isSorbetWorkspace } from '../common/workspaceUtils';
 import { ExtensionContext } from '../extensionContext';
+import { SorbetClientHost } from '../runtime/host/sorbetClientHost';
 import { setupWorkspace } from './setupWorkspace';
 
 const RUBY_ICON = new vscode.ThemeIcon('ruby');

@@ -1,7 +1,7 @@
 import { SorbetClientHost } from '../sorbetClientHost';
-import { SorbetClientStatus } from '../sorbetClientStatus';
+import { SorbetClientHostStatus } from '../sorbetClientHostStatus';
 
 export interface StatusChangedEvent {
   readonly clientHost: SorbetClientHost;
-  readonly status: SorbetClientStatus;
+  readonly status?: SorbetClientHostStatus;
 }
